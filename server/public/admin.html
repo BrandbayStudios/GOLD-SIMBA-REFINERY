@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gold SIMBA Bookings — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<g id="ic-flame"><path d="M12 2c1 3-2.5 4-2.5 7a2.5 2.5 0 0 0 5 0c0-1-.5-1.6-.5-1.6S15 9 15 12a5 5 0 1 1-10 0C5 7 9 6 12 2Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></g>
+<g id="ic-flask"><path d="M9 2h6M10 2v6l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 17l-5-9V2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7.5 15h9" stroke="currentColor" stroke-width="1.4"/></g>
+<g id="ic-gem"><path d="M4 8.5 8 3h8l4 5.5L12 21 4 8.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4 8.5h16M9.5 3 12 8.5 14.5 3M8 8.5 12 21l4-12.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></g>
+<g id="ic-atom"><circle cx="12" cy="12" r="1.6" fill="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="3.6" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="12" rx="9" ry="3.6" fill="none" stroke="currentColor" stroke-width="1.3" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.6" fill="none" stroke="currentColor" stroke-width="1.3" transform="rotate(120 12 12)"/></g>
+<g id="ic-layers"><path d="M12 3 3 8l9 5 9-5-9-5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M3 13l9 5 9-5M3 17.5l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></g>
+<g id="ic-search"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M20 20l-5-5M8 10.5l1.6 1.6L13.5 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-compass"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M15.5 8.5 13.4 13.4 8.5 15.5 10.6 10.6 15.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></g>
+<g id="ic-trend"><path d="M3 17 9 11 13 15 21 6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h6v6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-shield"><path d="M12 3l7 3v6c0 5-3.2 7.8-7 9-3.8-1.2-7-4-7-9V6l7-3Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 12l2 2 4-4.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-case"><rect x="3" y="7.5" width="18" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8.5 7.5V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5v2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3 12.5h18" stroke="currentColor" stroke-width="1.4"/></g>
+<g id="ic-finger"><path d="M12 3a7 7 0 0 0-7 7v3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M12 3a7 7 0 0 1 7 7v2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8.5 21c-1-2-1.5-3.6-1.5-6v-4a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M12 21c-1.8-2.3-2.5-4-2.5-6.5v-3.5a2.5 2.5 0 0 1 5 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></g>
+<g id="ic-chat"><path d="M4 5h16v11H9l-5 4V5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 9.5h8M8 12.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></g>
+<g id="ic-check"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 12.3l2.6 2.6L16.3 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-lock"><rect x="5" y="10.5" width="14" height="9.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.4"/></g>
+<g id="ic-team"><circle cx="8.5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="16" cy="9" r="2.3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3 19c.4-3.4 2.6-5.2 5.5-5.2S13.6 15.6 14 19" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M14.5 19c.3-2.6 1.8-4 4-4s3.7 1.4 4 4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></g>
+<g id="ic-map"><path d="M9 4 4 6v14l5-2 6 2 5-2V4l-5 2-6-2Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 4v14M15 6v14" stroke="currentColor" stroke-width="1.4"/></g>
+<g id="ic-phone"><path d="M6 3h3l1.5 4-2 1.6a12 12 0 0 0 6 6l1.6-2 4 1.5v3a2 2 0 0 1-2.2 2C10.6 18.6 5.4 13.4 4 6.2A2 2 0 0 1 6 3Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></g>
+<g id="ic-mail"><rect x="3" y="5.5" width="18" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></g>
+<g id="ic-clock"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 7v5.5l4 2.3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-arrow"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-calendar"><rect x="4" y="5.5" width="16" height="15" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 9.5h16M8 3.5v3.5M16 3.5v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8.5 13.2l1.8 1.8L14.8 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="ic-fb"><path d="M14 21v-7h2.4l.4-3H14V9c0-.9.3-1.5 1.6-1.5H17V4.8C16.7 4.8 15.7 4.7 14.6 4.7 12.2 4.7 10.6 6.1 10.6 8.7v2.3H8v3h2.6V21h3.4Z" fill="currentColor"/></g>
+<g id="ic-in"><path d="M4.98 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM3.2 9.6h3.5V21H3.2V9.6ZM9.7 9.6h3.4v1.6h.05c.47-.9 1.6-1.85 3.3-1.85 3.53 0 4.18 2.32 4.18 5.35V21h-3.5v-5.4c0-1.3-.02-2.96-1.8-2.96-1.8 0-2.08 1.4-2.08 2.86V21H9.7V9.6Z" fill="currentColor"/></g>
+<g id="ic-ig"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></g>
+<g id="ic-x"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+</defs>
+</svg>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="admin-app">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <g id="a-ic-search"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+  <g id="ic-plus"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+  <g id="a-ic-lock"><rect x="5" y="10.5" width="14" height="9.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.5"/></g>
+  <g id="a-ic-x"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+  <g id="ic-eye"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/></g>
+  <g id="ic-edit"><path d="M4 20h4l11-11-4-4L4 16v4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 6.5l4 4" stroke="currentColor" stroke-width="1.5"/></g>
+  <g id="ic-inbox"><path d="M4 13.5h4.5l1.5 3h4l1.5-3H20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4.5 13.5 6 5.5A1.5 1.5 0 0 1 7.47 4.3h9.06A1.5 1.5 0 0 1 18 5.5l1.5 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><rect x="4" y="13.5" width="16" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/></g>
+  <g id="ic-printer"><rect x="5" y="8.5" width="14" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 8.5V4h10v4.5M7 16v4h10v-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></g>
+  <g id="a-ic-check"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 12.3l2.6 2.6L16.3 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="ic-ban"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6 6l12 12" stroke="currentColor" stroke-width="1.3"/></g>
+  <g id="ic-trash"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></g>
+</defs>
+</svg>
+
+<!-- ============ Admin login gate ============ -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <svg viewBox="0 0 24 24"><use href="#a-ic-lock"/></svg>
+    <h2>Staff Sign-In</h2>
+    <p>Sign in with your staff username and password to open the Gold SIMBA bookings tool.</p>
+    <input type="text" id="gateUsernameInput" placeholder="Username" autocomplete="username" style="margin-bottom:10px">
+    <input type="password" id="gateKeyInput" placeholder="Password" autocomplete="current-password">
+    <p class="gate-err" id="gateErr"></p>
+    <button class="btn btn-gold" id="gateSubmit" style="width:100%;justify-content:center">Sign In</button>
+  </div>
+</div>
+
+<div class="app" id="appRoot" hidden>
+  <div class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 60 60" aria-hidden="true">
+        <defs><linearGradient id="crestGold-admin" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f8e3ac"/><stop offset="45%" stop-color="#d4a537"/><stop offset="100%" stop-color="#7a5710"/>
+        </linearGradient></defs>
+        <circle cx="30" cy="30" r="28.5" fill="none" stroke="url(#crestGold-admin)" stroke-width="1.2"/>
+        <circle cx="30" cy="30" r="10" fill="none" stroke="url(#crestGold-admin)" stroke-width="1.4"/>
+        <path d="M30 24c1.6 2.6-1.6 3.4-1.6 5.6a1.6 1.6 0 0 0 3.2 0c0-.7-.3-1-.3-1s1.3.7 1.3 2.7a3.1 3.1 0 1 1-6.2 0c0-3 2.6-4 3.6-7.3Z" fill="url(#crestGold-admin)"/>
+      </svg>
+      <div class="brand-text">
+        <h1>Gold SIMBA — Bookings &amp; Invoices</h1>
+        <p><svg viewBox="0 0 24 24"><use href="#a-ic-lock"/></svg> Staff tool — sign-in protected</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="conn" id="connStatus"><span class="dot" id="connDot"></span><span id="connLabel">Connecting…</span></div>
+      <button type="button" class="btn btn-sm" id="signOutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="adminTabs">
+    <button type="button" class="tab-btn active" id="tabBookingsBtn" data-tab="bookings">Bookings</button>
+    <button type="button" class="tab-btn" id="tabServicesBtn" data-tab="services">Services</button>
+  </div>
+
+  <div id="bookingsView">
+    <div class="stats">
+      <div class="stat"><div class="lbl">Total Bookings</div><div class="val tnum" id="statTotal">—</div><div class="sub" id="statTotalSub">&nbsp;</div></div>
+      <div class="stat warn"><div class="lbl">Outstanding Balance</div><div class="val tnum" id="statPending">—</div><div class="sub tnum" id="statPendingSub">&nbsp;</div></div>
+      <div class="stat ok"><div class="lbl">Collected</div><div class="val tnum" id="statPaid">—</div><div class="sub tnum" id="statPaidSub">&nbsp;</div></div>
+      <div class="stat"><div class="lbl">Testing This Week</div><div class="val tnum" id="statWeek">—</div><div class="sub" id="statWeekSub">&nbsp;</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><use href="#a-ic-search"/></svg>
+        <input type="text" id="searchInput" placeholder="Search reference number, seller, or buyer…" autocomplete="off">
+      </div>
+      <select class="filter" id="statusFilter">
+        <option value="all">All statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="Partially Paid">Partially Paid</option>
+        <option value="Paid">Paid</option>
+        <option value="Refunded">Refunded</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <button class="btn btn-gold" id="newBookingBtn"><svg viewBox="0 0 24 24"><use href="#ic-plus"/></svg> New Booking</button>
+    </div>
+
+    <div id="tableRegion">
+      <div class="state-block" id="loadingState">
+        <svg viewBox="0 0 24 24"><use href="#ic-inbox"/></svg>
+        <h3>Loading bookings…</h3>
+        <p>Fetching the latest data from Firestore.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="servicesView" hidden>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><use href="#a-ic-search"/></svg>
+        <input type="text" id="serviceSearchInput" placeholder="Search services…" autocomplete="off">
+      </div>
+      <button class="btn btn-gold" id="newServiceBtn"><svg viewBox="0 0 24 24"><use href="#ic-plus"/></svg> New Service</button>
+    </div>
+    <div id="servicesTableRegion">
+      <div class="state-block" id="servicesLoadingState">
+        <svg viewBox="0 0 24 24"><use href="#ic-inbox"/></svg>
+        <h3>Loading services…</h3>
+        <p>Fetching your services list from Firestore.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ New / Edit Booking Modal ============ -->
+<div class="modal-backdrop" id="formBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="formTitle">New Booking</h2>
+        <p id="formRefLine"></p>
+      </div>
+      <button class="modal-close" id="formClose"><svg viewBox="0 0 24 24"><use href="#a-ic-x"/></svg></button>
+    </div>
+    <div class="form-err" id="formErr"></div>
+    <form id="bookingForm">
+      <div class="frow">
+        <div class="field"><label for="f-dateOfBooking">Date of Booking</label><input type="date" id="f-dateOfBooking" required></div>
+        <div class="field"><label for="f-testingTime">Testing Time</label><input type="time" id="f-testingTime" required></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="f-testingDate">Testing Date Scheduled</label><input type="date" id="f-testingDate" required></div>
+        <div class="field"><label for="f-testingType">Testing Type</label>
+          <select id="f-testingType"><option value="">Select a service…</option></select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="f-bookingMadeBy">Booking Made By</label><input type="text" id="f-bookingMadeBy" placeholder="Staff name" required></div>
+        <div class="field">
+          <label for="f-quantity">Quantity</label>
+          <div class="qty-row">
+            <input type="number" id="f-quantity" min="0" step="0.001" required>
+            <select id="f-quantityUnit">
+              <option value="g">grams (g)</option>
+              <option value="kg">kilograms (kg)</option>
+              <option value="oz">troy ounces (oz)</option>
+              <option value="pcs">pieces</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-section">Seller Information</div>
+      <div class="frow">
+        <div class="field"><label for="f-sellerName">Seller Name</label><input type="text" id="f-sellerName" required></div>
+        <div class="field"><label for="f-sellerContact">Seller Contact Number</label><input type="tel" id="f-sellerContact" required></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="f-sellerNRC">Seller NRC / Passport</label><input type="text" id="f-sellerNRC"></div>
+        <div class="field"><label for="f-sellerCompany">Seller Company</label><input type="text" id="f-sellerCompany"></div>
+      </div>
+      <div class="field full">
+        <label for="f-sellerAddress">Seller Address</label>
+        <input type="text" id="f-sellerAddress">
+      </div>
+
+      <div class="field-section">Buyer Information (optional)</div>
+      <div class="frow">
+        <div class="field"><label for="f-buyerName">Buyer Name</label><input type="text" id="f-buyerName"></div>
+        <div class="field"><label for="f-buyerContact">Buyer Contact Number</label><input type="tel" id="f-buyerContact"></div>
+      </div>
+
+      <div class="field-section">Fee &amp; Payment</div>
+      <div class="frow">
+        <div class="field">
+          <label for="f-assayingFee">Assaying Fee (Amount Due)</label>
+          <div class="fee-row">
+            <input type="number" id="f-assayingFee" min="0" step="0.01" required>
+            <select id="f-currency">
+              <option value="ZMW">ZMW</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="f-amountPaid">Amount Paid</label><input type="number" id="f-amountPaid" min="0" step="0.01" value="0"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="f-paymentStatus">Payment Status</label>
+          <select id="f-paymentStatus">
+            <option value="Pending">Pending</option>
+            <option value="Partially Paid">Partially Paid</option>
+            <option value="Paid">Paid</option>
+            <option value="Refunded">Refunded</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Balance</label>
+          <div class="balance-display" id="f-balanceDisplay">—</div>
+        </div>
+      </div>
+
+      <div class="field full">
+        <label for="f-notes">Notes (optional)</label>
+        <textarea id="f-notes" placeholder="Anything else worth recording about this booking"></textarea>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="formCancel">Cancel</button>
+        <button type="submit" class="btn btn-gold" id="formSubmit">Save Booking</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ Detail / Receipt Modal ============ -->
+<div class="modal-backdrop" id="detailBackdrop">
+  <div class="modal" style="max-width:700px" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="detailTitle">Booking</h2>
+        <p id="detailRefLine"></p>
+      </div>
+      <button class="modal-close" id="detailClose"><svg viewBox="0 0 24 24"><use href="#a-ic-x"/></svg></button>
+    </div>
+
+    <div class="status-row">
+      <span class="pill" id="detailStatusPill">—</span>
+      <span class="mono" style="font-size:11.5px;color:var(--smoke-dim)" id="detailStatusMeta"></span>
+      <div class="stat-actions status-btn-row">
+        <button class="btn btn-sm" id="markPendingBtn"><svg viewBox="0 0 24 24"><use href="#ic-inbox"/></svg> Pending</button>
+        <button class="btn btn-sm" id="markPartialBtn" style="border-color:var(--info-line);color:var(--info)">Partial</button>
+        <button class="btn btn-sm" id="markPaidBtn" style="border-color:var(--ok-line);color:var(--ok)"><svg viewBox="0 0 24 24"><use href="#a-ic-check"/></svg> Mark Paid</button>
+        <button class="btn btn-sm" id="markRefundedBtn" style="border-color:var(--refund-line);color:var(--refund)">Refunded</button>
+        <button class="btn btn-sm btn-danger" id="markCancelledBtn"><svg viewBox="0 0 24 24"><use href="#ic-ban"/></svg> Cancel</button>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-item"><span>Date of Booking</span><strong id="d-dateOfBooking">—</strong></div>
+      <div class="detail-item"><span>Testing Time</span><strong id="d-testingTime">—</strong></div>
+      <div class="detail-item"><span>Testing Date Scheduled</span><strong id="d-testingDate">—</strong></div>
+      <div class="detail-item"><span>Testing Type</span><strong id="d-testingType">—</strong></div>
+      <div class="detail-item"><span>Booking Made By</span><strong id="d-bookingMadeBy">—</strong></div>
+      <div class="detail-item"><span>Quantity</span><strong id="d-quantity">—</strong></div>
+      <div class="detail-item"><span>Seller</span><strong id="d-sellerName">—</strong></div>
+      <div class="detail-item"><span>Seller Contact</span><strong id="d-sellerContact">—</strong></div>
+      <div class="detail-item"><span>Seller NRC / Passport</span><strong id="d-sellerNRC">—</strong></div>
+      <div class="detail-item"><span>Seller Company</span><strong id="d-sellerCompany">—</strong></div>
+      <div class="detail-item" style="grid-column:1/-1"><span>Seller Address</span><strong id="d-sellerAddress">—</strong></div>
+      <div class="detail-item"><span>Buyer</span><strong id="d-buyerName">—</strong></div>
+      <div class="detail-item"><span>Buyer Contact</span><strong id="d-buyerContact">—</strong></div>
+      <div class="detail-item"><span>Assaying Fee (Amount Due)</span><strong id="d-assayingFee">—</strong></div>
+      <div class="detail-item"><span>Amount Paid</span><strong id="d-amountPaid">—</strong></div>
+      <div class="detail-item"><span>Balance</span><strong id="d-balance">—</strong></div>
+    </div>
+    <div class="detail-item" id="d-notesWrap" style="margin-bottom:22px;display:none">
+      <span>Notes</span><strong id="d-notes" style="font-weight:500;font-size:13.5px;line-height:1.6">—</strong>
+    </div>
+
+    <div class="modal-foot" style="justify-content:space-between">
+      <button class="btn btn-danger btn-sm" id="deleteBtn"><svg viewBox="0 0 24 24"><use href="#ic-trash"/></svg> Delete Booking</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn" id="editBtn"><svg viewBox="0 0 24 24"><use href="#ic-edit"/></svg> Edit</button>
+        <button class="btn btn-gold" id="printBtn"><svg viewBox="0 0 24 24"><use href="#ic-printer"/></svg> Print Receipt</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Printable receipt (hidden on screen) ============ -->
+<div class="receipt" id="receiptBlock">
+  <div class="r-head">
+    <div>
+      <h2>Gold SIMBA Refinery</h2>
+      <div style="font-size:12px;color:#666;margin-top:4px">Mineral Refining &amp; Laboratory Testing — Zambia</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.08em">Reference</div>
+      <div class="r-ref" id="r-ref">—</div>
+    </div>
+  </div>
+  <table>
+    <tr><td class="k">Date of Booking</td><td id="r-dateOfBooking">—</td></tr>
+    <tr><td class="k">Testing Date Scheduled</td><td id="r-testingDate">—</td></tr>
+    <tr><td class="k">Testing Time</td><td id="r-testingTime">—</td></tr>
+    <tr><td class="k">Testing Type</td><td id="r-testingType">—</td></tr>
+    <tr><td class="k">Booking Made By</td><td id="r-bookingMadeBy">—</td></tr>
+    <tr><td class="k">Seller</td><td id="r-sellerName">—</td></tr>
+    <tr><td class="k">Seller Contact</td><td id="r-sellerContact">—</td></tr>
+    <tr><td class="k">Seller Company</td><td id="r-sellerCompany">—</td></tr>
+    <tr><td class="k">Buyer</td><td id="r-buyerName">—</td></tr>
+    <tr><td class="k">Buyer Contact</td><td id="r-buyerContact">—</td></tr>
+    <tr><td class="k">Quantity</td><td id="r-quantity">—</td></tr>
+  </table>
+  <div class="r-total"><span>Amount Due</span><span id="r-fee">—</span></div>
+  <div class="r-total" style="border-top:none;padding-top:0;margin-top:6px;font-size:13px;font-weight:400;"><span>Amount Paid</span><span id="r-paid">—</span></div>
+  <div class="r-total" style="margin-top:10px;"><span>Balance</span><span id="r-balance">—</span></div>
+  <span class="r-status" id="r-status">—</span>
+  <div class="r-foot">Generated from Gold SIMBA Refinery's booking system · Reference <span id="r-ref2"></span> is this record's unique identifier — keep it for your records.</div>
+</div>
+
+<!-- ============ New / Edit Service Modal ============ -->
+<div class="modal-backdrop" id="serviceFormBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="serviceFormTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="serviceFormTitle">New Service</h2>
+        <p id="serviceFormIdLine"></p>
+      </div>
+      <button class="modal-close" id="serviceFormClose"><svg viewBox="0 0 24 24"><use href="#a-ic-x"/></svg></button>
+    </div>
+    <div class="form-err" id="serviceFormErr"></div>
+    <form id="serviceForm">
+      <div class="field full">
+        <label for="s-name">Service Name</label>
+        <input type="text" id="s-name" placeholder="e.g. Gold Assay" required>
+      </div>
+      <div class="field full">
+        <label for="s-description">Description</label>
+        <textarea id="s-description" placeholder="What this service covers"></textarea>
+      </div>
+      <div class="frow">
+        <div class="field">
+          <label for="s-price">Price</label>
+          <div class="fee-row">
+            <input type="number" id="s-price" min="0" step="0.01">
+            <select id="s-currency">
+              <option value="ZMW">ZMW</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="s-unit">Unit</label><input type="text" id="s-unit" placeholder="e.g. per sample, per gram"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="s-turnaround">Estimated Turnaround Time</label><input type="text" id="s-turnaround" placeholder="e.g. 1-2 business days"></div>
+        <div class="field">
+          <label for="s-active">Status</label>
+          <select id="s-active">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="serviceFormCancel">Cancel</button>
+        <button type="submit" class="btn btn-gold" id="serviceFormSubmit">Save Service</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var els = {};
+  ['connDot','connLabel','statTotal','statTotalSub','statPending','statPendingSub','statPaid','statPaidSub',
+   'statWeek','statWeekSub','searchInput','statusFilter','newBookingBtn','tableRegion',
+   'formBackdrop','formTitle','formRefLine','formClose','formErr','bookingForm','formCancel','formSubmit',
+   'detailBackdrop','detailTitle','detailRefLine','detailClose','detailStatusPill','detailStatusMeta',
+   'markPendingBtn','markPartialBtn','markPaidBtn','markRefundedBtn','markCancelledBtn',
+   'deleteBtn','editBtn','printBtn','toasts','receiptBlock',
+   'gate','gateUsernameInput','gateKeyInput','gateErr','gateSubmit','appRoot','signOutBtn',
+   'adminTabs','tabBookingsBtn','tabServicesBtn','bookingsView','servicesView',
+   'serviceSearchInput','newServiceBtn','servicesTableRegion',
+   'serviceFormBackdrop','serviceFormTitle','serviceFormIdLine','serviceFormClose','serviceFormErr',
+   'serviceForm','serviceFormCancel','serviceFormSubmit'
+  ].forEach(function(id){ els[id] = document.getElementById(id); });
+
+  // Backed by the /api/admin/* routes served by server/server.js. Staff
+  // sign in with POST /api/login (username/password checked server-side
+  // against ADMIN_USERNAME/ADMIN_PASSWORD) and get back a signed bearer
+  // token, stored in sessionStorage and attached to every /api/admin/*
+  // call by GSR.api() (see the shared GSR helper block near the top of
+  // this file).
+
+  var state = {
+    bookings: [],
+    search: '',
+    statusFilter: 'all',
+    editingId: null,      // set when the form modal is editing an existing booking
+    detailId: null,       // set when the detail modal is open on a booking
+    services: [],          // all services (active + inactive) — Services tab
+    servicesLoaded: false,
+    servicesSearch: '',
+    editingServiceId: null,
+    activeTab: 'bookings'
+  };
+
+  // ---------------- Utilities ----------------
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function fmtDate(iso){
+    if(!iso) return '—';
+    var d = new Date(iso + 'T00:00:00');
+    if(isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
+  function fmtDateTime(iso){
+    if(!iso) return '—';
+    var d = new Date(iso);
+    if(isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'}) + ' at ' +
+           d.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit'});
+  }
+  function fmtMoney(amount, currency){
+    var n = Number(amount);
+    if(isNaN(n)) n = 0;
+    var symbol = currency === 'USD' ? '$' : 'K';
+    return symbol + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtQty(q, unit){
+    var n = Number(q);
+    if(isNaN(n)) n = 0;
+    return n.toLocaleString(undefined, {maximumFractionDigits:3}) + ' ' + (unit || '');
+  }
+  function todayISO(){
+    var d = new Date();
+    var m = String(d.getMonth()+1).padStart(2,'0');
+    var day = String(d.getDate()).padStart(2,'0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+  function nowTimeHM(){
+    var d = new Date();
+    return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+  function toast(msg, kind){
+    var t = document.createElement('div');
+    t.className = 'toast' + (kind ? ' ' + kind : '');
+    t.textContent = msg;
+    els.toasts.appendChild(t);
+    setTimeout(function(){
+      t.style.transition = 'opacity .25s ease';
+      t.style.opacity = '0';
+      setTimeout(function(){ t.remove(); }, 250);
+    }, 4200);
+  }
+  // ---------------- Connection status ----------------
+  function setConn(mode, label){
+    els.connDot.className = 'dot' + (mode ? ' ' + mode : '');
+    els.connLabel.textContent = label;
+  }
+
+  // ---------------- API data layer ----------------
+  // GET /api/admin/bookings returns every field on every booking already
+  // merged into one flat row (the server enforces who can see what, not
+  // the client) — that's a straight drop-in for the old merged rows this
+  // render/search/edit/print code below was already written against.
+  function handleAuthError(err){
+    if(err && err.status === 401){
+      GSR.clearToken();
+      showGate();
+      els.gateErr.textContent = 'Your session expired — please sign in again.';
+    }
+  }
+
+  var POLL_MS = 20000;
+  var pollTimer = null;
+
+  function loadBookings(silent){
+    if(!silent) setConn('', 'Loading…');
+    return GSR.api('/api/admin/bookings').then(function(json){
+      var list = (json.bookings || []).map(function(b){
+        return Object.assign({ id: b.referenceNumber }, b);
+      });
+      list.sort(function(a, b){ return String(b.createdAt).localeCompare(String(a.createdAt)); });
+      state.bookings = list;
+      setConn('live', 'Connected');
+      renderAll();
+    }).catch(function(err){
+      setConn('err', 'Connection failed');
+      toast(err.message, 'err');
+      handleAuthError(err);
+      throw err;
+    });
+  }
+
+  function startPolling(){
+    if(pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(function(){ loadBookings(true).catch(function(){}); }, POLL_MS);
+  }
+
+  // ---------------- Services ----------------
+  function loadServices(){
+    return GSR.api('/api/admin/services').then(function(json){
+      var list = json.services || [];
+      list.sort(function(a, b){ return String(a.name).localeCompare(String(b.name)); });
+      state.services = list;
+      state.servicesLoaded = true;
+      populateTestingTypeOptions();
+      if(state.activeTab === 'services') renderServicesTable();
+    }).catch(function(err){
+      toast(err.message, 'err');
+      handleAuthError(err);
+    });
+  }
+
+  function populateTestingTypeOptions(){
+    var select = document.getElementById('f-testingType');
+    if(!select) return;
+    var current = select.value;
+    select.innerHTML = '<option value="">Select a service…</option>';
+    state.services
+      .filter(function(s){ return s.active === true || s.active === 'TRUE' || s.active === 'true'; })
+      .forEach(function(s){
+        var opt = document.createElement('option');
+        opt.value = s.name;
+        opt.textContent = s.name + (s.price ? (' — ' + fmtMoney(s.price, s.currency)) : '');
+        select.appendChild(opt);
+      });
+    if(current) select.value = current;
+  }
+
+  function isServiceActive(s){ return s.active === true || s.active === 'TRUE' || s.active === 'true'; }
+
+  function filteredServices(){
+    var q = state.servicesSearch.trim().toLowerCase();
+    if(!q) return state.services;
+    return state.services.filter(function(s){
+      var hay = [s.name, s.description, s.unit].map(function(v){ return String(v||'').toLowerCase(); }).join(' ');
+      return hay.indexOf(q) !== -1;
+    });
+  }
+
+  function renderServicesTable(){
+    var list = filteredServices();
+
+    if(!state.services.length){
+      els.servicesTableRegion.innerHTML =
+        '<div class="state-block">' +
+          '<svg viewBox="0 0 24 24"><use href="#ic-inbox"/></svg>' +
+          '<h3>No services yet</h3>' +
+          '<p>Add the testing services you offer — name, price, unit, and turnaround — so they can be picked when booking.</p>' +
+          '<button class="btn btn-gold" onclick="document.getElementById(\'newServiceBtn\').click()">' +
+            '<svg viewBox="0 0 24 24"><use href="#ic-plus"/></svg> New Service</button>' +
+        '</div>';
+      return;
+    }
+
+    if(!list.length){
+      els.servicesTableRegion.innerHTML =
+        '<div class="state-block">' +
+          '<svg viewBox="0 0 24 24"><use href="#a-ic-search"/></svg>' +
+          '<h3>No matching services</h3>' +
+          '<p>Try a different search term.</p>' +
+        '</div>';
+      return;
+    }
+
+    var rows = list.map(function(s){
+      return '<tr data-id="' + esc(s.serviceId) + '">' +
+        '<td class="name-cell"><strong>' + esc(s.name) + '</strong><span>' + esc(s.description || '') + '</span></td>' +
+        '<td class="tnum">' + (s.price ? esc(fmtMoney(s.price, s.currency)) : '—') + '</td>' +
+        '<td>' + esc(s.unit || '—') + '</td>' +
+        '<td>' + esc(s.turnaround || '—') + '</td>' +
+        '<td>' + (isServiceActive(s) ? '<span class="pill paid">Active</span>' : '<span class="pill cancelled">Inactive</span>') + '</td>' +
+        '<td><div class="row-actions"><button class="icon-btn" data-edit-service="' + esc(s.serviceId) + '" aria-label="Edit service"><svg viewBox="0 0 24 24"><use href="#ic-edit"/></svg></button>' +
+        '<button class="icon-btn" data-delete-service="' + esc(s.serviceId) + '" aria-label="Delete service"><svg viewBox="0 0 24 24"><use href="#ic-trash"/></svg></button></div></td>' +
+      '</tr>';
+    }).join('');
+
+    els.servicesTableRegion.innerHTML =
+      '<div class="table-wrap"><table>' +
+        '<thead><tr><th>Service</th><th>Price</th><th>Unit</th><th>Turnaround</th><th>Status</th><th></th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table></div>';
+
+    els.servicesTableRegion.querySelectorAll('[data-edit-service]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var s = state.services.find(function(x){ return x.serviceId === btn.getAttribute('data-edit-service'); });
+        if(s) openServiceForm(s);
+      });
+    });
+    els.servicesTableRegion.querySelectorAll('[data-delete-service]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var id = btn.getAttribute('data-delete-service');
+        if(btn.dataset.armed === '1'){
+          GSR.api('/api/admin/services/' + encodeURIComponent(id), { method: 'DELETE' }).then(function(){
+            toast('Service deleted.', 'ok');
+            loadServices();
+          }).catch(function(err){ toast(err.message, 'err'); handleAuthError(err); });
+        } else {
+          btn.dataset.armed = '1';
+          btn.title = 'Click again to confirm delete';
+          setTimeout(function(){ btn.dataset.armed = '0'; }, 4000);
+        }
+      });
+    });
+  }
+
+  function openServiceForm(service){
+    state.editingServiceId = service ? service.serviceId : null;
+    els.serviceFormErr.classList.remove('show');
+    els.serviceFormTitle.textContent = service ? 'Edit Service' : 'New Service';
+    els.serviceFormIdLine.textContent = service ? service.serviceId : 'An ID is generated automatically on save';
+
+    var s = function(id){ return document.getElementById('s-' + id); };
+    s('name').value = service ? (service.name || '') : '';
+    s('description').value = service ? (service.description || '') : '';
+    s('price').value = service ? (service.price || '') : '';
+    s('currency').value = service ? (service.currency || 'ZMW') : 'ZMW';
+    s('unit').value = service ? (service.unit || '') : '';
+    s('turnaround').value = service ? (service.turnaround || '') : '';
+    s('active').value = service ? String(isServiceActive(service)) : 'true';
+
+    els.serviceFormBackdrop.classList.add('open');
+    setTimeout(function(){ s('name').focus(); }, 50);
+  }
+  function closeServiceForm(){
+    els.serviceFormBackdrop.classList.remove('open');
+    state.editingServiceId = null;
+  }
+  function collectServiceForm(){
+    var s = function(id){ return document.getElementById('s-' + id); };
+    return {
+      name: s('name').value.trim(),
+      description: s('description').value.trim(),
+      price: parseFloat(s('price').value) || '',
+      currency: s('currency').value,
+      unit: s('unit').value.trim(),
+      turnaround: s('turnaround').value.trim(),
+      active: s('active').value === 'true'
+    };
+  }
+  function submitServiceForm(e){
+    e.preventDefault();
+    var data = collectServiceForm();
+    if(!data.name){
+      els.serviceFormErr.textContent = 'Service name is required.';
+      els.serviceFormErr.classList.add('show');
+      return;
+    }
+    els.serviceFormSubmit.disabled = true;
+    els.serviceFormErr.classList.remove('show');
+
+    var isEdit = !!state.editingServiceId;
+
+    var task;
+    if(isEdit){
+      task = GSR.api('/api/admin/services/' + encodeURIComponent(state.editingServiceId), {
+        method: 'PUT', body: JSON.stringify(data)
+      });
+    } else {
+      task = GSR.api('/api/admin/services', { method: 'POST', body: JSON.stringify(data) });
+    }
+
+    task.then(function(){
+      toast(isEdit ? 'Service updated.' : 'Service created.', 'ok');
+      closeServiceForm();
+      loadServices();
+    }).catch(function(err){
+      els.serviceFormErr.textContent = err.message;
+      els.serviceFormErr.classList.add('show');
+      handleAuthError(err);
+    }).finally(function(){
+      els.serviceFormSubmit.disabled = false;
+    });
+  }
+
+  // ---------------- Tabs ----------------
+  function switchTab(tab){
+    state.activeTab = tab;
+    els.tabBookingsBtn.classList.toggle('active', tab === 'bookings');
+    els.tabServicesBtn.classList.toggle('active', tab === 'services');
+    els.bookingsView.hidden = tab !== 'bookings';
+    els.servicesView.hidden = tab !== 'services';
+    if(tab === 'services'){
+      if(!state.servicesLoaded){
+        els.servicesTableRegion.innerHTML =
+          '<div class="state-block"><svg viewBox="0 0 24 24"><use href="#ic-inbox"/></svg><h3>Loading services…</h3><p>Fetching your services list from the Google Sheet.</p></div>';
+        loadServices();
+      } else {
+        renderServicesTable();
+      }
+    }
+  }
+
+  // ---------------- Staff sign-in gate ----------------
+  // POST /api/login checks username/password server-side (against
+  // ADMIN_USERNAME/ADMIN_PASSWORD — default admin / ADMINGSR2026 unless
+  // the site owner set their own via environment variables) and returns a
+  // signed bearer token good for ~12 hours, which is all we keep — no
+  // separate "signed in" state to track beyond having a valid token.
+  function signIn(username, password){
+    els.gateErr.textContent = '';
+    els.gateSubmit.disabled = true;
+    GSR.api('/api/login', { method: 'POST', body: JSON.stringify({ username: username, password: password }) })
+      .then(function(json){
+        GSR.setToken(json.token);
+        showDashboard();
+      }).catch(function(err){
+        els.gateErr.textContent = err.message || 'Sign-in failed.';
+      }).finally(function(){
+        els.gateSubmit.disabled = false;
+      });
+  }
+
+  function showDashboard(){
+    els.gate.hidden = true;
+    els.appRoot.hidden = false;
+    els.gateSubmit.disabled = false;
+    loadBookings().then(function(){ startPolling(); }).catch(function(){});
+    loadServices();
+  }
+
+  function showGate(){
+    if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+    els.gate.hidden = false;
+    els.appRoot.hidden = true;
+    els.gateSubmit.disabled = false;
+  }
+
+  function initApp(){
+    // A token in sessionStorage from an earlier sign-in is only a claim —
+    // showDashboard()'s first loadBookings() call is what actually proves
+    // it (a 401 there routes back to showGate() via handleAuthError).
+    if(GSR.getToken()) showDashboard(); else showGate();
+  }
+
+  // ---------------- Derived stats + filtering ----------------
+  function isThisWeek(iso){
+    if(!iso) return false;
+    var d = new Date(iso + 'T00:00:00');
+    if(isNaN(d.getTime())) return false;
+    var now = new Date();
+    var start = new Date(now); start.setDate(now.getDate() - now.getDay());
+    start.setHours(0,0,0,0);
+    var end = new Date(start); end.setDate(start.getDate() + 7);
+    return d >= start && d < end;
+  }
+
+  function renderStats(){
+    var list = state.bookings;
+    var total = list.length;
+    var owing = list.filter(function(b){ return b.paymentStatus === 'Pending' || b.paymentStatus === 'Partially Paid'; });
+    var collected = list.filter(function(b){ return b.paymentStatus === 'Paid' || b.paymentStatus === 'Partially Paid'; });
+    var week = list.filter(function(b){ return isThisWeek(b.testingDate) && b.paymentStatus !== 'Cancelled'; });
+
+    var owingByCur = {};
+    owing.forEach(function(b){
+      var c = b.currency || 'ZMW';
+      var bal = b.balance !== undefined && b.balance !== '' ? Number(b.balance) : (Number(b.assayingFee)||0) - (Number(b.amountPaid)||0);
+      owingByCur[c] = (owingByCur[c] || 0) + (isNaN(bal) ? 0 : bal);
+    });
+    var collectedByCur = {};
+    collected.forEach(function(b){
+      var c = b.currency || 'ZMW';
+      collectedByCur[c] = (collectedByCur[c] || 0) + (Number(b.amountPaid) || 0);
+    });
+    function sumLine(byCur, emptyLabel){
+      var keys = Object.keys(byCur);
+      if(!keys.length) return emptyLabel;
+      return keys.map(function(c){ return fmtMoney(byCur[c], c); }).join(' + ');
+    }
+
+    els.statTotal.textContent = total;
+    els.statTotalSub.textContent = total ? 'across all statuses' : 'No bookings yet';
+    els.statPending.textContent = owing.length;
+    els.statPendingSub.textContent = sumLine(owingByCur, 'None outstanding');
+    els.statPaid.textContent = collected.length;
+    els.statPaidSub.textContent = sumLine(collectedByCur, 'Nothing collected yet');
+    els.statWeek.textContent = week.length;
+    els.statWeekSub.textContent = week.length ? 'scheduled this week' : 'None scheduled';
+  }
+
+  function filteredBookings(){
+    var q = state.search.trim().toLowerCase();
+    return state.bookings.filter(function(b){
+      if(state.statusFilter !== 'all' && b.paymentStatus !== state.statusFilter) return false;
+      if(!q) return true;
+      var hay = [b.id, b.referenceNumber, b.sellerName, b.buyerName, b.sellerContact, b.buyerContact, b.bookingMadeBy, b.testingType, b.sellerNRC, b.sellerCompany]
+        .map(function(v){ return String(v || '').toLowerCase(); }).join(' ');
+      return hay.indexOf(q) !== -1;
+    });
+  }
+
+  var STATUS_CLASS = {
+    'Pending': 'pending',
+    'Partially Paid': 'partial',
+    'Paid': 'paid',
+    'Refunded': 'refunded',
+    'Cancelled': 'cancelled'
+  };
+  function statusPillHtml(status){
+    var cls = STATUS_CLASS[status] || 'pending';
+    return '<span class="pill ' + cls + '">' + esc(status || 'Pending') + '</span>';
+  }
+  function computeBalance(b){
+    var due = Number(b.assayingFee) || 0;
+    var paid = Number(b.amountPaid) || 0;
+    return Math.round((due - paid) * 100) / 100;
+  }
+
+  function renderTable(){
+    var list = filteredBookings();
+
+    if(!state.bookings.length){
+      els.tableRegion.innerHTML =
+        '<div class="state-block">' +
+          '<svg viewBox="0 0 24 24"><use href="#ic-inbox"/></svg>' +
+          '<h3>No bookings yet</h3>' +
+          '<p>Create the first booking to generate a reference number, track its assaying fee and payment status, and print a receipt once it\'s paid.</p>' +
+          '<button class="btn btn-gold" onclick="document.getElementById(\'newBookingBtn\').click()">' +
+            '<svg viewBox="0 0 24 24"><use href="#ic-plus"/></svg> New Booking</button>' +
+        '</div>';
+      return;
+    }
+
+    if(!list.length){
+      els.tableRegion.innerHTML =
+        '<div class="state-block">' +
+          '<svg viewBox="0 0 24 24"><use href="#a-ic-search"/></svg>' +
+          '<h3>No matching bookings</h3>' +
+          '<p>Try a different reference number, name, or clear the status filter.</p>' +
+        '</div>';
+      return;
+    }
+
+    var rows = list.map(function(b){
+      var bal = b.balance !== undefined && b.balance !== '' ? Number(b.balance) : computeBalance(b);
+      return '<tr data-id="' + esc(b.id) + '">' +
+        '<td class="ref-cell">' + esc(b.referenceNumber || b.id) + '</td>' +
+        '<td>' + esc(fmtDate(b.dateOfBooking)) + '</td>' +
+        '<td>' + esc(fmtDate(b.testingDate)) + '<br><span style="color:var(--smoke-dim);font-size:11.5px">' + esc(b.testingTime || '') + '</span></td>' +
+        '<td>' + esc(b.testingType || '—') + '</td>' +
+        '<td class="name-cell"><strong>' + esc(b.sellerName) + '</strong><span>' + esc(b.sellerContact) + '</span></td>' +
+        '<td class="tnum">' + esc(fmtQty(b.quantity, b.quantityUnit)) + '</td>' +
+        '<td class="tnum">' + esc(fmtMoney(b.assayingFee, b.currency)) + '</td>' +
+        '<td class="tnum">' + esc(fmtMoney(bal, b.currency)) + '</td>' +
+        '<td>' + statusPillHtml(b.paymentStatus) + '</td>' +
+        '<td><div class="row-actions"><button class="icon-btn" data-view="' + esc(b.id) + '" aria-label="View booking"><svg viewBox="0 0 24 24"><use href="#ic-eye"/></svg></button></div></td>' +
+      '</tr>';
+    }).join('');
+
+    els.tableRegion.innerHTML =
+      '<div class="table-wrap"><table>' +
+        '<thead><tr>' +
+          '<th>Reference</th><th>Booked</th><th>Testing</th><th>Type</th><th>Seller</th>' +
+          '<th>Quantity</th><th>Fee</th><th>Balance</th><th>Status</th><th></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table></div>';
+
+    els.tableRegion.querySelectorAll('tbody tr').forEach(function(tr){
+      tr.addEventListener('click', function(){ openDetail(tr.getAttribute('data-id')); });
+    });
+  }
+
+  function renderAll(){
+    renderStats();
+    renderTable();
+    if(state.detailId){
+      var b = state.bookings.find(function(x){ return x.id === state.detailId; });
+      if(b) fillDetail(b); else closeDetail();
+    }
+  }
+
+  // ---------------- New / Edit form ----------------
+  function updateBalanceDisplay(){
+    var fee = parseFloat(document.getElementById('f-assayingFee').value) || 0;
+    var paid = parseFloat(document.getElementById('f-amountPaid').value) || 0;
+    var bal = Math.round((fee - paid) * 100) / 100;
+    var currency = document.getElementById('f-currency').value;
+    document.getElementById('f-balanceDisplay').textContent = fmtMoney(bal, currency);
+  }
+
+  function openForm(editBooking){
+    state.editingId = editBooking ? editBooking.id : null;
+    els.formErr.classList.remove('show');
+    els.formTitle.textContent = editBooking ? 'Edit Booking' : 'New Booking';
+    els.formRefLine.textContent = editBooking ? (editBooking.referenceNumber || editBooking.id) : 'A reference number is generated automatically on save';
+
+    populateTestingTypeOptions();
+
+    var f = function(id){ return document.getElementById('f-' + id); };
+    f('dateOfBooking').value = editBooking ? (editBooking.dateOfBooking || '') : todayISO();
+    f('testingTime').value = editBooking ? (editBooking.testingTime || '') : nowTimeHM();
+    f('testingDate').value = editBooking ? (editBooking.testingDate || '') : '';
+    f('testingType').value = editBooking ? (editBooking.testingType || '') : '';
+    f('bookingMadeBy').value = editBooking ? (editBooking.bookingMadeBy || '') : '';
+    f('sellerName').value = editBooking ? (editBooking.sellerName || '') : '';
+    f('sellerContact').value = editBooking ? (editBooking.sellerContact || '') : '';
+    f('sellerNRC').value = editBooking ? (editBooking.sellerNRC || '') : '';
+    f('sellerCompany').value = editBooking ? (editBooking.sellerCompany || '') : '';
+    f('sellerAddress').value = editBooking ? (editBooking.sellerAddress || '') : '';
+    f('buyerName').value = editBooking ? (editBooking.buyerName || '') : '';
+    f('buyerContact').value = editBooking ? (editBooking.buyerContact || '') : '';
+    f('quantity').value = editBooking ? editBooking.quantity : '';
+    f('quantityUnit').value = editBooking ? (editBooking.quantityUnit || 'g') : 'g';
+    f('assayingFee').value = editBooking ? editBooking.assayingFee : '';
+    f('amountPaid').value = editBooking ? (editBooking.amountPaid || 0) : 0;
+    f('currency').value = editBooking ? (editBooking.currency || 'ZMW') : 'ZMW';
+    f('paymentStatus').value = editBooking ? (editBooking.paymentStatus || 'Pending') : 'Pending';
+    f('notes').value = editBooking ? (editBooking.notes || '') : '';
+    updateBalanceDisplay();
+
+    els.formBackdrop.classList.add('open');
+    setTimeout(function(){ f('dateOfBooking').focus(); }, 50);
+  }
+  function closeForm(){
+    els.formBackdrop.classList.remove('open');
+    state.editingId = null;
+  }
+
+  function collectForm(){
+    var f = function(id){ return document.getElementById('f-' + id); };
+    return {
+      dateOfBooking: f('dateOfBooking').value,
+      testingTime: f('testingTime').value,
+      testingDate: f('testingDate').value,
+      testingType: f('testingType').value,
+      bookingMadeBy: f('bookingMadeBy').value.trim(),
+      sellerName: f('sellerName').value.trim(),
+      sellerContact: f('sellerContact').value.trim(),
+      sellerNRC: f('sellerNRC').value.trim(),
+      sellerCompany: f('sellerCompany').value.trim(),
+      sellerAddress: f('sellerAddress').value.trim(),
+      buyerName: f('buyerName').value.trim(),
+      buyerContact: f('buyerContact').value.trim(),
+      quantity: parseFloat(f('quantity').value) || 0,
+      quantityUnit: f('quantityUnit').value,
+      assayingFee: parseFloat(f('assayingFee').value) || 0,
+      amountPaid: parseFloat(f('amountPaid').value) || 0,
+      currency: f('currency').value,
+      paymentStatus: f('paymentStatus').value,
+      notes: f('notes').value.trim()
+    };
+  }
+
+  function submitForm(e){
+    e.preventDefault();
+    var data = collectForm();
+    els.formSubmit.disabled = true;
+    els.formErr.classList.remove('show');
+
+    var isEdit = !!state.editingId;
+    // balance and paidAt are always recomputed server-side from
+    // assayingFee/amountPaid/paymentStatus — the server ignores any value
+    // sent for them here, same as it did in Code.gs.
+    var task = isEdit
+      ? GSR.api('/api/admin/bookings/' + encodeURIComponent(state.editingId), { method: 'PUT', body: JSON.stringify(data) })
+      : GSR.api('/api/admin/bookings', { method: 'POST', body: JSON.stringify(data) });
+
+    task.then(function(){
+      toast(isEdit ? 'Booking updated.' : 'Booking created.', 'ok');
+      closeForm();
+      loadBookings(true).catch(function(){});
+    }).catch(function(err){
+      showFormError(err.message);
+      handleAuthError(err);
+    }).finally(function(){
+      els.formSubmit.disabled = false;
+    });
+  }
+  function showFormError(msg){
+    els.formErr.textContent = msg;
+    els.formErr.classList.add('show');
+  }
+
+  // ---------------- Detail / receipt ----------------
+  function openDetail(id){
+    var b = state.bookings.find(function(x){ return x.id === id; });
+    if(!b) return;
+    state.detailId = id;
+    fillDetail(b);
+    els.detailBackdrop.classList.add('open');
+  }
+  function closeDetail(){
+    els.detailBackdrop.classList.remove('open');
+    state.detailId = null;
+  }
+  function fillDetail(b){
+    els.detailTitle.textContent = b.sellerName ? ('Booking — ' + b.sellerName) : 'Booking';
+    els.detailRefLine.textContent = b.referenceNumber || b.id;
+
+    var bal = b.balance !== undefined && b.balance !== '' ? Number(b.balance) : computeBalance(b);
+    var cls = STATUS_CLASS[b.paymentStatus] || 'pending';
+    els.detailStatusPill.className = 'pill ' + cls;
+    els.detailStatusPill.textContent = b.paymentStatus || 'Pending';
+    els.detailStatusMeta.textContent = b.paymentStatus === 'Paid' && b.paidAt
+      ? ('Paid ' + fmtDateTime(b.paidAt))
+      : ('Booked ' + fmtDateTime(b.createdAt));
+
+    var set = function(id, val){ document.getElementById(id).textContent = val || '—'; };
+    set('d-dateOfBooking', fmtDate(b.dateOfBooking));
+    set('d-testingTime', b.testingTime);
+    set('d-testingDate', fmtDate(b.testingDate));
+    set('d-testingType', b.testingType);
+    set('d-bookingMadeBy', b.bookingMadeBy);
+    set('d-quantity', fmtQty(b.quantity, b.quantityUnit));
+    set('d-sellerName', b.sellerName);
+    set('d-sellerContact', b.sellerContact);
+    set('d-sellerNRC', b.sellerNRC);
+    set('d-sellerCompany', b.sellerCompany);
+    set('d-sellerAddress', b.sellerAddress);
+    set('d-buyerName', b.buyerName);
+    set('d-buyerContact', b.buyerContact);
+    set('d-assayingFee', fmtMoney(b.assayingFee, b.currency));
+    set('d-amountPaid', fmtMoney(b.amountPaid, b.currency));
+    set('d-balance', fmtMoney(bal, b.currency));
+
+    var notesWrap = document.getElementById('d-notesWrap');
+    if(b.notes){ notesWrap.style.display = ''; document.getElementById('d-notes').textContent = b.notes; }
+    else { notesWrap.style.display = 'none'; }
+
+    // receipt block (kept in sync so Print always reflects current record)
+    var rset = function(id, val){ document.getElementById(id).textContent = val || '—'; };
+    rset('r-ref', b.referenceNumber || b.id);
+    rset('r-ref2', b.referenceNumber || b.id);
+    rset('r-dateOfBooking', fmtDate(b.dateOfBooking));
+    rset('r-testingDate', fmtDate(b.testingDate));
+    rset('r-testingTime', b.testingTime);
+    rset('r-testingType', b.testingType);
+    rset('r-bookingMadeBy', b.bookingMadeBy);
+    rset('r-sellerName', b.sellerName);
+    rset('r-sellerContact', b.sellerContact);
+    rset('r-sellerCompany', b.sellerCompany);
+    rset('r-buyerName', b.buyerName);
+    rset('r-buyerContact', b.buyerContact);
+    rset('r-quantity', fmtQty(b.quantity, b.quantityUnit));
+    rset('r-fee', fmtMoney(b.assayingFee, b.currency));
+    rset('r-paid', fmtMoney(b.amountPaid, b.currency));
+    rset('r-balance', fmtMoney(bal, b.currency));
+    rset('r-status', (b.paymentStatus || 'Pending') + (b.paymentStatus === 'Paid' && b.paidAt ? (' · ' + fmtDateTime(b.paidAt)) : ''));
+  }
+
+  function changeStatus(status){
+    if(!state.detailId) return;
+    var ref = state.detailId;
+    // balance/paidAt are recomputed server-side from the booking's current
+    // assayingFee/amountPaid — only paymentStatus needs to be sent.
+    GSR.api('/api/admin/bookings/' + encodeURIComponent(ref), {
+      method: 'PUT', body: JSON.stringify({ paymentStatus: status })
+    }).then(function(){
+      toast('Marked as ' + status + '.', 'ok');
+      loadBookings(true).catch(function(){});
+    }).catch(function(err){
+      toast(err.message, 'err');
+      handleAuthError(err);
+    });
+  }
+
+  function deleteCurrent(){
+    if(!state.detailId) return;
+    if(els.deleteBtn.dataset.armed === '1'){
+      var ref = state.detailId;
+      GSR.api('/api/admin/bookings/' + encodeURIComponent(ref), { method: 'DELETE' }).then(function(){
+        toast('Booking deleted.', 'ok');
+        closeDetail();
+        loadBookings(true).catch(function(){});
+      }).catch(function(err){
+        toast(err.message, 'err');
+        handleAuthError(err);
+      });
+      els.deleteBtn.dataset.armed = '0';
+      els.deleteBtn.textContent = '';
+      els.deleteBtn.innerHTML = '<svg viewBox="0 0 24 24"><use href="#ic-trash"/></svg> Delete Booking';
+    } else {
+      els.deleteBtn.dataset.armed = '1';
+      els.deleteBtn.innerHTML = 'Click again to confirm delete';
+      setTimeout(function(){
+        if(els.deleteBtn.dataset.armed === '1'){
+          els.deleteBtn.dataset.armed = '0';
+          els.deleteBtn.innerHTML = '<svg viewBox="0 0 24 24"><use href="#ic-trash"/></svg> Delete Booking';
+        }
+      }, 4000);
+    }
+  }
+
+  // ---------------- Wire up events ----------------
+  els.newBookingBtn.addEventListener('click', function(){ openForm(null); });
+  els.formClose.addEventListener('click', closeForm);
+  els.formCancel.addEventListener('click', closeForm);
+  els.formBackdrop.addEventListener('click', function(e){ if(e.target === els.formBackdrop) closeForm(); });
+  els.bookingForm.addEventListener('submit', submitForm);
+
+  els.detailClose.addEventListener('click', closeDetail);
+  els.detailBackdrop.addEventListener('click', function(e){ if(e.target === els.detailBackdrop) closeDetail(); });
+  els.markPendingBtn.addEventListener('click', function(){ changeStatus('Pending'); });
+  els.markPartialBtn.addEventListener('click', function(){ changeStatus('Partially Paid'); });
+  els.markPaidBtn.addEventListener('click', function(){ changeStatus('Paid'); });
+  els.markRefundedBtn.addEventListener('click', function(){ changeStatus('Refunded'); });
+  els.markCancelledBtn.addEventListener('click', function(){ changeStatus('Cancelled'); });
+  els.deleteBtn.addEventListener('click', deleteCurrent);
+
+  ['f-assayingFee','f-amountPaid','f-currency'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('input', updateBalanceDisplay);
+  });
+
+  els.tabBookingsBtn.addEventListener('click', function(){ switchTab('bookings'); });
+  els.tabServicesBtn.addEventListener('click', function(){ switchTab('services'); });
+
+  els.newServiceBtn.addEventListener('click', function(){ openServiceForm(null); });
+  els.serviceFormClose.addEventListener('click', closeServiceForm);
+  els.serviceFormCancel.addEventListener('click', closeServiceForm);
+  els.serviceFormBackdrop.addEventListener('click', function(e){ if(e.target === els.serviceFormBackdrop) closeServiceForm(); });
+  els.serviceForm.addEventListener('submit', submitServiceForm);
+  els.serviceSearchInput.addEventListener('input', function(){ state.servicesSearch = els.serviceSearchInput.value; renderServicesTable(); });
+  els.editBtn.addEventListener('click', function(){
+    var b = state.bookings.find(function(x){ return x.id === state.detailId; });
+    if(b){ closeDetail(); openForm(b); }
+  });
+  els.printBtn.addEventListener('click', function(){ window.print(); });
+
+  els.searchInput.addEventListener('input', function(){ state.search = els.searchInput.value; renderTable(); });
+  els.statusFilter.addEventListener('change', function(){ state.statusFilter = els.statusFilter.value; renderTable(); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    if(els.formBackdrop.classList.contains('open')) closeForm();
+    if(els.detailBackdrop.classList.contains('open')) closeDetail();
+    if(els.serviceFormBackdrop.classList.contains('open')) closeServiceForm();
+  });
+
+  els.gateSubmit.addEventListener('click', function(){
+    var username = els.gateUsernameInput.value.trim();
+    var password = els.gateKeyInput.value;
+    if(!username || !password){ els.gateErr.textContent = 'Enter your staff username and password.'; return; }
+    signIn(username, password);
+  });
+  els.gateUsernameInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); els.gateKeyInput.focus(); }
+  });
+  els.gateKeyInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); els.gateSubmit.click(); }
+  });
+  if(els.signOutBtn){
+    els.signOutBtn.addEventListener('click', function(){
+      GSR.clearToken();
+      showGate();
+    });
+  }
+
+  initApp();
+})();
+</script>
+</body>
+</html>

@@ -425,22 +425,25 @@ admin.delete('/services/:serviceId', (req, res) => {
 app.use('/api/admin', admin);
 
 // ---------------------------------------------------------------------------
-// Static site (public marketing site, staff dashboard, and customer
-// tracker are all the same single HTML file — the client-side hash router
-// in the page decides which one is shown).
+// Static site — a set of standalone pages (index.html, about.html,
+// services.html, why-us.html, goals.html, contact.html, admin.html,
+// track.html) sharing assets/css/style.css and assets/js/main.js.
+// express.static serves index.html for "/" automatically.
+//
+// goldsimba.html — the original single-file hash-routed version this site
+// was generated from — is kept alongside them at /goldsimba.html as a
+// reference copy; it is fully self-contained and still works on its own.
 // ---------------------------------------------------------------------------
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'goldsimba.html'));
-});
 
-// JSON 404 for unknown API routes; everything else falls back to the SPA.
+// JSON 404 for unknown API routes; a plain 404 for everything else (no SPA
+// fallback needed now that each route is a real file).
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found.' });
 });
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'goldsimba.html'));
+  res.status(404).send('Not found.');
 });
 
 // Centralized error handler (e.g. malformed JSON bodies).
