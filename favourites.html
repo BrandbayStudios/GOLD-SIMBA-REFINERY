@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Favourites — EventHub Zambia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+    <nav><ul class="nav-links">
+      <li data-page="index.html"><a href="index.html">Home</a></li>
+      <li data-page="vendors.html"><a href="vendors.html">Find Vendors</a></li>
+      <li data-page="vendor-register.html"><a href="vendor-register.html">Become a Vendor</a></li>
+      <li data-page="contact.html"><a href="contact.html">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a href="favourites.html" class="icon-link" title="Favourites"><i class="fa-solid fa-heart" style="color:var(--gold);"></i><span class="badge" data-fav-count>0</span></a>
+      <a href="login.html" class="btn btn-outline-dark btn-sm">Log In</a>
+      <a href="register.html" class="btn btn-gold btn-sm">Sign Up</a>
+      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>My Favourites</span></div>
+    <h1>Your Saved Vendors</h1>
+  </div>
+</div>
+
+<section class="section-tight">
+  <div class="container">
+    <div id="favourites-grid" class="vendor-grid"></div>
+    <div id="favourites-empty" class="empty-state" style="display:none;">
+      <i class="fa-regular fa-heart"></i>
+      <h3>No favourites yet</h3>
+      <p>Tap the heart icon on any vendor to save it here for later.</p>
+      <a href="vendors.html" class="btn btn-gold">Browse Vendors</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2026 EventHub Zambia. All rights reserved.</span>
+      <span>Find. Compare. Connect. Celebrate.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+  var VENDOR_DB = {
+    v1: { name: 'Silverleaf Gardens', cat: 'Event Centre & Venue', loc: 'Kabulonga, Lusaka', rating: '4.8 (96)', price: 'K8,500/event', img: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=800&auto=format&fit=crop', tag: 'Verified' },
+    v2: { name: 'DJ Mwansa Live', cat: 'MC & DJ', loc: 'Rhodes Park, Lusaka', rating: '4.9 (154)', price: 'K3,200/event', img: 'https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=800&auto=format&fit=crop', tag: 'Verified' },
+    v3: { name: 'Chanda Lens Studio', cat: 'Photography & Video', loc: 'Woodlands, Lusaka', rating: '4.7 (82)', price: 'K4,500/event', img: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop', tag: 'Verified' },
+    v4: { name: "Mama Beulah's Kitchen", cat: 'Caterer & Chef', loc: 'Chelston, Lusaka', rating: '4.6 (41)', price: 'K150/plate', img: 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop', tag: 'Discovered' },
+    v5: { name: 'Golden Aisle Decor', cat: 'Event Decorator', loc: 'Ibex Hill, Lusaka', rating: '5.0 (203)', price: 'K6,000/event', img: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=800&auto=format&fit=crop', tag: 'Featured' },
+    v6: { name: 'Bliss Weddings Zambia', cat: 'Wedding Planner', loc: 'Kabulonga, Lusaka', rating: '4.9 (177)', price: 'K12,000/event', img: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=800&auto=format&fit=crop', tag: 'Featured' },
+    v7: { name: 'Sweet Nectar Cakes', cat: 'Cakes', loc: 'Roma, Lusaka', rating: '4.8 (68)', price: 'K900/tier', img: 'https://images.unsplash.com/photo-1535141192574-5d4897c12636?q=80&w=800&auto=format&fit=crop', tag: 'Featured' },
+    v8: { name: 'Zambezi Sound & Light', cat: 'Sound & Lighting', loc: 'Northmead, Lusaka', rating: '4.7 (59)', price: 'K2,800/event', img: 'https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?q=80&w=800&auto=format&fit=crop', tag: 'Featured' },
+    v9: { name: 'Bella Glow Makeup', cat: 'Makeup Artist', loc: 'Longacres, Lusaka', rating: '4.9 (112)', price: 'K700/session', img: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop', tag: 'Verified' },
+    v10: { name: 'Royal Ride Car Hire', cat: 'Car Hire & Decoration', loc: 'Kamwala, Lusaka', rating: '4.5 (47)', price: 'K2,500/day', img: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=800&auto=format&fit=crop', tag: 'Verified' },
+    v11: { name: 'Copperbelt Tents & Chairs', cat: 'Tents, Chairs & Tables', loc: 'Ndola Central', rating: '4.4 (29)', price: 'K1,800/set', img: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop', tag: 'Discovered' },
+    v12: { name: 'Livingstone Riverside Hall', cat: 'Event Centre & Venue', loc: 'Livingstone', rating: '4.6 (63)', price: 'K9,500/event', img: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop', tag: 'Verified' }
+  };
+
+  function renderFavourites() {
+    var favs = [];
+    try { favs = JSON.parse(localStorage.getItem('eh_favourites') || '[]'); } catch (e) {}
+    var grid = document.getElementById('favourites-grid');
+    var empty = document.getElementById('favourites-empty');
+    grid.innerHTML = '';
+    if (!favs.length) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    favs.forEach(function (id) {
+      var v = VENDOR_DB[id];
+      if (!v) return;
+      var tagClass = v.tag === 'Discovered' ? 'vendor-tag external' : 'vendor-tag';
+      var tagIcon = v.tag === 'Discovered' ? 'fa-map-pin' : (v.tag === 'Featured' ? 'fa-crown' : 'fa-circle-check');
+      var card = document.createElement('div');
+      card.className = 'vendor-card';
+      card.innerHTML =
+        '<div class="vendor-media"><img src="' + v.img + '" alt="' + v.name + '">' +
+        '<span class="' + tagClass + '"><i class="fa-solid ' + tagIcon + '"></i> ' + v.tag + '</span>' +
+        '<button class="fav-btn active" data-vendor-id="' + id + '" data-vendor-name="' + v.name + '"><i class="fa-solid fa-heart"></i></button></div>' +
+        '<div class="vendor-body"><span class="vendor-cat">' + v.cat + '</span><h4>' + v.name + '</h4>' +
+        '<div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> ' + v.loc + '</div>' +
+        '<div class="vendor-meta"><div class="stars"><i class="fa-solid fa-star"></i> <span>' + v.rating + '</span></div>' +
+        '<div class="price-from">' + v.price + '</div></div>' +
+        '<div class="vendor-actions"><a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>' +
+        '<a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>' +
+        '<a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a></div></div>';
+      grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('.fav-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var id = btn.getAttribute('data-vendor-id');
+        var favs2 = JSON.parse(localStorage.getItem('eh_favourites') || '[]');
+        favs2 = favs2.filter(function (f) { return f !== id; });
+        localStorage.setItem('eh_favourites', JSON.stringify(favs2));
+        EH_toast('Removed from favourites', 'fa-heart-crack');
+        renderFavourites();
+        var badge = document.querySelector('[data-fav-count]');
+        if (badge) badge.textContent = favs2.length;
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', renderFavourites);
+</script>
+</body>
+</html>

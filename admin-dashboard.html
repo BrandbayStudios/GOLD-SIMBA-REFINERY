@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — EventHub Zambia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span> <span style="font-size:.6rem;background:var(--dark);color:#fff;padding:3px 8px;border-radius:6px;margin-left:6px;vertical-align:middle;">ADMIN</span></a>
+    <nav><ul class="nav-links"><li><a href="index.html">View Site</a></li></ul></nav>
+    <div class="nav-actions">
+      <span style="font-size:.85rem;color:var(--gray);">Logged in as <strong style="color:var(--dark);">Admin</strong></span>
+      <a href="login.html" class="btn btn-outline-dark btn-sm">Log Out</a>
+      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <div class="dash-profile">
+      <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200&auto=format&fit=crop" alt="Admin">
+      <div><strong>Platform Admin</strong><span>Super Administrator</span></div>
+    </div>
+    <ul class="dash-nav" data-tab-group="admin">
+      <li class="section-label">Overview</li>
+      <li class="active"><a href="javascript:void(0)" data-tab="a-overview"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+      <li class="section-label">Marketplace</li>
+      <li><a href="javascript:void(0)" data-tab="a-approvals"><i class="fa-solid fa-clipboard-check"></i> Vendor Approvals <span class="badge" style="position:static;margin-left:auto;background:var(--gold);color:#000;">7</span></a></li>
+      <li><a href="javascript:void(0)" data-tab="a-vendors"><i class="fa-solid fa-store"></i> Vendors</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-customers"><i class="fa-solid fa-users"></i> Customers</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-categories"><i class="fa-solid fa-tags"></i> Categories</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-locations"><i class="fa-solid fa-location-dot"></i> Locations</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-claims"><i class="fa-solid fa-flag"></i> Business Claims</a></li>
+      <li class="section-label">Engagement</li>
+      <li><a href="javascript:void(0)" data-tab="a-enquiries"><i class="fa-solid fa-inbox"></i> Enquiries</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-reviews"><i class="fa-solid fa-star"></i> Reviews</a></li>
+      <li class="section-label">Growth</li>
+      <li><a href="javascript:void(0)" data-tab="a-featured"><i class="fa-solid fa-crown"></i> Featured Vendors</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-ads"><i class="fa-solid fa-bullhorn"></i> Advertisements</a></li>
+      <li><a href="javascript:void(0)" data-tab="a-reports"><i class="fa-solid fa-chart-line"></i> Reports & Analytics</a></li>
+    </ul>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- OVERVIEW -->
+    <div id="a-overview" data-tab-panel-group="admin" class="tab-panel active">
+      <div class="dash-topbar"><div><h2 style="margin:0;">Platform Overview</h2><p style="margin:4px 0 0;">Snapshot of EventHub Zambia's marketplace activity.</p></div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><i class="fa-solid fa-store"></i><strong>1,214</strong><span>Total Vendors</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-users"></i><strong>9,860</strong><span>Customers</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong>3,402</strong><span>Enquiries</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong>1,568</strong><span>Bookings</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong>6,204</strong><span>Reviews</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-hourglass-half"></i><strong>7</strong><span>Pending Approvals</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4 style="margin:0;">Vendors by Category</h4></div>
+        <div class="rating-bar-row"><span style="width:170px;">Venues & Event Centres</span><div class="rating-bar"><span style="width:82%"></span></div><span>210</span></div>
+        <div class="rating-bar-row"><span style="width:170px;">Photo & Video</span><div class="rating-bar"><span style="width:71%"></span></div><span>184</span></div>
+        <div class="rating-bar-row"><span style="width:170px;">Caterers & Chefs</span><div class="rating-bar"><span style="width:68%"></span></div><span>176</span></div>
+        <div class="rating-bar-row"><span style="width:170px;">MCs & DJs</span><div class="rating-bar"><span style="width:65%"></span></div><span>168</span></div>
+        <div class="rating-bar-row"><span style="width:170px;">Makeup Artists</span><div class="rating-bar"><span style="width:55%"></span></div><span>143</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4 style="margin:0;">Recent Vendor Applications</h4><a href="javascript:void(0)" class="jump-approvals" style="font-size:.85rem;color:var(--gold-dark);font-weight:600;">Review all</a></div>
+        <table class="data-table">
+          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Submitted</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=100&auto=format&fit=crop">Mama Beulah's Kitchen</td><td>Caterer</td><td>Lusaka</td><td>2 days ago</td><td><span class="status-pill pending">Pending</span></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents</td><td>Ndola</td><td>3 days ago</td><td><span class="status-pill pending">Pending</span></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=100&auto=format&fit=crop">Royal Ride Car Hire</td><td>Car Hire</td><td>Lusaka</td><td>5 days ago</td><td><span class="status-pill approved">Approved</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- APPROVALS -->
+    <div id="a-approvals" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Vendor Approvals</h2></div>
+      <div class="panel">
+        <p style="font-size:.85rem;">New vendor registrations must be reviewed and approved before they appear publicly on EventHub.</p>
+        <table class="data-table">
+          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=100&auto=format&fit=crop">Mama Beulah's Kitchen</td><td>Caterer & Chef</td><td>Chelston, Lusaka</td><td>2 days ago</td><td><span class="status-pill pending">Pending</span></td>
+              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents, Chairs & Tables</td><td>Ndola Central</td><td>3 days ago</td><td><span class="status-pill pending">Pending</span></td>
+              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=100&auto=format&fit=crop">Bantu Beats Entertainment</td><td>MC & DJ</td><td>Kitwe</td><td>4 days ago</td><td><span class="status-pill pending">Pending</span></td>
+              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=100&auto=format&fit=crop">Glow Up Studio</td><td>Makeup Artist</td><td>Livingstone</td><td>6 days ago</td><td><span class="status-pill pending">Pending</span></td>
+              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VENDORS -->
+    <div id="a-vendors" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">All Vendors (1,214)</h2></div>
+      <div class="results-bar">
+        <input type="text" class="form-control" placeholder="Search vendors…" style="max-width:280px;">
+        <select style="border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--off-white);">
+          <option>All Categories</option><option>Venues</option><option>Catering</option><option>Photography</option>
+        </select>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Type</th><th>Rating</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop">Silverleaf Gardens</td><td>Venue</td><td>Lusaka</td><td>Verified</td><td>4.8 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=100&auto=format&fit=crop">DJ Mwansa Live</td><td>MC & DJ</td><td>Lusaka</td><td>Verified</td><td>4.9 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=100&auto=format&fit=crop">Golden Aisle Decor</td><td>Decorator</td><td>Lusaka</td><td>Verified</td><td>5.0 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents</td><td>Ndola</td><td>Discovered</td><td>4.4 ★</td><td><span class="status-pill pending">Pending</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><a href="#" class="active">1</a><a href="#">2</a><a href="#">3</a><a href="#">…</a><a href="#">122</a></div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div id="a-customers" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Customers (9,860)</h2></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Enquiries Sent</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop">Chileshe Banda</td><td>chileshe@example.com</td><td>Jan 2026</td><td>4</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop">Natasha Mumba</td><td>natasha@example.com</td><td>Feb 2026</td><td>2</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop">Mwansa Phiri</td><td>mwansa@example.com</td><td>Mar 2026</td><td>7</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="a-categories" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Categories</h2><button class="btn btn-gold" data-modal-open="#add-category-modal"><i class="fa-solid fa-plus"></i> Add Category</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Category</th><th>Vendors</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><i class="fa-solid fa-landmark text-gold"></i> Venues & Event Centres</td><td>210</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-microphone text-gold"></i> MCs & DJs</td><td>168</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-camera text-gold"></i> Photographers & Videographers</td><td>184</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-music text-gold"></i> Choreographers</td><td>52</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-car text-gold"></i> Car Hire & Car Decoration</td><td>97</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-palette text-gold"></i> Makeup Artists</td><td>143</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-scissors text-gold"></i> Barbers & Hairdressers</td><td>121</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-shirt text-gold"></i> Tailors & Fashion Designers</td><td>88</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-crown text-gold"></i> Matrons</td><td>34</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-utensils text-gold"></i> Caterers & Chefs</td><td>176</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-cake-candles text-gold"></i> Cakes</td><td>75</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-chair text-gold"></i> Chairs & Tables</td><td>64</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-campground text-gold"></i> Tents</td><td>38</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-fire-burner text-gold"></i> Pots & Chafing Dishes</td><td>29</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-volume-high text-gold"></i> Sound & Lighting</td><td>91</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-star text-gold"></i> Event Decorators</td><td>112</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-ring text-gold"></i> Wedding Planners</td><td>58</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+            <tr><td><i class="fa-solid fa-ellipsis text-gold"></i> Other Event Services</td><td>26</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOCATIONS -->
+    <div id="a-locations" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Locations</h2><button class="btn btn-gold"><i class="fa-solid fa-plus"></i> Add Location</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>City</th><th>Vendors</th><th>Customers</th></tr></thead>
+          <tbody>
+            <tr><td>Lusaka</td><td>612</td><td>5,204</td></tr>
+            <tr><td>Ndola</td><td>184</td><td>1,340</td></tr>
+            <tr><td>Kitwe</td><td>163</td><td>1,180</td></tr>
+            <tr><td>Livingstone</td><td>98</td><td>702</td></tr>
+            <tr><td>Kabwe</td><td>74</td><td>510</td></tr>
+            <tr><td>Chingola</td><td>52</td><td>398</td></tr>
+            <tr><td>Solwezi</td><td>31</td><td>226</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLAIMS -->
+    <div id="a-claims" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Business Claims</h2></div>
+      <div class="panel">
+        <p style="font-size:.85rem;">Requests from business owners to claim an externally discovered listing (via Google Places) as their own verified profile.</p>
+        <table class="data-table">
+          <thead><tr><th>Business</th><th>Claimant</th><th>Evidence</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Mama Beulah's Kitchen</td><td>Beulah Tembo</td><td>Business registration doc</td><td>1 day ago</td><td><span class="status-pill pending">Pending</span></td><td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button></td></tr>
+            <tr><td>Copperbelt Tents & Chairs</td><td>Joseph Kunda</td><td>Utility bill + NRC</td><td>4 days ago</td><td><span class="status-pill pending">Pending</span></td><td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ENQUIRIES -->
+    <div id="a-enquiries" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">All Enquiries (3,402)</h2></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Vendor</th><th>Date Sent</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Chileshe Banda</td><td>Silverleaf Gardens</td><td>14 Dec 2026</td><td><span class="status-pill new">New</span></td></tr>
+            <tr><td>Natasha Mumba</td><td>Silverleaf Gardens</td><td>02 Jan 2027</td><td><span class="status-pill pending">Responded</span></td></tr>
+            <tr><td>Given Zulu</td><td>Golden Aisle Decor</td><td>18 Sep 2026</td><td><span class="status-pill approved">Booked</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div id="a-bookings" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">All Bookings (1,568)</h2></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Vendor</th><th>Event Date</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Mwansa Phiri</td><td>Silverleaf Gardens</td><td>20 Nov 2026</td><td>K8,500</td><td><span class="status-pill approved">Confirmed</span></td></tr>
+            <tr><td>Bwalya Chilufya</td><td>Silverleaf Gardens</td><td>05 Oct 2026</td><td>K16,000</td><td><span class="status-pill approved">Confirmed</span></td></tr>
+            <tr><td>Given Zulu</td><td>Golden Aisle Decor</td><td>18 Sep 2026</td><td>K6,000</td><td><span class="status-pill pending">Awaiting Deposit</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div id="a-reviews" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Reviews (6,204)</h2></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Vendor</th><th>Rating</th><th>Comment</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Chileshe Banda</td><td>Silverleaf Gardens</td><td>5.0 ★</td><td>Beautiful venue…</td><td><span class="status-pill approved">Published</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td>Natasha Mumba</td><td>Silverleaf Gardens</td><td>4.0 ★</td><td>Great space, parking…</td><td><span class="status-pill approved">Published</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td>Anonymous</td><td>DJ Mwansa Live</td><td>1.0 ★</td><td>Flagged as spam</td><td><span class="status-pill pending">Flagged</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FEATURED -->
+    <div id="a-featured" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Featured Vendors</h2><button class="btn btn-gold"><i class="fa-solid fa-plus"></i> Feature a Vendor</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Vendor</th><th>Category</th><th>Featured Until</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=100&auto=format&fit=crop">Golden Aisle Decor</td><td>Decorator</td><td>31 Dec 2026</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=100&auto=format&fit=crop">Bliss Weddings Zambia</td><td>Wedding Planner</td><td>15 Jan 2027</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADS -->
+    <div id="a-ads" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Advertisements</h2><button class="btn btn-gold"><i class="fa-solid fa-plus"></i> New Ad Campaign</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Campaign</th><th>Placement</th><th>Clicks</th><th>Impressions</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Silverleaf Gardens — Homepage Banner</td><td>Homepage Hero</td><td>2,140</td><td>48,200</td><td><span class="status-pill approved">Running</span></td></tr>
+            <tr><td>Bliss Weddings — Category Spotlight</td><td>Wedding Planners Page</td><td>860</td><td>12,400</td><td><span class="status-pill pending">Scheduled</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="a-reports" data-tab-panel-group="admin" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Reports & Platform Analytics</h2><button class="btn btn-outline-dark"><i class="fa-solid fa-file-export"></i> Export CSV</button></div>
+      <div class="grid grid-2">
+        <div class="panel">
+          <h4>Monthly New Vendors</h4>
+          <div class="rating-bar-row"><span>Apr</span><div class="rating-bar"><span style="width:40%"></span></div><span>62</span></div>
+          <div class="rating-bar-row"><span>May</span><div class="rating-bar"><span style="width:55%"></span></div><span>84</span></div>
+          <div class="rating-bar-row"><span>Jun</span><div class="rating-bar"><span style="width:48%"></span></div><span>71</span></div>
+          <div class="rating-bar-row"><span>Jul</span><div class="rating-bar"><span style="width:70%"></span></div><span>105</span></div>
+          <div class="rating-bar-row"><span>Aug</span><div class="rating-bar"><span style="width:88%"></span></div><span>132</span></div>
+        </div>
+        <div class="panel">
+          <h4>Enquiries → Bookings Conversion</h4>
+          <div class="rating-big" style="font-size:2.4rem;">46%</div>
+          <p style="font-size:.85rem;">Of the 3,402 enquiries sent this year, 1,568 converted into confirmed bookings.</p>
+          <div class="progress-track"><span style="width:46%"></span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h4>Top Performing Categories (by bookings)</h4>
+        <table class="data-table">
+          <thead><tr><th>Category</th><th>Bookings</th><th>Avg. Rating</th></tr></thead>
+          <tbody>
+            <tr><td>Venues & Event Centres</td><td>412</td><td>4.7 ★</td></tr>
+            <tr><td>Caterers & Chefs</td><td>388</td><td>4.6 ★</td></tr>
+            <tr><td>MCs & DJs</td><td>301</td><td>4.8 ★</td></tr>
+            <tr><td>Event Decorators</td><td>264</td><td>4.9 ★</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="modal-overlay" id="add-category-modal">
+  <div class="modal-box">
+    <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <h3>Add Category</h3>
+    <form data-fake-submit data-success-message="Category added!">
+      <div class="form-group"><label>Category Name</label><input type="text" class="form-control" required></div>
+      <div class="form-group"><label>Icon (Font Awesome class)</label><input type="text" class="form-control" placeholder="fa-solid fa-star"></div>
+      <button type="submit" class="btn btn-gold btn-block">Save Category</button>
+    </form>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script>
+  document.querySelectorAll('.jump-approvals').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelector('.dash-nav [data-tab="a-approvals"]').click();
+    });
+  });
+</script>
+</body>
+</html>

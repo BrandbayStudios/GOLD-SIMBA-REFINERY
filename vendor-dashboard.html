@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Dashboard — EventHub Zambia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="index.html">View Site</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <span style="font-size:.85rem;color:var(--gray);">Logged in as <strong style="color:var(--dark);">Silverleaf Gardens</strong></span>
+      <a href="login.html" class="btn btn-outline-dark btn-sm">Log Out</a>
+      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="dash-shell">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div class="dash-profile">
+      <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=200&auto=format&fit=crop" alt="Vendor logo">
+      <div>
+        <strong>Silverleaf Gardens</strong>
+        <span><i class="fa-solid fa-circle-check" style="color:#4caf50;"></i> Approved & Live</span>
+      </div>
+    </div>
+    <ul class="dash-nav" data-tab-group="dash">
+      <li class="section-label">Overview</li>
+      <li class="active"><a href="javascript:void(0)" data-tab="dash-overview"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+      <li class="section-label">Manage</li>
+      <li><a href="javascript:void(0)" data-tab="dash-profile-tab"><i class="fa-solid fa-store"></i> Business Profile</a></li>
+      <li><a href="javascript:void(0)" data-tab="dash-portfolio"><i class="fa-solid fa-images"></i> Portfolio</a></li>
+      <li><a href="javascript:void(0)" data-tab="dash-packages"><i class="fa-solid fa-tags"></i> Packages & Pricing</a></li>
+      <li><a href="javascript:void(0)" data-tab="dash-availability"><i class="fa-solid fa-calendar-days"></i> Availability</a></li>
+      <li class="section-label">Activity</li>
+      <li><a href="javascript:void(0)" data-tab="dash-enquiries"><i class="fa-solid fa-inbox"></i> Enquiries <span class="badge" style="position:static;margin-left:auto;background:var(--gold);color:#000;">5</span></a></li>
+      <li><a href="javascript:void(0)" data-tab="dash-bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
+      <li><a href="javascript:void(0)" data-tab="dash-reviews"><i class="fa-solid fa-star"></i> Reviews</a></li>
+      <li class="section-label">Account</li>
+      <li><a href="javascript:void(0)" data-tab="dash-settings"><i class="fa-solid fa-gear"></i> Settings</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+
+    <!-- OVERVIEW -->
+    <div id="dash-overview" data-tab-panel-group="dash" class="tab-panel active">
+      <div class="dash-topbar">
+        <div><h2 style="margin:0;">Welcome back, Silverleaf Gardens</h2><p style="margin:4px 0 0;">Here's how your profile is performing.</p></div>
+        <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View Public Profile</a>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card"><i class="fa-solid fa-eye"></i><strong>3,482</strong><span>Profile Views</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong>28</strong><span>Total Enquiries</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong>14</strong><span>Bookings</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong>4.8</strong><span>Average Rating</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-heart"></i><strong>96</strong><span>Times Favourited</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-clock"></i><strong>1.2h</strong><span>Avg. Response Time</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4 style="margin:0;">Profile Completeness</h4><span style="font-size:.85rem;color:var(--gray);">85%</span></div>
+        <div class="progress-track"><span style="width:85%;"></span></div>
+        <p style="font-size:.82rem;margin:0;">Add 2 more portfolio photos and your pricing packages to reach 100%.</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4 style="margin:0;">Recent Enquiries</h4><a href="javascript:void(0)" data-tab-jump="dash-enquiries" style="font-size:.85rem;color:var(--gold-dark);font-weight:600;">View all</a></div>
+        <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Event Date</th><th>Message</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="td-vendor"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop"> Chileshe Banda</td>
+              <td>14 Dec 2026</td><td>Interested in Signature Wedding package for 300 guests.</td>
+              <td><span class="status-pill new">New</span></td>
+              <td class="table-actions"><button title="Reply"><i class="fa-solid fa-reply"></i></button></td>
+            </tr>
+            <tr>
+              <td class="td-vendor"><img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop"> Natasha Mumba</td>
+              <td>02 Jan 2027</td><td>Corporate anniversary — need quote for 150 pax.</td>
+              <td><span class="status-pill pending">Responded</span></td>
+              <td class="table-actions"><button title="Reply"><i class="fa-solid fa-reply"></i></button></td>
+            </tr>
+            <tr>
+              <td class="td-vendor"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop"> Mwansa Phiri</td>
+              <td>20 Nov 2026</td><td>Availability check for a birthday party.</td>
+              <td><span class="status-pill approved">Booked</span></td>
+              <td class="table-actions"><button title="Reply"><i class="fa-solid fa-reply"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUSINESS PROFILE -->
+    <div id="dash-profile-tab" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Business Profile</h2></div>
+      <div class="panel">
+        <form data-fake-submit data-success-message="Profile updated successfully!">
+          <div class="form-row">
+            <div class="form-group"><label>Business Name</label><input type="text" class="form-control" value="Silverleaf Gardens"></div>
+            <div class="form-group"><label>Category</label><input type="text" class="form-control" value="Event Centre & Venue"></div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea class="form-control">Silverleaf Gardens is a premium outdoor and indoor event venue in Kabulonga, Lusaka…</textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Phone</label><input type="tel" class="form-control" value="+260 97 123 4567"></div>
+            <div class="form-group"><label>WhatsApp</label><input type="tel" class="form-control" value="+260 97 123 4567"></div>
+          </div>
+          <div class="form-group"><label>Address</label><input type="text" class="form-control" value="Plot 14B, Kabulonga Road, Lusaka"></div>
+          <button type="submit" class="btn btn-gold">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div id="dash-portfolio" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Portfolio</h2></div>
+      <div class="panel">
+        <div class="upload-box" style="margin-bottom:22px;">
+          <input type="file" multiple accept="image/*,video/*" style="display:none;">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <strong class="upload-label">Click to upload new photos or videos</strong>
+        </div>
+        <div class="gallery-grid">
+          <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=500&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=500&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=500&auto=format&fit=crop">
+          <img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=500&auto=format&fit=crop">
+        </div>
+      </div>
+    </div>
+
+    <!-- PACKAGES -->
+    <div id="dash-packages" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Packages & Pricing</h2><button class="btn btn-gold" data-modal-open="#add-package-modal"><i class="fa-solid fa-plus"></i> Add Package</button></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Package</th><th>Price</th><th>Guests</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Garden Basic</td><td>K8,500</td><td>Up to 150</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td>Signature Wedding</td><td>K16,000</td><td>Up to 350</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+            <tr><td>Grand Celebration</td><td>K24,000</td><td>Up to 500</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AVAILABILITY -->
+    <div id="dash-availability" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Availability — December 2026</h2></div>
+      <div class="panel">
+        <p style="font-size:.85rem;">Click a day to toggle availability. Green = available, red = booked/unavailable.</p>
+        <div class="avail-grid">
+          <div class="avail-day on">Mon 1</div><div class="avail-day on">Tue 2</div><div class="avail-day off">Wed 3</div><div class="avail-day on">Thu 4</div><div class="avail-day on">Fri 5</div><div class="avail-day off">Sat 6</div><div class="avail-day off">Sun 7</div>
+          <div class="avail-day on">Mon 8</div><div class="avail-day on">Tue 9</div><div class="avail-day on">Wed 10</div><div class="avail-day on">Thu 11</div><div class="avail-day off">Fri 12</div><div class="avail-day off">Sat 13</div><div class="avail-day on">Sun 14</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENQUIRIES -->
+    <div id="dash-enquiries" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Enquiries</h2></div>
+      <div class="dash-tabs">
+        <button class="active">All (28)</button><button>New (5)</button><button>Responded (12)</button><button>Booked (11)</button>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Event Date</th><th>Message</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop">Chileshe Banda</td><td>14 Dec 2026</td><td>Signature Wedding, 300 guests</td><td><span class="status-pill new">New</span></td><td class="table-actions"><button data-modal-open="#reply-modal"><i class="fa-solid fa-reply"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop">Natasha Mumba</td><td>02 Jan 2027</td><td>Corporate anniversary, 150 pax</td><td><span class="status-pill pending">Responded</span></td><td class="table-actions"><button data-modal-open="#reply-modal"><i class="fa-solid fa-reply"></i></button></td></tr>
+            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop">Mwansa Phiri</td><td>20 Nov 2026</td><td>Birthday party availability</td><td><span class="status-pill approved">Booked</span></td><td class="table-actions"><button data-modal-open="#reply-modal"><i class="fa-solid fa-reply"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div id="dash-bookings" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Bookings</h2></div>
+      <div class="panel">
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Package</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Mwansa Phiri</td><td>Garden Basic</td><td>20 Nov 2026</td><td>K8,500</td><td><span class="status-pill approved">Confirmed</span></td></tr>
+            <tr><td>Bwalya Chilufya</td><td>Signature Wedding</td><td>05 Oct 2026</td><td>K16,000</td><td><span class="status-pill approved">Confirmed</span></td></tr>
+            <tr><td>Given Zulu</td><td>Garden Basic</td><td>18 Sep 2026</td><td>K8,500</td><td><span class="status-pill pending">Awaiting Deposit</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div id="dash-reviews" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Reviews</h2></div>
+      <div class="panel">
+        <div class="review-item">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop">
+          <div style="flex:1;">
+            <div class="review-head"><strong>Chileshe Banda</strong><span>2 weeks ago</span></div>
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p style="margin-top:8px;">Beautiful venue, extremely helpful staff!</p>
+            <a href="#" style="font-size:.82rem;color:var(--gold-dark);font-weight:600;">Reply to review</a>
+          </div>
+        </div>
+        <div class="review-item">
+          <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop">
+          <div style="flex:1;">
+            <div class="review-head"><strong>Natasha Mumba</strong><span>1 month ago</span></div>
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+            <p style="margin-top:8px;">Great space, parking was tight for 300+ guests.</p>
+            <a href="#" style="font-size:.82rem;color:var(--gold-dark);font-weight:600;">Reply to review</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="dash-settings" data-tab-panel-group="dash" class="tab-panel">
+      <div class="dash-topbar"><h2 style="margin:0;">Account Settings</h2></div>
+      <div class="panel">
+        <form data-fake-submit data-success-message="Password updated!">
+          <div class="form-group"><label>Current Password</label><input type="password" class="form-control"></div>
+          <div class="form-group"><label>New Password</label><input type="password" class="form-control"></div>
+          <button type="submit" class="btn btn-gold">Update Password</button>
+        </form>
+        <hr style="border:none;border-top:1px solid var(--border);margin:26px 0;">
+        <h4>Notification Preferences</h4>
+        <label class="form-check" style="margin-bottom:12px;"><input type="checkbox" checked> Email me new enquiries</label>
+        <label class="form-check" style="margin-bottom:12px;"><input type="checkbox" checked> SMS alert for bookings</label>
+        <label class="form-check"><input type="checkbox"> Weekly performance summary</label>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="modal-overlay" id="add-package-modal">
+  <div class="modal-box">
+    <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <h3>Add a Package</h3>
+    <form data-fake-submit data-success-message="Package added!">
+      <div class="form-group"><label>Package Name</label><input type="text" class="form-control" required></div>
+      <div class="form-row">
+        <div class="form-group"><label>Price (ZMW)</label><input type="number" class="form-control" required></div>
+        <div class="form-group"><label>Guest Capacity</label><input type="text" class="form-control"></div>
+      </div>
+      <div class="form-group"><label>What's Included</label><textarea class="form-control"></textarea></div>
+      <button type="submit" class="btn btn-gold btn-block">Save Package</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reply-modal">
+  <div class="modal-box">
+    <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <h3>Reply to Enquiry</h3>
+    <form data-fake-submit data-success-message="Reply sent to customer!">
+      <div class="form-group"><label>Message</label><textarea class="form-control" placeholder="Type your reply…"></textarea></div>
+      <button type="submit" class="btn btn-gold btn-block">Send Reply</button>
+    </form>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script>
+  document.querySelectorAll('[data-tab-jump]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelector('.dash-nav [data-tab="' + el.getAttribute('data-tab-jump') + '"]').click();
+    });
+  });
+</script>
+</body>
+</html>

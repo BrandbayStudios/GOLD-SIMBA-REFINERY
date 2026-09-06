@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventHub Zambia — Find. Compare. Connect. Celebrate.</title>
+<meta name="description" content="Zambia's premium marketplace for event services — venues, MCs & DJs, photographers, caterers, decorators and more. Find trusted vendors near you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-left">
+      <span><i class="fa-solid fa-phone"></i> +260 97 123 4567</span>
+      <span><i class="fa-solid fa-envelope"></i> hello@eventhub.zm</span>
+      <span><i class="fa-solid fa-location-dot"></i> Lusaka · Ndola · Kitwe · Livingstone</span>
+    </div>
+    <div class="topbar-right">
+      <span>Follow us</span>
+      <div class="topbar-social">
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<header class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+    <nav>
+      <ul class="nav-links">
+        <li data-page="index.html" class="active"><a href="index.html">Home</a></li>
+        <li class="has-dropdown">
+          <a href="vendors.html">Categories <i class="fa-solid fa-chevron-down" style="font-size:.7rem"></i></a>
+          <div class="dropdown">
+            <a href="vendors.html?category=venues"><i class="fa-solid fa-landmark"></i>Venues & Event Centres</a>
+            <a href="vendors.html?category=mcs-djs"><i class="fa-solid fa-microphone"></i>MCs & DJs</a>
+            <a href="vendors.html?category=photography"><i class="fa-solid fa-camera"></i>Photo & Video</a>
+            <a href="vendors.html?category=catering"><i class="fa-solid fa-utensils"></i>Caterers & Chefs</a>
+            <a href="vendors.html?category=decor"><i class="fa-solid fa-star"></i>Event Decorators</a>
+            <a href="vendors.html?category=makeup"><i class="fa-solid fa-palette"></i>Makeup Artists</a>
+            <a href="vendors.html?category=cakes"><i class="fa-solid fa-cake-candles"></i>Cakes</a>
+            <a href="vendors.html?category=cars"><i class="fa-solid fa-car"></i>Car Hire & Decor</a>
+            <a href="vendors.html?category=tents"><i class="fa-solid fa-campground"></i>Tents, Chairs & Tables</a>
+            <a href="vendors.html?category=planners"><i class="fa-solid fa-ring"></i>Wedding Planners</a>
+            <a href="vendors.html" style="grid-column:1/-1;justify-content:center;color:#c9a24b;font-weight:600;">View all 17 categories →</a>
+          </div>
+        </li>
+        <li data-page="vendors.html"><a href="vendors.html">Find Vendors</a></li>
+        <li><a href="index.html#how-it-works">How It Works</a></li>
+        <li data-page="vendor-register.html"><a href="vendor-register.html">Become a Vendor</a></li>
+        <li data-page="contact.html"><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a href="favourites.html" class="icon-link" title="Favourites"><i class="fa-regular fa-heart"></i><span class="badge" data-fav-count>0</span></a>
+      <a href="login.html" class="btn btn-outline-dark btn-sm">Log In</a>
+      <a href="register.html" class="btn btn-gold btn-sm">Sign Up</a>
+      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="eyebrow">Zambia's Event Services Marketplace</div>
+      <h1>Plan Your Event. Find Everything You Need.</h1>
+      <p class="lead">From venues to videographers, caterers to cake makers — discover verified event vendors near you, compare their work and book with confidence.</p>
+      <div class="hero-stats">
+        <div><strong>1,200+</strong><span>Verified Vendors</span></div>
+        <div><strong>17</strong><span>Service Categories</span></div>
+        <div><strong>8,500+</strong><span>Events Planned</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Search Card -->
+<div class="container">
+  <form class="search-card" id="hero-search-form">
+    <div class="search-field">
+      <label>What do you need for your event?</label>
+      <div class="input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="hero-search-q" placeholder="e.g. Wedding photographer, DJ, caterer…">
+      </div>
+    </div>
+    <div class="search-field">
+      <label>Location</label>
+      <div class="input-wrap">
+        <i class="fa-solid fa-location-dot"></i>
+        <select id="hero-search-loc">
+          <option value="">Choose a city</option>
+          <option value="lusaka">Lusaka</option>
+          <option value="ndola">Ndola</option>
+          <option value="kitwe">Kitwe</option>
+          <option value="livingstone">Livingstone</option>
+          <option value="kabwe">Kabwe</option>
+          <option value="chingola">Chingola</option>
+        </select>
+      </div>
+    </div>
+    <div class="search-field">
+      <label>&nbsp;</label>
+      <button type="button" id="near-me-btn" class="btn btn-outline-dark btn-block" style="border-color:#e9e6dd;color:#6d7078;justify-content:flex-start;padding:13px 14px;"><i class="fa-solid fa-location-crosshairs" style="color:#c9a24b"></i> Near Me</button>
+    </div>
+    <button type="submit" class="btn btn-gold">Find Vendors <i class="fa-solid fa-arrow-right"></i></button>
+  </form>
+</div>
+
+<!-- Stat strip -->
+<div class="container" style="margin-top:44px;">
+  <div class="stat-strip">
+    <div class="stat"><i class="fa-solid fa-shield-heart"></i><div><strong>Verified Vendors</strong><span>Admin-approved businesses only</span></div></div>
+    <div class="stat"><i class="fa-solid fa-map-location-dot"></i><div><strong>GPS Near Me</strong><span>Discover vendors around you</span></div></div>
+    <div class="stat"><i class="fa-solid fa-star"></i><div><strong>Real Reviews</strong><span>Ratings from real customers</span></div></div>
+    <div class="stat"><i class="fa-brands fa-whatsapp"></i><div><strong>Direct Contact</strong><span>Call or WhatsApp instantly</span></div></div>
+  </div>
+</div>
+
+<!-- Popular Categories -->
+<section class="section" id="categories">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Browse</div>
+      <h2>Popular Categories</h2>
+      <p>Everything you need for weddings, parties, corporate functions and more — organised into 17 trusted categories.</p>
+    </div>
+    <div class="cat-grid">
+      <a href="vendors.html?category=venues" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-landmark"></i></div><h4>Venues & Event Centres</h4><span>210 vendors</span></a>
+      <a href="vendors.html?category=mcs-djs" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-microphone"></i></div><h4>MCs & DJs</h4><span>168 vendors</span></a>
+      <a href="vendors.html?category=photography" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-camera"></i></div><h4>Photo & Video</h4><span>184 vendors</span></a>
+      <a href="vendors.html?category=choreography" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-music"></i></div><h4>Choreographers</h4><span>52 vendors</span></a>
+      <a href="vendors.html?category=cars" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-car"></i></div><h4>Car Hire & Decor</h4><span>97 vendors</span></a>
+      <a href="vendors.html?category=makeup" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-palette"></i></div><h4>Makeup Artists</h4><span>143 vendors</span></a>
+      <a href="vendors.html?category=barbers" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-scissors"></i></div><h4>Barbers & Hairdressers</h4><span>121 vendors</span></a>
+      <a href="vendors.html?category=tailors" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-shirt"></i></div><h4>Tailors & Designers</h4><span>88 vendors</span></a>
+      <a href="vendors.html?category=matrons" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-crown"></i></div><h4>Matrons</h4><span>34 vendors</span></a>
+      <a href="vendors.html?category=catering" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-utensils"></i></div><h4>Caterers & Chefs</h4><span>176 vendors</span></a>
+      <a href="vendors.html?category=cakes" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-cake-candles"></i></div><h4>Cakes</h4><span>75 vendors</span></a>
+      <a href="vendors.html?category=tents" class="cat-card"><div class="cat-icon"><i class="fa-solid fa-campground"></i></div><h4>Tents, Chairs & Tables</h4><span>102 vendors</span></a>
+    </div>
+    <div class="flex-center" style="margin-top:36px;">
+      <a href="vendors.html" class="btn btn-outline-dark">View All 17 Categories <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- Vendors Near You -->
+<section class="section bg-off">
+  <div class="container">
+    <div class="section-head left flex-between" style="align-items:flex-end;">
+      <div>
+        <div class="eyebrow">GPS Powered</div>
+        <h2>Vendors Near You</h2>
+        <p style="max-width:520px;margin:0;">Based on Lusaka, Zambia. Enable location for more accurate results.</p>
+      </div>
+      <a href="vendors.html" class="btn btn-dark">Browse All</a>
+    </div>
+
+    <div class="vendor-grid">
+      <div class="vendor-card" data-cat="venues" data-rating="4.8" data-price="8500" data-name="Silverleaf Gardens">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=800&auto=format&fit=crop" alt="Silverleaf Gardens venue">
+          <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+          <button class="fav-btn" data-vendor-id="v1" data-vendor-name="Silverleaf Gardens"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Event Centre & Venue</span>
+          <h4>Silverleaf Gardens</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Kabulonga, Lusaka · 2.4 km away</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.8 (96)</span></div>
+            <div class="price-from">K8,500<small>/event</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="vendor-card" data-cat="mcs-djs" data-rating="4.9" data-price="3200" data-name="DJ Mwansa Live">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=800&auto=format&fit=crop" alt="DJ Mwansa">
+          <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+          <button class="fav-btn" data-vendor-id="v2" data-vendor-name="DJ Mwansa Live"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">MC & DJ</span>
+          <h4>DJ Mwansa Live</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Rhodes Park, Lusaka · 3.1 km away</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.9 (154)</span></div>
+            <div class="price-from">K3,200<small>/event</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="vendor-card" data-cat="photography" data-rating="4.7" data-price="4500" data-name="Chanda Lens Studio">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" alt="Chanda Lens Studio">
+          <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+          <button class="fav-btn" data-vendor-id="v3" data-vendor-name="Chanda Lens Studio"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Photography & Video</span>
+          <h4>Chanda Lens Studio</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Woodlands, Lusaka · 4.6 km away</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.7 (82)</span></div>
+            <div class="price-from">K4,500<small>/event</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="vendor-card" data-cat="catering" data-rating="4.6" data-price="150" data-name="Mama Beulah's Kitchen">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" alt="Mama Beulah's Kitchen">
+          <span class="vendor-tag external"><i class="fa-solid fa-map-pin"></i> Discovered</span>
+          <button class="fav-btn" data-vendor-id="v4" data-vendor-name="Mama Beulah's Kitchen"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Caterer & Chef</span>
+          <h4>Mama Beulah's Kitchen</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Chelston, Lusaka · 6.2 km away</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.6 (41)</span></div>
+            <div class="price-from">K150<small>/plate</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="#" class="btn btn-gold btn-block"><i class="fa-solid fa-flag"></i> Claim This Business</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About / Trusted Experts stats -->
+<section class="section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-media">
+        <div class="badge-float"><strong>8.5K+</strong><span>EVENTS PLANNED</span></div>
+        <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1000&auto=format&fit=crop" alt="Event setup">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=600&auto=format&fit=crop" alt="Wedding decor">
+      </div>
+      <div>
+        <div class="eyebrow">Why EventHub</div>
+        <h2>Trusted Vendors and Zambia's Largest Event Directory</h2>
+        <p>We verify every vendor before they go live on the platform, so you can plan your wedding, party or corporate function with confidence — no guesswork, no ghosting.</p>
+        <ul class="check-list">
+          <li><i class="fa-solid fa-circle-check"></i> Admin-approved vendors with real portfolios</li>
+          <li><i class="fa-solid fa-circle-check"></i> Compare pricing, packages and ratings side-by-side</li>
+          <li><i class="fa-solid fa-circle-check"></i> Contact vendors directly via call or WhatsApp</li>
+          <li><i class="fa-solid fa-circle-check"></i> Save favourites and build your own event checklist</li>
+        </ul>
+        <div class="flex gap-16" style="margin-top:28px;">
+          <a href="vendors.html" class="btn btn-gold">Explore Vendors</a>
+          <a href="checklist.html" class="btn btn-outline-dark">Try the Planning Checklist</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Vendors -->
+<section class="section bg-cream">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Handpicked</div>
+      <h2>Featured Vendors</h2>
+      <p>Top-rated, highly booked vendors chosen for exceptional quality and service across Zambia.</p>
+    </div>
+    <div class="vendor-grid">
+      <div class="vendor-card" data-cat="decor" data-rating="5.0" data-price="6000" data-name="Golden Aisle Decor">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=800&auto=format&fit=crop" alt="Golden Aisle Decor">
+          <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+          <button class="fav-btn" data-vendor-id="v5" data-vendor-name="Golden Aisle Decor"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Event Decorator</span>
+          <h4>Golden Aisle Decor</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Ibex Hill, Lusaka</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0 (203)</span></div>
+            <div class="price-from">K6,000<small>/event</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="vendor-card" data-cat="planners" data-rating="4.9" data-price="12000" data-name="Bliss Weddings Zambia">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=800&auto=format&fit=crop" alt="Bliss Weddings Zambia">
+          <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+          <button class="fav-btn" data-vendor-id="v6" data-vendor-name="Bliss Weddings Zambia"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Wedding Planner</span>
+          <h4>Bliss Weddings Zambia</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Kabulonga, Lusaka</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.9 (177)</span></div>
+            <div class="price-from">K12,000<small>/event</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="vendor-card" data-cat="cakes" data-rating="4.8" data-price="900" data-name="Sweet Nectar Cakes">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?q=80&w=800&auto=format&fit=crop" alt="Sweet Nectar Cakes">
+          <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+          <button class="fav-btn" data-vendor-id="v7" data-vendor-name="Sweet Nectar Cakes"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Cakes</span>
+          <h4>Sweet Nectar Cakes</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Roma, Lusaka</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.8 (68)</span></div>
+            <div class="price-from">K900<small>/tier</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="vendor-card" data-cat="sound" data-rating="4.7" data-price="2800" data-name="Zambezi Sound & Light">
+        <div class="vendor-media">
+          <img src="https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?q=80&w=800&auto=format&fit=crop" alt="Zambezi Sound & Light">
+          <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+          <button class="fav-btn" data-vendor-id="v8" data-vendor-name="Zambezi Sound & Light"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <div class="vendor-body">
+          <span class="vendor-cat">Sound & Lighting</span>
+          <h4>Zambezi Sound & Light</h4>
+          <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Northmead, Lusaka</div>
+          <div class="vendor-meta">
+            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.7 (59)</span></div>
+            <div class="price-from">K2,800<small>/event</small></div>
+          </div>
+          <div class="vendor-actions">
+            <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+            <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+            <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Browse by Event Type -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Occasions</div>
+      <h2>Browse by Event Type</h2>
+      <p>Whatever you're celebrating, find the right vendors curated for the occasion.</p>
+    </div>
+    <div class="grid grid-4">
+      <a href="vendors.html?q=wedding" class="cat-card" style="text-align:left;padding:0;overflow:hidden;position:relative;height:220px;">
+        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=700&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+        <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent 60%);"></div>
+        <div style="position:absolute;bottom:18px;left:18px;color:#fff;font-family:var(--font-head);font-weight:700;font-size:1.15rem;">Weddings</div>
+      </a>
+      <a href="vendors.html?q=birthday" class="cat-card" style="text-align:left;padding:0;overflow:hidden;position:relative;height:220px;">
+        <img src="https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=700&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+        <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent 60%);"></div>
+        <div style="position:absolute;bottom:18px;left:18px;color:#fff;font-family:var(--font-head);font-weight:700;font-size:1.15rem;">Birthdays</div>
+      </a>
+      <a href="vendors.html?q=corporate" class="cat-card" style="text-align:left;padding:0;overflow:hidden;position:relative;height:220px;">
+        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=700&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+        <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent 60%);"></div>
+        <div style="position:absolute;bottom:18px;left:18px;color:#fff;font-family:var(--font-head);font-weight:700;font-size:1.15rem;">Corporate</div>
+      </a>
+      <a href="vendors.html?q=traditional" class="cat-card" style="text-align:left;padding:0;overflow:hidden;position:relative;height:220px;">
+        <img src="https://images.unsplash.com/photo-1600021458059-104fdb888e3c?q=80&w=700&auto=format&fit=crop" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+        <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent 60%);"></div>
+        <div style="position:absolute;bottom:18px;left:18px;color:#fff;font-family:var(--font-head);font-weight:700;font-size:1.15rem;">Traditional Ceremonies</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- How it Works -->
+<section class="section bg-off" id="how-it-works">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Simple Process</div>
+      <h2>How It Works</h2>
+      <p>Planning your event should feel exciting, not exhausting.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Search & Discover</h4>
+        <p>Browse categories or search by what you need near your location.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Compare Vendors</h4>
+        <p>Check portfolios, pricing, packages and real customer reviews.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Connect Directly</h4>
+        <p>Call, WhatsApp or request a quotation straight from the profile.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Celebrate</h4>
+        <p>Book with confidence and enjoy a beautifully planned event.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Become a Vendor -->
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <div>
+        <div class="eyebrow">For Businesses</div>
+        <h2>Grow Your Event Business on EventHub</h2>
+        <p style="color:#c8c9ce;">Join Zambia's fastest-growing event services directory. Create your profile, upload your portfolio and start receiving enquiries from customers actively planning events.</p>
+        <ul class="cta-list">
+          <li><i class="fa-solid fa-circle-check"></i> Free business profile</li>
+          <li><i class="fa-solid fa-circle-check"></i> Reach customers near you</li>
+          <li><i class="fa-solid fa-circle-check"></i> Manage bookings & enquiries</li>
+        </ul>
+        <div class="flex gap-16" style="margin-top:30px;">
+          <a href="vendor-register.html" class="btn btn-gold">Register Your Business</a>
+          <a href="vendor-dashboard.html" class="btn btn-outline">Vendor Dashboard Demo</a>
+        </div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" style="border-radius:18px;box-shadow:var(--shadow);" alt="Event vendor at work">
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section bg-dark">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Testimonials</div>
+      <h2>What Our Customers Say</h2>
+    </div>
+    <div class="testi-track">
+      <div class="testi-card">
+        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <p>"EventHub helped me find a decorator and caterer in Lusaka within a day. Everything was verified and the prices were upfront — no back and forth."</p>
+        <div class="testi-person">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop" alt="Customer">
+          <div><strong>Chileshe Banda</strong><span>Wedding, Lusaka</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <p>"As a DJ, EventHub has completely changed how I get bookings. My profile shows my past events and clients contact me directly on WhatsApp."</p>
+        <div class="testi-person">
+          <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200&auto=format&fit=crop" alt="Vendor">
+          <div><strong>Mwansa Phiri</strong><span>DJ & MC, Kitwe</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+        <p>"We used the event checklist and Near Me search for our company's anniversary function. Saved us weeks of calling around Ndola."</p>
+        <div class="testi-person">
+          <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Customer">
+          <div><strong>Natasha Mumba</strong><span>Corporate Event, Ndola</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo" style="color:#fff;margin-bottom:16px;display:flex;"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+        <p style="font-size:.88rem;">Zambia's premium marketplace connecting customers with trusted event service vendors — find, compare, connect and celebrate.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div>
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="vendors.html">Find Vendors</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="checklist.html">Planning Checklist</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Top Categories</h5>
+        <ul>
+          <li><a href="vendors.html?category=venues">Venues & Event Centres</a></li>
+          <li><a href="vendors.html?category=catering">Caterers & Chefs</a></li>
+          <li><a href="vendors.html?category=photography">Photo & Video</a></li>
+          <li><a href="vendors.html?category=decor">Event Decorators</a></li>
+          <li><a href="vendors.html?category=planners">Wedding Planners</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For Vendors</h5>
+        <ul>
+          <li><a href="vendor-register.html">Register Your Business</a></li>
+          <li><a href="vendor-dashboard.html">Vendor Dashboard</a></li>
+          <li><a href="login.html">Vendor Login</a></li>
+          <li><a href="admin-dashboard.html">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Stay Updated</h5>
+        <p style="font-size:.85rem;">Get new vendor drops and event tips in your inbox.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 EventHub Zambia. All rights reserved.</span>
+      <span>Find. Compare. Connect. Celebrate.</span>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

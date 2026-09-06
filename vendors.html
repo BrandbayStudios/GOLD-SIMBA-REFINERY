@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Vendors — EventHub Zambia</title>
+<meta name="description" content="Search and compare verified event vendors across Zambia by category, location, price and rating.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-left">
+      <span><i class="fa-solid fa-phone"></i> +260 97 123 4567</span>
+      <span><i class="fa-solid fa-envelope"></i> hello@eventhub.zm</span>
+      <span><i class="fa-solid fa-location-dot"></i> Lusaka · Ndola · Kitwe · Livingstone</span>
+    </div>
+    <div class="topbar-right">
+      <span>Follow us</span>
+      <div class="topbar-social">
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+    <nav>
+      <ul class="nav-links">
+        <li data-page="index.html"><a href="index.html">Home</a></li>
+        <li class="has-dropdown">
+          <a href="vendors.html">Categories <i class="fa-solid fa-chevron-down" style="font-size:.7rem"></i></a>
+          <div class="dropdown">
+            <a href="vendors.html?category=venues"><i class="fa-solid fa-landmark"></i>Venues & Event Centres</a>
+            <a href="vendors.html?category=mcs-djs"><i class="fa-solid fa-microphone"></i>MCs & DJs</a>
+            <a href="vendors.html?category=photography"><i class="fa-solid fa-camera"></i>Photo & Video</a>
+            <a href="vendors.html?category=catering"><i class="fa-solid fa-utensils"></i>Caterers & Chefs</a>
+            <a href="vendors.html?category=decor"><i class="fa-solid fa-star"></i>Event Decorators</a>
+            <a href="vendors.html?category=makeup"><i class="fa-solid fa-palette"></i>Makeup Artists</a>
+            <a href="vendors.html?category=cakes"><i class="fa-solid fa-cake-candles"></i>Cakes</a>
+            <a href="vendors.html?category=cars"><i class="fa-solid fa-car"></i>Car Hire & Decor</a>
+            <a href="vendors.html?category=tents"><i class="fa-solid fa-campground"></i>Tents, Chairs & Tables</a>
+            <a href="vendors.html?category=planners"><i class="fa-solid fa-ring"></i>Wedding Planners</a>
+            <a href="vendors.html" style="grid-column:1/-1;justify-content:center;color:#c9a24b;font-weight:600;">View all 17 categories →</a>
+          </div>
+        </li>
+        <li data-page="vendors.html" class="active"><a href="vendors.html">Find Vendors</a></li>
+        <li><a href="index.html#how-it-works">How It Works</a></li>
+        <li data-page="vendor-register.html"><a href="vendor-register.html">Become a Vendor</a></li>
+        <li data-page="contact.html"><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a href="favourites.html" class="icon-link" title="Favourites"><i class="fa-regular fa-heart"></i><span class="badge" data-fav-count>0</span></a>
+      <a href="login.html" class="btn btn-outline-dark btn-sm">Log In</a>
+      <a href="register.html" class="btn btn-gold btn-sm">Sign Up</a>
+      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Find Vendors</span></div>
+    <h1>Find the Right Vendor for Your Event</h1>
+  </div>
+</div>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="browse-layout">
+
+      <!-- Filters -->
+      <aside class="filter-card">
+        <h5>Search</h5>
+        <div class="input-wrap" style="border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:4px;">
+          <i class="fa-solid fa-magnifying-glass" style="color:var(--gold-dark);margin-right:8px;"></i>
+          <input type="text" id="browse-search-q" placeholder="Search vendors…" style="border:none;background:none;outline:none;width:100%;">
+        </div>
+
+        <h5>Category</h5>
+        <label class="filter-option"><input type="checkbox" data-cat="venues"> Venues & Event Centres</label>
+        <label class="filter-option"><input type="checkbox" data-cat="mcs-djs"> MCs & DJs</label>
+        <label class="filter-option"><input type="checkbox" data-cat="photography"> Photographers & Videographers</label>
+        <label class="filter-option"><input type="checkbox" data-cat="catering"> Caterers & Chefs</label>
+        <label class="filter-option"><input type="checkbox" data-cat="decor"> Event Decorators</label>
+        <label class="filter-option"><input type="checkbox" data-cat="planners"> Wedding Planners</label>
+        <label class="filter-option"><input type="checkbox" data-cat="cakes"> Cakes</label>
+        <label class="filter-option"><input type="checkbox" data-cat="sound"> Sound & Lighting</label>
+        <label class="filter-option"><input type="checkbox" data-cat="makeup"> Makeup Artists</label>
+        <label class="filter-option"><input type="checkbox" data-cat="cars"> Car Hire & Decoration</label>
+
+        <h5>Location</h5>
+        <label class="filter-option"><input type="radio" name="loc"> Lusaka</label>
+        <label class="filter-option"><input type="radio" name="loc"> Ndola</label>
+        <label class="filter-option"><input type="radio" name="loc"> Kitwe</label>
+        <label class="filter-option"><input type="radio" name="loc"> Livingstone</label>
+        <label class="filter-option"><input type="radio" name="loc"> Kabwe</label>
+
+        <h5>Max Price</h5>
+        <input type="range" id="price-range" min="100" max="15000" value="15000" step="100" style="width:100%;accent-color:var(--gold);">
+        <div class="range-row"><span>K100</span><span id="price-range-val">K15,000</span></div>
+
+        <h5>Minimum Rating</h5>
+        <label class="filter-option"><input type="radio" name="rating"> <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span> & up</label>
+        <label class="filter-option"><input type="radio" name="rating"> <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span> & up</label>
+        <label class="filter-option"><input type="radio" name="rating"> <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></span> & up</label>
+
+        <h5>Vendor Type</h5>
+        <label class="filter-option"><input type="checkbox"> Verified Platform Vendor</label>
+        <label class="filter-option"><input type="checkbox"> Externally Discovered</label>
+
+        <button class="btn btn-gold btn-block" id="apply-filters" style="margin-top:22px;"><i class="fa-solid fa-filter"></i> Apply Filters</button>
+      </aside>
+
+      <!-- Results -->
+      <div>
+        <div class="results-bar">
+          <div class="chip">Near Me <button>&times;</button></div>
+          <div class="flex gap-12" style="margin-left:auto;align-items:center;">
+            <span style="font-size:.85rem;color:var(--gray);"><strong id="results-count">12</strong> vendors found</span>
+            <select id="sort-select">
+              <option value="relevance">Sort: Relevance</option>
+              <option value="rating">Highest Rated</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="name">Name A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="vendor-grid">
+
+          <div class="vendor-card" data-cat="venues" data-rating="4.8" data-price="8500" data-name="Silverleaf Gardens">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=800&auto=format&fit=crop" alt="Silverleaf Gardens">
+              <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+              <button class="fav-btn" data-vendor-id="v1" data-vendor-name="Silverleaf Gardens"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Event Centre & Venue</span>
+              <h4>Silverleaf Gardens</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Kabulonga, Lusaka · 2.4 km</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.8 (96)</span></div>
+                <div class="price-from">K8,500<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="mcs-djs" data-rating="4.9" data-price="3200" data-name="DJ Mwansa Live">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=800&auto=format&fit=crop" alt="DJ Mwansa Live">
+              <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+              <button class="fav-btn" data-vendor-id="v2" data-vendor-name="DJ Mwansa Live"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">MC & DJ</span>
+              <h4>DJ Mwansa Live</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Rhodes Park, Lusaka · 3.1 km</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.9 (154)</span></div>
+                <div class="price-from">K3,200<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="photography" data-rating="4.7" data-price="4500" data-name="Chanda Lens Studio">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" alt="Chanda Lens Studio">
+              <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+              <button class="fav-btn" data-vendor-id="v3" data-vendor-name="Chanda Lens Studio"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Photography & Video</span>
+              <h4>Chanda Lens Studio</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Woodlands, Lusaka · 4.6 km</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.7 (82)</span></div>
+                <div class="price-from">K4,500<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="catering" data-rating="4.6" data-price="150" data-name="Mama Beulah's Kitchen">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" alt="Mama Beulah's Kitchen">
+              <span class="vendor-tag external"><i class="fa-solid fa-map-pin"></i> Discovered</span>
+              <button class="fav-btn" data-vendor-id="v4" data-vendor-name="Mama Beulah's Kitchen"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Caterer & Chef</span>
+              <h4>Mama Beulah's Kitchen</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Chelston, Lusaka · 6.2 km</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.6 (41)</span></div>
+                <div class="price-from">K150<small>/plate</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark btn-block"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="#" class="btn btn-gold"><i class="fa-solid fa-flag"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="decor" data-rating="5.0" data-price="6000" data-name="Golden Aisle Decor">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=800&auto=format&fit=crop" alt="Golden Aisle Decor">
+              <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+              <button class="fav-btn" data-vendor-id="v5" data-vendor-name="Golden Aisle Decor"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Event Decorator</span>
+              <h4>Golden Aisle Decor</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Ibex Hill, Lusaka</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0 (203)</span></div>
+                <div class="price-from">K6,000<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="planners" data-rating="4.9" data-price="12000" data-name="Bliss Weddings Zambia">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=800&auto=format&fit=crop" alt="Bliss Weddings Zambia">
+              <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+              <button class="fav-btn" data-vendor-id="v6" data-vendor-name="Bliss Weddings Zambia"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Wedding Planner</span>
+              <h4>Bliss Weddings Zambia</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Kabulonga, Lusaka</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.9 (177)</span></div>
+                <div class="price-from">K12,000<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="cakes" data-rating="4.8" data-price="900" data-name="Sweet Nectar Cakes">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?q=80&w=800&auto=format&fit=crop" alt="Sweet Nectar Cakes">
+              <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+              <button class="fav-btn" data-vendor-id="v7" data-vendor-name="Sweet Nectar Cakes"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Cakes</span>
+              <h4>Sweet Nectar Cakes</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Roma, Lusaka</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.8 (68)</span></div>
+                <div class="price-from">K900<small>/tier</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="sound" data-rating="4.7" data-price="2800" data-name="Zambezi Sound & Light">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?q=80&w=800&auto=format&fit=crop" alt="Zambezi Sound & Light">
+              <span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>
+              <button class="fav-btn" data-vendor-id="v8" data-vendor-name="Zambezi Sound & Light"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Sound & Lighting</span>
+              <h4>Zambezi Sound & Light</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Northmead, Lusaka</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.7 (59)</span></div>
+                <div class="price-from">K2,800<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="makeup" data-rating="4.9" data-price="700" data-name="Bella Glow Makeup">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop" alt="Bella Glow Makeup">
+              <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+              <button class="fav-btn" data-vendor-id="v9" data-vendor-name="Bella Glow Makeup"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Makeup Artist</span>
+              <h4>Bella Glow Makeup</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Longacres, Lusaka</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.9 (112)</span></div>
+                <div class="price-from">K700<small>/session</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="cars" data-rating="4.5" data-price="2500" data-name="Royal Ride Car Hire">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=800&auto=format&fit=crop" alt="Royal Ride Car Hire">
+              <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+              <button class="fav-btn" data-vendor-id="v10" data-vendor-name="Royal Ride Car Hire"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Car Hire & Decoration</span>
+              <h4>Royal Ride Car Hire</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Kamwala, Lusaka</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.5 (47)</span></div>
+                <div class="price-from">K2,500<small>/day</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="tents" data-rating="4.4" data-price="1800" data-name="Copperbelt Tents & Chairs">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop" alt="Copperbelt Tents & Chairs">
+              <span class="vendor-tag external"><i class="fa-solid fa-map-pin"></i> Discovered</span>
+              <button class="fav-btn" data-vendor-id="v11" data-vendor-name="Copperbelt Tents & Chairs"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Tents, Chairs & Tables</span>
+              <h4>Copperbelt Tents & Chairs</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Ndola Central</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.4 (29)</span></div>
+                <div class="price-from">K1,800<small>/set</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark btn-block"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="#" class="btn btn-gold"><i class="fa-solid fa-flag"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="vendor-card" data-cat="venues" data-rating="4.6" data-price="9500" data-name="Livingstone Riverside Hall">
+            <div class="vendor-media">
+              <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" alt="Livingstone Riverside Hall">
+              <span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>
+              <button class="fav-btn" data-vendor-id="v12" data-vendor-name="Livingstone Riverside Hall"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="vendor-body">
+              <span class="vendor-cat">Event Centre & Venue</span>
+              <h4>Livingstone Riverside Hall</h4>
+              <div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> Livingstone</div>
+              <div class="vendor-meta">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.6 (63)</span></div>
+                <div class="price-from">K9,500<small>/event</small></div>
+              </div>
+              <div class="vendor-actions">
+                <a href="vendor-profile.html" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>
+                <a href="tel:+260971234567" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://wa.me/260971234567" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pagination">
+          <a href="#" class="active">1</a>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#"><i class="fa-solid fa-chevron-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo" style="color:#fff;margin-bottom:16px;display:flex;"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+        <p style="font-size:.88rem;">Zambia's premium marketplace connecting customers with trusted event service vendors.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div>
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="vendors.html">Find Vendors</a></li>
+          <li><a href="checklist.html">Planning Checklist</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Top Categories</h5>
+        <ul>
+          <li><a href="vendors.html?category=venues">Venues & Event Centres</a></li>
+          <li><a href="vendors.html?category=catering">Caterers & Chefs</a></li>
+          <li><a href="vendors.html?category=photography">Photo & Video</a></li>
+          <li><a href="vendors.html?category=decor">Event Decorators</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For Vendors</h5>
+        <ul>
+          <li><a href="vendor-register.html">Register Your Business</a></li>
+          <li><a href="vendor-dashboard.html">Vendor Dashboard</a></li>
+          <li><a href="admin-dashboard.html">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Stay Updated</h5>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 EventHub Zambia. All rights reserved.</span>
+      <span>Find. Compare. Connect. Celebrate.</span>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

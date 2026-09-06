@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become a Vendor — EventHub Zambia</title>
+<meta name="description" content="Register your event services business on EventHub Zambia. Add your services, portfolio, pricing and start receiving enquiries.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container">
+    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
+    <nav><ul class="nav-links">
+      <li data-page="index.html"><a href="index.html">Home</a></li>
+      <li data-page="vendors.html"><a href="vendors.html">Find Vendors</a></li>
+      <li data-page="vendor-register.html" class="active"><a href="vendor-register.html">Become a Vendor</a></li>
+      <li data-page="contact.html"><a href="contact.html">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-outline-dark btn-sm">Log In</a>
+      <a href="register.html" class="btn btn-gold btn-sm">Sign Up</a>
+      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Become a Vendor</span></div>
+    <h1>Grow Your Event Business on EventHub</h1>
+    <p style="color:#d8d9df;max-width:560px;margin:14px auto 0;">Create your free vendor profile in a few guided steps. Your listing goes live once approved by our admin team.</p>
+  </div>
+</div>
+
+<section class="section-tight">
+  <div class="container" style="max-width:880px;">
+
+    <div class="form-steps">
+      <div class="fstep active"><div class="circ">1</div><span>Business Info</span></div>
+      <div class="fstep"><div class="circ">2</div><span>Category</span></div>
+      <div class="fstep"><div class="circ">3</div><span>Location</span></div>
+      <div class="fstep"><div class="circ">4</div><span>Portfolio</span></div>
+      <div class="fstep"><div class="circ">5</div><span>Pricing & Socials</span></div>
+    </div>
+
+    <form id="vendor-register-form">
+
+      <!-- Step 1 -->
+      <div class="step-panel active panel">
+        <h3>Business Information</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Business Name</label><input type="text" class="form-control" placeholder="e.g. Silverleaf Gardens" required></div>
+          <div class="form-group"><label>Owner / Contact Name</label><input type="text" class="form-control" placeholder="Full name" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone Number</label><input type="tel" class="form-control" placeholder="+260…" required></div>
+          <div class="form-group"><label>WhatsApp Number</label><input type="tel" class="form-control" placeholder="+260…"></div>
+        </div>
+        <div class="form-group"><label>Business Email</label><input type="email" class="form-control" placeholder="business@example.com" required></div>
+        <div class="form-group"><label>Business Description</label><textarea class="form-control" placeholder="Tell customers about your business…"></textarea></div>
+        <div class="flex-between">
+          <span></span>
+          <button type="button" class="btn btn-gold next-step">Continue <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-panel panel">
+        <h3>Select Your Category</h3>
+        <p style="font-size:.88rem;">Choose the category that best describes your primary service. You can add more later.</p>
+        <div class="category-pick">
+          <div><input type="radio" name="category" id="c1"><label for="c1"><i class="fa-solid fa-landmark"></i>Venues & Event Centres</label></div>
+          <div><input type="radio" name="category" id="c2"><label for="c2"><i class="fa-solid fa-microphone"></i>MCs & DJs</label></div>
+          <div><input type="radio" name="category" id="c3"><label for="c3"><i class="fa-solid fa-camera"></i>Photographers & Videographers</label></div>
+          <div><input type="radio" name="category" id="c4"><label for="c4"><i class="fa-solid fa-music"></i>Choreographers</label></div>
+          <div><input type="radio" name="category" id="c5"><label for="c5"><i class="fa-solid fa-car"></i>Car Hire & Decoration</label></div>
+          <div><input type="radio" name="category" id="c6"><label for="c6"><i class="fa-solid fa-palette"></i>Makeup Artists</label></div>
+          <div><input type="radio" name="category" id="c7"><label for="c7"><i class="fa-solid fa-scissors"></i>Barbers & Hairdressers</label></div>
+          <div><input type="radio" name="category" id="c8"><label for="c8"><i class="fa-solid fa-shirt"></i>Tailors & Designers</label></div>
+          <div><input type="radio" name="category" id="c9"><label for="c9"><i class="fa-solid fa-crown"></i>Matrons</label></div>
+          <div><input type="radio" name="category" id="c10"><label for="c10"><i class="fa-solid fa-utensils"></i>Caterers & Chefs</label></div>
+          <div><input type="radio" name="category" id="c11"><label for="c11"><i class="fa-solid fa-cake-candles"></i>Cakes</label></div>
+          <div><input type="radio" name="category" id="c12"><label for="c12"><i class="fa-solid fa-chair"></i>Chairs & Tables</label></div>
+          <div><input type="radio" name="category" id="c13"><label for="c13"><i class="fa-solid fa-campground"></i>Tents</label></div>
+          <div><input type="radio" name="category" id="c14"><label for="c14"><i class="fa-solid fa-fire-burner"></i>Pots & Chafing Dishes</label></div>
+          <div><input type="radio" name="category" id="c15"><label for="c15"><i class="fa-solid fa-volume-high"></i>Sound & Lighting</label></div>
+          <div><input type="radio" name="category" id="c16"><label for="c16"><i class="fa-solid fa-star"></i>Event Decorators</label></div>
+          <div><input type="radio" name="category" id="c17"><label for="c17"><i class="fa-solid fa-ring"></i>Wedding Planners</label></div>
+          <div><input type="radio" name="category" id="c18"><label for="c18"><i class="fa-solid fa-ellipsis"></i>Other Event Services</label></div>
+        </div>
+        <div class="flex-between" style="margin-top:24px;">
+          <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button type="button" class="btn btn-gold next-step">Continue <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-panel panel">
+        <h3>Business Location</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City / Town</label>
+            <select class="form-control">
+              <option>Lusaka</option><option>Ndola</option><option>Kitwe</option><option>Livingstone</option><option>Kabwe</option><option>Chingola</option><option>Solwezi</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Area / Suburb</label><input type="text" class="form-control" placeholder="e.g. Kabulonga"></div>
+        </div>
+        <div class="form-group"><label>Full Address</label><input type="text" class="form-control" placeholder="Street address"></div>
+        <div class="form-group">
+          <label>Pin Your Location on the Map</label>
+          <div class="map-embed">
+            <iframe src="https://www.google.com/maps?q=Lusaka,Zambia&output=embed" width="100%" height="100%" style="border:0;" loading="lazy" title="Pick location"></iframe>
+          </div>
+        </div>
+        <label class="form-check"><input type="checkbox"> I also serve other cities / travel for events</label>
+        <div class="flex-between" style="margin-top:24px;">
+          <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button type="button" class="btn btn-gold next-step">Continue <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-panel panel">
+        <h3>Upload Your Portfolio</h3>
+        <p style="font-size:.88rem;">Add photos and videos of your past work — this is what customers see first.</p>
+        <div class="upload-box">
+          <input type="file" multiple accept="image/*,video/*" style="display:none;">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <strong class="upload-label">Click to upload photos & videos</strong>
+          <p style="margin:6px 0 0;font-size:.8rem;">JPG, PNG or MP4 — up to 20 files</p>
+        </div>
+        <div class="form-group" style="margin-top:20px;"><label>Business Logo</label><input type="file" class="form-control" accept="image/*"></div>
+        <div class="flex-between" style="margin-top:24px;">
+          <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button type="button" class="btn btn-gold next-step">Continue <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-panel panel">
+        <h3>Pricing & Social Links</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Starting Price (ZMW)</label><input type="number" class="form-control" placeholder="e.g. 3500"></div>
+          <div class="form-group">
+            <label>Price Unit</label>
+            <select class="form-control"><option>Per event</option><option>Per day</option><option>Per hour</option><option>Per plate</option><option>Per item</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>Package Details (optional)</label><textarea class="form-control" placeholder="Describe your packages/tiers…"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Facebook Page URL</label><input type="url" class="form-control" placeholder="https://facebook.com/…"></div>
+          <div class="form-group"><label>Instagram URL</label><input type="url" class="form-control" placeholder="https://instagram.com/…"></div>
+        </div>
+        <div class="form-group"><label>TikTok / Website (optional)</label><input type="url" class="form-control" placeholder="https://…"></div>
+        <label class="form-check" style="margin-bottom:20px;"><input type="checkbox" required> I confirm this information is accurate and agree to EventHub's <a href="#" style="color:var(--gold-dark);">Vendor Terms</a></label>
+        <div class="flex-between">
+          <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button type="submit" class="btn btn-gold">Submit for Approval <i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+<!-- Success modal -->
+<div class="modal-overlay" id="submitted-modal">
+  <div class="modal-box" style="text-align:center;">
+    <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <i class="fa-solid fa-circle-check" style="font-size:3rem;color:var(--gold);margin-bottom:16px;"></i>
+    <h3>Application Submitted!</h3>
+    <p>Thanks for registering with EventHub. Our admin team will review your business and notify you once approved — usually within 24–48 hours.</p>
+    <a href="index.html" class="btn btn-gold btn-block">Back to Homepage</a>
+  </div>
+</div>
+
+<footer class="footer" style="margin-top:60px;">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2026 EventHub Zambia. All rights reserved.</span>
+      <span>Find. Compare. Connect. Celebrate.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
