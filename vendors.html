@@ -138,7 +138,7 @@
           </div>
         </div>
 
-        <div class="vendor-grid">
+        <div class="vendor-grid" id="vendor-grid">
 
           <div class="vendor-card" data-cat="venues" data-rating="4.8" data-price="8500" data-name="Silverleaf Gardens">
             <div class="vendor-media">
@@ -404,7 +404,7 @@
 
         </div>
 
-        <div class="pagination">
+        <div class="pagination" id="pagination">
           <a href="#" class="active">1</a>
           <a href="#">2</a>
           <a href="#">3</a>
@@ -470,6 +470,135 @@
 </footer>
 
 <button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+(function () {
+  var grid = document.getElementById('vendor-grid');
+  var staticGridHTML = grid.innerHTML; // keep the bundled demo as a fallback
+  var currentPage = 1;
+  var lastParams = {};
+
+  function starsHtml(rating) {
+    var full = Math.floor(rating), half = rating - full >= 0.5;
+    var html = '';
+    for (var i = 0; i < full; i++) html += '<i class="fa-solid fa-star"></i>';
+    if (half) html += '<i class="fa-solid fa-star-half-stroke"></i>';
+    for (var i = full + (half ? 1 : 0); i < 5; i++) html += '<i class="fa-regular fa-star"></i>';
+    return html;
+  }
+
+  function vendorCardHtml(v) {
+    var tag = v.is_featured ? '<span class="vendor-tag"><i class="fa-solid fa-crown"></i> Featured</span>'
+      : (v.is_verified ? '<span class="vendor-tag"><i class="fa-solid fa-circle-check"></i> Verified</span>'
+      : '<span class="vendor-tag external"><i class="fa-solid fa-map-pin"></i> Discovered</span>');
+    var loc = [v.area || v.city, v.distance_km != null ? v.distance_km + ' km' : null].filter(Boolean).join(' · ');
+    var actions = v.is_verified || v.phone
+      ? '<a href="vendor-profile.html?slug=' + v.slug + '" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>' +
+        '<a href="tel:' + (v.phone || '') + '" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>' +
+        '<a href="https://wa.me/' + (v.whatsapp || v.phone || '').replace(/[^0-9]/g, '') + '" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>'
+      : '<a href="vendor-profile.html?slug=' + v.slug + '" class="btn btn-outline-dark btn-block"><i class="fa-solid fa-eye"></i> View</a>' +
+        '<a href="#" class="btn btn-gold"><i class="fa-solid fa-flag"></i></a>';
+
+    return '<div class="vendor-card" data-cat="' + (v.category ? v.category.slug : '') + '" data-rating="' + v.rating_avg + '" data-price="' + (v.price_from || 0) + '" data-name="' + v.business_name + '">' +
+      '<div class="vendor-media"><img src="' + (v.cover_path || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=800&auto=format&fit=crop') + '" alt="' + v.business_name + '">' + tag +
+      '<button class="fav-btn" data-vendor-id="' + v.id + '" data-vendor-name="' + v.business_name + '"><i class="fa-solid fa-heart"></i></button></div>' +
+      '<div class="vendor-body"><span class="vendor-cat">' + (v.category ? v.category.name : '') + '</span><h4>' + v.business_name + '</h4>' +
+      '<div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> ' + loc + '</div>' +
+      '<div class="vendor-meta"><div class="stars">' + starsHtml(v.rating_avg) + '<span>' + v.rating_avg.toFixed(1) + ' (' + v.rating_count + ')</span></div>' +
+      '<div class="price-from">K' + Number(v.price_from || 0).toLocaleString() + '<small>/' + (v.price_unit || 'event').replace('per ', '') + '</small></div></div>' +
+      '<div class="vendor-actions">' + actions + '</div></div></div>';
+  }
+
+  function renderPagination(meta) {
+    var el = document.getElementById('pagination');
+    if (!meta || meta.last_page <= 1) { el.innerHTML = ''; return; }
+    var html = '';
+    for (var p = 1; p <= meta.last_page; p++) {
+      html += '<a href="#" data-page="' + p + '" class="' + (p === meta.current_page ? 'active' : '') + '">' + p + '</a>';
+    }
+    el.innerHTML = html;
+    el.querySelectorAll('a[data-page]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        currentPage = parseInt(a.getAttribute('data-page'), 10);
+        loadVendors(lastParams);
+        window.scrollTo({ top: grid.offsetTop - 120, behavior: 'smooth' });
+      });
+    });
+  }
+
+  function loadVendors(params) {
+    lastParams = params || {};
+    var query = Object.assign({ page: currentPage, per_page: 9 }, lastParams);
+    Object.keys(query).forEach(function (k) { if (query[k] === '' || query[k] == null) delete query[k]; });
+
+    EH_API.vendors(query).then(function (res) {
+      if (!res.data.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-magnifying-glass"></i><h3>No vendors found</h3><p>Try a different search or clear your filters.</p></div>';
+      } else {
+        grid.innerHTML = res.data.map(vendorCardHtml).join('');
+      }
+      var countEl = document.getElementById('results-count');
+      if (countEl) countEl.textContent = res.meta ? res.meta.total : res.data.length;
+      renderPagination(res.meta);
+      if (window.EH_refreshFavButtons) window.EH_refreshFavButtons();
+    }).catch(function () {
+      console.info('EventHub API not reachable — showing bundled demo vendors instead.');
+    });
+  }
+
+  function collectFilterParams() {
+    var params = {};
+    var q = document.getElementById('browse-search-q');
+    if (q && q.value.trim()) params.q = q.value.trim();
+    var checkedCats = Array.prototype.slice.call(document.querySelectorAll('.filter-option input[data-cat]:checked'));
+    if (checkedCats.length === 1) params.category = checkedCats[0].getAttribute('data-cat');
+    var priceRange = document.getElementById('price-range');
+    if (priceRange) params.max_price = priceRange.value;
+    var sortSelect = document.getElementById('sort-select');
+    if (sortSelect && sortSelect.value !== 'relevance') {
+      params.sort = sortSelect.value === 'name' ? 'name' : sortSelect.value.replace('-', '_');
+    }
+    return params;
+  }
+
+  var applyBtn = document.getElementById('apply-filters');
+  if (applyBtn) {
+    applyBtn.addEventListener('click', function () {
+      currentPage = 1;
+      loadVendors(collectFilterParams());
+    });
+  }
+  var sortSelect = document.getElementById('sort-select');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function () {
+      currentPage = 1;
+      loadVendors(collectFilterParams());
+    });
+  }
+
+  // Initial load from URL query params (?q=&category=&location=)
+  document.addEventListener('DOMContentLoaded', function () {
+    var urlParams = new URLSearchParams(window.location.search);
+    var initial = {};
+    if (urlParams.get('q')) initial.q = urlParams.get('q');
+    if (urlParams.get('category')) initial.category = urlParams.get('category');
+
+    if (urlParams.get('location') === 'near-me' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        initial.lat = pos.coords.latitude;
+        initial.lng = pos.coords.longitude;
+        initial.radius_km = 30;
+        loadVendors(initial);
+      }, function () {
+        loadVendors(initial);
+      });
+    } else {
+      loadVendors(initial);
+    }
+  });
+})();
+</script>
 </body>
 </html>

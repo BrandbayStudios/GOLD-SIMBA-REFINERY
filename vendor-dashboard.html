@@ -63,12 +63,12 @@
       </div>
 
       <div class="kpi-grid">
-        <div class="kpi-card"><i class="fa-solid fa-eye"></i><strong>3,482</strong><span>Profile Views</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong>28</strong><span>Total Enquiries</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong>14</strong><span>Bookings</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong>4.8</strong><span>Average Rating</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-heart"></i><strong>96</strong><span>Times Favourited</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-clock"></i><strong>1.2h</strong><span>Avg. Response Time</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-eye"></i><strong id="vkpi-views">3,482</strong><span>Profile Views</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong id="vkpi-enquiries">28</strong><span>Total Enquiries</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong id="vkpi-bookings">14</strong><span>Bookings</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong id="vkpi-rating">4.8</strong><span>Average Rating</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-heart"></i><strong id="vkpi-favourited">96</strong><span>Times Favourited</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-clock"></i><strong id="vkpi-response">1.2h</strong><span>Avg. Response Time</span></div>
       </div>
 
       <div class="panel">
@@ -181,7 +181,7 @@
       <div class="panel">
         <table class="data-table">
           <thead><tr><th>Customer</th><th>Event Date</th><th>Message</th><th>Status</th><th></th></tr></thead>
-          <tbody>
+          <tbody id="enquiries-tbody">
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop">Chileshe Banda</td><td>14 Dec 2026</td><td>Signature Wedding, 300 guests</td><td><span class="status-pill new">New</span></td><td class="table-actions"><button data-modal-open="#reply-modal"><i class="fa-solid fa-reply"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop">Natasha Mumba</td><td>02 Jan 2027</td><td>Corporate anniversary, 150 pax</td><td><span class="status-pill pending">Responded</span></td><td class="table-actions"><button data-modal-open="#reply-modal"><i class="fa-solid fa-reply"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop">Mwansa Phiri</td><td>20 Nov 2026</td><td>Birthday party availability</td><td><span class="status-pill approved">Booked</span></td><td class="table-actions"><button data-modal-open="#reply-modal"><i class="fa-solid fa-reply"></i></button></td></tr>
@@ -277,6 +277,7 @@
   </div>
 </div>
 
+<script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
   document.querySelectorAll('[data-tab-jump]').forEach(function (el) {
@@ -284,6 +285,75 @@
       document.querySelector('.dash-nav [data-tab="' + el.getAttribute('data-tab-jump') + '"]').click();
     });
   });
+
+  // Demo-browsable page (Silverleaf Gardens sample data) unless an actual
+  // vendor is logged in, in which case we swap in their live stats/enquiries.
+  var isVendor = EH_API.isLoggedIn() && EH_API.getUser() && EH_API.getUser().role === 'vendor';
+
+  if (isVendor) {
+    var vp = EH_API.getVendorProfile();
+    if (vp) {
+      var profileNameEls = document.querySelectorAll('.dash-profile strong');
+      profileNameEls.forEach(function (el) { el.textContent = vp.business_name; });
+      var statusEl = document.querySelector('.dash-profile span');
+      if (statusEl) {
+        statusEl.innerHTML = vp.status === 'approved'
+          ? '<i class="fa-solid fa-circle-check" style="color:#4caf50;"></i> Approved & Live'
+          : '<i class="fa-solid fa-hourglass-half" style="color:#a3720c;"></i> Pending Admin Approval';
+      }
+    }
+
+    EH_API.vendorStats().then(function (s) {
+      setText('vkpi-views', s.profile_views.toLocaleString());
+      setText('vkpi-enquiries', s.total_enquiries.toLocaleString());
+      setText('vkpi-bookings', s.bookings.toLocaleString());
+      setText('vkpi-rating', s.average_rating.toFixed(1));
+      setText('vkpi-favourited', s.favourited_count.toLocaleString());
+      setText('vkpi-response', s.response_time_minutes ? (s.response_time_minutes / 60).toFixed(1) + 'h' : '—');
+      var badge = document.querySelector('.dash-nav [data-tab="dash-enquiries"] .badge');
+      if (badge) badge.textContent = s.new_enquiries;
+    }).catch(function () {});
+
+    EH_API.vendorEnquiries().then(function (res) {
+      var tbody = document.getElementById('enquiries-tbody');
+      if (!res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray);padding:30px;">No enquiries yet.</td></tr>';
+        return;
+      }
+      var statusClass = { new: 'new', responded: 'pending', booked: 'approved', closed: 'rejected' };
+      tbody.innerHTML = res.data.map(function (e) {
+        var name = e.user ? e.user.name : (e.guest_name || 'Guest');
+        return '<tr data-enquiry-id="' + e.id + '"><td class="td-vendor">' + name + '</td>' +
+          '<td>' + (e.event_date ? new Date(e.event_date).toLocaleDateString() : '—') + '</td>' +
+          '<td>' + (e.message || '—') + '</td>' +
+          '<td><span class="status-pill ' + (statusClass[e.status] || 'new') + '">' + e.status.charAt(0).toUpperCase() + e.status.slice(1) + '</span></td>' +
+          '<td class="table-actions"><button data-mark-responded title="Mark responded"><i class="fa-solid fa-reply"></i></button></td></tr>';
+      }).join('');
+
+      tbody.querySelectorAll('[data-mark-responded]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('tr');
+          var id = row.getAttribute('data-enquiry-id');
+          EH_API.vendorUpdateEnquiryStatus(id, 'responded').then(function () {
+            row.querySelector('.status-pill').outerHTML = '<span class="status-pill pending">Responded</span>';
+            EH_toast('Enquiry marked as responded.', 'fa-circle-check');
+          }).catch(function (err) { EH_toast(err.message || 'Update failed.', 'fa-triangle-exclamation'); });
+        });
+      });
+    }).catch(function () {});
+  } else {
+    var banner = document.createElement('div');
+    banner.className = 'panel';
+    banner.style.cssText = 'background:#fdf2d8;border-color:#f0d998;margin-bottom:20px;';
+    banner.innerHTML = '<strong>Demo mode.</strong> Showing sample data for Silverleaf Gardens — <a href="login.html" style="color:var(--gold-dark);font-weight:700;">log in as a vendor</a> to manage your own live profile.';
+    var main = document.querySelector('.dash-main');
+    main.insertBefore(banner, main.firstChild.nextSibling);
+  }
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
 </script>
 </body>
 </html>

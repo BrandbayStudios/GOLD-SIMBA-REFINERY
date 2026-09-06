@@ -68,25 +68,36 @@ document.addEventListener('DOMContentLoaded', function () {
     var badge = document.querySelector('[data-fav-count]');
     if (badge) badge.textContent = favs.length;
   }
+  window.EH_refreshFavButtons = refreshFavButtons;
 
-  document.querySelectorAll('.fav-btn[data-vendor-id]').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var id = btn.getAttribute('data-vendor-id');
-      var name = btn.getAttribute('data-vendor-name') || 'Vendor';
-      var favs = getFavs();
-      var idx = favs.indexOf(id);
-      if (idx > -1) {
-        favs.splice(idx, 1);
-        EH_toast(name + ' removed from favourites', 'fa-heart-crack');
-      } else {
-        favs.push(id);
-        EH_toast(name + ' saved to favourites', 'fa-heart');
-      }
-      setFavs(favs);
-      refreshFavButtons();
-    });
+  // Delegated (not per-element) so favourite buttons on cards injected later
+  // by API-backed pages (e.g. vendors.html live search results) still work.
+  document.body.addEventListener('click', function (e) {
+    var btn = e.target.closest('.fav-btn[data-vendor-id]');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var id = btn.getAttribute('data-vendor-id');
+    var name = btn.getAttribute('data-vendor-name') || 'Vendor';
+    var favs = getFavs();
+    var idx = favs.indexOf(id);
+    if (idx > -1) {
+      favs.splice(idx, 1);
+      EH_toast(name + ' removed from favourites', 'fa-heart-crack');
+    } else {
+      favs.push(id);
+      EH_toast(name + ' saved to favourites', 'fa-heart');
+    }
+    setFavs(favs);
+    refreshFavButtons();
+
+    // Real API ids are numeric (v.id from the backend); the bundled static
+    // demo cards use placeholder ids like "v1" which aren't real vendor
+    // rows, so only sync to the server when it's an actual id and someone
+    // is logged in — otherwise this stays a local-only favourite.
+    if (window.EH_API && EH_API.isLoggedIn() && /^\d+$/.test(id)) {
+      EH_API.toggleFavourite(id).catch(function () {});
+    }
   });
   refreshFavButtons();
 
@@ -195,11 +206,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (current > 0) { current--; showStep(current); }
       });
     });
-    stepForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var modal = document.getElementById('submitted-modal');
-      if (modal) modal.classList.add('open');
-    });
+    // Actual submission (API call + success modal) is wired per-page, since it
+    // needs page-specific field collection — see vendor-register.html.
   }
 
   /* ---------- Upload box triggers hidden file input & previews name ---------- */

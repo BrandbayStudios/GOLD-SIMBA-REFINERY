@@ -56,12 +56,12 @@
     <div id="a-overview" data-tab-panel-group="admin" class="tab-panel active">
       <div class="dash-topbar"><div><h2 style="margin:0;">Platform Overview</h2><p style="margin:4px 0 0;">Snapshot of EventHub Zambia's marketplace activity.</p></div></div>
       <div class="kpi-grid">
-        <div class="kpi-card"><i class="fa-solid fa-store"></i><strong>1,214</strong><span>Total Vendors</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-users"></i><strong>9,860</strong><span>Customers</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong>3,402</strong><span>Enquiries</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong>1,568</strong><span>Bookings</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong>6,204</strong><span>Reviews</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-hourglass-half"></i><strong>7</strong><span>Pending Approvals</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-store"></i><strong id="kpi-vendors">1,214</strong><span>Total Vendors</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-users"></i><strong id="kpi-customers">9,860</strong><span>Customers</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong id="kpi-enquiries">3,402</strong><span>Enquiries</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong id="kpi-bookings">1,568</strong><span>Bookings</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong id="kpi-reviews">6,204</strong><span>Reviews</span></div>
+        <div class="kpi-card"><i class="fa-solid fa-hourglass-half"></i><strong id="kpi-pending">7</strong><span>Pending Approvals</span></div>
       </div>
 
       <div class="panel">
@@ -93,7 +93,7 @@
         <p style="font-size:.85rem;">New vendor registrations must be reviewed and approved before they appear publicly on EventHub.</p>
         <table class="data-table">
           <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody>
+          <tbody id="approvals-tbody">
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=100&auto=format&fit=crop">Mama Beulah's Kitchen</td><td>Caterer & Chef</td><td>Chelston, Lusaka</td><td>2 days ago</td><td><span class="status-pill pending">Pending</span></td>
               <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents, Chairs & Tables</td><td>Ndola Central</td><td>3 days ago</td><td><span class="status-pill pending">Pending</span></td>
@@ -330,6 +330,7 @@
   </div>
 </div>
 
+<script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
   document.querySelectorAll('.jump-approvals').forEach(function (el) {
@@ -337,6 +338,71 @@
       document.querySelector('.dash-nav [data-tab="a-approvals"]').click();
     });
   });
+
+  // This page is browsable as a demo without logging in. If an admin *is*
+  // logged in (via login.html), swap the KPI cards and approvals queue for
+  // live API data instead of the bundled sample rows.
+  var isAdmin = EH_API.isLoggedIn() && EH_API.getUser() && EH_API.getUser().role === 'admin';
+
+  if (isAdmin) {
+    EH_API.adminStats().then(function (s) {
+      setText('kpi-vendors', s.total_vendors.toLocaleString());
+      setText('kpi-customers', s.total_customers.toLocaleString());
+      setText('kpi-enquiries', s.total_enquiries.toLocaleString());
+      setText('kpi-bookings', s.total_bookings.toLocaleString());
+      setText('kpi-reviews', s.total_reviews.toLocaleString());
+      setText('kpi-pending', s.pending_approvals.toLocaleString());
+      var badge = document.querySelector('.dash-nav [data-tab="a-approvals"] .badge');
+      if (badge) badge.textContent = s.pending_approvals;
+    }).catch(function () {});
+
+    loadApprovals();
+  } else {
+    var banner = document.createElement('div');
+    banner.className = 'panel';
+    banner.style.cssText = 'background:#fdf2d8;border-color:#f0d998;margin-bottom:20px;';
+    banner.innerHTML = '<strong>Demo mode.</strong> Showing sample data — <a href="login.html" style="color:var(--gold-dark);font-weight:700;">log in as admin@eventhub.zm</a> to manage live vendors, approvals and reports.';
+    var main = document.querySelector('.dash-main');
+    main.insertBefore(banner, main.firstChild.nextSibling);
+  }
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function loadApprovals() {
+    EH_API.adminVendors({ status: 'pending', per_page: 20 }).then(function (res) {
+      var tbody = document.getElementById('approvals-tbody');
+      if (!res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:30px;">No pending applications right now.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = res.data.map(function (v) {
+        return '<tr data-vendor-id="' + v.id + '"><td class="td-vendor"><img src="' + (v.cover_path || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop') + '">' + v.business_name + '</td>' +
+          '<td>' + (v.category ? v.category.name : '—') + '</td><td>' + [v.area, v.city].filter(Boolean).join(', ') + '</td>' +
+          '<td>' + new Date(v.created_at).toLocaleDateString() + '</td><td><span class="status-pill pending">Pending</span></td>' +
+          '<td class="table-actions"><button data-live-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button>' +
+          '<button data-live-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>' +
+          '<a href="vendor-profile.html?slug=' + v.slug + '" target="_blank" title="View"><button type="button"><i class="fa-solid fa-eye"></i></button></a></td></tr>';
+      }).join('');
+
+      tbody.querySelectorAll('[data-live-action]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('tr');
+          var id = row.getAttribute('data-vendor-id');
+          var status = btn.getAttribute('data-live-action') === 'approve' ? 'approved' : 'rejected';
+          EH_API.adminUpdateVendorStatus(id, status).then(function (res) {
+            EH_toast(res.data.business_name + ' ' + status + '.', status === 'approved' ? 'fa-circle-check' : 'fa-ban');
+            row.style.opacity = '0';
+            setTimeout(function () { row.remove(); }, 250);
+          }).catch(function (err) {
+            EH_toast(err.message || 'Action failed.', 'fa-triangle-exclamation');
+          });
+        });
+      });
+    }).catch(function () {});
+  }
 </script>
 </body>
 </html>

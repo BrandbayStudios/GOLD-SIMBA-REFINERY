@@ -54,15 +54,16 @@
       <div class="step-panel active panel">
         <h3>Business Information</h3>
         <div class="form-row">
-          <div class="form-group"><label>Business Name</label><input type="text" class="form-control" placeholder="e.g. Silverleaf Gardens" required></div>
-          <div class="form-group"><label>Owner / Contact Name</label><input type="text" class="form-control" placeholder="Full name" required></div>
+          <div class="form-group"><label>Business Name</label><input type="text" name="business_name" class="form-control" placeholder="e.g. Silverleaf Gardens" required></div>
+          <div class="form-group"><label>Owner / Contact Name</label><input type="text" name="owner_name" class="form-control" placeholder="Full name" required></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Phone Number</label><input type="tel" class="form-control" placeholder="+260…" required></div>
-          <div class="form-group"><label>WhatsApp Number</label><input type="tel" class="form-control" placeholder="+260…"></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" name="phone" class="form-control" placeholder="+260…" required></div>
+          <div class="form-group"><label>WhatsApp Number</label><input type="tel" name="whatsapp" class="form-control" placeholder="+260…"></div>
         </div>
-        <div class="form-group"><label>Business Email</label><input type="email" class="form-control" placeholder="business@example.com" required></div>
-        <div class="form-group"><label>Business Description</label><textarea class="form-control" placeholder="Tell customers about your business…"></textarea></div>
+        <div class="form-group"><label>Business Email</label><input type="email" name="email" class="form-control" placeholder="business@example.com" required></div>
+        <div class="form-group"><label>Password</label><input type="password" name="password" class="form-control" placeholder="Create a password for your vendor account" required minlength="6"></div>
+        <div class="form-group"><label>Business Description</label><textarea name="description" class="form-control" placeholder="Tell customers about your business…"></textarea></div>
         <div class="flex-between">
           <span></span>
           <button type="button" class="btn btn-gold next-step">Continue <i class="fa-solid fa-arrow-right"></i></button>
@@ -73,25 +74,25 @@
       <div class="step-panel panel">
         <h3>Select Your Category</h3>
         <p style="font-size:.88rem;">Choose the category that best describes your primary service. You can add more later.</p>
-        <div class="category-pick">
-          <div><input type="radio" name="category" id="c1"><label for="c1"><i class="fa-solid fa-landmark"></i>Venues & Event Centres</label></div>
-          <div><input type="radio" name="category" id="c2"><label for="c2"><i class="fa-solid fa-microphone"></i>MCs & DJs</label></div>
-          <div><input type="radio" name="category" id="c3"><label for="c3"><i class="fa-solid fa-camera"></i>Photographers & Videographers</label></div>
-          <div><input type="radio" name="category" id="c4"><label for="c4"><i class="fa-solid fa-music"></i>Choreographers</label></div>
-          <div><input type="radio" name="category" id="c5"><label for="c5"><i class="fa-solid fa-car"></i>Car Hire & Decoration</label></div>
-          <div><input type="radio" name="category" id="c6"><label for="c6"><i class="fa-solid fa-palette"></i>Makeup Artists</label></div>
-          <div><input type="radio" name="category" id="c7"><label for="c7"><i class="fa-solid fa-scissors"></i>Barbers & Hairdressers</label></div>
-          <div><input type="radio" name="category" id="c8"><label for="c8"><i class="fa-solid fa-shirt"></i>Tailors & Designers</label></div>
-          <div><input type="radio" name="category" id="c9"><label for="c9"><i class="fa-solid fa-crown"></i>Matrons</label></div>
-          <div><input type="radio" name="category" id="c10"><label for="c10"><i class="fa-solid fa-utensils"></i>Caterers & Chefs</label></div>
-          <div><input type="radio" name="category" id="c11"><label for="c11"><i class="fa-solid fa-cake-candles"></i>Cakes</label></div>
-          <div><input type="radio" name="category" id="c12"><label for="c12"><i class="fa-solid fa-chair"></i>Chairs & Tables</label></div>
-          <div><input type="radio" name="category" id="c13"><label for="c13"><i class="fa-solid fa-campground"></i>Tents</label></div>
-          <div><input type="radio" name="category" id="c14"><label for="c14"><i class="fa-solid fa-fire-burner"></i>Pots & Chafing Dishes</label></div>
-          <div><input type="radio" name="category" id="c15"><label for="c15"><i class="fa-solid fa-volume-high"></i>Sound & Lighting</label></div>
-          <div><input type="radio" name="category" id="c16"><label for="c16"><i class="fa-solid fa-star"></i>Event Decorators</label></div>
-          <div><input type="radio" name="category" id="c17"><label for="c17"><i class="fa-solid fa-ring"></i>Wedding Planners</label></div>
-          <div><input type="radio" name="category" id="c18"><label for="c18"><i class="fa-solid fa-ellipsis"></i>Other Event Services</label></div>
+        <div class="category-pick" id="category-pick">
+          <div><input type="radio" name="category_id" id="c1"><label for="c1"><i class="fa-solid fa-landmark"></i>Venues & Event Centres</label></div>
+          <div><input type="radio" name="category_id" id="c2"><label for="c2"><i class="fa-solid fa-microphone"></i>MCs & DJs</label></div>
+          <div><input type="radio" name="category_id" id="c3"><label for="c3"><i class="fa-solid fa-camera"></i>Photographers & Videographers</label></div>
+          <div><input type="radio" name="category_id" id="c4"><label for="c4"><i class="fa-solid fa-music"></i>Choreographers</label></div>
+          <div><input type="radio" name="category_id" id="c5"><label for="c5"><i class="fa-solid fa-car"></i>Car Hire & Decoration</label></div>
+          <div><input type="radio" name="category_id" id="c6"><label for="c6"><i class="fa-solid fa-palette"></i>Makeup Artists</label></div>
+          <div><input type="radio" name="category_id" id="c7"><label for="c7"><i class="fa-solid fa-scissors"></i>Barbers & Hairdressers</label></div>
+          <div><input type="radio" name="category_id" id="c8"><label for="c8"><i class="fa-solid fa-shirt"></i>Tailors & Designers</label></div>
+          <div><input type="radio" name="category_id" id="c9"><label for="c9"><i class="fa-solid fa-crown"></i>Matrons</label></div>
+          <div><input type="radio" name="category_id" id="c10"><label for="c10"><i class="fa-solid fa-utensils"></i>Caterers & Chefs</label></div>
+          <div><input type="radio" name="category_id" id="c11"><label for="c11"><i class="fa-solid fa-cake-candles"></i>Cakes</label></div>
+          <div><input type="radio" name="category_id" id="c12"><label for="c12"><i class="fa-solid fa-chair"></i>Chairs & Tables</label></div>
+          <div><input type="radio" name="category_id" id="c13"><label for="c13"><i class="fa-solid fa-campground"></i>Tents</label></div>
+          <div><input type="radio" name="category_id" id="c14"><label for="c14"><i class="fa-solid fa-fire-burner"></i>Pots & Chafing Dishes</label></div>
+          <div><input type="radio" name="category_id" id="c15"><label for="c15"><i class="fa-solid fa-volume-high"></i>Sound & Lighting</label></div>
+          <div><input type="radio" name="category_id" id="c16"><label for="c16"><i class="fa-solid fa-star"></i>Event Decorators</label></div>
+          <div><input type="radio" name="category_id" id="c17"><label for="c17"><i class="fa-solid fa-ring"></i>Wedding Planners</label></div>
+          <div><input type="radio" name="category_id" id="c18"><label for="c18"><i class="fa-solid fa-ellipsis"></i>Other Event Services</label></div>
         </div>
         <div class="flex-between" style="margin-top:24px;">
           <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -105,13 +106,13 @@
         <div class="form-row">
           <div class="form-group">
             <label>City / Town</label>
-            <select class="form-control">
+            <select name="city" class="form-control">
               <option>Lusaka</option><option>Ndola</option><option>Kitwe</option><option>Livingstone</option><option>Kabwe</option><option>Chingola</option><option>Solwezi</option>
             </select>
           </div>
-          <div class="form-group"><label>Area / Suburb</label><input type="text" class="form-control" placeholder="e.g. Kabulonga"></div>
+          <div class="form-group"><label>Area / Suburb</label><input type="text" name="area" class="form-control" placeholder="e.g. Kabulonga"></div>
         </div>
-        <div class="form-group"><label>Full Address</label><input type="text" class="form-control" placeholder="Street address"></div>
+        <div class="form-group"><label>Full Address</label><input type="text" name="address" class="form-control" placeholder="Street address"></div>
         <div class="form-group">
           <label>Pin Your Location on the Map</label>
           <div class="map-embed">
@@ -146,18 +147,18 @@
       <div class="step-panel panel">
         <h3>Pricing & Social Links</h3>
         <div class="form-row">
-          <div class="form-group"><label>Starting Price (ZMW)</label><input type="number" class="form-control" placeholder="e.g. 3500"></div>
+          <div class="form-group"><label>Starting Price (ZMW)</label><input type="number" name="price_from" class="form-control" placeholder="e.g. 3500"></div>
           <div class="form-group">
             <label>Price Unit</label>
-            <select class="form-control"><option>Per event</option><option>Per day</option><option>Per hour</option><option>Per plate</option><option>Per item</option></select>
+            <select name="price_unit" class="form-control"><option value="per event">Per event</option><option value="per day">Per day</option><option value="per hour">Per hour</option><option value="per plate">Per plate</option><option value="per item">Per item</option></select>
           </div>
         </div>
         <div class="form-group"><label>Package Details (optional)</label><textarea class="form-control" placeholder="Describe your packages/tiers…"></textarea></div>
         <div class="form-row">
-          <div class="form-group"><label>Facebook Page URL</label><input type="url" class="form-control" placeholder="https://facebook.com/…"></div>
-          <div class="form-group"><label>Instagram URL</label><input type="url" class="form-control" placeholder="https://instagram.com/…"></div>
+          <div class="form-group"><label>Facebook Page URL</label><input type="url" name="facebook_url" class="form-control" placeholder="https://facebook.com/…"></div>
+          <div class="form-group"><label>Instagram URL</label><input type="url" name="instagram_url" class="form-control" placeholder="https://instagram.com/…"></div>
         </div>
-        <div class="form-group"><label>TikTok / Website (optional)</label><input type="url" class="form-control" placeholder="https://…"></div>
+        <div class="form-group"><label>TikTok / Website (optional)</label><input type="url" name="website_url" class="form-control" placeholder="https://…"></div>
         <label class="form-check" style="margin-bottom:20px;"><input type="checkbox" required> I confirm this information is accurate and agree to EventHub's <a href="#" style="color:var(--gold-dark);">Vendor Terms</a></label>
         <div class="flex-between">
           <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -189,6 +190,72 @@
   </div>
 </footer>
 
+<script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  // Match each static category radio to its real backend category_id by name,
+  // so submission always sends an id the API recognises.
+  document.addEventListener('DOMContentLoaded', function () {
+    EH_API.categories().then(function (res) {
+      var radios = document.querySelectorAll('#category-pick input[type=radio]');
+      res.data.forEach(function (cat) {
+        radios.forEach(function (radio) {
+          var label = document.querySelector('label[for="' + radio.id + '"]');
+          if (label && label.textContent.trim() === cat.name) {
+            radio.value = cat.id;
+          }
+        });
+      });
+    }).catch(function () {
+      console.info('EventHub API not reachable — category IDs will not be pre-filled.');
+    });
+  });
+
+  var form = document.getElementById('vendor-register-form');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('button[type=submit]');
+      var originalText = btn.innerHTML;
+
+      var categoryId = form.category_id.value;
+      if (!categoryId) {
+        EH_toast('Please choose a category in Step 2.', 'fa-triangle-exclamation');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
+
+      EH_API.registerVendor({
+        business_name: form.business_name.value.trim(),
+        owner_name: form.owner_name.value.trim(),
+        email: form.email.value.trim(),
+        password: form.password.value,
+        phone: form.phone.value.trim(),
+        whatsapp: form.whatsapp.value.trim() || undefined,
+        category_id: categoryId,
+        description: form.description.value.trim() || undefined,
+        city: form.city.value,
+        area: form.area.value.trim() || undefined,
+        address: form.address.value.trim() || undefined,
+        price_from: form.price_from.value || undefined,
+        price_unit: form.price_unit.value,
+        facebook_url: form.facebook_url.value.trim() || undefined,
+        instagram_url: form.instagram_url.value.trim() || undefined,
+        website_url: form.website_url.value.trim() || undefined,
+      }).then(function (res) {
+        EH_API.setToken(res.token);
+        EH_API.setUser(res.user);
+        EH_API.setVendorProfile(res.vendor_profile);
+        document.getElementById('submitted-modal').classList.add('open');
+      }).catch(function (err) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        EH_toast(err.message || 'Submission failed. Is the API running?', 'fa-triangle-exclamation');
+      });
+    });
+  }
+</script>
 </body>
 </html>

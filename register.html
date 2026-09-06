@@ -42,13 +42,13 @@
       </div>
 
       <div class="auth-panel" id="panel-customer" style="display:block;">
-        <form data-auth-form data-redirect="index.html">
+        <form id="customer-register-form">
           <div class="form-row">
-            <div class="form-group"><label>Full Name</label><input type="text" class="form-control" placeholder="Your name" required></div>
-            <div class="form-group"><label>Phone Number</label><input type="tel" class="form-control" placeholder="+260…" required></div>
+            <div class="form-group"><label>Full Name</label><input type="text" name="name" class="form-control" placeholder="Your name" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" name="phone" class="form-control" placeholder="+260…" required></div>
           </div>
-          <div class="form-group"><label>Email Address</label><input type="email" class="form-control" placeholder="you@example.com" required></div>
-          <div class="form-group"><label>Password</label><input type="password" class="form-control" placeholder="Create a password" required></div>
+          <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" placeholder="you@example.com" required></div>
+          <div class="form-group"><label>Password</label><input type="password" name="password" class="form-control" placeholder="Create a password" required minlength="6"></div>
           <label class="form-check" style="margin-bottom:20px;"><input type="checkbox" required> I agree to the <a href="#" style="color:var(--gold-dark);">Terms</a> & <a href="#" style="color:var(--gold-dark);">Privacy Policy</a></label>
           <button type="submit" class="btn btn-gold btn-block">Create Account</button>
         </form>
@@ -70,6 +70,35 @@
   </div>
 </div>
 
+<script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  var form = document.getElementById('customer-register-form');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('button[type=submit]');
+      var originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account…';
+
+      EH_API.registerCustomer({
+        name: form.name.value.trim(),
+        phone: form.phone.value.trim(),
+        email: form.email.value.trim(),
+        password: form.password.value,
+      }).then(function (res) {
+        EH_API.setToken(res.token);
+        EH_API.setUser(res.user);
+        EH_toast('Welcome to EventHub, ' + res.user.name + '!', 'fa-champagne-glasses');
+        setTimeout(function () { window.location.href = 'index.html'; }, 700);
+      }).catch(function (err) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        EH_toast(err.message || 'Sign up failed. Is the API running?', 'fa-triangle-exclamation');
+      });
+    });
+  }
+</script>
 </body>
 </html>

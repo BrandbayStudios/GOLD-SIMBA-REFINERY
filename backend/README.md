@@ -1,58 +1,149 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EventHub API — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel REST API for **EventHub Zambia**, the event services marketplace whose
+static HTML/CSS/JS frontend lives in the repository root. Built to the MVP
+brief's technology choice (Laravel/PHP, MySQL, REST API-ready for a future
+mobile app) using Laravel Sanctum for token auth.
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Quick start
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cd backend
+composer install
+cp .env.example .env      # already defaults to sqlite — see "Database" below
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate --seed
+php artisan serve          # http://localhost:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+The frontend (`../index.html` etc.) expects the API at `http://localhost:8000/api/v1`
+by default. Open the frontend with any static file server (e.g. `python3 -m
+http.server 8811` from the repo root) — CORS is wide open on `api/*` so the
+two can run on different ports. If your API runs somewhere else, set
+`window.EH_API_BASE` before `assets/js/api.js` loads on any page, e.g.:
 
-## Contributing
+```html
+<script>window.EH_API_BASE = 'https://api.eventhub.zm/api/v1';</script>
+<script src="assets/js/api.js"></script>
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Database
 
-## Code of Conduct
+Defaults to **SQLite** (`database/database.sqlite`) for a zero-config local
+setup. For production, per the brief, switch to MySQL by editing `.env`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=eventhub
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Security Vulnerabilities
+All queries (including the haversine "near me" search) were written to work
+on both drivers — no SQLite-only SQL.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Seeded demo accounts
 
-## License
+`php artisan migrate --seed` creates 18 categories, 7 Zambian cities, 14
+vendors (12 approved + 2 pending, matching the names/prices already in the
+static frontend demo), and:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@eventhub.zm` | `password` |
+| Vendor (Silverleaf Gardens) | `hello@silverleafgardens.zm` | `password` |
+| Customer | `chileshe@example.test` | `password` |
+
+(Every other seeded vendor/customer also uses the password `password`.)
+
+## Auth
+
+Sanctum personal-access tokens (bearer tokens), not cookie/SPA auth — the
+frontend is a separate static origin. Register/login return a `token`; send
+it as `Authorization: Bearer <token>` on subsequent requests. Roles are
+`customer`, `vendor`, `admin`, enforced by the `role:` route middleware.
+
+## API reference
+
+Base path: `/api/v1`. JSON in, JSON out.
+
+### Public
+
+| Method | Endpoint | Notes |
+|---|---|---|
+| GET | `/categories` | 18 categories with live vendor counts |
+| GET | `/locations` | Seeded Zambian cities |
+| GET | `/vendors` | Filters: `q`, `category` (slug), `city`, `min_price`, `max_price`, `min_rating`, `source` (`platform`\|`google_places`), `featured_only`, `lat`+`lng`+`radius_km` (near-me), `sort` (`rating`\|`price_low`\|`price_high`\|`name`), `page`, `per_page` |
+| GET | `/vendors/{slugOrId}` | Full profile incl. portfolio, packages, published reviews |
+| GET | `/vendors/{vendor}/reviews` | Paginated |
+| POST | `/vendors/{vendor}/enquiries` | Guest-allowed (`guest_name`+`guest_phone` required if not logged in) |
+| POST | `/auth/register` | Customer signup |
+| POST | `/auth/register-vendor` | Creates a `vendor`-role user + a `pending` `VendorProfile` in one call |
+| POST | `/auth/login` | Any role |
+
+### Authenticated (any logged-in user)
+
+| Method | Endpoint |
+|---|---|
+| POST | `/auth/logout` |
+| GET | `/auth/me` |
+| POST | `/vendors/{vendor}/reviews` |
+| POST | `/vendors/{vendor}/favourite` (toggle) |
+| GET | `/favourites` |
+| GET/POST | `/events`, `POST /events/{event}/vendors/{vendor}` ("save vendor to my event") |
+
+### Vendor dashboard (`role:vendor`, prefix `/vendor`)
+
+`stats`, `profile` (GET/PUT), `portfolio` (GET/POST/DELETE), `packages`
+(GET/POST/PUT/DELETE), `enquiries` (GET, `PATCH {id}` status), `bookings`
+(GET, `PATCH {id}` status).
+
+### Admin panel (`role:admin`, prefix `/admin`)
+
+`stats`, `vendors` (GET, `GET {id}`, `PATCH {id}/status` — the
+approve/reject step from the brief's Phase 1 flow, `DELETE {id}`),
+`customers` (GET, `DELETE {id}`), `categories` (full CRUD), `locations`
+(GET/POST/DELETE), `claims` (GET, `PATCH {id}` — approving a claim reassigns
+the `VendorProfile.user_id` to the claimant and flips `source` to
+`platform`), `reviews` (GET, `PATCH {id}` moderate, `DELETE {id}`),
+`enquiries` (GET), `bookings` (GET), `featured` (GET, `POST {vendor}`,
+`DELETE {vendor}`), `advertisements` (full CRUD), `reports` (monthly new
+vendors, enquiry→booking conversion, top categories by bookings).
+
+## Frontend integration
+
+`assets/js/api.js` (repo root) is a thin fetch wrapper (`window.EH_API`)
+consumed by `login.html`, `register.html`, `vendor-register.html`,
+`vendors.html`, `vendor-profile.html`, `vendor-dashboard.html` and
+`admin-dashboard.html`. Every one of those falls back to its bundled static
+demo content if the API is unreachable — open any page without running the
+backend at all and it still works as a demo, exactly as before this backend
+existed.
+
+`vendor-dashboard.html` and `admin-dashboard.html` specifically: they're
+browsable without logging in (sample data + a "Demo mode" banner). Log in as
+the seeded vendor or admin account above and they swap to live data —
+approving/rejecting a pending vendor in the admin Approvals tab is a real
+`PATCH /admin/vendors/{id}/status` call.
+
+## What's intentionally out of scope for this pass
+
+- File uploads: portfolio/logo/cover fields accept URLs (matching the
+  frontend's "paste a link" style forms); wiring actual multipart uploads to
+  cloud storage (S3-compatible, per the brief) is straightforward to add via
+  `Illuminate\Http\UploadedFile` + `Storage::disk('s3')` but wasn't built out.
+- Google Maps/Places integration for external business discovery — the data
+  model supports it (`VendorProfile.source = 'google_places'`,
+  `business_claims` table) but no live Places API calls are made.
+- Vendor calendar/availability persistence (the dashboard's calendar UI is
+  still demo-only client state).
+- WhatsApp/SMS delivery of enquiries — enquiries are stored and shown in the
+  vendor dashboard; no outbound notification is sent.
+
+## Tests
+
+None yet beyond the Laravel skeleton's default example tests. The
+`storage/logs/laravel.log` is the first place to look if an endpoint 500s.

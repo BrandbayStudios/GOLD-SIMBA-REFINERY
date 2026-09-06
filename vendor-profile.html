@@ -68,31 +68,31 @@
   <div class="breadcrumb" style="justify-content:flex-start;color:var(--gray);">
     <a href="index.html" style="color:var(--gray);">Home</a><span>/</span>
     <a href="vendors.html" style="color:var(--gray);">Find Vendors</a><span>/</span>
-    <a href="vendors.html?category=venues" style="color:var(--gray);">Venues</a><span>/</span>
-    <span style="color:var(--dark);font-weight:600;">Silverleaf Gardens</span>
+    <a href="vendors.html?category=venues" id="profile-category-link" style="color:var(--gray);">Venues</a><span>/</span>
+    <span style="color:var(--dark);font-weight:600;" id="profile-breadcrumb-name">Silverleaf Gardens</span>
   </div>
 
   <div class="profile-hero">
-    <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1600&auto=format&fit=crop" alt="Silverleaf Gardens cover">
+    <img id="profile-cover-img" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1600&auto=format&fit=crop" alt="Silverleaf Gardens cover">
   </div>
 
   <div class="profile-card">
-    <img class="profile-avatar" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=300&auto=format&fit=crop" alt="Silverleaf Gardens logo">
+    <img class="profile-avatar" id="profile-avatar-img" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=300&auto=format&fit=crop" alt="Silverleaf Gardens logo">
     <div>
       <div class="profile-name">
-        <h3 style="margin:0;">Silverleaf Gardens</h3>
-        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Platform Vendor</span>
+        <h3 style="margin:0;" id="profile-name">Silverleaf Gardens</h3>
+        <span class="verified-badge" id="profile-verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Platform Vendor</span>
       </div>
       <div class="profile-tags">
-        <span><i class="fa-solid fa-tag"></i> Event Centre & Venue</span>
-        <span><i class="fa-solid fa-location-dot"></i> Kabulonga, Lusaka</span>
-        <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span style="color:var(--dark);font-weight:600;">4.8 (96 reviews)</span></span>
+        <span><i class="fa-solid fa-tag"></i> <span id="profile-category-name">Event Centre & Venue</span></span>
+        <span><i class="fa-solid fa-location-dot"></i> <span id="profile-location">Kabulonga, Lusaka</span></span>
+        <span class="stars" id="profile-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span style="color:var(--dark);font-weight:600;" id="profile-rating-text">4.8 (96 reviews)</span></span>
       </div>
     </div>
     <div class="profile-actions">
-      <button class="fav-btn" style="position:static;background:var(--off-white);color:var(--dark);" data-vendor-id="v1" data-vendor-name="Silverleaf Gardens"><i class="fa-solid fa-heart"></i></button>
-      <a href="tel:+260971234567" class="btn btn-outline-dark"><i class="fa-solid fa-phone"></i> Call</a>
-      <a href="https://wa.me/260971234567" class="btn btn-dark"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+      <button class="fav-btn" id="profile-fav-btn" style="position:static;background:var(--off-white);color:var(--dark);" data-vendor-id="v1" data-vendor-name="Silverleaf Gardens"><i class="fa-solid fa-heart"></i></button>
+      <a href="tel:+260971234567" id="profile-call-link" class="btn btn-outline-dark"><i class="fa-solid fa-phone"></i> Call</a>
+      <a href="https://wa.me/260971234567" id="profile-whatsapp-link" class="btn btn-dark"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
       <button class="btn btn-gold" data-modal-open="#quote-modal"><i class="fa-solid fa-file-invoice"></i> Request Quote</button>
     </div>
   </div>
@@ -103,21 +103,23 @@
         <button class="active" data-tab="tab-about">About</button>
         <button data-tab="tab-portfolio">Portfolio</button>
         <button data-tab="tab-packages">Packages & Pricing</button>
-        <button data-tab="tab-reviews">Reviews (96)</button>
+        <button data-tab="tab-reviews" id="reviews-tab-btn">Reviews (96)</button>
         <button data-tab="tab-location">Location</button>
       </div>
 
       <div class="tab-panel active" id="tab-about" data-tab-panel-group="profile">
-        <h4>About Silverleaf Gardens</h4>
-        <p>Silverleaf Gardens is a premium outdoor and indoor event venue in Kabulonga, Lusaka, offering a beautifully landscaped garden setting for weddings, corporate functions and private parties. Our venue comfortably hosts up to 500 guests with dedicated parking, backup power and an in-house event coordination team.</p>
-        <p>We work closely with other EventHub vendors — caterers, decorators and sound & lighting teams — to make your event planning seamless from one venue.</p>
+        <h4 id="profile-about-heading">About Silverleaf Gardens</h4>
+        <div id="profile-description">
+          <p>Silverleaf Gardens is a premium outdoor and indoor event venue in Kabulonga, Lusaka, offering a beautifully landscaped garden setting for weddings, corporate functions and private parties. Our venue comfortably hosts up to 500 guests with dedicated parking, backup power and an in-house event coordination team.</p>
+          <p>We work closely with other EventHub vendors — caterers, decorators and sound & lighting teams — to make your event planning seamless from one venue.</p>
+        </div>
         <ul class="check-list" style="margin-top:24px;">
           <li><i class="fa-solid fa-circle-check"></i> Capacity: up to 500 guests</li>
           <li><i class="fa-solid fa-circle-check"></i> On-site parking for 120 vehicles</li>
           <li><i class="fa-solid fa-circle-check"></i> Backup generator & sound system included</li>
           <li><i class="fa-solid fa-circle-check"></i> In-house décor and catering partners available</li>
         </ul>
-        <div class="flex gap-12" style="margin-top:20px;flex-wrap:wrap;">
+        <div class="flex gap-12" style="margin-top:20px;flex-wrap:wrap;" id="profile-socials">
           <span class="chip"><i class="fa-brands fa-facebook-f"></i> facebook.com/silverleafgardens</span>
           <span class="chip"><i class="fa-brands fa-instagram"></i> @silverleaf_gardens</span>
         </div>
@@ -125,8 +127,8 @@
 
       <div class="tab-panel" id="tab-portfolio" data-tab-panel-group="profile">
         <h4>Portfolio</h4>
-        <p>Recent events hosted at Silverleaf Gardens.</p>
-        <div class="gallery-grid">
+        <p>Recent events hosted at <span id="profile-name-inline">Silverleaf Gardens</span>.</p>
+        <div class="gallery-grid" id="profile-gallery">
           <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=500&auto=format&fit=crop" alt="Event 1">
           <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=500&auto=format&fit=crop" alt="Event 2">
           <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=500&auto=format&fit=crop" alt="Event 3">
@@ -140,7 +142,7 @@
 
       <div class="tab-panel" id="tab-packages" data-tab-panel-group="profile">
         <h4>Packages & Pricing</h4>
-        <div class="pkg-grid">
+        <div class="pkg-grid" id="profile-packages">
           <div class="pkg-card">
             <h4>Garden Basic</h4>
             <div class="pkg-price">K8,500<small>/event</small></div>
@@ -181,9 +183,9 @@
         <h4>Customer Reviews</h4>
         <div class="rating-summary">
           <div style="text-align:center;">
-            <div class="rating-big">4.8</div>
-            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
-            <span style="font-size:.78rem;color:var(--gray);">96 reviews</span>
+            <div class="rating-big" id="reviews-rating-big">4.8</div>
+            <div class="stars" id="reviews-rating-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+            <span style="font-size:.78rem;color:var(--gray);" id="reviews-count-text">96 reviews</span>
           </div>
           <div style="flex:1;">
             <div class="rating-bar-row"><span>5 star</span><div class="rating-bar"><span style="width:78%"></span></div><span>78%</span></div>
@@ -194,30 +196,50 @@
           </div>
         </div>
 
-        <div class="review-item">
-          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop" alt="Reviewer">
-          <div style="flex:1;">
-            <div class="review-head"><strong>Chileshe Banda</strong><span>2 weeks ago</span></div>
-            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-            <p style="margin-top:8px;">Beautiful venue and the staff were extremely helpful throughout our wedding planning. Highly recommend!</p>
+        <div id="profile-reviews-list">
+          <div class="review-item">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop" alt="Reviewer">
+            <div style="flex:1;">
+              <div class="review-head"><strong>Chileshe Banda</strong><span>2 weeks ago</span></div>
+              <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              <p style="margin-top:8px;">Beautiful venue and the staff were extremely helpful throughout our wedding planning. Highly recommend!</p>
+            </div>
+          </div>
+          <div class="review-item">
+            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Reviewer">
+            <div style="flex:1;">
+              <div class="review-head"><strong>Natasha Mumba</strong><span>1 month ago</span></div>
+              <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+              <p style="margin-top:8px;">Great garden space for our corporate function. Parking was a bit tight when we had over 300 guests.</p>
+            </div>
           </div>
         </div>
-        <div class="review-item">
-          <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Reviewer">
-          <div style="flex:1;">
-            <div class="review-head"><strong>Natasha Mumba</strong><span>1 month ago</span></div>
-            <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
-            <p style="margin-top:8px;">Great garden space for our corporate function. Parking was a bit tight when we had over 300 guests.</p>
-          </div>
+
+        <div class="panel" style="margin-top:20px;padding:0;border:none;">
+          <h5 style="margin-bottom:12px;">Leave a Review</h5>
+          <p style="font-size:.82rem;">Log in as a customer to leave a review — it posts straight to this vendor's public profile.</p>
+          <form id="review-form">
+            <div class="form-group">
+              <label>Rating</label>
+              <select class="form-control" name="rating" required>
+                <option value="5">5 — Excellent</option>
+                <option value="4">4 — Great</option>
+                <option value="3">3 — Good</option>
+                <option value="2">2 — Fair</option>
+                <option value="1">1 — Poor</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Comment</label><textarea class="form-control" name="comment" placeholder="Share your experience…"></textarea></div>
+            <button type="submit" class="btn btn-dark">Submit Review</button>
+          </form>
         </div>
-        <button class="btn btn-outline-dark" style="margin-top:16px;">Load More Reviews</button>
       </div>
 
       <div class="tab-panel" id="tab-location" data-tab-panel-group="profile">
         <h4>Location</h4>
-        <p><i class="fa-solid fa-location-dot text-gold"></i> Plot 14B, Kabulonga Road, Lusaka, Zambia</p>
+        <p><i class="fa-solid fa-location-dot text-gold"></i> <span id="profile-address">Plot 14B, Kabulonga Road, Lusaka, Zambia</span></p>
         <div class="map-embed">
-          <iframe src="https://www.google.com/maps?q=Kabulonga,Lusaka,Zambia&output=embed" width="100%" height="100%" style="border:0;" loading="lazy" title="Silverleaf Gardens map"></iframe>
+          <iframe id="profile-map-iframe" src="https://www.google.com/maps?q=Kabulonga,Lusaka,Zambia&output=embed" width="100%" height="100%" style="border:0;" loading="lazy" title="Vendor map"></iframe>
         </div>
       </div>
     </div>
@@ -226,10 +248,10 @@
     <div>
       <div class="sidebar-card">
         <h5>Contact Details</h5>
-        <div class="contact-row"><i class="fa-solid fa-phone"></i> +260 97 123 4567</div>
-        <div class="contact-row"><i class="fa-brands fa-whatsapp"></i> +260 97 123 4567</div>
-        <div class="contact-row"><i class="fa-solid fa-envelope"></i> hello@silverleafgardens.zm</div>
-        <div class="contact-row"><i class="fa-solid fa-location-dot"></i> Kabulonga, Lusaka</div>
+        <div class="contact-row"><i class="fa-solid fa-phone"></i> <span id="sidebar-phone">+260 97 123 4567</span></div>
+        <div class="contact-row"><i class="fa-brands fa-whatsapp"></i> <span id="sidebar-whatsapp">+260 97 123 4567</span></div>
+        <div class="contact-row"><i class="fa-solid fa-envelope"></i> <span id="sidebar-email">hello@silverleafgardens.zm</span></div>
+        <div class="contact-row"><i class="fa-solid fa-location-dot"></i> <span id="sidebar-location">Kabulonga, Lusaka</span></div>
         <button class="btn btn-gold btn-block" data-modal-open="#quote-modal">Request Quotation</button>
       </div>
       <div class="sidebar-card">
@@ -262,15 +284,15 @@
   <div class="modal-box">
     <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
     <h3>Request a Quotation</h3>
-    <p style="font-size:.88rem;">Sent directly to Silverleaf Gardens. They typically respond within a few hours.</p>
-    <form data-fake-submit data-success-message="Quote request sent to Silverleaf Gardens!">
-      <div class="form-group"><label>Your Name</label><input type="text" class="form-control" required></div>
+    <p style="font-size:.88rem;">Sent directly to <span id="quote-vendor-name">Silverleaf Gardens</span>. They typically respond within a few hours.</p>
+    <form id="quote-form">
+      <div class="form-group"><label>Your Name</label><input type="text" name="guest_name" class="form-control" required></div>
       <div class="form-row">
-        <div class="form-group"><label>Event Date</label><input type="date" class="form-control" required></div>
-        <div class="form-group"><label>Guest Count</label><input type="number" class="form-control" placeholder="e.g. 250"></div>
+        <div class="form-group"><label>Event Date</label><input type="date" name="event_date" class="form-control" required></div>
+        <div class="form-group"><label>Guest Count</label><input type="number" name="guest_count" class="form-control" placeholder="e.g. 250"></div>
       </div>
-      <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" class="form-control" placeholder="+260…" required></div>
-      <div class="form-group"><label>Message</label><textarea class="form-control" placeholder="Tell us about your event…"></textarea></div>
+      <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" name="guest_phone" class="form-control" placeholder="+260…" required></div>
+      <div class="form-group"><label>Message</label><textarea name="message" class="form-control" placeholder="Tell us about your event…"></textarea></div>
       <button class="btn btn-gold btn-block" type="submit">Send Request</button>
     </form>
   </div>
@@ -331,6 +353,218 @@
 </footer>
 
 <button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var slug = params.get('slug') || params.get('id');
+  if (!slug) return; // no slug in URL: keep the bundled Silverleaf Gardens demo as-is
+
+  var currentVendor = null;
+
+  function starsHtml(rating) {
+    var full = Math.floor(rating), half = rating - full >= 0.5;
+    var html = '';
+    for (var i = 0; i < full; i++) html += '<i class="fa-solid fa-star"></i>';
+    if (half) html += '<i class="fa-solid fa-star-half-stroke"></i>';
+    for (var i = full + (half ? 1 : 0); i < 5; i++) html += '<i class="fa-regular fa-star"></i>';
+    return html;
+  }
+
+  function timeAgo(dateStr) {
+    var diff = Date.now() - new Date(dateStr).getTime();
+    var days = Math.floor(diff / 86400000);
+    if (days < 1) return 'today';
+    if (days < 30) return days + ' day' + (days === 1 ? '' : 's') + ' ago';
+    var months = Math.floor(days / 30);
+    return months + ' month' + (months === 1 ? '' : 's') + ' ago';
+  }
+
+  EH_API.vendor(slug).then(function (res) {
+    var v = res.data;
+    currentVendor = v;
+    document.title = v.business_name + ' — Vendor Profile | EventHub Zambia';
+
+    setText('profile-breadcrumb-name', v.business_name);
+    setText('profile-name', v.business_name);
+    setText('profile-name-inline', v.business_name);
+    setText('profile-about-heading', 'About ' + v.business_name);
+    setText('profile-category-name', v.category ? v.category.name : '');
+    setText('profile-location', [v.area, v.city].filter(Boolean).join(', '));
+    setText('profile-rating-text', v.rating_avg.toFixed(1) + ' (' + v.rating_count + ' reviews)');
+    setText('reviews-tab-btn', 'Reviews (' + v.rating_count + ')');
+    setText('reviews-rating-big', v.rating_avg.toFixed(1));
+    setText('reviews-count-text', v.rating_count + ' reviews');
+    setText('quote-vendor-name', v.business_name);
+    setText('sidebar-phone', v.phone || '—');
+    setText('sidebar-whatsapp', v.whatsapp || v.phone || '—');
+    setText('sidebar-email', v.email || '—');
+    setText('sidebar-location', [v.area, v.city].filter(Boolean).join(', '));
+    setText('profile-address', v.address || [v.area, v.city, 'Zambia'].filter(Boolean).join(', '));
+
+    var starsEl = document.getElementById('profile-stars');
+    if (starsEl) starsEl.innerHTML = starsHtml(v.rating_avg) + '<span style="color:var(--dark);font-weight:600;" id="profile-rating-text">' + v.rating_avg.toFixed(1) + ' (' + v.rating_count + ' reviews)</span>';
+    var revStarsEl = document.getElementById('reviews-rating-stars');
+    if (revStarsEl) revStarsEl.innerHTML = starsHtml(v.rating_avg);
+
+    if (v.category) {
+      var catLink = document.getElementById('profile-category-link');
+      if (catLink) { catLink.href = 'vendors.html?category=' + v.category.slug; catLink.textContent = v.category.name; }
+    }
+
+    var verifiedBadge = document.getElementById('profile-verified-badge');
+    if (verifiedBadge) {
+      if (v.is_verified) {
+        verifiedBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Verified Platform Vendor';
+        verifiedBadge.style.display = '';
+      } else {
+        verifiedBadge.innerHTML = '<i class="fa-solid fa-map-pin"></i> Externally Discovered';
+        verifiedBadge.style.background = '#f1f1f1';
+        verifiedBadge.style.color = '#555';
+      }
+    }
+
+    if (v.cover_path) document.getElementById('profile-cover-img').src = v.cover_path;
+    if (v.logo_path) document.getElementById('profile-avatar-img').src = v.logo_path;
+
+    var favBtn = document.getElementById('profile-fav-btn');
+    if (favBtn) {
+      favBtn.setAttribute('data-vendor-id', v.id);
+      favBtn.setAttribute('data-vendor-name', v.business_name);
+      if (window.EH_refreshFavButtons) EH_refreshFavButtons();
+    }
+
+    var callLink = document.getElementById('profile-call-link');
+    if (callLink) callLink.href = 'tel:' + (v.phone || '');
+    var waLink = document.getElementById('profile-whatsapp-link');
+    if (waLink) waLink.href = 'https://wa.me/' + (v.whatsapp || v.phone || '').replace(/[^0-9]/g, '');
+
+    if (v.description) {
+      document.getElementById('profile-description').innerHTML = v.description.split('\n\n').map(function (p) { return '<p>' + p + '</p>'; }).join('');
+    }
+
+    var socials = document.getElementById('profile-socials');
+    if (socials) {
+      var chips = [];
+      if (v.facebook_url) chips.push('<a href="' + v.facebook_url + '" target="_blank" class="chip"><i class="fa-brands fa-facebook-f"></i> Facebook</a>');
+      if (v.instagram_url) chips.push('<a href="' + v.instagram_url + '" target="_blank" class="chip"><i class="fa-brands fa-instagram"></i> Instagram</a>');
+      if (v.website_url) chips.push('<a href="' + v.website_url + '" target="_blank" class="chip"><i class="fa-solid fa-globe"></i> Website</a>');
+      socials.innerHTML = chips.join('') || '<span style="font-size:.82rem;color:var(--gray);">No social links added yet.</span>';
+    }
+
+    // Portfolio
+    var gallery = document.getElementById('profile-gallery');
+    if (gallery && v.portfolio && v.portfolio.length) {
+      gallery.innerHTML = v.portfolio.map(function (m) {
+        return '<img src="' + m.url + '" alt="' + (m.caption || v.business_name) + '">';
+      }).join('');
+    }
+
+    // Packages
+    var pkgGrid = document.getElementById('profile-packages');
+    if (pkgGrid) {
+      if (v.packages && v.packages.length) {
+        pkgGrid.innerHTML = v.packages.map(function (p) {
+          return '<div class="pkg-card' + (p.is_popular ? ' popular' : '') + '">' +
+            '<h4>' + p.name + '</h4>' +
+            '<div class="pkg-price">K' + Number(p.price).toLocaleString() + '<small>/' + (p.unit || 'event').replace('per ', '') + '</small></div>' +
+            (p.guest_capacity ? '<p style="font-size:.85rem;color:var(--gray);">' + p.guest_capacity + ' guests</p>' : '') +
+            (p.description ? '<p style="font-size:.85rem;">' + p.description + '</p>' : '') +
+            '<button class="btn ' + (p.is_popular ? 'btn-gold' : 'btn-outline-dark') + ' btn-block" data-modal-open="#quote-modal">Request This Package</button></div>';
+        }).join('');
+      } else {
+        pkgGrid.innerHTML = '<p style="color:var(--gray);">This vendor has not published packages yet — use Request Quote for custom pricing.</p>';
+      }
+      // Re-wire modal-open triggers created dynamically (main.js only bound these on initial load)
+      pkgGrid.querySelectorAll('[data-modal-open]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(btn.getAttribute('data-modal-open')).classList.add('open');
+        });
+      });
+    }
+
+    // Reviews
+    var reviewsList = document.getElementById('profile-reviews-list');
+    if (reviewsList) {
+      if (v.reviews && v.reviews.length) {
+        reviewsList.innerHTML = v.reviews.map(function (r) {
+          return '<div class="review-item"><div style="width:52px;height:52px;border-radius:50%;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold-dark);">' +
+            (r.customer_name ? r.customer_name.charAt(0) : '?') + '</div>' +
+            '<div style="flex:1;"><div class="review-head"><strong>' + (r.customer_name || 'Anonymous') + '</strong><span>' + timeAgo(r.created_at) + '</span></div>' +
+            '<div class="stars">' + starsHtml(r.rating) + '</div>' +
+            (r.comment ? '<p style="margin-top:8px;">' + r.comment + '</p>' : '') + '</div></div>';
+        }).join('');
+      } else {
+        reviewsList.innerHTML = '<p style="color:var(--gray);">No reviews yet — be the first to review ' + v.business_name + '.</p>';
+      }
+    }
+
+    // Map
+    var mapIframe = document.getElementById('profile-map-iframe');
+    if (mapIframe && v.latitude && v.longitude) {
+      mapIframe.src = 'https://www.google.com/maps?q=' + v.latitude + ',' + v.longitude + '&output=embed';
+    }
+  }).catch(function (err) {
+    console.info('EventHub API not reachable or vendor not found — showing bundled demo profile instead.', err.message);
+  });
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el != null && text != null) el.textContent = text;
+  }
+  // Quote request form -> real enquiry submission
+  var quoteForm = document.getElementById('quote-form');
+  if (quoteForm) {
+    quoteForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!currentVendor) { EH_toast('Vendor not loaded yet — please wait a moment and try again.', 'fa-triangle-exclamation'); return; }
+      var btn = quoteForm.querySelector('button[type=submit]');
+      var originalText = btn.innerHTML;
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+
+      EH_API.submitEnquiry(currentVendor.slug, {
+        guest_name: quoteForm.guest_name.value.trim(),
+        guest_phone: quoteForm.guest_phone.value.trim(),
+        event_date: quoteForm.event_date.value || undefined,
+        guest_count: quoteForm.guest_count.value || undefined,
+        message: quoteForm.message.value.trim() || undefined,
+      }).then(function (res) {
+        EH_toast(res.message || 'Enquiry sent!', 'fa-circle-check');
+        quoteForm.reset();
+        setTimeout(function () { document.getElementById('quote-modal').classList.remove('open'); }, 900);
+      }).catch(function (err) {
+        EH_toast(err.message || 'Could not send enquiry. Is the API running?', 'fa-triangle-exclamation');
+      }).finally(function () {
+        btn.disabled = false; btn.innerHTML = originalText;
+      });
+    });
+  }
+
+  // Review form -> real review submission (requires customer login)
+  var reviewForm = document.getElementById('review-form');
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!EH_API.isLoggedIn()) {
+        EH_toast('Please log in as a customer to leave a review.', 'fa-circle-info');
+        return;
+      }
+      if (!currentVendor) return;
+      EH_API.submitReview(currentVendor.slug, {
+        rating: parseInt(reviewForm.rating.value, 10),
+        comment: reviewForm.comment.value.trim() || undefined,
+      }).then(function () {
+        EH_toast('Thanks for your review!', 'fa-circle-check');
+        reviewForm.reset();
+        EH_API.vendor(slug).then(function (res) { location.reload(); });
+      }).catch(function (err) {
+        EH_toast(err.message || 'Could not submit review.', 'fa-triangle-exclamation');
+      });
+    });
+  }
+})();
+</script>
 </body>
 </html>
