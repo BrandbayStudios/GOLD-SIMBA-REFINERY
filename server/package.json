@@ -1,0 +1,17 @@
+{
+  "name": "gold-simba-refinery-server",
+  "version": "1.0.0",
+  "description": "Gold SIMBA Refinery — public site, staff dashboard, and customer tracker, served by a small Node/Express/SQLite backend.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
