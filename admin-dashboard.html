@@ -112,7 +112,7 @@
 
     <!-- VENDORS -->
     <div id="a-vendors" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">All Vendors (1,214)</h2></div>
+      <div class="dash-topbar"><h2 id="vendors-heading" style="margin:0;">All Vendors (1,214)</h2></div>
       <div class="results-bar">
         <input type="text" class="form-control" placeholder="Search vendors…" style="max-width:280px;">
         <select style="border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--off-white);">
@@ -121,8 +121,8 @@
       </div>
       <div class="panel">
         <table class="data-table">
-          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Type</th><th>Rating</th><th>Status</th><th></th></tr></thead>
-          <tbody>
+          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Email</th><th>Price From</th><th>Status</th><th></th></tr></thead>
+          <tbody id="vendors-tbody">
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop">Silverleaf Gardens</td><td>Venue</td><td>Lusaka</td><td>Verified</td><td>4.8 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=100&auto=format&fit=crop">DJ Mwansa Live</td><td>MC & DJ</td><td>Lusaka</td><td>Verified</td><td>4.9 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=100&auto=format&fit=crop">Golden Aisle Decor</td><td>Decorator</td><td>Lusaka</td><td>Verified</td><td>5.0 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
@@ -135,11 +135,11 @@
 
     <!-- CUSTOMERS -->
     <div id="a-customers" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Customers (9,860)</h2></div>
+      <div class="dash-topbar"><h2 id="customers-heading" style="margin:0;">Customers (9,860)</h2></div>
       <div class="panel">
         <table class="data-table">
           <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Enquiries Sent</th><th>Status</th><th></th></tr></thead>
-          <tbody>
+          <tbody id="customers-tbody">
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop">Chileshe Banda</td><td>chileshe@example.com</td><td>Jan 2026</td><td>4</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop">Natasha Mumba</td><td>natasha@example.com</td><td>Feb 2026</td><td>2</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
             <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop">Mwansa Phiri</td><td>mwansa@example.com</td><td>Mar 2026</td><td>7</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
@@ -333,6 +333,11 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
@@ -342,69 +347,177 @@
     });
   });
 
-  // This page is browsable as a demo without logging in. If an admin *is*
-  // logged in (via login.html), swap the KPI cards and approvals queue for
-  // live API data instead of the bundled sample rows.
-  var isAdmin = EH_API.isLoggedIn() && EH_API.getUser() && EH_API.getUser().role === 'admin';
-
-  if (isAdmin) {
-    EH_API.adminStats().then(function (s) {
-      setText('kpi-vendors', s.total_vendors.toLocaleString());
-      setText('kpi-customers', s.total_customers.toLocaleString());
-      setText('kpi-enquiries', s.total_enquiries.toLocaleString());
-      setText('kpi-bookings', s.total_bookings.toLocaleString());
-      setText('kpi-reviews', s.total_reviews.toLocaleString());
-      setText('kpi-pending', s.pending_approvals.toLocaleString());
-      var badge = document.querySelector('.dash-nav [data-tab="a-approvals"] .badge');
-      if (badge) badge.textContent = s.pending_approvals;
-    }).catch(function () {});
-
-    loadApprovals();
-  } else {
-    var banner = document.createElement('div');
-    banner.className = 'panel';
-    banner.style.cssText = 'background:#fdf2d8;border-color:#f0d998;margin-bottom:20px;';
-    banner.innerHTML = '<strong>Demo mode.</strong> Showing sample data — <a href="login.html" style="color:var(--gold-dark);font-weight:700;">log in as admin@eventhub.zm</a> to manage live vendors, approvals and reports.';
-    var main = document.querySelector('.dash-main');
-    main.insertBefore(banner, main.firstChild.nextSibling);
-  }
-
   function setText(id, text) {
     var el = document.getElementById(id);
     if (el) el.textContent = text;
   }
 
-  function loadApprovals() {
-    EH_API.adminVendors({ status: 'pending', per_page: 20 }).then(function (res) {
+  function showDemoBanner(message) {
+    var banner = document.createElement('div');
+    banner.className = 'panel';
+    banner.style.cssText = 'background:#fdf2d8;border-color:#f0d998;margin-bottom:20px;';
+    banner.innerHTML = message;
+    var main = document.querySelector('.dash-main');
+    main.insertBefore(banner, main.firstChild.nextSibling);
+  }
+
+  var DEFAULT_AVATAR = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop';
+
+  function fmtDate(ts) {
+    if (!ts || typeof ts.toDate !== 'function') return '—';
+    return ts.toDate().toLocaleDateString();
+  }
+
+  /* ---------- Live Firebase admin view ---------- */
+  function loadFirebaseOverview() {
+    EH_FB.getPlatformStats().then(function (s) {
+      setText('kpi-vendors', s.totalVendors.toLocaleString());
+      setText('kpi-customers', s.totalCustomers.toLocaleString());
+      setText('kpi-pending', s.pendingVendors.toLocaleString());
+      setText('vendors-heading', 'All Vendors (' + s.totalVendors.toLocaleString() + ')');
+      setText('customers-heading', 'Customers (' + s.totalCustomers.toLocaleString() + ')');
+      var badge = document.querySelector('.dash-nav [data-tab="a-approvals"] .badge');
+      if (badge) badge.textContent = s.pendingVendors;
+    }).catch(function (err) {
+      EH_toast(err.message || 'Could not load platform stats from Firebase.', 'fa-triangle-exclamation');
+    });
+  }
+
+  function loadFirebaseApprovals() {
+    EH_FB.listVendors('pending').then(function (vendors) {
       var tbody = document.getElementById('approvals-tbody');
-      if (!res.data.length) {
+      if (!vendors.length) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:30px;">No pending applications right now.</td></tr>';
         return;
       }
-      tbody.innerHTML = res.data.map(function (v) {
-        return '<tr data-vendor-id="' + v.id + '"><td class="td-vendor"><img src="' + (v.cover_path || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop') + '">' + v.business_name + '</td>' +
-          '<td>' + (v.category ? v.category.name : '—') + '</td><td>' + [v.area, v.city].filter(Boolean).join(', ') + '</td>' +
-          '<td>' + new Date(v.created_at).toLocaleDateString() + '</td><td><span class="status-pill pending">Pending</span></td>' +
-          '<td class="table-actions"><button data-live-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button>' +
-          '<button data-live-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>' +
-          '<a href="vendor-profile.html?slug=' + v.slug + '" target="_blank" title="View"><button type="button"><i class="fa-solid fa-eye"></i></button></a></td></tr>';
+      tbody.innerHTML = vendors.map(function (v) {
+        return '<tr data-vendor-id="' + v.id + '"><td class="td-vendor"><img src="' + DEFAULT_AVATAR + '">' + v.businessName + '</td>' +
+          '<td>' + (v.category || '—') + '</td><td>' + [v.area, v.city].filter(Boolean).join(', ') + '</td>' +
+          '<td>' + fmtDate(v.createdAt) + '</td><td><span class="status-pill pending">Pending</span></td>' +
+          '<td class="table-actions"><button data-fb-action="approved" title="Approve"><i class="fa-solid fa-check"></i></button>' +
+          '<button data-fb-action="rejected" title="Reject"><i class="fa-solid fa-xmark"></i></button></td></tr>';
       }).join('');
 
-      tbody.querySelectorAll('[data-live-action]').forEach(function (btn) {
+      tbody.querySelectorAll('[data-fb-action]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var row = btn.closest('tr');
-          var id = row.getAttribute('data-vendor-id');
-          var status = btn.getAttribute('data-live-action') === 'approve' ? 'approved' : 'rejected';
-          EH_API.adminUpdateVendorStatus(id, status).then(function (res) {
-            EH_toast(res.data.business_name + ' ' + status + '.', status === 'approved' ? 'fa-circle-check' : 'fa-ban');
+          var uid = row.getAttribute('data-vendor-id');
+          var status = btn.getAttribute('data-fb-action');
+          EH_FB.updateVendorStatus(uid, status).then(function () {
+            EH_toast('Vendor ' + status + '.', status === 'approved' ? 'fa-circle-check' : 'fa-ban');
             row.style.opacity = '0';
             setTimeout(function () { row.remove(); }, 250);
+            loadFirebaseOverview();
           }).catch(function (err) {
             EH_toast(err.message || 'Action failed.', 'fa-triangle-exclamation');
           });
         });
       });
-    }).catch(function () {});
+    }).catch(function (err) {
+      EH_toast(err.message || 'Could not load vendor applications.', 'fa-triangle-exclamation');
+    });
+  }
+
+  function loadFirebaseVendors() {
+    EH_FB.listVendors().then(function (vendors) {
+      var tbody = document.getElementById('vendors-tbody');
+      if (!vendors.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray);padding:30px;">No vendors registered yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = vendors.map(function (v) {
+        var pillClass = v.status === 'approved' ? 'approved' : (v.status === 'rejected' ? 'rejected' : 'pending');
+        var label = v.status.charAt(0).toUpperCase() + v.status.slice(1);
+        return '<tr data-vendor-id="' + v.id + '"><td class="td-vendor"><img src="' + DEFAULT_AVATAR + '">' + v.businessName + '</td>' +
+          '<td>' + (v.category || '—') + '</td><td>' + [v.area, v.city].filter(Boolean).join(', ') + '</td><td>' + (v.email || '—') + '</td>' +
+          '<td>' + (v.priceFrom ? 'K' + v.priceFrom.toLocaleString() : '—') + '</td>' +
+          '<td><span class="status-pill ' + pillClass + '">' + label + '</span></td>' +
+          '<td class="table-actions"><button data-fb-delete-vendor title="Delete"><i class="fa-solid fa-trash"></i></button></td></tr>';
+      }).join('');
+
+      tbody.querySelectorAll('[data-fb-delete-vendor]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('tr');
+          var uid = row.getAttribute('data-vendor-id');
+          if (!confirm('Delete this vendor\'s Firestore record? This cannot be undone.')) return;
+          EH_FB.deleteVendor(uid).then(function () {
+            EH_toast('Vendor deleted.', 'fa-trash');
+            row.remove();
+            loadFirebaseOverview();
+          }).catch(function (err) { EH_toast(err.message || 'Delete failed.', 'fa-triangle-exclamation'); });
+        });
+      });
+    }).catch(function (err) {
+      EH_toast(err.message || 'Could not load vendors.', 'fa-triangle-exclamation');
+    });
+  }
+
+  function loadFirebaseCustomers() {
+    EH_FB.listCustomers().then(function (customers) {
+      var tbody = document.getElementById('customers-tbody');
+      if (!customers.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:30px;">No customers registered yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = customers.map(function (c) {
+        return '<tr data-customer-id="' + c.id + '"><td>' + (c.name || '—') + '</td><td>' + (c.email || '—') + '</td>' +
+          '<td>' + fmtDate(c.createdAt) + '</td><td>—</td><td><span class="status-pill approved">Active</span></td>' +
+          '<td class="table-actions"><button data-fb-delete-customer title="Remove"><i class="fa-solid fa-ban"></i></button></td></tr>';
+      }).join('');
+
+      tbody.querySelectorAll('[data-fb-delete-customer]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('tr');
+          var uid = row.getAttribute('data-customer-id');
+          if (!confirm('Remove this customer\'s Firestore record? This cannot be undone.')) return;
+          EH_FB.deleteCustomer(uid).then(function () {
+            EH_toast('Customer removed.', 'fa-ban');
+            row.remove();
+            loadFirebaseOverview();
+          }).catch(function (err) { EH_toast(err.message || 'Remove failed.', 'fa-triangle-exclamation'); });
+        });
+      });
+    }).catch(function (err) {
+      EH_toast(err.message || 'Could not load customers.', 'fa-triangle-exclamation');
+    });
+  }
+
+  /* ---------- Decide which data source to show ---------- */
+  // This page is browsable as a demo without logging in. Firebase (real
+  // registered vendors/customers) takes priority when an admin is signed
+  // in; otherwise fall back to the Laravel API demo-mode logic, and
+  // finally to the bundled sample rows if neither backend is reachable.
+  if (window.EH_FB) {
+    EH_FB.onAuthChange(function (user) {
+      if (!user) {
+        tryLaravelDemoMode();
+        return;
+      }
+      EH_FB.resolveRole(user.uid).then(function (role) {
+        if (role !== 'admin') { tryLaravelDemoMode(); return; }
+        loadFirebaseOverview();
+        loadFirebaseApprovals();
+        loadFirebaseVendors();
+        loadFirebaseCustomers();
+      });
+    });
+  } else {
+    // Firebase SDK/config failed to load (network issue, or
+    // firebase-config.js still has placeholder values) — fall back.
+    tryLaravelDemoMode();
+  }
+
+  function tryLaravelDemoMode() {
+    var isAdmin = EH_API.isLoggedIn() && EH_API.getUser() && EH_API.getUser().role === 'admin';
+    if (isAdmin) {
+      EH_API.adminStats().then(function (s) {
+        setText('kpi-enquiries', s.total_enquiries.toLocaleString());
+        setText('kpi-bookings', s.total_bookings.toLocaleString());
+        setText('kpi-reviews', s.total_reviews.toLocaleString());
+      }).catch(function () {});
+    } else {
+      showDemoBanner('<strong>Demo mode.</strong> Showing sample data — <a href="login.html" style="color:var(--gold-dark);font-weight:700;">log in as a Firebase admin</a> to manage live vendors, customers and approvals.');
+    }
   }
 </script>
 </body>

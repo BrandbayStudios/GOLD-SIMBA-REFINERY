@@ -1,0 +1,60 @@
+rules_version = '2';
+
+// EventHub Zambia — Firestore Security Rules
+// Paste this into Firebase Console -> Firestore Database -> Rules -> Publish.
+//
+// Model:
+//   - customers/{uid}: a signed-up customer's own profile.
+//   - vendors/{uid}:   a signed-up vendor's own profile ("status" starts
+//                      as "pending" and only an admin may change it).
+//   - admins/{uid}:    presence of this document grants admin rights.
+//                      There is no sign-up flow for this — create it by
+//                      hand in the console for your own uid (see
+//                      FIREBASE_SETUP.md).
+//
+// Anyone (including signed-out visitors) may read vendors so the public
+// site can list them, but only the vendor who owns a record — or an
+// admin — may write to it, and a vendor can never approve themselves.
+// Customer records are private: only the owner and admins can read them.
+
+function isSignedIn() {
+  return request.auth != null;
+}
+
+function isOwner(uid) {
+  return isSignedIn() && request.auth.uid == uid;
+}
+
+function isAdmin() {
+  return isSignedIn() &&
+    exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /admins/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false; // manage this collection from the console only
+    }
+
+    match /customers/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /vendors/{uid} {
+      allow read: if true; // public vendor listings
+      allow create: if isOwner(uid)
+                    && request.resource.data.status == 'pending';
+      allow update: if isAdmin()
+                    || (isOwner(uid)
+                        // a vendor may edit their own profile, but never
+                        // grant themselves approval
+                        && request.resource.data.status == resource.data.status);
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -81,10 +81,15 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-  function handleLogin(form, expectedRole, fallbackRedirect) {
+  function handleLogin(form, expectedRole) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var email = form.email.value.trim();
@@ -94,29 +99,29 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in…';
 
-      EH_API.login(email, password).then(function (res) {
-        if (expectedRole && res.user.role !== expectedRole) {
-          throw new Error('This account is not registered as a ' + expectedRole + '. Try the other tab.');
+      EH_FB.login(email, password).then(function (res) {
+        if (!res.role) {
+          throw new Error('This account has no matching customer/vendor/admin record.');
         }
-        EH_API.setToken(res.token);
-        EH_API.setUser(res.user);
-        if (res.vendor_profile) EH_API.setVendorProfile(res.vendor_profile);
-        EH_toast('Welcome back, ' + res.user.name + '!', 'fa-champagne-glasses');
+        if (expectedRole && res.role !== expectedRole) {
+          throw new Error('This account is registered as a ' + res.role + ', not a ' + expectedRole + '. Try the other tab.');
+        }
+        EH_toast('Welcome back!', 'fa-champagne-glasses');
         setTimeout(function () {
-          window.location.href = res.user.role === 'admin' ? 'admin-dashboard.html' : (res.user.role === 'vendor' ? 'vendor-dashboard.html' : 'index.html');
+          window.location.href = res.role === 'admin' ? 'admin-dashboard.html' : (res.role === 'vendor' ? 'vendor-dashboard.html' : 'index.html');
         }, 600);
       }).catch(function (err) {
         btn.disabled = false;
         btn.innerHTML = originalText;
-        EH_toast(err.message || 'Login failed. Is the API running?', 'fa-triangle-exclamation');
+        EH_toast(err.message || 'Login failed.', 'fa-triangle-exclamation');
       });
     });
   }
 
   var customerForm = document.getElementById('customer-login-form');
   var vendorForm = document.getElementById('vendor-login-form');
-  if (customerForm) handleLogin(customerForm, null, 'index.html');
-  if (vendorForm) handleLogin(vendorForm, 'vendor', 'vendor-dashboard.html');
+  if (customerForm) handleLogin(customerForm, null);
+  if (vendorForm) handleLogin(vendorForm, 'vendor');
 </script>
 </body>
 </html>

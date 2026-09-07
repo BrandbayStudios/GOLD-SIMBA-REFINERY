@@ -193,24 +193,20 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-  // Match each static category radio to its real backend category_id by name,
-  // so submission always sends an id the API recognises.
+  // Each category radio's value is its own label text, so Firestore stores
+  // a readable category name directly (no separate lookup table needed).
   document.addEventListener('DOMContentLoaded', function () {
-    EH_API.categories().then(function (res) {
-      var radios = document.querySelectorAll('#category-pick input[type=radio]');
-      res.data.forEach(function (cat) {
-        radios.forEach(function (radio) {
-          var label = document.querySelector('label[for="' + radio.id + '"]');
-          if (label && label.textContent.trim() === cat.name) {
-            radio.value = cat.id;
-          }
-        });
-      });
-    }).catch(function () {
-      console.info('EventHub API not reachable — category IDs will not be pre-filled.');
+    document.querySelectorAll('#category-pick input[type=radio]').forEach(function (radio) {
+      var label = document.querySelector('label[for="' + radio.id + '"]');
+      if (label) radio.value = label.textContent.trim();
     });
   });
 
@@ -221,8 +217,8 @@
       var btn = form.querySelector('button[type=submit]');
       var originalText = btn.innerHTML;
 
-      var categoryId = form.category_id.value;
-      if (!categoryId) {
+      var category = form.category_id.value;
+      if (!category) {
         EH_toast('Please choose a category in Step 2.', 'fa-triangle-exclamation');
         return;
       }
@@ -230,14 +226,14 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting…';
 
-      EH_API.registerVendor({
+      EH_FB.registerVendor({
         business_name: form.business_name.value.trim(),
         owner_name: form.owner_name.value.trim(),
         email: form.email.value.trim(),
         password: form.password.value,
         phone: form.phone.value.trim(),
         whatsapp: form.whatsapp.value.trim() || undefined,
-        category_id: categoryId,
+        category: category,
         description: form.description.value.trim() || undefined,
         city: form.city.value,
         area: form.area.value.trim() || undefined,
@@ -247,15 +243,12 @@
         facebook_url: form.facebook_url.value.trim() || undefined,
         instagram_url: form.instagram_url.value.trim() || undefined,
         website_url: form.website_url.value.trim() || undefined,
-      }).then(function (res) {
-        EH_API.setToken(res.token);
-        EH_API.setUser(res.user);
-        EH_API.setVendorProfile(res.vendor_profile);
+      }).then(function () {
         document.getElementById('submitted-modal').classList.add('open');
       }).catch(function (err) {
         btn.disabled = false;
         btn.innerHTML = originalText;
-        EH_toast(err.message || 'Submission failed. Is the API running?', 'fa-triangle-exclamation');
+        EH_toast(err.message || 'Submission failed.', 'fa-triangle-exclamation');
       });
     });
   }

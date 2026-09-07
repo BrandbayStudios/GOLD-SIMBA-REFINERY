@@ -73,6 +73,11 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
@@ -85,20 +90,18 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account…';
 
-      EH_API.registerCustomer({
+      EH_FB.registerCustomer({
         name: form.name.value.trim(),
         phone: form.phone.value.trim(),
         email: form.email.value.trim(),
         password: form.password.value,
       }).then(function (res) {
-        EH_API.setToken(res.token);
-        EH_API.setUser(res.user);
-        EH_toast('Welcome to EventHub, ' + res.user.name + '!', 'fa-champagne-glasses');
+        EH_toast('Welcome to EventHub, ' + res.profile.name + '!', 'fa-champagne-glasses');
         setTimeout(function () { window.location.href = 'index.html'; }, 700);
       }).catch(function (err) {
         btn.disabled = false;
         btn.innerHTML = originalText;
-        EH_toast(err.message || 'Sign up failed. Is the API running?', 'fa-triangle-exclamation');
+        EH_toast(err.message || 'Sign up failed.', 'fa-triangle-exclamation');
       });
     });
   }
