@@ -55,6 +55,15 @@ service cloud.firestore {
                         // grant themselves approval
                         && request.resource.data.status == resource.data.status);
       allow delete: if isAdmin();
+
+      // Quote requests from the public "Request Quotation" form. Anyone
+      // (including signed-out visitors) may send one — same as the
+      // Laravel API's guest enquiries — but only the vendor who owns
+      // this profile, or an admin, may read/manage the resulting list.
+      match /enquiries/{enquiryId} {
+        allow create: if true;
+        allow read, update, delete: if isOwner(uid) || isAdmin();
+      }
     }
   }
 }

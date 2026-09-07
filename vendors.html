@@ -488,6 +488,11 @@
 </footer>
 
 <button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
@@ -562,7 +567,56 @@
       renderPagination(res.meta);
       if (window.EH_refreshFavButtons) window.EH_refreshFavButtons();
     }).catch(function () {
-      console.info('EventHub API not reachable — showing bundled demo vendors instead.');
+      console.info('EventHub API not reachable — showing bundled demo vendors, plus any real Firebase vendors.');
+      prependFirebaseVendors();
+    });
+  }
+
+  // Maps a vendor-register.html category label to a vendors.html filter
+  // slug, so real Firebase vendors still respond to the category filters.
+  var CATEGORY_SLUGS = {
+    'Venues & Event Centres': 'venues',
+    'MCs & DJs': 'mcs-djs',
+    'Photographers & Videographers': 'photography',
+    'Caterers & Chefs': 'catering',
+    'Event Decorators': 'decor',
+    'Wedding Planners': 'planners',
+    'Cakes': 'cakes',
+    'Sound & Lighting': 'sound',
+    'Makeup Artists': 'makeup',
+    'Car Hire & Decoration': 'cars'
+  };
+
+  function fbVendorCardHtml(v) {
+    var loc = [v.area, v.city].filter(Boolean).join(', ');
+    var actions = '<a href="vendor-profile.html?fb=' + v.id + '" class="btn btn-outline-dark"><i class="fa-solid fa-eye"></i> View</a>' +
+      '<a href="tel:' + (v.phone || '') + '" class="btn btn-dark"><i class="fa-solid fa-phone"></i></a>' +
+      '<a href="https://wa.me/' + (v.whatsapp || v.phone || '').replace(/[^0-9]/g, '') + '" class="btn btn-gold"><i class="fa-brands fa-whatsapp"></i></a>';
+
+    return '<div class="vendor-card" data-cat="' + (CATEGORY_SLUGS[v.category] || '') + '" data-rating="0" data-price="' + (v.priceFrom || 0) + '" data-name="' + v.businessName + '">' +
+      '<div class="vendor-media"><img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=800&auto=format&fit=crop" alt="' + v.businessName + '">' +
+      '<span class="vendor-tag"><i class="fa-solid fa-certificate"></i> New</span>' +
+      '<button class="fav-btn" data-vendor-id="fb-' + v.id + '" data-vendor-name="' + v.businessName + '"><i class="fa-solid fa-heart"></i></button></div>' +
+      '<div class="vendor-body"><span class="vendor-cat">' + (v.category || 'Event Services') + '</span><h4>' + v.businessName + '</h4>' +
+      '<div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> ' + (loc || 'Zambia') + '</div>' +
+      '<div class="vendor-meta"><div class="stars"><span style="color:var(--gray);">No reviews yet</span></div>' +
+      (v.priceFrom ? '<div class="price-from">K' + Number(v.priceFrom).toLocaleString() + '<small>/' + (v.priceUnit || 'event').replace('per ', '') + '</small></div>' : '<span></span>') +
+      '</div><div class="vendor-actions">' + actions + '</div></div></div>';
+  }
+
+  // Real vendors approved by an admin in the Firebase dashboard get shown
+  // ahead of the bundled demo cards, so newly onboarded vendors are
+  // actually visible on the site instead of only living in Firestore.
+  function prependFirebaseVendors() {
+    if (!window.EH_FB) return;
+    EH_FB.listVendors('approved').then(function (vendors) {
+      if (!vendors.length) return;
+      grid.insertAdjacentHTML('afterbegin', vendors.map(fbVendorCardHtml).join(''));
+      var countEl = document.getElementById('results-count');
+      if (countEl) countEl.textContent = grid.querySelectorAll('.vendor-card').length;
+      if (window.EH_refreshFavButtons) window.EH_refreshFavButtons();
+    }).catch(function (err) {
+      console.info('Firebase vendors not loaded:', err.message);
     });
   }
 

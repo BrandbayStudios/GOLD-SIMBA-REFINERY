@@ -185,6 +185,18 @@
       });
     },
 
+    /** Stores a quote request under vendors/{uid}/enquiries/{auto-id}. */
+    submitEnquiry: function (vendorUid, data) {
+      return db.collection('vendors').doc(vendorUid).collection('enquiries').add({
+        guestName: data.guest_name,
+        guestPhone: data.guest_phone,
+        eventDate: data.event_date || null,
+        guestCount: data.guest_count ? Number(data.guest_count) : null,
+        message: data.message || null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function (err) { throw friendlyError(err); });
+    },
+
     updateVendorStatus: function (uid, status) {
       return db.collection('vendors').doc(uid).update({ status: status });
     },

@@ -371,15 +371,122 @@
 </footer>
 
 <button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
 (function () {
   var params = new URLSearchParams(window.location.search);
+  var fbId = params.get('fb');
   var slug = params.get('slug') || params.get('id');
-  if (!slug) return; // no slug in URL: keep the bundled Silverleaf Gardens demo as-is
 
   var currentVendor = null;
+  var isFirebaseVendor = false;
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el != null && text != null) el.textContent = text;
+  }
+
+  // A vendor registered through vendor-register.html (Firestore), rather
+  // than the Laravel API. It has no portfolio/packages/reviews/map data
+  // yet, so those sections render as honest empty states instead of
+  // stale demo content.
+  function renderFirebaseVendor(uid) {
+    if (!window.EH_FB) { console.info('Firebase not available — showing bundled demo profile instead.'); return; }
+    EH_FB.getVendorProfile(uid).then(function (v) {
+      if (!v) { console.info('No such Firebase vendor — showing bundled demo profile instead.'); return; }
+      isFirebaseVendor = true;
+      currentVendor = v;
+      var loc = [v.area, v.city].filter(Boolean).join(', ');
+      document.title = v.businessName + ' — Vendor Profile | EventHub Zambia';
+
+      setText('profile-breadcrumb-name', v.businessName);
+      setText('profile-name', v.businessName);
+      setText('profile-name-inline', v.businessName);
+      setText('profile-about-heading', 'About ' + v.businessName);
+      setText('profile-category-name', v.category || 'Event Services');
+      setText('profile-location', loc || 'Zambia');
+      setText('quote-vendor-name', v.businessName);
+      setText('sidebar-phone', v.phone || '—');
+      setText('sidebar-whatsapp', v.whatsapp || v.phone || '—');
+      setText('sidebar-email', v.email || '—');
+      setText('sidebar-location', loc || 'Zambia');
+      setText('profile-address', v.address || [loc, 'Zambia'].filter(Boolean).join(', '));
+
+      var catLink = document.getElementById('profile-category-link');
+      if (catLink) { catLink.href = 'vendors.html'; catLink.textContent = v.category || 'Vendors'; }
+
+      var starsEl = document.getElementById('profile-stars');
+      if (starsEl) starsEl.innerHTML = '<span style="color:var(--gray);font-weight:600;">No reviews yet</span>';
+      setText('reviews-tab-btn', 'Reviews (0)');
+
+      var verifiedBadge = document.getElementById('profile-verified-badge');
+      if (verifiedBadge) {
+        if (v.status === 'approved') {
+          verifiedBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Verified Platform Vendor';
+        } else {
+          verifiedBadge.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Pending Admin Approval';
+          verifiedBadge.style.background = '#fdf2d8';
+          verifiedBadge.style.color = '#a3720c';
+        }
+      }
+
+      document.getElementById('profile-cover-img').src = 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1600&auto=format&fit=crop';
+      document.getElementById('profile-avatar-img').src = 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=300&auto=format&fit=crop';
+
+      var favBtn = document.getElementById('profile-fav-btn');
+      if (favBtn) {
+        favBtn.setAttribute('data-vendor-id', 'fb-' + v.id);
+        favBtn.setAttribute('data-vendor-name', v.businessName);
+        if (window.EH_refreshFavButtons) EH_refreshFavButtons();
+      }
+
+      var callLink = document.getElementById('profile-call-link');
+      if (callLink) callLink.href = 'tel:' + (v.phone || '');
+      var waLink = document.getElementById('profile-whatsapp-link');
+      if (waLink) waLink.href = 'https://wa.me/' + (v.whatsapp || v.phone || '').replace(/[^0-9]/g, '');
+
+      document.getElementById('profile-description').innerHTML = v.description
+        ? '<p>' + v.description + '</p>'
+        : '<p style="color:var(--gray);">' + v.businessName + ' hasn\'t added a description yet.</p>';
+
+      var socials = document.getElementById('profile-socials');
+      if (socials) {
+        var chips = [];
+        if (v.facebookUrl) chips.push('<a href="' + v.facebookUrl + '" target="_blank" class="chip"><i class="fa-brands fa-facebook-f"></i> Facebook</a>');
+        if (v.instagramUrl) chips.push('<a href="' + v.instagramUrl + '" target="_blank" class="chip"><i class="fa-brands fa-instagram"></i> Instagram</a>');
+        if (v.websiteUrl) chips.push('<a href="' + v.websiteUrl + '" target="_blank" class="chip"><i class="fa-solid fa-globe"></i> Website</a>');
+        socials.innerHTML = chips.join('') || '<span style="font-size:.82rem;color:var(--gray);">No social links added yet.</span>';
+      }
+
+      var gallery = document.getElementById('profile-gallery');
+      if (gallery) gallery.innerHTML = '<p style="color:var(--gray);grid-column:1/-1;">' + v.businessName + ' hasn\'t uploaded a portfolio yet.</p>';
+
+      var pkgGrid = document.getElementById('profile-packages');
+      if (pkgGrid) pkgGrid.innerHTML = '<p style="color:var(--gray);">This vendor has not published packages yet — use Request Quote for custom pricing.</p>';
+
+      var reviewsList = document.getElementById('profile-reviews-list');
+      if (reviewsList) reviewsList.innerHTML = '<p style="color:var(--gray);">No reviews yet — be the first to review ' + v.businessName + '.</p>';
+      var ratingSummary = document.querySelector('.rating-summary');
+      if (ratingSummary) ratingSummary.style.display = 'none';
+
+      var mapIframe = document.getElementById('profile-map-iframe');
+      if (mapIframe) {
+        var q = encodeURIComponent([v.address, loc, 'Zambia'].filter(Boolean).join(', '));
+        mapIframe.src = 'https://www.google.com/maps?q=' + q + '&output=embed';
+      }
+    }).catch(function (err) {
+      console.info('Firebase vendor lookup failed — showing bundled demo profile instead.', err.message);
+    });
+  }
+
+  if (fbId) renderFirebaseVendor(fbId);
+  if (!fbId && !slug) return; // no id in URL at all: keep the bundled Silverleaf Gardens demo as-is
 
   function starsHtml(rating) {
     var full = Math.floor(rating), half = rating - full >= 0.5;
@@ -399,7 +506,7 @@
     return months + ' month' + (months === 1 ? '' : 's') + ' ago';
   }
 
-  EH_API.vendor(slug).then(function (res) {
+  if (slug) EH_API.vendor(slug).then(function (res) {
     var v = res.data;
     currentVendor = v;
     document.title = v.business_name + ' — Vendor Profile | EventHub Zambia';
@@ -528,11 +635,8 @@
     console.info('EventHub API not reachable or vendor not found — showing bundled demo profile instead.', err.message);
   });
 
-  function setText(id, text) {
-    var el = document.getElementById(id);
-    if (el != null && text != null) el.textContent = text;
-  }
-  // Quote request form -> real enquiry submission
+  // Quote request form -> real enquiry submission (Firestore for Firebase
+  // vendors, the Laravel API for everyone else)
   var quoteForm = document.getElementById('quote-form');
   if (quoteForm) {
     quoteForm.addEventListener('submit', function (e) {
@@ -542,29 +646,40 @@
       var originalText = btn.innerHTML;
       btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
 
-      EH_API.submitEnquiry(currentVendor.slug, {
+      var payload = {
         guest_name: quoteForm.guest_name.value.trim(),
         guest_phone: quoteForm.guest_phone.value.trim(),
         event_date: quoteForm.event_date.value || undefined,
         guest_count: quoteForm.guest_count.value || undefined,
         message: quoteForm.message.value.trim() || undefined,
-      }).then(function (res) {
-        EH_toast(res.message || 'Enquiry sent!', 'fa-circle-check');
+      };
+      var request = isFirebaseVendor
+        ? EH_FB.submitEnquiry(currentVendor.id, payload)
+        : EH_API.submitEnquiry(currentVendor.slug, payload);
+
+      request.then(function (res) {
+        EH_toast((res && res.message) || 'Enquiry sent!', 'fa-circle-check');
         quoteForm.reset();
         setTimeout(function () { document.getElementById('quote-modal').classList.remove('open'); }, 900);
       }).catch(function (err) {
-        EH_toast(err.message || 'Could not send enquiry. Is the API running?', 'fa-triangle-exclamation');
+        EH_toast(err.message || 'Could not send enquiry.', 'fa-triangle-exclamation');
       }).finally(function () {
         btn.disabled = false; btn.innerHTML = originalText;
       });
     });
   }
 
-  // Review form -> real review submission (requires customer login)
+  // Review form -> real review submission (requires customer login).
+  // Reviews aren't modeled in Firestore yet, so Firebase vendors get a
+  // clear "not available yet" message instead of a silent dead end.
   var reviewForm = document.getElementById('review-form');
   if (reviewForm) {
     reviewForm.addEventListener('submit', function (e) {
       e.preventDefault();
+      if (isFirebaseVendor) {
+        EH_toast('Reviews aren\'t available for this vendor yet.', 'fa-circle-info');
+        return;
+      }
       if (!EH_API.isLoggedIn()) {
         EH_toast('Please log in as a customer to leave a review.', 'fa-circle-info');
         return;
