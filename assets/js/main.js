@@ -6,6 +6,82 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  /* ---------- Page load spinner ---------- */
+  var pageSpinner = document.getElementById('page-spinner');
+  if (pageSpinner) {
+    var hideSpinner = function () { pageSpinner.classList.add('hide'); };
+    window.addEventListener('load', function () { setTimeout(hideSpinner, 150); });
+    setTimeout(hideSpinner, 1500); // fallback in case 'load' is slow/blocked
+  }
+
+  /* ---------- Scroll reveal ---------- */
+  var revealItems = document.querySelectorAll('.reveal');
+  if (revealItems.length) {
+    if ('IntersectionObserver' in window) {
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      revealItems.forEach(function (el) { revealObserver.observe(el); });
+    } else {
+      revealItems.forEach(function (el) { el.classList.add('in-view'); });
+    }
+  }
+
+  /* ---------- Animated stat counters ---------- */
+  var counters = document.querySelectorAll('[data-counter]');
+  if (counters.length) {
+    var animateCounter = function (el) {
+      var target = parseFloat(el.getAttribute('data-counter'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      var duration = 1600, start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var progress = Math.min((ts - start) / duration, 1);
+        el.textContent = Math.floor(progress * target).toLocaleString() + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target.toLocaleString() + suffix;
+      }
+      requestAnimationFrame(step);
+    };
+    if ('IntersectionObserver' in window) {
+      var counterObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          animateCounter(entry.target);
+          counterObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.5 });
+      counters.forEach(function (el) { counterObserver.observe(el); });
+    } else {
+      counters.forEach(animateCounter);
+    }
+  }
+
+  /* ---------- Hero carousel (homepage) ---------- */
+  var heroSlides = document.querySelectorAll('.hero-slide');
+  var heroDots = document.querySelectorAll('.hero-dots button');
+  if (heroSlides.length > 1) {
+    var heroIndex = 0, heroTimer;
+    var showHeroSlide = function (i) {
+      heroSlides.forEach(function (s, idx) { s.classList.toggle('active', idx === i); });
+      heroDots.forEach(function (d, idx) { d.classList.toggle('active', idx === i); });
+      heroIndex = i;
+    };
+    var restartHeroTimer = function () {
+      clearInterval(heroTimer);
+      heroTimer = setInterval(function () { showHeroSlide((heroIndex + 1) % heroSlides.length); }, 6500);
+    };
+    heroDots.forEach(function (dot, idx) {
+      dot.addEventListener('click', function () { showHeroSlide(idx); restartHeroTimer(); });
+    });
+    restartHeroTimer();
+  }
+
   /* ---------- Mobile nav ---------- */
   var navToggle = document.querySelector('.nav-toggle');
   var navLinks = document.querySelector('.nav-links');

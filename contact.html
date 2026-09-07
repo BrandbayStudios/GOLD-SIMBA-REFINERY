@@ -12,6 +12,43 @@
 </head>
 <body>
 
+<!-- Spinner -->
+<div id="page-spinner"></div>
+
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-left">
+      <span><i class="fa-solid fa-phone"></i> +260 97 123 4567</span>
+      <span><i class="fa-solid fa-envelope"></i> hello@eventhub.zm</span>
+      <span><i class="fa-solid fa-location-dot"></i> Lusaka · Ndola · Kitwe · Livingstone</span>
+    </div>
+    <div class="topbar-right">
+      <span>Follow us</span>
+      <div class="topbar-social">
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Brand Bar -->
+<div class="brand-bar">
+  <div class="container">
+    <a href="tel:+260971234567" class="brand-bar-item">
+      <i class="fa-solid fa-phone-volume"></i>
+      <div><h6>Call Now</h6><span>+260 97 123 4567</span></div>
+    </a>
+    <a href="index.html" class="logo">Event<span>Hub</span></a>
+    <a href="mailto:hello@eventhub.zm" class="brand-bar-item">
+      <i class="fa-solid fa-envelope-open-text"></i>
+      <div><h6>Mail Now</h6><span>hello@eventhub.zm</span></div>
+    </a>
+  </div>
+</div>
+
 <header class="navbar">
   <div class="container">
     <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span></a>
@@ -40,17 +77,17 @@
 <section class="section-tight">
   <div class="container">
     <div class="grid grid-3" style="margin-bottom:50px;">
-      <div class="sidebar-card" style="text-align:center;">
+      <div class="sidebar-card reveal" style="text-align:center;">
         <i class="fa-solid fa-phone" style="font-size:1.6rem;color:var(--gold);margin-bottom:12px;"></i>
         <h5>Call Us</h5>
         <p style="margin:0;">+260 97 123 4567<br>Mon–Sat, 8am–6pm</p>
       </div>
-      <div class="sidebar-card" style="text-align:center;">
+      <div class="sidebar-card reveal reveal-delay-1" style="text-align:center;">
         <i class="fa-brands fa-whatsapp" style="font-size:1.6rem;color:var(--gold);margin-bottom:12px;"></i>
         <h5>WhatsApp</h5>
         <p style="margin:0;">+260 97 123 4567<br>Fastest response</p>
       </div>
-      <div class="sidebar-card" style="text-align:center;">
+      <div class="sidebar-card reveal reveal-delay-2" style="text-align:center;">
         <i class="fa-solid fa-envelope" style="font-size:1.6rem;color:var(--gold);margin-bottom:12px;"></i>
         <h5>Email</h5>
         <p style="margin:0;">hello@eventhub.zm<br>support@eventhub.zm</p>
@@ -58,7 +95,7 @@
     </div>
 
     <div class="grid grid-2" style="align-items:start;">
-      <div class="panel">
+      <div class="panel reveal">
         <h3>Send Us a Message</h3>
         <form data-fake-submit data-success-message="Message sent! We'll get back to you shortly.">
           <div class="form-row">
@@ -77,7 +114,7 @@
           <button type="submit" class="btn btn-gold">Send Message</button>
         </form>
       </div>
-      <div>
+      <div class="reveal reveal-delay-1">
         <div class="map-embed" style="height:340px;margin-bottom:24px;">
           <iframe src="https://www.google.com/maps?q=Lusaka,Zambia&output=embed" width="100%" height="100%" style="border:0;" loading="lazy" title="EventHub office map"></iframe>
         </div>

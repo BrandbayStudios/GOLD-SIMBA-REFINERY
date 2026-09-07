@@ -12,6 +12,9 @@
 </head>
 <body>
 
+<!-- Spinner -->
+<div id="page-spinner"></div>
+
 <!-- Topbar -->
 <div class="topbar">
   <div class="container">
@@ -29,6 +32,21 @@
         <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Brand Bar -->
+<div class="brand-bar">
+  <div class="container">
+    <a href="tel:+260971234567" class="brand-bar-item">
+      <i class="fa-solid fa-phone-volume"></i>
+      <div><h6>Call Now</h6><span>+260 97 123 4567</span></div>
+    </a>
+    <a href="index.html" class="logo">Event<span>Hub</span></a>
+    <a href="mailto:hello@eventhub.zm" class="brand-bar-item">
+      <i class="fa-solid fa-envelope-open-text"></i>
+      <div><h6>Mail Now</h6><span>hello@eventhub.zm</span></div>
+    </a>
   </div>
 </div>
 
@@ -72,17 +90,37 @@
 
 <!-- Hero -->
 <section class="hero">
-  <div class="container">
-    <div class="hero-inner">
-      <div class="eyebrow">Zambia's Event Services Marketplace</div>
-      <h1>Plan Your Event. Find Everything You Need.</h1>
-      <p class="lead">From venues to videographers, caterers to cake makers — discover verified event vendors near you, compare their work and book with confidence.</p>
-      <div class="hero-stats">
-        <div><strong>1,200+</strong><span>Verified Vendors</span></div>
-        <div><strong>17</strong><span>Service Categories</span></div>
-        <div><strong>8,500+</strong><span>Events Planned</span></div>
+  <div class="hero-slide active" style="background-image:linear-gradient(120deg,rgba(9,9,10,.88) 10%,rgba(9,9,10,.55) 55%,rgba(9,9,10,.35) 100%),url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&amp;w=1740&amp;auto=format&amp;fit=crop');">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="eyebrow">Zambia's Event Services Marketplace</div>
+        <h1>Plan Your Event. Find Everything You Need.</h1>
+        <p class="lead">From venues to videographers, caterers to cake makers — discover verified event vendors near you, compare their work and book with confidence.</p>
+        <div class="hero-stats">
+          <div><strong><span data-counter="1200" data-suffix="+">0</span></strong><span>Verified Vendors</span></div>
+          <div><strong><span data-counter="17">0</span></strong><span>Service Categories</span></div>
+          <div><strong><span data-counter="8500" data-suffix="+">0</span></strong><span>Events Planned</span></div>
+        </div>
       </div>
     </div>
+  </div>
+  <div class="hero-slide" style="background-image:linear-gradient(120deg,rgba(9,9,10,.88) 10%,rgba(9,9,10,.55) 55%,rgba(9,9,10,.35) 100%),url('https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&amp;w=1740&amp;auto=format&amp;fit=crop');">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="eyebrow">For Weddings, Parties & Corporate Events</div>
+        <h1>Zambia's Largest Trusted Vendor Network.</h1>
+        <p class="lead">Every vendor on EventHub is admin-verified — real portfolios, upfront pricing and direct contact, so you can plan with total confidence.</p>
+        <div class="hero-stats">
+          <div><strong><span data-counter="17">0</span></strong><span>Cities Covered</span></div>
+          <div><strong>4.8★</strong><span>Average Rating</span></div>
+          <div><strong><span data-counter="24" data-suffix="hr">0</span></strong><span>Avg. Vendor Response</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-dots">
+    <button class="active" aria-label="Slide 1"></button>
+    <button aria-label="Slide 2"></button>
   </div>
 </section>
 
@@ -132,7 +170,7 @@
 <!-- Popular Categories -->
 <section class="section" id="categories">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="eyebrow">Browse</div>
       <h2>Popular Categories</h2>
       <p>Everything you need for weddings, parties, corporate functions and more — organised into 17 trusted categories.</p>
@@ -160,7 +198,7 @@
 <!-- Vendors Near You -->
 <section class="section bg-off">
   <div class="container">
-    <div class="section-head left flex-between" style="align-items:flex-end;">
+    <div class="section-head left flex-between reveal" style="align-items:flex-end;">
       <div>
         <div class="eyebrow">GPS Powered</div>
         <h2>Vendors Near You</h2>
@@ -264,7 +302,7 @@
 <section class="section">
   <div class="container">
     <div class="about-grid">
-      <div class="about-media">
+      <div class="about-media reveal">
         <div class="badge-float"><strong>8.5K+</strong><span>EVENTS PLANNED</span></div>
         <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1000&auto=format&fit=crop" alt="Event setup">
         <img class="img-sm" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=600&auto=format&fit=crop" alt="Wedding decor">
@@ -291,7 +329,7 @@
 <!-- Featured Vendors -->
 <section class="section bg-cream">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="eyebrow">Handpicked</div>
       <h2>Featured Vendors</h2>
       <p>Top-rated, highly booked vendors chosen for exceptional quality and service across Zambia.</p>
@@ -388,7 +426,7 @@
 <!-- Browse by Event Type -->
 <section class="section">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="eyebrow">Occasions</div>
       <h2>Browse by Event Type</h2>
       <p>Whatever you're celebrating, find the right vendors curated for the occasion.</p>
@@ -421,28 +459,28 @@
 <!-- How it Works -->
 <section class="section bg-off" id="how-it-works">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="eyebrow">Simple Process</div>
       <h2>How It Works</h2>
       <p>Planning your event should feel exciting, not exhausting.</p>
     </div>
     <div class="steps">
-      <div class="step">
+      <div class="step reveal">
         <div class="step-num">1</div>
         <h4>Search & Discover</h4>
         <p>Browse categories or search by what you need near your location.</p>
       </div>
-      <div class="step">
+      <div class="step reveal reveal-delay-1">
         <div class="step-num">2</div>
         <h4>Compare Vendors</h4>
         <p>Check portfolios, pricing, packages and real customer reviews.</p>
       </div>
-      <div class="step">
+      <div class="step reveal reveal-delay-2">
         <div class="step-num">3</div>
         <h4>Connect Directly</h4>
         <p>Call, WhatsApp or request a quotation straight from the profile.</p>
       </div>
-      <div class="step">
+      <div class="step reveal reveal-delay-3">
         <div class="step-num">4</div>
         <h4>Celebrate</h4>
         <p>Book with confidence and enjoy a beautifully planned event.</p>
@@ -451,10 +489,69 @@
   </div>
 </section>
 
+<!-- Get a Free Quote -->
+<section class="section">
+  <div class="container">
+    <div class="grid grid-2" style="align-items:center;">
+      <div class="reveal">
+        <div class="eyebrow">Get Matched</div>
+        <h2>Get a Free, Personalized Vendor Shortlist</h2>
+        <p>Not sure where to start? Tell us about your event and what you need, and our team will hand-pick 3–5 verified vendors that match your budget, style and location.</p>
+        <div class="contact-row" style="margin-top:28px;">
+          <i class="fa-solid fa-clock"></i>
+          <div><strong style="display:block;">Under 24 Hours</strong><span style="font-size:.85rem;color:var(--gray);">We reply with your shortlist fast</span></div>
+        </div>
+        <div class="contact-row">
+          <i class="fa-solid fa-shield-heart"></i>
+          <div><strong style="display:block;">100% Free, No Obligation</strong><span style="font-size:.85rem;color:var(--gray);">No fees, no pressure to book</span></div>
+        </div>
+        <div class="contact-row">
+          <i class="fa-brands fa-whatsapp"></i>
+          <div><strong style="display:block;">Delivered Straight to WhatsApp</strong><span style="font-size:.85rem;color:var(--gray);">Or email, whichever you prefer</span></div>
+        </div>
+      </div>
+      <div class="panel reveal reveal-delay-1">
+        <h3 style="margin-bottom:20px;">Request Your Shortlist</h3>
+        <form data-fake-submit data-success-message="Thanks! Our team will WhatsApp you a vendor shortlist within 24 hours.">
+          <div class="form-row">
+            <div class="form-group"><label>Your Name</label><input type="text" class="form-control" placeholder="Your name" required></div>
+            <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" class="form-control" placeholder="e.g. 097 123 4567" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Event Type</label>
+              <select class="form-control">
+                <option>Wedding</option>
+                <option>Birthday</option>
+                <option>Corporate Event</option>
+                <option>Traditional Ceremony</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>What Do You Need?</label>
+              <select class="form-control">
+                <option>Venue</option>
+                <option>Photographer / Videographer</option>
+                <option>Caterer</option>
+                <option>MC / DJ</option>
+                <option>Decorator</option>
+                <option>A Bit of Everything</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Tell Us More</label><textarea class="form-control" placeholder="Event date, guest count, budget range…" style="min-height:100px;"></textarea></div>
+          <button type="submit" class="btn btn-gold btn-block">Request My Shortlist <i class="fa-solid fa-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Become a Vendor -->
 <section class="section">
   <div class="container">
-    <div class="cta-banner">
+    <div class="cta-banner reveal">
       <div>
         <div class="eyebrow">For Businesses</div>
         <h2>Grow Your Event Business on EventHub</h2>
@@ -477,12 +574,12 @@
 <!-- Testimonials -->
 <section class="section bg-dark">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div class="eyebrow">Testimonials</div>
       <h2>What Our Customers Say</h2>
     </div>
     <div class="testi-track">
-      <div class="testi-card">
+      <div class="testi-card reveal">
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p>"EventHub helped me find a decorator and caterer in Lusaka within a day. Everything was verified and the prices were upfront — no back and forth."</p>
         <div class="testi-person">
@@ -490,7 +587,7 @@
           <div><strong>Chileshe Banda</strong><span>Wedding, Lusaka</span></div>
         </div>
       </div>
-      <div class="testi-card">
+      <div class="testi-card reveal reveal-delay-1">
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p>"As a DJ, EventHub has completely changed how I get bookings. My profile shows my past events and clients contact me directly on WhatsApp."</p>
         <div class="testi-person">
@@ -498,7 +595,7 @@
           <div><strong>Mwansa Phiri</strong><span>DJ & MC, Kitwe</span></div>
         </div>
       </div>
-      <div class="testi-card">
+      <div class="testi-card reveal reveal-delay-2">
         <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
         <p>"We used the event checklist and Near Me search for our company's anniversary function. Saved us weeks of calling around Ndola."</p>
         <div class="testi-person">
