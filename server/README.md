@@ -1,14 +1,20 @@
 # Gold SIMBA Refinery — server
 
 A small Node.js + Express + SQLite server that serves the Gold SIMBA
-Refinery site (`public/goldsimba.html`) and answers the same-origin
-`/api/...` routes that page's JavaScript calls.
+Refinery site (`public/*.html`) and answers the same-origin `/api/...`
+routes those pages' JavaScript calls.
 
-This one file at `public/goldsimba.html` contains all three apps —
-the public marketing site (`/`), the staff dashboard (`/#admin`), and
-the customer booking tracker (`/#track`) — switched by a client-side hash
-router. There is nothing else to configure: the page's `fetch()` calls are
-all same-origin relative paths.
+The site is a set of standalone pages — `index.html`, `about.html`,
+`services.html`, `why-us.html`, `goals.html`, `contact.html` (the public
+marketing site), plus `admin.html` (staff dashboard) and `track.html`
+(customer tracker) — sharing `assets/css/style.css` and `assets/js/main.js`.
+There is nothing else to configure: every page's `fetch()` calls are
+same-origin relative paths.
+
+`goldsimba.html` is also kept in the same folder as a fully self-contained
+single-file version of the whole site (all pages in one file, switched by a
+client-side hash router at `#admin` / `#track`) — a reference copy, still
+fully working, that every change here is mirrored into.
 
 ## Run it
 
@@ -19,8 +25,9 @@ npm start
 ```
 
 - Public site:      http://localhost:4000/
-- Staff dashboard:  http://localhost:4000/#admin  (default `admin` / `ADMINGSR2026`)
-- Booking tracker:  http://localhost:4000/#track
+- Staff dashboard:  http://localhost:4000/admin.html  (default `admin` / `ADMINGSR2026`)
+- Booking tracker:  http://localhost:4000/track.html
+- Single-file version: http://localhost:4000/goldsimba.html (and `goldsimba.html#admin` / `#track`)
 
 Data is stored in a SQLite database file at `server/data/goldsimba.sqlite`,
 created automatically on first run. The default service catalogue (the
@@ -72,6 +79,24 @@ The server always recomputes `balance` (`assayingFee - amountPaid`) and
 `sellerNRC`, `sellerAddress`, `bookingMadeBy`, and buyer/seller contact
 details before the response is ever sent, so the customer tracker can never
 see them.
+
+### Test reports
+
+Once a booking's `paymentStatus` is `Paid`, staff can attach a laboratory
+test report to it from the booking detail view in `admin.html` — number of
+bars, total weight, sample details, method used, gold % and carats, report
+date, and who analysed/checked it. A `labNumber` (a plain 6-digit number,
+distinct from the `GSR-######` booking reference) is assigned automatically
+the first time a report field is saved; `PUT /api/admin/bookings/:reference`
+rejects report fields with a 400 until the booking is Paid. The report
+prints as its own certificate (mirroring a standard assay lab report layout:
+sample identity, laboratory number, an analyte/unit/method/result table,
+disclaimer, and analysed-by/checked-by lines) separately from the payment
+receipt.
+
+`GET /api/lookup` includes a `testReport` field (`null` until one exists)
+once the booking is Paid and a report has been saved, so `track.html` shows
+and can print it alongside the payment receipt.
 
 ## Hosting
 

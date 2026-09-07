@@ -296,6 +296,28 @@
       <span>Notes</span><strong id="d-notes" style="font-weight:500;font-size:13.5px;line-height:1.6">—</strong>
     </div>
 
+    <div class="report-section">
+      <div class="report-section-head">
+        <h3>Test Report</h3>
+        <span class="mono" id="reportLabLine" style="font-size:11.5px;color:var(--smoke-dim)"></span>
+      </div>
+      <p class="report-gate-note" id="reportGateNote">A test report can be added once this booking's payment status is Paid.</p>
+      <div id="reportSummary" hidden>
+        <div class="detail-grid">
+          <div class="detail-item"><span>Number of Bars</span><strong id="d-numberOfBars">—</strong></div>
+          <div class="detail-item"><span>Total Weight</span><strong id="d-reportTotalWeight">—</strong></div>
+          <div class="detail-item"><span>Sample Details</span><strong id="d-sampleDetails">—</strong></div>
+          <div class="detail-item"><span>Gold %</span><strong id="d-goldPercent">—</strong></div>
+          <div class="detail-item"><span>Gold Carats</span><strong id="d-goldCarats">—</strong></div>
+          <div class="detail-item"><span>Report Date</span><strong id="d-reportDate">—</strong></div>
+        </div>
+      </div>
+      <div class="report-actions">
+        <button type="button" class="btn btn-sm" id="reportFormBtn" hidden><svg viewBox="0 0 24 24"><use href="#ic-edit"/></svg> <span id="reportFormBtnLabel">Add Test Report</span></button>
+        <button type="button" class="btn btn-sm btn-gold" id="printReportBtn" hidden><svg viewBox="0 0 24 24"><use href="#ic-printer"/></svg> Print Test Report</button>
+      </div>
+    </div>
+
     <div class="modal-foot" style="justify-content:space-between">
       <button class="btn btn-danger btn-sm" id="deleteBtn"><svg viewBox="0 0 24 24"><use href="#ic-trash"/></svg> Delete Booking</button>
       <div style="display:flex;gap:10px">
@@ -304,6 +326,98 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- ============ Test Report Form Modal ============ -->
+<div class="modal-backdrop" id="reportFormBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reportFormTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="reportFormTitle">Test Report</h2>
+        <p id="reportFormLabLine">A laboratory number is generated automatically on save</p>
+      </div>
+      <button class="modal-close" id="reportFormClose"><svg viewBox="0 0 24 24"><use href="#a-ic-x"/></svg></button>
+    </div>
+    <div class="form-err" id="reportFormErr"></div>
+    <form id="reportForm">
+      <div class="frow">
+        <div class="field"><label for="rf-numberOfBars">Number of Bars</label><input type="number" id="rf-numberOfBars" min="0" step="1"></div>
+        <div class="field">
+          <label for="rf-reportTotalWeight">Total Weight of Gold Bars</label>
+          <div class="qty-row">
+            <input type="number" id="rf-reportTotalWeight" min="0" step="0.01">
+            <select id="rf-reportWeightUnit">
+              <option value="g">g</option>
+              <option value="kg">kg</option>
+              <option value="oz">oz</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="rf-sampleDetails">Sample Details</label><input type="text" id="rf-sampleDetails" placeholder="e.g. Metallic"></div>
+        <div class="field"><label for="rf-testMethod">Method Used</label><input type="text" id="rf-testMethod" placeholder="e.g. Atomic Absorption Spectrophotometry"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="rf-goldPercent">Gold (%)</label><input type="number" id="rf-goldPercent" min="0" max="100" step="0.01"></div>
+        <div class="field"><label for="rf-goldCarats">Gold (Carats)</label><input type="number" id="rf-goldCarats" min="0" max="24" step="0.01"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="rf-reportDate">Report Date</label><input type="date" id="rf-reportDate"></div>
+        <div class="field"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label for="rf-analysedBy">Analysed By</label><input type="text" id="rf-analysedBy"></div>
+        <div class="field"><label for="rf-checkedBy">Checked By</label><input type="text" id="rf-checkedBy"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="reportFormCancel">Cancel</button>
+        <button type="submit" class="btn btn-gold" id="reportFormSubmit">Save Test Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ Printable test report (hidden on screen) ============ -->
+<div class="test-report" id="testReportBlock">
+  <div class="r-head">
+    <div>
+      <h2>Gold SIMBA Refinery</h2>
+      <div style="font-size:12px;color:#666;margin-top:4px">Mineral Refining &amp; Laboratory Testing — Zambia</div>
+      <div style="font-size:12px;color:#666;margin-top:2px">Laboratory Report</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.08em">Laboratory Number</div>
+      <div class="r-ref" id="tr-labNumber">—</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#999;margin-top:6px">Booking Reference: <span id="tr-ref">—</span></div>
+    </div>
+  </div>
+  <table>
+    <tr><td class="k">Sample Identity</td><td>Number of Bars (<span id="tr-numberOfBars">—</span>) · Total Weight of Gold Bars (<span id="tr-totalWeight">—</span>)</td></tr>
+    <tr><td class="k">Laboratory Number</td><td id="tr-labNumber2">—</td></tr>
+    <tr><td class="k">Sample Details</td><td id="tr-sampleDetails">—</td></tr>
+    <tr><td class="k">Report Date</td><td id="tr-reportDate">—</td></tr>
+  </table>
+  <table class="analyte-table">
+    <thead><tr><th>Analyte</th><th>Unit</th><th>Method</th><th>Test Results</th></tr></thead>
+    <tbody>
+      <tr><td>Gold</td><td>%</td><td id="tr-method1">—</td><td id="tr-goldPercent">—</td></tr>
+      <tr><td>Gold</td><td>Carats</td><td id="tr-method2">—</td><td id="tr-goldCarats">—</td></tr>
+    </tbody>
+  </table>
+  <div class="disclaimer">
+    <h4>Disclaimer</h4>
+    <ol type="i">
+      <li>This laboratory report should not in any way be used as a certificate for goods not sampled and sealed by our officers.</li>
+      <li>The results reported above pertain only to the sample submitted for analysis and not necessarily to any other samples of similar nature.</li>
+      <li>If this document is transmitted electronically, it will only be valid if it is supported by the original document.</li>
+    </ol>
+  </div>
+  <div class="sign-row">
+    <div class="sign-col"><div class="sign-line">Analysed By: <span id="tr-analysedBy">—</span></div></div>
+    <div class="sign-col"><div class="sign-line">Checked By: <span id="tr-checkedBy">—</span></div></div>
+  </div>
+  <div class="r-foot">Generated from Gold SIMBA Refinery's booking system · Laboratory Number <span id="tr-labNumber3"></span> is this report's unique identifier.</div>
 </div>
 
 <!-- ============ Printable receipt (hidden on screen) ============ -->
@@ -408,7 +522,10 @@
    'adminTabs','tabBookingsBtn','tabServicesBtn','bookingsView','servicesView',
    'serviceSearchInput','newServiceBtn','servicesTableRegion',
    'serviceFormBackdrop','serviceFormTitle','serviceFormIdLine','serviceFormClose','serviceFormErr',
-   'serviceForm','serviceFormCancel','serviceFormSubmit'
+   'serviceForm','serviceFormCancel','serviceFormSubmit',
+   'reportLabLine','reportGateNote','reportSummary','reportFormBtn','reportFormBtnLabel','printReportBtn',
+   'reportFormBackdrop','reportFormTitle','reportFormLabLine','reportFormClose','reportFormErr',
+   'reportForm','reportFormCancel','reportFormSubmit','testReportBlock'
   ].forEach(function(id){ els[id] = document.getElementById(id); });
 
   // Backed by the /api/admin/* routes served by server/server.js. Staff
@@ -1071,6 +1188,108 @@
     rset('r-paid', fmtMoney(b.amountPaid, b.currency));
     rset('r-balance', fmtMoney(bal, b.currency));
     rset('r-status', (b.paymentStatus || 'Pending') + (b.paymentStatus === 'Paid' && b.paidAt ? (' · ' + fmtDateTime(b.paidAt)) : ''));
+
+    fillReportSection(b);
+  }
+
+  // ---------------- Test report (only meaningful once paymentStatus is Paid) ----------------
+  function fillReportSection(b){
+    var isPaid = b.paymentStatus === 'Paid';
+    var hasReport = !!b.labNumber;
+
+    els.reportGateNote.hidden = isPaid;
+    els.reportSummary.hidden = !hasReport;
+    els.reportFormBtn.hidden = !isPaid;
+    els.printReportBtn.hidden = !hasReport;
+    els.reportLabLine.textContent = hasReport ? ('Lab No. ' + b.labNumber) : '';
+    els.reportFormBtnLabel.textContent = hasReport ? 'Edit Test Report' : 'Add Test Report';
+
+    if(hasReport){
+      var set = function(id, val){ document.getElementById(id).textContent = (val === null || val === undefined || val === '') ? '—' : val; };
+      set('d-numberOfBars', b.numberOfBars);
+      set('d-reportTotalWeight', (b.reportTotalWeight != null ? fmtQty(b.reportTotalWeight, b.reportWeightUnit || 'g') : ''));
+      set('d-sampleDetails', b.sampleDetails);
+      set('d-goldPercent', b.goldPercent != null ? (b.goldPercent + '%') : '');
+      set('d-goldCarats', b.goldCarats != null ? (b.goldCarats + ' ct') : '');
+      set('d-reportDate', b.reportDate ? fmtDate(b.reportDate) : '');
+    }
+
+    // printable test-report block (kept in sync so Print always reflects the current record)
+    var trset = function(id, val){ document.getElementById(id).textContent = (val === null || val === undefined || val === '') ? '—' : val; };
+    trset('tr-labNumber', b.labNumber);
+    trset('tr-labNumber2', b.labNumber);
+    trset('tr-labNumber3', b.labNumber);
+    trset('tr-ref', b.referenceNumber || b.id);
+    trset('tr-numberOfBars', b.numberOfBars);
+    trset('tr-totalWeight', b.reportTotalWeight != null ? fmtQty(b.reportTotalWeight, b.reportWeightUnit || 'g') : '');
+    trset('tr-sampleDetails', b.sampleDetails);
+    trset('tr-reportDate', b.reportDate ? fmtDate(b.reportDate) : '');
+    trset('tr-method1', b.testMethod);
+    trset('tr-method2', b.testMethod);
+    trset('tr-goldPercent', b.goldPercent != null ? (b.goldPercent + '%') : '');
+    trset('tr-goldCarats', b.goldCarats != null ? (b.goldCarats + ' ct') : '');
+    trset('tr-analysedBy', b.analysedBy);
+    trset('tr-checkedBy', b.checkedBy);
+  }
+
+  function openReportForm(b){
+    els.reportFormErr.classList.remove('show');
+    els.reportFormTitle.textContent = b.labNumber ? 'Edit Test Report' : 'New Test Report';
+    els.reportFormLabLine.textContent = b.labNumber ? ('Laboratory Number ' + b.labNumber) : 'A laboratory number is generated automatically on save';
+
+    var f = function(id){ return document.getElementById('rf-' + id); };
+    f('numberOfBars').value = b.numberOfBars != null ? b.numberOfBars : '';
+    f('reportTotalWeight').value = b.reportTotalWeight != null ? b.reportTotalWeight : '';
+    f('reportWeightUnit').value = b.reportWeightUnit || 'g';
+    f('sampleDetails').value = b.sampleDetails || '';
+    f('testMethod').value = b.testMethod || 'Atomic Absorption Spectrophotometry';
+    f('goldPercent').value = b.goldPercent != null ? b.goldPercent : '';
+    f('goldCarats').value = b.goldCarats != null ? b.goldCarats : '';
+    f('reportDate').value = b.reportDate || todayISO();
+    f('analysedBy').value = b.analysedBy || '';
+    f('checkedBy').value = b.checkedBy || '';
+
+    els.reportFormBackdrop.classList.add('open');
+    setTimeout(function(){ f('numberOfBars').focus(); }, 50);
+  }
+  function closeReportForm(){
+    els.reportFormBackdrop.classList.remove('open');
+  }
+  function submitReportForm(e){
+    e.preventDefault();
+    if(!state.detailId) return;
+    var ref = state.detailId;
+    var f = function(id){ return document.getElementById('rf-' + id); };
+    var data = {
+      numberOfBars: f('numberOfBars').value === '' ? '' : parseInt(f('numberOfBars').value, 10),
+      reportTotalWeight: f('reportTotalWeight').value === '' ? '' : parseFloat(f('reportTotalWeight').value),
+      reportWeightUnit: f('reportWeightUnit').value,
+      sampleDetails: f('sampleDetails').value.trim(),
+      testMethod: f('testMethod').value.trim(),
+      goldPercent: f('goldPercent').value === '' ? '' : parseFloat(f('goldPercent').value),
+      goldCarats: f('goldCarats').value === '' ? '' : parseFloat(f('goldCarats').value),
+      reportDate: f('reportDate').value,
+      analysedBy: f('analysedBy').value.trim(),
+      checkedBy: f('checkedBy').value.trim()
+    };
+    els.reportFormSubmit.disabled = true;
+    els.reportFormErr.classList.remove('show');
+    GSR.api('/api/admin/bookings/' + encodeURIComponent(ref), { method: 'PUT', body: JSON.stringify(data) })
+      .then(function(){
+        toast('Test report saved.', 'ok');
+        closeReportForm();
+        loadBookings(true).catch(function(){});
+      }).catch(function(err){
+        els.reportFormErr.textContent = err.message;
+        els.reportFormErr.classList.add('show');
+        handleAuthError(err);
+      }).finally(function(){
+        els.reportFormSubmit.disabled = false;
+      });
+  }
+  function printTestReport(){
+    document.getElementById('admin-app').classList.add('print-target-report');
+    window.print();
   }
 
   function changeStatus(status){
@@ -1152,6 +1371,19 @@
   });
   els.printBtn.addEventListener('click', function(){ window.print(); });
 
+  els.reportFormBtn.addEventListener('click', function(){
+    var b = state.bookings.find(function(x){ return x.id === state.detailId; });
+    if(b) openReportForm(b);
+  });
+  els.reportFormClose.addEventListener('click', closeReportForm);
+  els.reportFormCancel.addEventListener('click', closeReportForm);
+  els.reportFormBackdrop.addEventListener('click', function(e){ if(e.target === els.reportFormBackdrop) closeReportForm(); });
+  els.reportForm.addEventListener('submit', submitReportForm);
+  els.printReportBtn.addEventListener('click', printTestReport);
+  window.addEventListener('afterprint', function(){
+    document.getElementById('admin-app').classList.remove('print-target-report');
+  });
+
   els.searchInput.addEventListener('input', function(){ state.search = els.searchInput.value; renderTable(); });
   els.statusFilter.addEventListener('change', function(){ state.statusFilter = els.statusFilter.value; renderTable(); });
 
@@ -1160,6 +1392,7 @@
     if(els.formBackdrop.classList.contains('open')) closeForm();
     if(els.detailBackdrop.classList.contains('open')) closeDetail();
     if(els.serviceFormBackdrop.classList.contains('open')) closeServiceForm();
+    if(els.reportFormBackdrop.classList.contains('open')) closeReportForm();
   });
 
   els.gateSubmit.addEventListener('click', function(){

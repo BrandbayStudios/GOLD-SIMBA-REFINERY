@@ -10,6 +10,34 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const db = new DatabaseSync(path.join(DATA_DIR, 'goldsimba.sqlite'));
 
+// Migrate a bookings table created before the test-report columns existed
+// (safe to run every startup — ALTER TABLE ADD COLUMN fails harmlessly if
+// the column is already there).
+const REPORT_COLUMNS = [
+  ['labNumber', 'TEXT'],
+  ['numberOfBars', 'INTEGER'],
+  ['reportTotalWeight', 'REAL'],
+  ['reportWeightUnit', 'TEXT'],
+  ['sampleDetails', 'TEXT'],
+  ['testMethod', 'TEXT'],
+  ['goldPercent', 'REAL'],
+  ['goldCarats', 'REAL'],
+  ['reportDate', 'TEXT'],
+  ['analysedBy', 'TEXT'],
+  ['checkedBy', 'TEXT']
+];
+function migrateReportColumns() {
+  const tableExists = db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='bookings'").get();
+  if (!tableExists) return;
+  const existingCols = new Set(db.prepare('PRAGMA table_info(bookings)').all().map((c) => c.name));
+  for (const [col, type] of REPORT_COLUMNS) {
+    if (!existingCols.has(col)) {
+      db.exec(`ALTER TABLE bookings ADD COLUMN ${col} ${type}`);
+    }
+  }
+}
+migrateReportColumns();
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS bookings (
     referenceNumber TEXT PRIMARY KEY,
@@ -34,7 +62,18 @@ db.exec(`
     paymentStatus TEXT DEFAULT 'Pending',
     notes TEXT,
     createdAt TEXT NOT NULL,
-    paidAt TEXT
+    paidAt TEXT,
+    labNumber TEXT,
+    numberOfBars INTEGER,
+    reportTotalWeight REAL,
+    reportWeightUnit TEXT,
+    sampleDetails TEXT,
+    testMethod TEXT,
+    goldPercent REAL,
+    goldCarats REAL,
+    reportDate TEXT,
+    analysedBy TEXT,
+    checkedBy TEXT
   );
 
   CREATE TABLE IF NOT EXISTS services (

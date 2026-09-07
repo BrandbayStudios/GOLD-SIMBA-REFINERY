@@ -38,6 +38,23 @@ function generateReferenceNumber() {
   throw new Error('Could not generate a unique reference number.');
 }
 
+// Laboratory number for a test report — a plain 6-digit number (distinct
+// look from the GSR-###### booking reference), auto-assigned server-side
+// the first time a report field is saved for a booking.
+function generateLabNumber() {
+  const existing = db.prepare('SELECT 1 FROM bookings WHERE labNumber = ?');
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const num = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+    if (!existing.get(num)) return num;
+  }
+  throw new Error('Could not generate a unique laboratory number.');
+}
+
+const REPORT_FIELD_KEYS = [
+  'numberOfBars', 'reportTotalWeight', 'reportWeightUnit', 'sampleDetails',
+  'testMethod', 'goldPercent', 'goldCarats', 'reportDate', 'analysedBy', 'checkedBy'
+];
+
 function str(v) {
   return v == null ? '' : String(v);
 }
@@ -77,7 +94,18 @@ function bookingRowToJson(row) {
     paymentStatus: row.paymentStatus,
     notes: row.notes,
     createdAt: row.createdAt,
-    paidAt: row.paidAt
+    paidAt: row.paidAt,
+    labNumber: row.labNumber,
+    numberOfBars: row.numberOfBars,
+    reportTotalWeight: row.reportTotalWeight,
+    reportWeightUnit: row.reportWeightUnit,
+    sampleDetails: row.sampleDetails,
+    testMethod: row.testMethod,
+    goldPercent: row.goldPercent,
+    goldCarats: row.goldCarats,
+    reportDate: row.reportDate,
+    analysedBy: row.analysedBy,
+    checkedBy: row.checkedBy
   };
 }
 
@@ -101,7 +129,7 @@ function publicRequestConfirmation(row) {
 // excludes notes, sellerNRC, sellerAddress, bookingMadeBy, buyer details,
 // and seller contact/company — everything the tracker's UI actually reads.
 function trackerBookingView(row) {
-  return {
+  const view = {
     referenceNumber: row.referenceNumber,
     dateOfBooking: row.dateOfBooking,
     testingDate: row.testingDate,
@@ -114,7 +142,30 @@ function trackerBookingView(row) {
     amountPaid: row.amountPaid,
     balance: row.balance,
     currency: row.currency,
-    paymentStatus: row.paymentStatus
+    paymentStatus: row.paymentStatus,
+    testReport: null
+  };
+  // The test report is only handed to the customer once payment is complete
+  // and staff have actually filled one in (a labNumber has been assigned).
+  if (row.paymentStatus === 'Paid' && row.labNumber) {
+    view.testReport = testReportView(row);
+  }
+  return view;
+}
+
+function testReportView(row) {
+  return {
+    labNumber: row.labNumber,
+    numberOfBars: row.numberOfBars,
+    reportTotalWeight: row.reportTotalWeight,
+    reportWeightUnit: row.reportWeightUnit,
+    sampleDetails: row.sampleDetails,
+    testMethod: row.testMethod,
+    goldPercent: row.goldPercent,
+    goldCarats: row.goldCarats,
+    reportDate: row.reportDate,
+    analysedBy: row.analysedBy,
+    checkedBy: row.checkedBy
   };
 }
 
@@ -306,6 +357,15 @@ admin.put('/bookings/:reference', (req, res) => {
     paidAt = null;
   }
 
+  // Test report fields — staff-only, and only meaningful once a booking is
+  // Paid. A lab number is assigned automatically the first time any report
+  // field is saved; it is never accepted from the client.
+  const sendingReportFields = REPORT_FIELD_KEYS.some((key) => has(key));
+  if (sendingReportFields && paymentStatus !== 'Paid') {
+    return res.status(400).json({ error: 'A test report can only be added once the booking is marked Paid.' });
+  }
+  const labNumber = sendingReportFields && !existing.labNumber ? generateLabNumber() : existing.labNumber;
+
   const merged = {
     referenceNumber: reference,
     dateOfBooking: has('dateOfBooking') ? str(body.dateOfBooking).trim() : existing.dateOfBooking,
@@ -328,7 +388,18 @@ admin.put('/bookings/:reference', (req, res) => {
     currency: has('currency') ? sanitizeCurrency(body.currency) : existing.currency,
     paymentStatus,
     notes: has('notes') ? str(body.notes).trim() : existing.notes,
-    paidAt
+    paidAt,
+    labNumber,
+    numberOfBars: has('numberOfBars') ? (body.numberOfBars === '' || body.numberOfBars == null ? null : num(body.numberOfBars, null)) : existing.numberOfBars,
+    reportTotalWeight: has('reportTotalWeight') ? (body.reportTotalWeight === '' || body.reportTotalWeight == null ? null : num(body.reportTotalWeight, null)) : existing.reportTotalWeight,
+    reportWeightUnit: has('reportWeightUnit') ? str(body.reportWeightUnit).trim() : existing.reportWeightUnit,
+    sampleDetails: has('sampleDetails') ? str(body.sampleDetails).trim() : existing.sampleDetails,
+    testMethod: has('testMethod') ? str(body.testMethod).trim() : existing.testMethod,
+    goldPercent: has('goldPercent') ? (body.goldPercent === '' || body.goldPercent == null ? null : num(body.goldPercent, null)) : existing.goldPercent,
+    goldCarats: has('goldCarats') ? (body.goldCarats === '' || body.goldCarats == null ? null : num(body.goldCarats, null)) : existing.goldCarats,
+    reportDate: has('reportDate') ? str(body.reportDate).trim() : existing.reportDate,
+    analysedBy: has('analysedBy') ? str(body.analysedBy).trim() : existing.analysedBy,
+    checkedBy: has('checkedBy') ? str(body.checkedBy).trim() : existing.checkedBy
   };
 
   db.prepare(`
@@ -340,7 +411,11 @@ admin.put('/bookings/:reference', (req, res) => {
       buyerName=@buyerName, buyerContact=@buyerContact,
       quantity=@quantity, quantityUnit=@quantityUnit,
       assayingFee=@assayingFee, amountPaid=@amountPaid, balance=@balance,
-      currency=@currency, paymentStatus=@paymentStatus, notes=@notes, paidAt=@paidAt
+      currency=@currency, paymentStatus=@paymentStatus, notes=@notes, paidAt=@paidAt,
+      labNumber=@labNumber, numberOfBars=@numberOfBars, reportTotalWeight=@reportTotalWeight,
+      reportWeightUnit=@reportWeightUnit, sampleDetails=@sampleDetails, testMethod=@testMethod,
+      goldPercent=@goldPercent, goldCarats=@goldCarats, reportDate=@reportDate,
+      analysedBy=@analysedBy, checkedBy=@checkedBy
     WHERE referenceNumber=@referenceNumber
   `).run(merged);
 
@@ -455,6 +530,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log('Gold SIMBA Refinery server listening on http://localhost:' + PORT);
   console.log('  Public site:      http://localhost:' + PORT + '/');
-  console.log('  Staff dashboard:  http://localhost:' + PORT + '/#admin');
-  console.log('  Booking tracker:  http://localhost:' + PORT + '/#track');
+  console.log('  Staff dashboard:  http://localhost:' + PORT + '/admin.html');
+  console.log('  Booking tracker:  http://localhost:' + PORT + '/track.html');
 });

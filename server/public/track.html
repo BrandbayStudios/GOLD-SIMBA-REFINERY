@@ -88,6 +88,36 @@
       <div class="total-row" style="border-top:none;padding-top:0;font-size:13px;"><span>Amount Paid</span><span id="t-paid">—</span></div>
       <div class="total-row"><span>Balance</span><b id="t-balance">—</b></div>
       <button class="btn print-btn" id="trackPrintBtn">Print / Save Receipt</button>
+
+      <div class="report-block" id="reportBlock" hidden>
+        <h3>Test Report</h3>
+        <div class="lab-line mono">Laboratory Number <span id="tk-labNumber">—</span></div>
+        <div class="detail-grid">
+          <div class="detail-item"><span>Number of Bars</span><strong id="tk-numberOfBars">—</strong></div>
+          <div class="detail-item"><span>Total Weight of Gold Bars</span><strong id="tk-totalWeight">—</strong></div>
+          <div class="detail-item"><span>Sample Details</span><strong id="tk-sampleDetails">—</strong></div>
+          <div class="detail-item"><span>Report Date</span><strong id="tk-reportDate">—</strong></div>
+        </div>
+        <table class="analyte-table">
+          <thead><tr><th>Analyte</th><th>Unit</th><th>Method</th><th>Test Results</th></tr></thead>
+          <tbody>
+            <tr><td>Gold</td><td>%</td><td id="tk-method1">—</td><td id="tk-goldPercent">—</td></tr>
+            <tr><td>Gold</td><td>Carats</td><td id="tk-method2">—</td><td id="tk-goldCarats">—</td></tr>
+          </tbody>
+        </table>
+        <div class="disclaimer">
+          <h4>Disclaimer</h4>
+          <ol type="i">
+            <li>This laboratory report should not in any way be used as a certificate for goods not sampled and sealed by our officers.</li>
+            <li>The results reported above pertain only to the sample submitted for analysis and not necessarily to any other samples of similar nature.</li>
+            <li>If this document is transmitted electronically, it will only be valid if it is supported by the original document.</li>
+          </ol>
+        </div>
+        <div class="sign-row">
+          <div class="sign-col"><div class="sign-line">Analysed By: <span id="tk-analysedBy">—</span></div></div>
+          <div class="sign-col"><div class="sign-line">Checked By: <span id="tk-checkedBy">—</span></div></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -145,6 +175,26 @@
     set('t-fee', fmtMoney(b.assayingFee, b.currency));
     set('t-paid', fmtMoney(b.amountPaid, b.currency));
     set('t-balance', fmtMoney(bal, b.currency));
+
+    var reportBlock = document.getElementById('reportBlock');
+    if(b.testReport){
+      var r = b.testReport;
+      set('tk-labNumber', r.labNumber);
+      set('tk-numberOfBars', r.numberOfBars);
+      set('tk-totalWeight', r.reportTotalWeight != null ? fmtQty(r.reportTotalWeight, r.reportWeightUnit || 'g') : '');
+      set('tk-sampleDetails', r.sampleDetails);
+      set('tk-reportDate', fmtDate(r.reportDate));
+      set('tk-method1', r.testMethod);
+      set('tk-method2', r.testMethod);
+      set('tk-goldPercent', r.goldPercent != null ? (r.goldPercent + '%') : '');
+      set('tk-goldCarats', r.goldCarats != null ? (r.goldCarats + ' ct') : '');
+      set('tk-analysedBy', r.analysedBy);
+      set('tk-checkedBy', r.checkedBy);
+      reportBlock.hidden = false;
+    } else {
+      reportBlock.hidden = true;
+    }
+
     result.classList.add('show');
   }
 
