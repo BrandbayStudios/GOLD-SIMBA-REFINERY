@@ -87,18 +87,27 @@ register themselves as one). Instead:
   **Customers** tabs all show real, live Firestore data: total counts,
   pending approvals (approve/reject buttons update Firestore directly),
   the full vendor list, and the full customer list.
+- `vendors.html` → once a vendor has been approved in the admin
+  dashboard, they appear on the public listing (tagged **New**,
+  prepended above the bundled demo cards) whenever the Laravel API
+  isn't reachable. Click **View** on one to open its real profile at
+  `vendor-profile.html?fb=<uid>`, with a working **Request Quotation**
+  form (stored in Firestore under that vendor).
 
 ## What this does *not* cover yet
 
-- The public listings on `index.html` / `vendors.html` still show the
-  bundled sample vendor cards — they are not yet wired to read real
-  *approved* vendors from Firestore. That's a reasonable next step once
-  you have real vendor data to show.
+- If your Laravel API *is* running and reachable, it takes priority on
+  `vendors.html` and the Firebase vendors won't be shown alongside it —
+  the two data sources aren't merged.
 - `vendor-dashboard.html` still shows demo data rather than the signed-in
-  vendor's own Firestore profile.
-- Enquiries, bookings and reviews are not modeled in Firestore — those
-  KPI cards on the admin dashboard still show static/demo numbers (or
-  live Laravel numbers if that backend is running).
+  vendor's own Firestore profile, so a vendor can't yet see the
+  enquiries submitted through their real profile.
+- A Firebase vendor's profile has no portfolio photos, packages, or
+  reviews (there's no upload flow or reviews collection yet) — those
+  sections show an honest "not added yet" state instead.
+- Bookings and reviews aren't modeled in Firestore at all — those KPI
+  cards on the admin dashboard still show static/demo numbers (or live
+  Laravel numbers if that backend is running).
 - Password reset, email verification, and Google/Facebook sign-in
   buttons are still non-functional placeholders.
 
