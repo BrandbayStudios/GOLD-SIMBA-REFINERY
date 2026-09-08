@@ -115,9 +115,7 @@
         </form>
       </div>
       <div class="reveal reveal-delay-1">
-        <div class="map-embed" style="height:340px;margin-bottom:24px;">
-          <iframe src="https://www.google.com/maps?q=Lusaka,Zambia&output=embed" width="100%" height="100%" style="border:0;" loading="lazy" title="EventHub office map"></iframe>
-        </div>
+        <div class="map-embed" id="office-map" style="height:340px;margin-bottom:24px;"></div>
         <div class="sidebar-card">
           <h5>EventHub Zambia HQ</h5>
           <div class="contact-row"><i class="fa-solid fa-location-dot"></i> Cairo Road, Lusaka, Zambia</div>
@@ -165,6 +163,11 @@
 </footer>
 
 <button class="back-top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="assets/js/google-config.js"></script>
+<script src="assets/js/google-maps.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  EH_GMAPS.renderStaticMap(document.getElementById('office-map'), -15.4177, 28.2833, 'EventHub Zambia HQ').catch(function () {});
+</script>
 </body>
 </html>

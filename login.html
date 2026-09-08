@@ -60,7 +60,7 @@
         <div class="divider">or continue with</div>
         <div class="social-auth">
           <button type="button"><i class="fa-brands fa-google"></i> Google</button>
-          <button type="button"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
+          <button type="button" id="fb-login-btn"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
         </div>
         <p style="text-align:center;margin-top:24px;font-size:.88rem;">New to EventHub? <a href="register.html" style="color:var(--gold-dark);font-weight:600;">Create an account</a></p>
       </div>
@@ -122,6 +122,25 @@
   var vendorForm = document.getElementById('vendor-login-form');
   if (customerForm) handleLogin(customerForm, null);
   if (vendorForm) handleLogin(vendorForm, 'vendor');
+
+  var fbLoginBtn = document.getElementById('fb-login-btn');
+  if (fbLoginBtn) {
+    fbLoginBtn.addEventListener('click', function () {
+      var originalText = fbLoginBtn.innerHTML;
+      fbLoginBtn.disabled = true;
+      fbLoginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting…';
+      EH_FB.loginWithFacebook().then(function (res) {
+        EH_toast(res.isNewAccount ? 'Welcome to EventHub!' : 'Welcome back!', 'fa-champagne-glasses');
+        setTimeout(function () {
+          window.location.href = res.role === 'admin' ? 'admin-dashboard.html' : (res.role === 'vendor' ? 'vendor-dashboard.html' : 'index.html');
+        }, 600);
+      }).catch(function (err) {
+        fbLoginBtn.disabled = false;
+        fbLoginBtn.innerHTML = originalText;
+        EH_toast(err.message || 'Facebook login failed.', 'fa-triangle-exclamation');
+      });
+    });
+  }
 </script>
 </body>
 </html>

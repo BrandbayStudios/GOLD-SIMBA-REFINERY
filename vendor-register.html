@@ -115,12 +115,15 @@
           </div>
           <div class="form-group"><label>Area / Suburb</label><input type="text" name="area" class="form-control" placeholder="e.g. Kabulonga"></div>
         </div>
-        <div class="form-group"><label>Full Address</label><input type="text" name="address" class="form-control" placeholder="Street address"></div>
         <div class="form-group">
-          <label>Pin Your Location on the Map</label>
-          <div class="map-embed">
-            <iframe src="https://www.google.com/maps?q=Lusaka,Zambia&output=embed" width="100%" height="100%" style="border:0;" loading="lazy" title="Pick location"></iframe>
-          </div>
+          <label>Full Address</label>
+          <input type="text" id="address-input" name="address" class="form-control" placeholder="Start typing your street address…" autocomplete="off">
+          <input type="hidden" name="latitude" id="latitude-input">
+          <input type="hidden" name="longitude" id="longitude-input">
+        </div>
+        <div class="form-group">
+          <label>Pin Your Exact Location <span style="font-weight:400;color:var(--gray);">(search the address above, or drag the pin)</span></label>
+          <div class="map-embed" id="pin-map"></div>
         </div>
         <label class="form-check"><input type="checkbox"> I also serve other cities / travel for events</label>
         <div class="flex-between" style="margin-top:24px;">
@@ -133,13 +136,18 @@
       <div class="step-panel panel">
         <h3>Upload Your Portfolio</h3>
         <p style="font-size:.88rem;">Add photos and videos of your past work — this is what customers see first.</p>
-        <div class="upload-box">
-          <input type="file" multiple accept="image/*,video/*" style="display:none;">
+        <div class="upload-box" id="portfolio-upload-box">
+          <input type="file" id="portfolio-input" multiple accept="image/*" style="display:none;">
           <i class="fa-solid fa-cloud-arrow-up"></i>
-          <strong class="upload-label">Click to upload photos & videos</strong>
-          <p style="margin:6px 0 0;font-size:.8rem;">JPG, PNG or MP4 — up to 20 files</p>
+          <strong class="upload-label">Click to upload photos</strong>
+          <p style="margin:6px 0 0;font-size:.8rem;">JPG or PNG — up to 10 photos, 10MB each</p>
         </div>
-        <div class="form-group" style="margin-top:20px;"><label>Business Logo</label><input type="file" class="form-control" accept="image/*"></div>
+        <div class="grid grid-4" id="portfolio-preview" style="margin-top:14px;"></div>
+        <div class="form-group" style="margin-top:20px;">
+          <label>Business Logo</label>
+          <input type="file" id="logo-input" class="form-control" accept="image/*">
+          <img id="logo-preview" style="display:none;width:80px;height:80px;object-fit:cover;border-radius:var(--radius);margin-top:10px;">
+        </div>
         <div class="flex-between" style="margin-top:24px;">
           <button type="button" class="btn btn-outline-dark prev-step"><i class="fa-solid fa-arrow-left"></i> Back</button>
           <button type="button" class="btn btn-gold next-step">Continue <i class="fa-solid fa-arrow-right"></i></button>
@@ -196,8 +204,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/firebase.js"></script>
+<script src="assets/js/google-config.js"></script>
+<script src="assets/js/google-maps.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
@@ -210,6 +221,60 @@
     });
   });
 
+  // Pre-fill the business name when arriving from a "Claim This Business"
+  // link on vendors.html (?name=...&claim_place=...).
+  document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var claimName = params.get('name');
+    var form = document.getElementById('vendor-register-form');
+    if (claimName && form) form.business_name.value = decodeURIComponent(claimName);
+  });
+
+  /* ---------- Step 3: address autocomplete + draggable pin map ---------- */
+  var latInput = document.getElementById('latitude-input');
+  var lngInput = document.getElementById('longitude-input');
+  var pinMapHandle = null;
+  EH_GMAPS.createPinMap(document.getElementById('pin-map'), {
+    onChange: function (lat, lng) { latInput.value = lat; lngInput.value = lng; }
+  }).then(function (handle) { pinMapHandle = handle; }).catch(function () {
+    document.getElementById('pin-map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--gray);font-size:.85rem;text-align:center;padding:20px;">Map unavailable — Google Maps isn\'t configured yet. You can still submit; add your exact location later.</div>';
+  });
+  EH_GMAPS.attachAutocomplete(document.getElementById('address-input'), function (place) {
+    latInput.value = place.lat;
+    lngInput.value = place.lng;
+    if (place.city) {
+      var citySelect = document.querySelector('select[name=city]');
+      var match = Array.prototype.find.call(citySelect.options, function (o) { return o.value.toLowerCase() === place.city.toLowerCase(); });
+      if (match) citySelect.value = match.value;
+    }
+    if (place.area) document.querySelector('input[name=area]').value = place.area;
+    if (pinMapHandle) pinMapHandle.setPosition(place.lat, place.lng);
+  });
+
+  /* ---------- Step 4: portfolio + logo previews (uploaded after account creation) ---------- */
+  var portfolioFiles = [];
+  var logoFile = null;
+
+  document.getElementById('portfolio-input').addEventListener('change', function (e) {
+    portfolioFiles = Array.prototype.slice.call(e.target.files).slice(0, 10);
+    var preview = document.getElementById('portfolio-preview');
+    preview.innerHTML = '';
+    portfolioFiles.forEach(function (file) {
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.style.cssText = 'width:100%;height:90px;object-fit:cover;border-radius:var(--radius-sm);';
+      preview.appendChild(img);
+    });
+  });
+
+  document.getElementById('logo-input').addEventListener('change', function (e) {
+    logoFile = e.target.files[0] || null;
+    var img = document.getElementById('logo-preview');
+    if (logoFile) { img.src = URL.createObjectURL(logoFile); img.style.display = 'block'; }
+    else { img.style.display = 'none'; }
+  });
+
+  /* ---------- Submit ---------- */
   var form = document.getElementById('vendor-register-form');
   if (form) {
     form.addEventListener('submit', function (e) {
@@ -238,11 +303,20 @@
         city: form.city.value,
         area: form.area.value.trim() || undefined,
         address: form.address.value.trim() || undefined,
+        latitude: latInput.value ? parseFloat(latInput.value) : undefined,
+        longitude: lngInput.value ? parseFloat(lngInput.value) : undefined,
         price_from: form.price_from.value || undefined,
         price_unit: form.price_unit.value,
         facebook_url: form.facebook_url.value.trim() || undefined,
         instagram_url: form.instagram_url.value.trim() || undefined,
         website_url: form.website_url.value.trim() || undefined,
+      }).then(function (res) {
+        if (!logoFile && portfolioFiles.length === 0) return;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading photos…';
+        return EH_FB.uploadVendorFiles(res.uid, { logoFile: logoFile, portfolioFiles: portfolioFiles }).catch(function (err) {
+          // Account is already created — don't block on a photo upload failure.
+          console.info('Photo upload failed:', err.message);
+        });
       }).then(function () {
         document.getElementById('submitted-modal').classList.add('open');
       }).catch(function (err) {

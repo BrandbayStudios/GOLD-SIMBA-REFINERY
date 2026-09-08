@@ -39,6 +39,7 @@
   firebase.initializeApp(window.EH_FIREBASE_CONFIG);
   var auth = firebase.auth();
   var db = firebase.firestore();
+  var storage = (typeof firebase.storage === 'function') ? firebase.storage() : null;
 
   function friendlyError(err) {
     var map = {
@@ -48,6 +49,8 @@
       'auth/user-not-found': 'No account found with that email.',
       'auth/wrong-password': 'Incorrect password.',
       'auth/invalid-credential': 'Incorrect email or password.',
+      'auth/popup-closed-by-user': 'Sign-in window was closed before finishing.',
+      'auth/account-exists-with-different-credential': 'An account already exists with this email using a different sign-in method.',
       'auth/too-many-requests': 'Too many attempts. Please wait a moment and try again.',
       'auth/network-request-failed': 'Network error — check your connection and that firebase-config.js is filled in.'
     };
@@ -104,6 +107,10 @@
           facebookUrl: data.facebook_url || null,
           instagramUrl: data.instagram_url || null,
           websiteUrl: data.website_url || null,
+          latitude: data.latitude || null,
+          longitude: data.longitude || null,
+          logoUrl: data.logo_url || null,
+          portfolioUrls: data.portfolio_urls || [],
           status: 'pending',
           role: 'vendor',
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -120,6 +127,63 @@
         return EH_FB.resolveRole(cred.user.uid).then(function (role) {
           return { uid: cred.user.uid, email: cred.user.email, role: role };
         });
+      }).catch(function (err) { throw friendlyError(err); });
+    },
+
+    /**
+     * Signs in with Facebook (via Firebase Auth's built-in provider — no
+     * Meta SDK needed). First-time sign-ins get an auto-created customer
+     * profile so they're counted on the admin dashboard like anyone who
+     * registered with email/password.
+     * @returns {Promise<{uid, email, role, isNewAccount}>}
+     */
+    loginWithFacebook: function () {
+      var provider = new firebase.auth.FacebookAuthProvider();
+      return auth.signInWithPopup(provider).then(function (result) {
+        var user = result.user;
+        return EH_FB.resolveRole(user.uid).then(function (role) {
+          if (role) return { uid: user.uid, email: user.email, role: role, isNewAccount: false };
+          var profile = {
+            name: user.displayName || 'EventHub Customer',
+            phone: user.phoneNumber || null,
+            email: user.email || null,
+            role: 'customer',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          return db.collection('customers').doc(user.uid).set(profile).then(function () {
+            return { uid: user.uid, email: user.email, role: 'customer', isNewAccount: true };
+          });
+        });
+      }).catch(function (err) { throw friendlyError(err); });
+    },
+
+    /**
+     * Uploads a vendor's logo and/or portfolio files to Firebase Storage
+     * and saves the resulting URLs onto their Firestore doc. Called
+     * *after* registerVendor, once a real uid exists.
+     * @param {{logoFile?: File, portfolioFiles?: File[]}} files
+     * @returns {Promise<{logoUrl: ?string, portfolioUrls: string[]}>}
+     */
+    uploadVendorFiles: function (uid, files) {
+      if (!storage) return Promise.reject(new Error('Firebase Storage is not enabled for this project yet — see GOOGLE_SETUP.md / FIREBASE_SETUP.md.'));
+      var tasks = [];
+      var result = { logoUrl: null, portfolioUrls: [] };
+
+      if (files.logoFile) {
+        var logoRef = storage.ref('vendors/' + uid + '/logo-' + Date.now() + '-' + files.logoFile.name);
+        tasks.push(logoRef.put(files.logoFile).then(function (snap) { return snap.ref.getDownloadURL(); }).then(function (url) { result.logoUrl = url; }));
+      }
+      (files.portfolioFiles || []).forEach(function (file, i) {
+        var ref = storage.ref('vendors/' + uid + '/portfolio/' + Date.now() + '-' + i + '-' + file.name);
+        tasks.push(ref.put(file).then(function (snap) { return snap.ref.getDownloadURL(); }).then(function (url) { result.portfolioUrls.push(url); }));
+      });
+
+      return Promise.all(tasks).then(function () {
+        var updates = {};
+        if (result.logoUrl) updates.logoUrl = result.logoUrl;
+        if (result.portfolioUrls.length) updates.portfolioUrls = firebase.firestore.FieldValue.arrayUnion.apply(null, result.portfolioUrls);
+        if (Object.keys(updates).length === 0) return result;
+        return db.collection('vendors').doc(uid).update(updates).then(function () { return result; });
       }).catch(function (err) { throw friendlyError(err); });
     },
 

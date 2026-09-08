@@ -493,6 +493,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/firebase.js"></script>
+<script src="assets/js/google-config.js"></script>
+<script src="assets/js/google-maps.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
@@ -620,6 +622,47 @@
     });
   }
 
+  // Approximate city centers, used to trigger a Places search when a
+  // customer filters by location rather than using "Near Me".
+  var CITY_COORDS = {
+    Lusaka: { lat: -15.3875, lng: 28.3228 },
+    Ndola: { lat: -12.9587, lng: 28.6366 },
+    Kitwe: { lat: -12.8024, lng: 28.2132 },
+    Livingstone: { lat: -17.8419, lng: 25.8544 },
+    Kabwe: { lat: -14.4469, lng: 28.4464 }
+  };
+
+  var discoveredPlaceIds = {};
+
+  function discoveredCardHtml(place) {
+    var stars = place.rating
+      ? '<div class="stars">' + starsHtml(place.rating) + '<span>' + place.rating.toFixed(1) + ' (' + place.user_ratings_total + ')</span></div>'
+      : '<span style="color:var(--gray);">Not yet reviewed on EventHub</span>';
+    return '<div class="vendor-card" data-cat="" data-rating="' + (place.rating || 0) + '" data-price="0" data-name="' + place.name + '">' +
+      '<div class="vendor-media"><img src="' + (place.photoUrl || 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=800&auto=format&fit=crop') + '" alt="' + place.name + '">' +
+      '<span class="vendor-tag external"><i class="fa-solid fa-map-pin"></i> Discovered</span></div>' +
+      '<div class="vendor-body"><span class="vendor-cat">Event Services</span><h4>' + place.name + '</h4>' +
+      '<div class="vendor-loc"><i class="fa-solid fa-location-dot"></i> ' + (place.vicinity || 'Zambia') + '</div>' +
+      '<div class="vendor-meta">' + stars + '</div>' +
+      '<div class="vendor-actions"><a href="vendor-register.html?name=' + encodeURIComponent(place.name) + '" class="btn btn-gold btn-block"><i class="fa-solid fa-flag"></i> Claim This Business</a></div>' +
+      '</div></div>';
+  }
+
+  // Google Places results for event-related businesses near a searched
+  // location — shown as unclaimed "Discovered" listings a real owner can
+  // claim via vendor-register.html. Triggered by "Near Me" or picking a
+  // city filter, never on a plain page load, to keep API usage bounded.
+  function injectDiscoveredVendors(lat, lng) {
+    EH_GMAPS.searchNearbyVendors(lat, lng, function (places) {
+      var fresh = places.filter(function (p) { return !discoveredPlaceIds[p.place_id]; });
+      if (!fresh.length) return;
+      fresh.forEach(function (p) { discoveredPlaceIds[p.place_id] = true; });
+      grid.insertAdjacentHTML('beforeend', fresh.map(discoveredCardHtml).join(''));
+      var countEl = document.getElementById('results-count');
+      if (countEl) countEl.textContent = grid.querySelectorAll('.vendor-card').length;
+    });
+  }
+
   function collectFilterParams() {
     var params = {};
     var q = document.getElementById('browse-search-q');
@@ -640,6 +683,12 @@
     applyBtn.addEventListener('click', function () {
       currentPage = 1;
       loadVendors(collectFilterParams());
+      var checkedLoc = document.querySelector('.filter-option input[name=loc]:checked');
+      if (checkedLoc) {
+        var cityLabel = checkedLoc.closest('.filter-option').textContent.trim();
+        var coords = CITY_COORDS[cityLabel];
+        if (coords) injectDiscoveredVendors(coords.lat, coords.lng);
+      }
     });
   }
   var sortSelect = document.getElementById('sort-select');
@@ -663,6 +712,7 @@
         initial.lng = pos.coords.longitude;
         initial.radius_km = 30;
         loadVendors(initial);
+        injectDiscoveredVendors(initial.lat, initial.lng);
       }, function () {
         loadVendors(initial);
       });

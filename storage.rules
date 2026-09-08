@@ -1,0 +1,26 @@
+rules_version = '2';
+
+// EventHub Zambia — Firebase Storage Security Rules
+// Paste this into Firebase Console -> Storage -> Rules -> Publish.
+//
+// Layout:
+//   vendors/{uid}/logo-*        — a vendor's business logo
+//   vendors/{uid}/portfolio/*   — a vendor's uploaded portfolio photos
+//
+// Anyone may read (photos need to display on the public site), but only
+// the vendor who owns that uid — or an admin — may upload/replace/delete
+// their own files. A 10MB cap keeps a single bad upload from ballooning
+// storage costs.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /vendors/{uid}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == uid
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
