@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Site Directory — Gold SIMBA Refinery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .dir-wrap{max-width:900px;margin:0 auto;padding:80px 32px 100px;}
+  .dir-wrap h1{font-size:clamp(30px,4vw,42px);margin-bottom:10px;}
+  .dir-wrap .lead{color:var(--smoke);font-size:15px;line-height:1.7;margin-bottom:48px;max-width:640px;}
+  .dir-group{margin-bottom:40px;}
+  .dir-group h2{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:16px;}
+  .dir-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);}
+  .dir-item{background:var(--ink);padding:20px 22px;transition:background .2s ease;}
+  .dir-item:hover{background:var(--panel);}
+  .dir-item a{font-family:'Fraunces',serif;font-size:17px;color:var(--bone);display:block;margin-bottom:6px;}
+  .dir-item a:hover{color:var(--gold-2);}
+  .dir-item p{font-size:12.5px;color:var(--smoke-dim);line-height:1.6;}
+  .dir-item .path{display:inline-block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--smoke-dim);}
+  @media (max-width:620px){.dir-wrap{padding:60px 20px 80px;}}
+</style>
+</head>
+<body>
+
+<div class="dir-wrap">
+  <div class="eyebrow">Gold SIMBA Refinery</div>
+  <h1>Site Directory</h1>
+  <p class="lead">Every entry point in this repo, in one place — a plain reference page, not part of the public site's own navigation. Nothing else was changed to add this.</p>
+
+  <div class="dir-group">
+    <h2>Public marketing site</h2>
+    <div class="dir-list">
+      <div class="dir-item"><a href="index.html">Home</a><p>Hero, trust strip, quick booking-tracking CTA.</p><span class="path">index.html</span></div>
+      <div class="dir-item"><a href="about.html">About</a><p>About, process band, CEO message, vision &amp; mission.</p><span class="path">about.html</span></div>
+      <div class="dir-item"><a href="services.html">Services</a><p>The twelve refining, assaying, and consultation services.</p><span class="path">services.html</span></div>
+      <div class="dir-item"><a href="why-us.html">Why Us</a><p>Confidence-at-every-stage pillars.</p><span class="path">why-us.html</span></div>
+      <div class="dir-item"><a href="goals.html">Goals</a><p>The ten commitments that guide the work.</p><span class="path">goals.html</span></div>
+      <div class="dir-item"><a href="contact.html">Contact / Book Now</a><p>General enquiries and the testing/assaying booking form.</p><span class="path">contact.html</span></div>
+    </div>
+  </div>
+
+  <div class="dir-group">
+    <h2>Booking system (Node / Express / SQLite)</h2>
+    <div class="dir-list">
+      <div class="dir-item"><a href="admin.html">Staff Dashboard</a><p>Bookings, services, stats, and post-payment test reports. Sign-in required.</p><span class="path">admin.html</span></div>
+      <div class="dir-item"><a href="track.html">Booking Tracker</a><p>Look up a booking's payment status and, once Paid, its test report.</p><span class="path">track.html</span></div>
+      <div class="dir-item"><a href="goldsimba.html">Single-file version</a><p>The whole booking system as one hash-routed file — a working reference copy.</p><span class="path">goldsimba.html</span></div>
+    </div>
+  </div>
+
+  <div class="dir-group">
+    <h2>Assay Receipt Tracker (Firebase — separate system)</h2>
+    <div class="dir-list">
+      <div class="dir-item"><a href="assay.html">Assay Receipt Tracker</a><p>Submit an assay, track payment status, and — once Paid — generate an assay test report (% tested, carats, test date, tested-by company). Backed by your own Firebase project, not the SQLite server.</p><span class="path">assay.html</span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
