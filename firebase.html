@@ -1,0 +1,6482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EventHub Zambia | Plan. Connect. Celebrate.</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+    --gold:#c8a84e;
+    --gold-light:#e6cf83;
+    --gold-dark:#9d7b20;
+
+    --turquoise:#006b61;
+    --turquoise-dark:#004f49;
+    --turquoise-deep:#003d38;
+
+    --black:#050505;
+    --black-2:#0c0c0c;
+    --black-3:#141414;
+
+    --white:#fff;
+    --off-white:#f7f6f2;
+    --muted:#8f8f8f;
+    --border:rgba(255,255,255,.10);
+
+    --shadow:0 20px 60px rgba(0,0,0,.20);
+    --radius:18px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Helvetica,Arial,sans-serif;
+    background:var(--off-white);
+    color:#111;
+    line-height:1.6;
+}
+
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:100;
+    padding:22px 5%;
+    color:#fff;
+}
+
+.header-inner{
+    max-width:1450px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:30px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:23px;
+    letter-spacing:-.7px;
+    white-space:nowrap;
+}
+
+.logo-mark{
+    width:40px;
+    height:40px;
+    border:1px solid var(--gold);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--gold-light);
+    font-family:Georgia,serif;
+    font-size:20px;
+}
+
+.nav{
+    display:flex;
+    align-items:center;
+    gap:30px;
+}
+
+.nav a{
+    font-size:14px;
+    color:rgba(255,255,255,.86);
+    transition:.25s;
+}
+
+.nav a:hover{
+    color:var(--gold-light);
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.login-btn,
+.signup-btn{
+    padding:10px 17px;
+    border-radius:7px;
+    font-size:13px;
+    border:1px solid rgba(255,255,255,.25);
+    background:transparent;
+    color:#fff;
+}
+
+.signup-btn{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#080808;
+    font-weight:700;
+}
+
+.mobile-toggle{
+    display:none;
+    background:none;
+    border:0;
+    color:#fff;
+    font-size:27px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    background:#050505;
+}
+
+.hero-slide{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    background-size:cover;
+    background-position:center;
+    transition:opacity 1s ease;
+}
+
+.hero-slide.active{
+    opacity:1;
+}
+
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.90) 0%,
+            rgba(0,0,0,.72) 32%,
+            rgba(0,0,0,.32) 68%,
+            rgba(0,0,0,.15) 100%
+        );
+}
+
+.hero-content{
+    position:relative;
+    z-index:5;
+    min-height:100vh;
+    max-width:1450px;
+    margin:auto;
+    padding:150px 5% 80px;
+    display:flex;
+    align-items:center;
+}
+
+.hero-copy{
+    max-width:850px;
+}
+
+.eyebrow{
+    color:var(--gold-light);
+    text-transform:uppercase;
+    letter-spacing:3px;
+    font-size:12px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.hero h1{
+    font-family:"Times New Roman",serif;
+    font-size:clamp(52px,7vw,100px);
+    line-height:.94;
+    font-weight:700;
+    letter-spacing:-4px;
+    max-width:850px;
+}
+
+.hero h1 span{
+    color:var(--gold-light);
+}
+
+.hero-description{
+    max-width:670px;
+    color:rgba(255,255,255,.78);
+    margin:27px 0 32px;
+    font-size:17px;
+}
+
+.hero-search-row{
+    display:flex;
+    align-items:stretch;
+    gap:10px;
+    max-width:1050px;
+}
+
+.search-box{
+    flex:1;
+    min-width:300px;
+    height:58px;
+    display:flex;
+    align-items:center;
+    background:#fff;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.search-box i{
+    color:#777;
+    font-size:21px;
+    margin-left:18px;
+}
+
+.search-box input{
+    border:0;
+    outline:0;
+    height:100%;
+    flex:1;
+    padding:0 15px;
+    color:#111;
+    background:#fff;
+}
+
+.search-box button{
+    height:44px;
+    margin-right:7px;
+    padding:0 20px;
+    border:0;
+    border-radius:6px;
+    background:var(--turquoise);
+    color:#fff;
+    font-weight:700;
+}
+
+.plan-event-btn,
+.vendor-btn{
+    min-height:58px;
+    padding:0 22px;
+    border-radius:8px;
+    border:1px solid var(--gold);
+    white-space:nowrap;
+    font-weight:700;
+}
+
+.plan-event-btn{
+    background:var(--gold);
+    color:#050505;
+}
+
+.vendor-btn{
+    background:rgba(0,61,56,.88);
+    color:#fff;
+}
+
+.popular{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    margin-top:18px;
+    font-size:12px;
+    color:rgba(255,255,255,.62);
+}
+
+.popular a{
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.35);
+}
+
+.hero-controls{
+    position:absolute;
+    z-index:10;
+    right:5%;
+    bottom:50px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.slider-arrow{
+    width:43px;
+    height:43px;
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(0,0,0,.3);
+    color:#fff;
+    border-radius:50%;
+    font-size:19px;
+}
+
+.slider-dots{
+    display:flex;
+    gap:6px;
+    margin:0 10px;
+}
+
+.slider-dot{
+    width:25px;
+    height:3px;
+    border:0;
+    background:rgba(255,255,255,.35);
+}
+
+.slider-dot.active{
+    background:var(--gold);
+}
+
+/* =========================
+   SECTION SYSTEM
+========================= */
+
+.section{
+    padding:95px 5%;
+}
+
+.container{
+    max-width:1350px;
+    margin:auto;
+}
+
+.section-heading{
+    margin-bottom:42px;
+}
+
+.section-eyebrow{
+    color:var(--turquoise);
+    text-transform:uppercase;
+    letter-spacing:2.5px;
+    font-size:11px;
+    font-weight:800;
+    margin-bottom:10px;
+}
+
+.section-title{
+    font-family:"Times New Roman",serif;
+    font-size:clamp(38px,5vw,65px);
+    line-height:1;
+    letter-spacing:-2px;
+}
+
+.section-description{
+    max-width:650px;
+    color:#777;
+    margin-top:15px;
+}
+
+/* =========================
+   SERVICES
+========================= */
+
+.services{
+    background:var(--turquoise-deep);
+    color:#fff;
+    padding:0 5%;
+}
+
+.services-inner{
+    max-width:1350px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+}
+
+.service-item{
+    padding:28px 15px;
+    text-align:center;
+    border-right:1px solid rgba(255,255,255,.10);
+    transition:.25s;
+}
+
+.service-item:first-child{
+    border-left:1px solid rgba(255,255,255,.10);
+}
+
+.service-item:hover{
+    background:rgba(255,255,255,.05);
+}
+
+.service-item i{
+    display:block;
+    color:var(--gold-light);
+    font-size:25px;
+    margin-bottom:7px;
+}
+
+.service-item span{
+    font-size:13px;
+    font-weight:600;
+}
+
+/* =========================
+   MARKETPLACE
+========================= */
+
+.marketplace{
+    background:#f7f6f2;
+}
+
+.marketplace-toolbar{
+    background:#fff;
+    padding:20px;
+    border:1px solid #e8e5dc;
+    border-radius:14px;
+    margin-bottom:25px;
+}
+
+.toolbar-top{
+    display:grid;
+    grid-template-columns:1.5fr 1fr 1fr auto;
+    gap:10px;
+}
+
+.filter-control{
+    height:48px;
+    border:1px solid #dedbd2;
+    border-radius:7px;
+    background:#fff;
+    padding:0 14px;
+    outline:none;
+    color:#222;
+}
+
+.search-control{
+    position:relative;
+}
+
+.search-control i{
+    position:absolute;
+    left:14px;
+    top:14px;
+    color:#999;
+}
+
+.search-control input{
+    width:100%;
+    height:48px;
+    border:1px solid #dedbd2;
+    border-radius:7px;
+    padding:0 15px 0 43px;
+    outline:none;
+}
+
+.quick-categories{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-top:13px;
+}
+
+.category-pill{
+    border:1px solid #ddd8cc;
+    background:#fff;
+    padding:7px 13px;
+    border-radius:30px;
+    font-size:12px;
+    color:#555;
+}
+
+.category-pill.active,
+.category-pill:hover{
+    background:var(--turquoise);
+    border-color:var(--turquoise);
+    color:#fff;
+}
+
+.marketplace-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:22px 0;
+}
+
+.vendor-count{
+    font-size:13px;
+    color:#777;
+}
+
+.vendor-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.vendor-card{
+    background:#fff;
+    border:1px solid #e8e5dc;
+    border-radius:14px;
+    overflow:hidden;
+    position:relative;
+    transition:.3s;
+}
+
+.vendor-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 45px rgba(0,0,0,.10);
+}
+
+.vendor-image{
+    height:230px;
+    position:relative;
+    overflow:hidden;
+}
+
+.vendor-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.5s;
+}
+
+.vendor-card:hover .vendor-image img{
+    transform:scale(1.05);
+}
+
+.featured-badge,
+.verified-badge{
+    position:absolute;
+    z-index:2;
+    top:12px;
+    left:12px;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    padding:5px 8px;
+    border-radius:4px;
+}
+
+.featured-badge{
+    background:var(--gold);
+    color:#111;
+}
+
+.verified-badge{
+    left:auto;
+    right:12px;
+    background:#fff;
+    color:var(--turquoise);
+}
+
+.favorite-btn{
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:0;
+    background:rgba(0,0,0,.65);
+    color:#fff;
+    font-size:17px;
+    z-index:3;
+}
+
+.favorite-btn.active{
+    color:#e43c50;
+}
+
+.vendor-body{
+    padding:19px;
+}
+
+.vendor-category{
+    color:var(--turquoise);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.3px;
+    font-weight:800;
+}
+
+.vendor-name{
+    font-size:19px;
+    margin:4px 0 9px;
+    font-weight:800;
+}
+
+.vendor-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:#777;
+    font-size:12px;
+    margin-bottom:13px;
+}
+
+.vendor-rating{
+    color:#111;
+    font-weight:700;
+}
+
+.vendor-rating i{
+    color:var(--gold-dark);
+}
+
+.vendor-price{
+    font-size:12px;
+    color:#777;
+    margin-bottom:17px;
+}
+
+.vendor-price strong{
+    color:#111;
+    font-size:16px;
+}
+
+.vendor-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+}
+
+.profile-btn,
+.whatsapp-btn{
+    height:41px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.profile-btn{
+    border:1px solid #d8d4c9;
+    background:#fff;
+}
+
+.whatsapp-btn{
+    border:0;
+    background:var(--turquoise);
+    color:#fff;
+}
+
+.no-results{
+    display:none;
+    text-align:center;
+    padding:70px 20px;
+    color:#777;
+    background:#fff;
+    border-radius:14px;
+}
+
+.no-results i{
+    display:block;
+    font-size:45px;
+    margin-bottom:10px;
+}
+
+.load-more-wrap{
+    text-align:center;
+    margin-top:35px;
+}
+
+.load-more{
+    border:1px solid #cfc9bb;
+    background:#fff;
+    padding:12px 25px;
+    border-radius:7px;
+    font-weight:700;
+}
+
+/* =========================
+   EVENT TYPES
+========================= */
+
+.event-types{
+    background:#fff;
+}
+
+.event-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.event-card{
+    height:420px;
+    position:relative;
+    overflow:hidden;
+    border-radius:12px;
+    color:#fff;
+}
+
+.event-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.5s;
+}
+
+.event-card:hover img{
+    transform:scale(1.06);
+}
+
+.event-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(transparent 35%,rgba(0,0,0,.85));
+}
+
+.event-card-content{
+    position:absolute;
+    z-index:2;
+    bottom:25px;
+    left:25px;
+}
+
+.event-card h3{
+    font-family:"Times New Roman",serif;
+    font-size:32px;
+}
+
+.event-card p{
+    font-size:12px;
+    color:rgba(255,255,255,.75);
+}
+
+/* =========================
+   HOW IT WORKS — INTERACTIVE
+========================= */
+
+.how{
+    position:relative;
+    color:#fff;
+    background:
+        linear-gradient(180deg,rgba(5,5,5,.82),rgba(5,5,5,.58)),
+        url("https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=2200&q=80") center/cover fixed;
+    overflow:hidden;
+}
+
+.how::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at 15% 20%,rgba(200,168,78,.13),transparent 35%),
+               radial-gradient(circle at 85% 80%,rgba(0,107,97,.16),transparent 35%);
+    pointer-events:none;
+}
+
+.how > .container{
+    position:relative;
+    z-index:1;
+}
+
+.how .section-eyebrow{
+    color:var(--gold-light);
+}
+
+.steps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    position:relative;
+}
+
+.steps::before{
+    content:"";
+    position:absolute;
+    left:7%;
+    right:7%;
+    top:32px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(230,207,131,.45),transparent);
+    z-index:0;
+}
+
+.step{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:18px;
+    padding:26px 24px 24px;
+    background:rgba(255,255,255,.055);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    color:#fff;
+    text-align:left;
+    cursor:pointer;
+    position:relative;
+    z-index:1;
+    transition:transform .3s ease,border-color .3s ease,background .3s ease,box-shadow .3s ease;
+}
+
+.step:hover{
+    transform:translateY(-6px);
+    background:rgba(255,255,255,.09);
+    border-color:rgba(230,207,131,.5);
+    box-shadow:0 20px 55px rgba(0,0,0,.22);
+}
+
+.step.active{
+    transform:translateY(-8px);
+    background:linear-gradient(145deg,rgba(200,168,78,.18),rgba(255,255,255,.07));
+    border-color:rgba(230,207,131,.72);
+    box-shadow:0 24px 60px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+.step-number{
+    color:var(--gold-light);
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.9px;
+}
+
+.step i{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:26px;
+    color:var(--gold-light);
+    background:rgba(0,0,0,.28);
+    border:1px solid rgba(230,207,131,.28);
+    margin:22px 0 20px;
+    transition:transform .3s ease,background .3s ease;
+}
+
+.step.active i{
+    transform:scale(1.06);
+    background:rgba(200,168,78,.16);
+}
+
+.step h3{
+    font-family:"Times New Roman",serif;
+    font-size:30px;
+    line-height:1.1;
+}
+
+.step p{
+    color:rgba(255,255,255,.64);
+    margin-top:10px;
+    max-width:350px;
+    font-size:13px;
+}
+
+.how-detail{
+    margin-top:26px;
+    padding:26px 28px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    background:rgba(0,0,0,.2);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:22px;
+}
+
+.how-detail-icon{
+    width:54px;
+    height:54px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    background:rgba(200,168,78,.13);
+    border:1px solid rgba(230,207,131,.24);
+    color:var(--gold-light);
+    font-size:24px;
+}
+
+.how-detail-copy small{
+    display:block;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--gold-light);
+    font-size:10px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.how-detail-copy h4{
+    font-size:20px;
+    margin-bottom:4px;
+}
+
+.how-detail-copy p{
+    color:rgba(255,255,255,.62);
+    font-size:12px;
+    max-width:700px;
+}
+
+.how-detail-cta{
+    border:1px solid rgba(255,255,255,.22);
+    background:transparent;
+    color:#fff;
+    border-radius:8px;
+    padding:11px 16px;
+    font-size:12px;
+    font-weight:800;
+    white-space:nowrap;
+    transition:.25s;
+}
+
+.how-detail-cta:hover{
+    background:var(--gold);
+    color:#111;
+    border-color:var(--gold);
+}
+
+/* =========================
+   MAP
+========================= */
+
+.map-section{
+    background:#eeeae1;
+}
+
+.map-box{
+    height:500px;
+    border-radius:15px;
+    overflow:hidden;
+    position:relative;
+    background:
+        linear-gradient(rgba(0,61,56,.15),rgba(0,61,56,.15)),
+        repeating-linear-gradient(
+            45deg,
+            #d8d4c8 0,
+            #d8d4c8 1px,
+            transparent 1px,
+            transparent 55px
+        ),
+        repeating-linear-gradient(
+            -45deg,
+            #d8d4c8 0,
+            #d8d4c8 1px,
+            transparent 1px,
+            transparent 55px
+        );
+}
+
+.map-label{
+    position:absolute;
+    background:#fff;
+    padding:10px 15px;
+    border-radius:5px;
+    box-shadow:0 5px 20px rgba(0,0,0,.12);
+    font-size:12px;
+    font-weight:700;
+}
+
+.map-pin{
+    position:absolute;
+    width:40px;
+    height:40px;
+    border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg);
+    background:var(--turquoise);
+    border:4px solid #fff;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+
+.map-pin::after{
+    content:"";
+    position:absolute;
+    width:9px;
+    height:9px;
+    background:#fff;
+    border-radius:50%;
+    top:11px;
+    left:11px;
+}
+
+.pin-1{left:24%;top:32%}
+.pin-2{left:52%;top:24%}
+.pin-3{left:69%;top:53%}
+.pin-4{left:38%;top:65%}
+.pin-5{left:81%;top:30%}
+
+/* =========================
+   CTA
+========================= */
+
+.cta{
+    background:var(--turquoise-deep);
+    color:#fff;
+    text-align:center;
+    padding:100px 5%;
+}
+
+.cta h2{
+    font-family:"Times New Roman",serif;
+    font-size:clamp(42px,6vw,75px);
+    line-height:1;
+    max-width:850px;
+    margin:auto;
+}
+
+.cta p{
+    max-width:600px;
+    margin:20px auto 28px;
+    color:rgba(255,255,255,.70);
+}
+
+.cta-buttons{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.cta-primary,
+.cta-secondary{
+    padding:14px 24px;
+    border-radius:7px;
+    font-weight:700;
+}
+
+.cta-primary{
+    background:var(--gold);
+    color:#111;
+}
+
+.cta-secondary{
+    border:1px solid rgba(255,255,255,.3);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    background:#050505;
+    color:#fff;
+    padding:70px 5% 25px;
+}
+
+.footer-grid{
+    max-width:1350px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:50px;
+}
+
+.footer-brand p{
+    color:#777;
+    max-width:400px;
+    margin-top:15px;
+    font-size:13px;
+}
+
+.footer h4{
+    font-size:13px;
+    margin-bottom:17px;
+}
+
+.footer-links{
+    display:grid;
+    gap:9px;
+}
+
+.footer-links a{
+    color:#777;
+    font-size:12px;
+}
+
+.footer-links a:hover{
+    color:var(--gold);
+}
+
+.footer-bottom{
+    max-width:1350px;
+    margin:55px auto 0;
+    padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.08);
+    display:flex;
+    justify-content:space-between;
+    color:#666;
+    font-size:11px;
+}
+
+/* =========================
+   MODAL SYSTEM
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    z-index:500;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.active{
+    display:flex;
+}
+
+.modal-box{
+    width:min(650px,100%);
+    max-height:92vh;
+    overflow-y:auto;
+    background:#fff;
+    border-radius:14px;
+    position:relative;
+    box-shadow:0 30px 100px rgba(0,0,0,.35);
+}
+
+.modal-header{
+    padding:25px 28px;
+    border-bottom:1px solid #eee;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.modal-header h3{
+    font-family:"Times New Roman",serif;
+    font-size:30px;
+}
+
+.modal-close{
+    border:0;
+    background:none;
+    font-size:25px;
+    color:#777;
+}
+
+.modal-content{
+    padding:28px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:13px;
+}
+
+.form-group{
+    display:grid;
+    gap:6px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+.form-group label{
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    border:1px solid #ddd;
+    border-radius:6px;
+    padding:12px;
+    outline:none;
+}
+
+.form-group textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
+.submit-btn{
+    width:100%;
+    height:48px;
+    border:0;
+    border-radius:7px;
+    background:var(--turquoise);
+    color:#fff;
+    font-weight:800;
+    margin-top:18px;
+}
+
+#authSwitch button{
+    border:0;
+    background:none;
+    color:var(--turquoise);
+    font-weight:800;
+    text-decoration:underline;
+}
+
+/* =========================
+   VENDOR PROFILE
+========================= */
+
+.profile-modal .modal-box{
+    width:min(1050px,100%);
+    background:#f7f6f2;
+    overflow:hidden;
+    overflow-y:auto;
+}
+
+.profile-cover{
+    height:330px;
+    position:relative;
+    overflow:hidden;
+}
+
+.profile-cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.profile-cover::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        transparent 25%,
+        rgba(0,0,0,.82)
+    );
+}
+
+.profile-close{
+    position:absolute;
+    z-index:20;
+    top:18px;
+    right:18px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(0,0,0,.5);
+    color:#fff;
+    font-size:21px;
+}
+
+.profile-cover-content{
+    position:absolute;
+    z-index:10;
+    bottom:25px;
+    left:35px;
+    right:35px;
+    color:#fff;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:25px;
+}
+
+.profile-identity{
+    display:flex;
+    align-items:flex-end;
+    gap:18px;
+}
+
+.profile-logo{
+    width:95px;
+    height:95px;
+    border-radius:12px;
+    border:4px solid #fff;
+    overflow:hidden;
+    background:#fff;
+    flex-shrink:0;
+}
+
+.profile-logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.profile-name{
+    font-family:"Times New Roman",serif;
+    font-size:40px;
+    line-height:1;
+}
+
+.profile-verified{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    color:var(--gold-light);
+    font-size:11px;
+    font-weight:800;
+    margin-top:7px;
+}
+
+.profile-location{
+    font-size:12px;
+    color:rgba(255,255,255,.75);
+    margin-top:5px;
+}
+
+.profile-top-actions{
+    display:flex;
+    gap:8px;
+}
+
+.profile-top-actions button{
+    height:43px;
+    padding:0 17px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.profile-whatsapp{
+    border:0;
+    background:var(--turquoise);
+    color:#fff;
+}
+
+.profile-quote{
+    border:1px solid rgba(255,255,255,.5);
+    background:rgba(0,0,0,.25);
+    color:#fff;
+}
+
+.profile-body{
+    padding:35px;
+}
+
+.profile-layout{
+    display:grid;
+    grid-template-columns:1.6fr .8fr;
+    gap:30px;
+}
+
+.profile-main{
+    min-width:0;
+}
+
+.profile-sidebar{
+    min-width:0;
+}
+
+.profile-section{
+    background:#fff;
+    border:1px solid #e4e0d7;
+    border-radius:12px;
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.profile-section h3{
+    font-family:"Times New Roman",serif;
+    font-size:28px;
+    margin-bottom:14px;
+}
+
+.profile-section p{
+    color:#666;
+    font-size:13px;
+}
+
+.profile-facts{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    margin-top:20px;
+    gap:10px;
+}
+
+.fact{
+    background:#f7f6f2;
+    border-radius:8px;
+    padding:14px;
+}
+
+.fact strong{
+    display:block;
+    font-size:18px;
+}
+
+.fact span{
+    color:#888;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.service-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.service-tag{
+    padding:7px 11px;
+    background:#f2efe7;
+    border-radius:30px;
+    font-size:11px;
+}
+
+.packages{
+    display:grid;
+    gap:12px;
+}
+
+.package{
+    border:1px solid #e2ded5;
+    border-radius:9px;
+    padding:17px;
+}
+
+.package-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.package h4{
+    font-size:15px;
+}
+
+.package-price{
+    font-weight:800;
+    color:var(--turquoise);
+    white-space:nowrap;
+}
+
+.package ul{
+    margin:10px 0 0 17px;
+    color:#777;
+    font-size:11px;
+}
+
+.package button{
+    margin-top:13px;
+    border:0;
+    background:var(--black);
+    color:#fff;
+    border-radius:5px;
+    padding:8px 13px;
+    font-size:10px;
+    font-weight:700;
+}
+
+.portfolio-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+}
+
+.portfolio-item{
+    height:145px;
+    border-radius:6px;
+    overflow:hidden;
+    cursor:pointer;
+}
+
+.portfolio-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.3s;
+}
+
+.portfolio-item:hover img{
+    transform:scale(1.05);
+}
+
+.review-summary{
+    display:grid;
+    grid-template-columns:130px 1fr;
+    gap:25px;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.average-rating{
+    text-align:center;
+}
+
+.average-rating strong{
+    display:block;
+    font-family:"Times New Roman",serif;
+    font-size:52px;
+    line-height:1;
+}
+
+.stars{
+    color:var(--gold-dark);
+    letter-spacing:2px;
+}
+
+.review-bars{
+    display:grid;
+    gap:6px;
+}
+
+.review-bar{
+    display:grid;
+    grid-template-columns:35px 1fr 30px;
+    align-items:center;
+    gap:7px;
+    font-size:10px;
+    color:#777;
+}
+
+.bar{
+    height:6px;
+    background:#eee;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.bar span{
+    display:block;
+    height:100%;
+    background:var(--gold);
+}
+
+.review{
+    padding:15px 0;
+    border-top:1px solid #eee;
+}
+
+.review-head{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+}
+
+.review-name{
+    font-weight:800;
+}
+
+.review p{
+    font-size:11px;
+    margin-top:5px;
+}
+
+.availability-card{
+    background:var(--turquoise-deep);
+    color:#fff;
+    border-radius:12px;
+    padding:23px;
+    margin-bottom:20px;
+}
+
+.availability-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.status-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#51d38b;
+}
+
+.availability-card p{
+    color:rgba(255,255,255,.65);
+    font-size:11px;
+    margin-top:8px;
+}
+
+.sidebar-contact{
+    width:100%;
+    height:48px;
+    border-radius:7px;
+    font-weight:800;
+    margin-top:8px;
+}
+
+.sidebar-whatsapp{
+    background:#1c8d52;
+    color:#fff;
+    border:0;
+}
+
+.sidebar-quote{
+    background:var(--gold);
+    color:#111;
+    border:0;
+}
+
+/* =========================
+   LIGHTBOX
+========================= */
+
+.lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.94);
+    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+}
+
+.lightbox.active{
+    display:flex;
+}
+
+.lightbox img{
+    max-width:92vw;
+    max-height:88vh;
+    object-fit:contain;
+}
+
+.lightbox-close{
+    position:absolute;
+    top:25px;
+    right:30px;
+    color:#fff;
+    background:none;
+    border:0;
+    font-size:35px;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    z-index:1500;
+    right:25px;
+    bottom:25px;
+    background:#111;
+    color:#fff;
+    padding:14px 18px;
+    border-left:3px solid var(--gold);
+    border-radius:5px;
+    font-size:12px;
+    transform:translateY(100px);
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+}
+
+.toast.show{
+    transform:translateY(0);
+    opacity:1;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+
+    .vendor-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .event-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .toolbar-top{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .services-inner{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .service-item:nth-child(4){
+        border-left:1px solid rgba(255,255,255,.10);
+    }
+
+    .profile-layout{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:900px){
+
+    .how{
+        background-attachment:scroll;
+    }
+
+    .steps{
+        grid-template-columns:1fr;
+    }
+
+    .steps::before{
+        display:none;
+    }
+
+    .how-detail{
+        grid-template-columns:auto 1fr;
+    }
+
+    .how-detail-cta{
+        grid-column:1/-1;
+        width:100%;
+    }
+
+    .nav,
+    .header-actions{
+        display:none;
+    }
+
+    .mobile-toggle{
+        display:block;
+    }
+
+    .hero-content{
+        padding-top:135px;
+    }
+
+    .hero h1{
+        letter-spacing:-2px;
+    }
+
+    .hero-search-row{
+        flex-wrap:wrap;
+    }
+
+    .search-box{
+        width:100%;
+        flex-basis:100%;
+    }
+
+    .plan-event-btn,
+    .vendor-btn{
+        flex:1;
+    }
+
+    .vendor-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:600px){
+
+    .section{
+        padding:70px 5%;
+    }
+
+    .hero h1{
+        font-size:53px;
+    }
+
+    .hero-description{
+        font-size:14px;
+    }
+
+    .hero-search-row{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+    }
+
+    .search-box{
+        grid-column:1/-1;
+        min-width:0;
+    }
+
+    .plan-event-btn,
+    .vendor-btn{
+        width:100%;
+    }
+
+    .services-inner{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .vendor-grid,
+    .event-grid{
+        grid-template-columns:1fr;
+    }
+
+    .toolbar-top{
+        grid-template-columns:1fr;
+    }
+
+    .marketplace-meta{
+        align-items:flex-start;
+        gap:10px;
+        flex-direction:column;
+    }
+
+    .steps{
+        grid-template-columns:1fr;
+    }
+
+    .map-box{
+        height:370px;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr;
+        gap:30px;
+    }
+
+    .footer-bottom{
+        flex-direction:column;
+        gap:8px;
+    }
+
+    .profile-cover{
+        height:380px;
+    }
+
+    .profile-cover-content{
+        left:20px;
+        right:20px;
+        bottom:20px;
+        display:block;
+    }
+
+    .profile-identity{
+        align-items:flex-end;
+    }
+
+    .profile-logo{
+        width:72px;
+        height:72px;
+    }
+
+    .profile-name{
+        font-size:31px;
+    }
+
+    .profile-top-actions{
+        margin-top:15px;
+    }
+
+    .profile-top-actions button{
+        flex:1;
+    }
+
+    .profile-body{
+        padding:18px;
+    }
+
+    .profile-section{
+        padding:18px;
+    }
+
+    .profile-facts{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .portfolio-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .portfolio-item{
+        height:120px;
+    }
+
+    .review-summary{
+        grid-template-columns:1fr;
+    }
+}
+
+/* =========================================================
+   FREE VENDOR DISCOVERY / FACEBOOK LINK SEARCH
+========================================================= */
+.free-discovery-card{
+    margin:24px 0 10px;
+    padding:22px;
+    border:1px solid rgba(0,107,97,.18);
+    background:linear-gradient(135deg,rgba(0,107,97,.05),rgba(200,168,78,.08));
+    border-radius:16px;
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:24px;
+    align-items:center;
+}
+.free-discovery-eyebrow{
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:1.6px;
+    color:var(--turquoise);
+    margin-bottom:6px;
+}
+.free-discovery-copy h3{
+    font-family:"Times New Roman",serif;
+    font-size:29px;
+    line-height:1.05;
+    color:#111;
+}
+.free-discovery-copy p{
+    margin-top:8px;
+    max-width:620px;
+    color:#6e6e6e;
+    font-size:12px;
+}
+.free-discovery-controls{
+    display:grid;
+    gap:10px;
+}
+.free-search-row{
+    display:grid;
+    grid-template-columns:1.4fr .8fr;
+    gap:10px;
+}
+.free-search-row input,
+.free-search-row select{
+    width:100%;
+    height:46px;
+    border:1px solid #ddd;
+    border-radius:7px;
+    padding:0 13px;
+    outline:none;
+    background:#fff;
+}
+.free-search-row input:focus,
+.free-search-row select:focus{
+    border-color:var(--turquoise);
+    box-shadow:0 0 0 3px rgba(0,107,97,.08);
+}
+.free-discovery-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+.free-facebook-btn,
+.free-google-btn,
+.free-maps-btn,
+.free-register-btn{
+    min-height:46px;
+    border-radius:7px;
+    font-weight:800;
+    border:0;
+}
+.free-facebook-btn{
+    background:#1877f2;
+    color:#fff;
+}
+.free-google-btn{
+    background:#fff;
+    color:#1f1f1f;
+    border:1px solid #dadce0;
+}
+.free-google-btn i{color:#4285f4;}
+.free-maps-btn{
+    background:#fff;
+    color:#1f1f1f;
+    border:1px solid #dadce0;
+}
+.free-maps-btn i{color:#ea4335;}
+.free-register-btn{
+    background:var(--gold);
+    color:#111;
+}
+.free-discovery-note{
+    color:#8b8b8b;
+    font-size:10px;
+    line-height:1.45;
+}
+.facebook-card-btn{
+    width:100%;
+    min-height:40px;
+    margin-top:8px;
+    border:1px solid #d8d8d8;
+    background:#fff;
+    color:#1877f2;
+    border-radius:7px;
+    font-weight:800;
+    font-size:11px;
+}
+.facebook-card-btn i{margin-right:5px;}
+.claim-card-btn{
+    width:100%;
+    min-height:40px;
+    margin-top:8px;
+    border:0;
+    background:#111;
+    color:#fff;
+    border-radius:7px;
+    font-weight:800;
+    font-size:11px;
+}
+.claim-card-btn i{margin-right:5px;}
+.source-badge{
+    position:absolute;
+    left:12px;
+    bottom:12px;
+    z-index:8;
+    background:rgba(255,255,255,.94);
+    color:#111;
+    border-radius:999px;
+    padding:5px 8px;
+    font-size:9px;
+    font-weight:900;
+}
+@media(max-width:900px){
+    .free-discovery-card{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+    .free-search-row,
+    .free-discovery-actions{grid-template-columns:1fr;}
+    .free-discovery-copy h3{font-size:24px;}
+}
+
+/* =========================
+   SOCIAL AUTH
+========================= */
+.auth-divider{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:18px 0 12px;
+    color:#999;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+.auth-divider::before,
+.auth-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#e7e7e7;
+}
+.facebook-auth-btn{
+    width:100%;
+    height:48px;
+    border:1px solid #d9d9d9;
+    border-radius:7px;
+    background:#fff;
+    color:#1f1f1f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-weight:800;
+    font-size:13px;
+    transition:.2s ease;
+}
+.facebook-auth-btn:hover{
+    border-color:#b8b8b8;
+    background:#f7f7f7;
+}
+.facebook-auth-btn i{
+    font-size:19px;
+}
+.facebook-auth-btn:disabled{
+    opacity:.65;
+    cursor:wait;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+    <div class="header-inner">
+
+        <a href="#" class="logo">
+            <span class="logo-mark">EH</span>
+            <span>EventHub Zambia</span>
+        </a>
+
+        <nav class="nav">
+            <a href="#events">Events</a>
+            <a href="#vendors">Vendors</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#locations">Locations</a>
+        </nav>
+
+        <div class="header-actions">
+            <button class="login-btn" onclick="openAuthModal('login')">
+                Login
+            </button>
+
+            <button class="signup-btn" onclick="openAuthModal('register')">
+                Sign Up
+            </button>
+        </div>
+
+        <button class="mobile-toggle" aria-label="Open menu">
+            <i class="ri-menu-3-line"></i>
+        </button>
+
+    </div>
+</header>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="hero-slide active"
+         style="background-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=85')"></div>
+
+    <div class="hero-slide"
+         style="background-image:url('https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=2000&q=85')"></div>
+
+    <div class="hero-slide"
+         style="background-image:url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=2000&q=85')"></div>
+
+    <div class="hero-slide"
+         style="background-image:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=2000&q=85')"></div>
+
+    <div class="hero-slide"
+         style="background-image:url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=2000&q=85')"></div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <div class="hero-copy">
+
+            <div class="eyebrow">
+                Zambia's Event Marketplace
+            </div>
+
+            <h1>
+                Make Every
+                <span>Moment</span>
+                Remarkable.
+            </h1>
+
+            <p class="hero-description">
+                Discover trusted venues, decorators, photographers, caterers,
+                DJs, beauty professionals, transport providers and more —
+                all in one place.
+            </p>
+
+            <div class="hero-search-row">
+
+                <div class="search-box">
+                    <i class="ri-search-line"></i>
+
+                    <input
+                        type="text"
+                        id="heroSearch"
+                        placeholder="What are you looking for?">
+
+                    <button onclick="heroSearch()">
+                        Search
+                    </button>
+                </div>
+
+                <button
+                    class="plan-event-btn"
+                    onclick="openModal('plannerModal')">
+                    <i class="ri-calendar-event-line"></i>
+                    Plan My Event
+                </button>
+
+                <button
+                    class="vendor-btn"
+                    onclick="openModal('vendorModal')">
+                    <i class="ri-store-2-line"></i>
+                    Become a Vendor
+                </button>
+
+            </div>
+
+            <div class="popular">
+                Popular:
+                <a href="#vendors" onclick="quickCategory('Venue')">Wedding Venues</a>
+                <a href="#vendors" onclick="quickCategory('Photography')">Photographers</a>
+                <a href="#vendors" onclick="quickCategory('Catering')">Catering</a>
+                <a href="#vendors" onclick="quickCategory('DJ')">DJs</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="hero-controls">
+
+        <button class="slider-arrow" onclick="changeSlide(-1)" aria-label="Previous slide">
+            <i class="ri-arrow-left-line"></i>
+        </button>
+
+        <div class="slider-dots">
+            <button class="slider-dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
+            <button class="slider-dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
+            <button class="slider-dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
+            <button class="slider-dot" onclick="goToSlide(3)" aria-label="Slide 4"></button>
+            <button class="slider-dot" onclick="goToSlide(4)" aria-label="Slide 5"></button>
+        </div>
+
+        <button class="slider-arrow" onclick="changeSlide(1)" aria-label="Next slide">
+            <i class="ri-arrow-right-line"></i>
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     SERVICES
+========================= -->
+
+<section class="services">
+
+    <div class="services-inner">
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('Venue')">
+            <i class="ri-building-4-line"></i>
+            <span>Event Venues</span>
+        </a>
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('DJ')">
+            <i class="ri-mic-line"></i>
+            <span>MCs & DJs</span>
+        </a>
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('Photography')">
+            <i class="ri-camera-3-line"></i>
+            <span>Photography</span>
+        </a>
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('Car Hire')">
+            <i class="ri-roadster-line"></i>
+            <span>Car Hire</span>
+        </a>
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('Beauty')">
+            <i class="ri-sparkling-2-line"></i>
+            <span>Beauty</span>
+        </a>
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('Catering')">
+            <i class="ri-restaurant-line"></i>
+            <span>Catering</span>
+        </a>
+
+        <a class="service-item" href="#vendors" onclick="quickCategory('Fashion & Outfits')">
+            <i class="ri-shirt-line"></i>
+            <span>Fashion & Outfits</span>
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     VENDORS
+========================= -->
+
+<section class="section marketplace" id="vendors">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div class="section-eyebrow">
+                Discover
+            </div>
+
+            <h2 class="section-title">
+                Find the people<br>
+                behind the moments.
+            </h2>
+
+            <p class="section-description">
+                Explore trusted event professionals and businesses across Zambia.
+                Compare services, packages, ratings and pricing before you connect.
+            </p>
+
+        </div>
+
+
+        <div class="marketplace-toolbar">
+
+            <div class="toolbar-top">
+
+                <div class="search-control">
+                    <i class="ri-search-line"></i>
+
+                    <input
+                        type="text"
+                        id="vendorSearch"
+                        placeholder="Search vendors..."
+                        oninput="filterVendors()">
+                </div>
+
+                <select
+                    id="categoryFilter"
+                    class="filter-control"
+                    onchange="filterVendors()">
+
+                    <option value="">All Categories</option>
+                    <option value="Venue">Venues</option>
+                    <option value="Decor">Decor</option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="Car Hire">Car Hire</option>
+                    <option value="Catering">Catering</option>
+                    <option value="Photography">Photography</option>
+                    <option value="DJ">DJ & Entertainment</option>
+                    <option value="Fashion & Outfits">Fashion & Outfits</option>
+
+                </select>
+
+
+                <select
+                    id="locationFilter"
+                    class="filter-control"
+                    onchange="filterVendors()">
+
+                    <option value="">All Locations</option>
+                    <option value="Lusaka">Lusaka</option>
+                    <option value="Ndola">Ndola</option>
+                    <option value="Kitwe">Kitwe</option>
+                    <option value="Livingstone">Livingstone</option>
+
+                </select>
+
+
+                <select
+                    id="sortFilter"
+                    class="filter-control"
+                    onchange="sortVendors()">
+
+                    <option value="featured">Featured</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="priceLow">Price: Low to High</option>
+                    <option value="priceHigh">Price: High to Low</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="quick-categories">
+
+                <button class="category-pill active" data-category=""
+                        onclick="quickCategory('')">
+                    All
+                </button>
+
+                <button class="category-pill" data-category="Venue"
+                        onclick="quickCategory('Venue')">
+                    Venues
+                </button>
+
+                <button class="category-pill" data-category="Decor"
+                        onclick="quickCategory('Decor')">
+                    Decor
+                </button>
+
+                <button class="category-pill" data-category="Photography"
+                        onclick="quickCategory('Photography')">
+                    Photography
+                </button>
+
+                <button class="category-pill" data-category="Catering"
+                        onclick="quickCategory('Catering')">
+                    Catering
+                </button>
+
+                <button class="category-pill" data-category="DJ"
+                        onclick="quickCategory('DJ')">
+                    Entertainment
+                </button>
+
+                <button class="category-pill" data-category="Beauty"
+                        onclick="quickCategory('Beauty')">
+                    Beauty
+                </button>
+
+                <button class="category-pill" data-category="Car Hire"
+                        onclick="quickCategory('Car Hire')">
+                    Car Hire
+                </button>
+
+                <button class="category-pill" data-category="Fashion & Outfits"
+                        onclick="quickCategory('Fashion & Outfits')">
+                    Fashion & Outfits
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             FREE VENDOR DISCOVERY
+        ========================= -->
+        <div class="free-discovery-card">
+            <div class="free-discovery-copy">
+                <div class="free-discovery-eyebrow">FREE DISCOVERY</div>
+                <h3>Can't find the vendor you're looking for?</h3>
+                <p>Search Facebook, Google or Google Maps for event businesses, then invite the business owner to claim or create their EventHub profile.</p>
+            </div>
+            <div class="free-discovery-controls">
+                <div class="free-search-row">
+                    <input id="facebookVendorQuery" type="text" placeholder="e.g. wedding decorators" autocomplete="off">
+                    <select id="facebookVendorLocation">
+                        <option value="Lusaka">Lusaka</option>
+                        <option value="Kitwe">Kitwe</option>
+                        <option value="Ndola">Ndola</option>
+                        <option value="Livingstone">Livingstone</option>
+                        <option value="Kabwe">Kabwe</option>
+                        <option value="Chipata">Chipata</option>
+                        <option value="Solwezi">Solwezi</option>
+                        <option value="Mansa">Mansa</option>
+                        <option value="Kasama">Kasama</option>
+                        <option value="Chingola">Chingola</option>
+                    </select>
+                </div>
+                <div class="free-discovery-actions">
+                    <button type="button" class="free-facebook-btn" onclick="searchFacebookVendors()">
+                        <i class="ri-facebook-fill"></i>
+                        Search Facebook
+                    </button>
+                    <button type="button" class="free-google-btn" onclick="searchGoogleVendors()">
+                        <i class="ri-google-fill"></i>
+                        Search Google
+                    </button>
+                    <button type="button" class="free-maps-btn" onclick="searchGoogleMapsVendors()">
+                        <i class="ri-map-pin-2-fill"></i>
+                        Google Maps
+                    </button>
+                    <button type="button" class="free-register-btn" onclick="openFreeVendorRegistration()">
+                        <i class="ri-store-2-line"></i>
+                        Add / Claim Vendor
+                    </button>
+                </div>
+                <div class="free-discovery-note">
+                    Results open in a new tab. EventHub does not scrape or import Facebook or Google results automatically.
+                </div>
+            </div>
+        </div>
+
+        <div class="marketplace-meta">
+
+            <div class="vendor-count">
+                Showing <strong id="vendorCount">9</strong> vendors
+            </div>
+
+        </div>
+
+
+        <div class="vendor-grid" id="vendorGrid">
+
+            <!-- VENDOR 1 -->
+
+            <article class="vendor-card"
+                data-name="Royal Gardens"
+                data-category="Venue"
+                data-location="Lusaka"
+                data-rating="4.9"
+                data-price="5000"
+                data-featured="1"
+                data-vendor="royal-gardens">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1000&q=85" alt="Royal Gardens venue" loading="lazy">
+
+                    <span class="featured-badge">Featured</span>
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Venue</div>
+
+                    <h3 class="vendor-name">
+                        Royal Gardens
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Lusaka
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.9
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K5,000</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('royal-gardens')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('royal-gardens')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 2 -->
+
+            <article class="vendor-card"
+                data-name="Elegant Moments"
+                data-category="Decor"
+                data-location="Lusaka"
+                data-rating="4.8"
+                data-price="3500"
+                data-featured="1"
+                data-vendor="elegant-moments">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85" alt="Elegant Moments decor" loading="lazy">
+
+                    <span class="featured-badge">Featured</span>
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Decor</div>
+
+                    <h3 class="vendor-name">
+                        Elegant Moments
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Lusaka
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.8
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K3,500</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('elegant-moments')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('elegant-moments')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 3 -->
+
+            <article class="vendor-card"
+                data-name="Glow Beauty"
+                data-category="Beauty"
+                data-location="Lusaka"
+                data-rating="4.7"
+                data-price="1200"
+                data-featured="0"
+                data-vendor="glow-beauty">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=85" alt="Glow Beauty makeup" loading="lazy">
+
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Beauty</div>
+
+                    <h3 class="vendor-name">
+                        Glow Beauty
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Lusaka
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.7
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K1,200</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('glow-beauty')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('glow-beauty')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 4 -->
+
+            <article class="vendor-card"
+                data-name="Executive Rides"
+                data-category="Car Hire"
+                data-location="Lusaka"
+                data-rating="4.8"
+                data-price="2500"
+                data-featured="1"
+                data-vendor="executive-rides">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1000&q=85" alt="Executive Rides car hire" loading="lazy">
+
+                    <span class="featured-badge">Featured</span>
+
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Car Hire</div>
+
+                    <h3 class="vendor-name">
+                        Executive Rides
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Lusaka
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.8
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K2,500</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('executive-rides')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('executive-rides')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 5 -->
+
+            <article class="vendor-card"
+                data-name="Golden Plate Catering"
+                data-category="Catering"
+                data-location="Ndola"
+                data-rating="4.9"
+                data-price="4500"
+                data-featured="1"
+                data-vendor="golden-plate">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1000&q=85" alt="Golden Plate Catering buffet" loading="lazy">
+
+                    <span class="featured-badge">Featured</span>
+
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Catering</div>
+
+                    <h3 class="vendor-name">
+                        Golden Plate Catering
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Ndola
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.9
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K4,500</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('golden-plate')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('golden-plate')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 6 -->
+
+            <article class="vendor-card"
+                data-name="Prime Lens Photography"
+                data-category="Photography"
+                data-location="Kitwe"
+                data-rating="4.8"
+                data-price="2800"
+                data-featured="0"
+                data-vendor="prime-lens">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1000&q=85" alt="Prime Lens Photography" loading="lazy">
+
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Photography</div>
+
+                    <h3 class="vendor-name">
+                        Prime Lens Photography
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Kitwe
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.8
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K2,800</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('prime-lens')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('prime-lens')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 7 -->
+
+            <article class="vendor-card"
+                data-name="Royal Sound Entertainment"
+                data-category="DJ"
+                data-location="Lusaka"
+                data-rating="4.9"
+                data-price="3000"
+                data-featured="0"
+                data-vendor="royal-sound">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1571266028243-d220c9c3b0c7?auto=format&fit=crop&w=1000&q=85" alt="Royal Sound Entertainment DJ" loading="lazy">
+
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">DJ & Entertainment</div>
+
+                    <h3 class="vendor-name">
+                        Royal Sound Entertainment
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Lusaka
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.9
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K3,000</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('royal-sound')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('royal-sound')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 8 -->
+
+            <article class="vendor-card"
+                data-name="Grand Hall Events"
+                data-category="Venue"
+                data-location="Livingstone"
+                data-rating="4.6"
+                data-price="4000"
+                data-featured="0"
+                data-vendor="grand-hall">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=85" alt="Grand Hall Events venue" loading="lazy">
+
+                    <button class="favorite-btn"
+                            onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Venue</div>
+
+                    <h3 class="vendor-name">
+                        Grand Hall Events
+                    </h3>
+
+                    <div class="vendor-meta">
+
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Livingstone
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.6
+                        </span>
+
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K4,000</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+
+                        <button
+                            class="profile-btn"
+                            onclick="openVendorProfile('grand-hall')">
+                            View Profile
+                        </button>
+
+                        <button
+                            class="whatsapp-btn"
+                            onclick="contactWhatsAppById('grand-hall')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VENDOR 9 -->
+
+            <article class="vendor-card"
+                data-name="Mwezi Couture Studio"
+                data-category="Fashion & Outfits"
+                data-location="Lusaka"
+                data-rating="4.9"
+                data-price="2500"
+                data-featured="1"
+                data-vendor="mwezi-couture">
+
+                <div class="vendor-image">
+
+                    <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1000&q=85" alt="Fashion designer outfits" loading="lazy">
+
+                    <span class="featured-badge">Featured</span>
+                    <span class="verified-badge">
+                        <i class="ri-verified-badge-fill"></i> Verified
+                    </span>
+
+                    <button class="favorite-btn" onclick="toggleFavorite(this)">
+                        <i class="ri-heart-line"></i>
+                    </button>
+
+                </div>
+
+                <div class="vendor-body">
+
+                    <div class="vendor-category">Fashion & Outfits</div>
+
+                    <h3 class="vendor-name">Mwezi Couture Studio</h3>
+
+                    <div class="vendor-meta">
+                        <span>
+                            <i class="ri-map-pin-line"></i>
+                            Lusaka
+                        </span>
+
+                        <span class="vendor-rating">
+                            <i class="ri-star-fill"></i>
+                            4.9
+                        </span>
+                    </div>
+
+                    <div class="vendor-price">
+                        Starting from
+                        <strong>K2,500</strong>
+                    </div>
+
+                    <div class="vendor-actions">
+                        <button class="profile-btn" onclick="openVendorProfile('mwezi-couture')">
+                            View Profile
+                        </button>
+
+                        <button class="whatsapp-btn" onclick="contactWhatsAppById('mwezi-couture')">
+                            <i class="ri-whatsapp-line"></i>
+                            WhatsApp
+                        </button>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+        <div class="no-results" id="noResults">
+            <i class="ri-search-eye-line"></i>
+            <strong>No vendors found.</strong>
+            <p>Try another category, location or search term.</p>
+        </div>
+
+
+        <div class="load-more-wrap">
+            <button class="load-more" onclick="showToast('More vendors will be loaded from the marketplace database.')">
+                Load More Vendors
+                <i class="ri-arrow-down-line"></i>
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     EVENT TYPES
+========================= -->
+
+<section class="section event-types" id="events">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div class="section-eyebrow">
+                Whatever the Occasion
+            </div>
+
+            <h2 class="section-title">
+                Start with the<br>
+                moment you're creating.
+            </h2>
+
+        </div>
+
+
+        <div class="event-grid">
+
+            <div class="event-card">
+
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=85" alt="Wedding" loading="lazy">
+
+                <div class="event-card-content">
+                    <h3>Weddings</h3>
+                    <p>Venues, décor, photography, beauty and more.</p>
+                </div>
+
+            </div>
+
+
+            <div class="event-card">
+
+                <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=85" alt="Birthday" loading="lazy">
+
+                <div class="event-card-content">
+                    <h3>Birthdays</h3>
+                    <p>Make your next celebration unforgettable.</p>
+                </div>
+
+            </div>
+
+
+            <div class="event-card">
+
+                <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1000&q=85" alt="Corporate event" loading="lazy">
+
+                <div class="event-card-content">
+                    <h3>Corporate</h3>
+                    <p>Professional events without the stress.</p>
+                </div>
+
+            </div>
+
+
+            <div class="event-card">
+
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=85" alt="Celebration" loading="lazy">
+
+                <div class="event-card-content">
+                    <h3>Celebrations</h3>
+                    <p>From graduations to private celebrations.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     HOW IT WORKS
+========================= -->
+
+<section class="section how" id="how-it-works">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div class="section-eyebrow">
+                Simple By Design
+            </div>
+
+            <h2 class="section-title">
+                From idea to<br>
+                unforgettable.
+            </h2>
+
+        </div>
+
+
+        <div class="steps" id="howSteps">
+
+            <button class="step active" type="button" data-step="0" aria-pressed="true" onclick="activateHowStep(0)">
+
+                <div class="step-number">01 — DISCOVER</div>
+
+                <i class="ri-search-eye-line"></i>
+
+                <h3>Find what you need.</h3>
+
+                <p>
+                    Search venues and event professionals by service,
+                    location, rating and price.
+                </p>
+
+            </button>
+
+
+            <button class="step" type="button" data-step="1" aria-pressed="false" onclick="activateHowStep(1)">
+
+                <div class="step-number">02 — CONNECT</div>
+
+                <i class="ri-chat-3-line"></i>
+
+                <h3>Connect directly.</h3>
+
+                <p>
+                    View vendor profiles, compare packages and contact
+                    providers directly.
+                </p>
+
+            </button>
+
+
+            <button class="step" type="button" data-step="2" aria-pressed="false" onclick="activateHowStep(2)">
+
+                <div class="step-number">03 — CELEBRATE</div>
+
+                <i class="ri-gift-line"></i>
+
+                <h3>Make it happen.</h3>
+
+                <p>
+                    Book the right people and focus on enjoying the event
+                    you've created.
+                </p>
+
+            </button>
+
+        </div>
+
+
+        <div class="how-detail" id="howDetail" aria-live="polite">
+            <div class="how-detail-icon" id="howDetailIcon">
+                <i class="ri-search-eye-line"></i>
+            </div>
+
+            <div class="how-detail-copy">
+                <small id="howDetailLabel">Step 01</small>
+                <h4 id="howDetailTitle">Discover the right professionals.</h4>
+                <p id="howDetailText">Search by category, location, rating or price to narrow down exactly what your event needs.</p>
+            </div>
+
+            <button class="how-detail-cta" type="button" onclick="document.getElementById('vendors').scrollIntoView({behavior:'smooth'})">
+                Explore Vendors
+                <i class="ri-arrow-right-line"></i>
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     LOCATIONS
+========================= -->
+
+<section class="section map-section" id="locations">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <div class="section-eyebrow">
+                Across Zambia
+            </div>
+
+            <h2 class="section-title">
+                Events happen<br>
+                everywhere.
+            </h2>
+
+            <p class="section-description">
+                Discover event professionals in Lusaka, Copperbelt,
+                Livingstone and growing markets across Zambia.
+            </p>
+
+        </div>
+
+
+        <div class="map-box">
+
+            <div class="map-label" style="left:20%;top:18%;">
+                Lusaka
+            </div>
+
+            <div class="map-label" style="left:48%;top:12%;">
+                Copperbelt
+            </div>
+
+            <div class="map-label" style="left:66%;top:67%;">
+                Livingstone
+            </div>
+
+            <div class="map-pin pin-1"></div>
+            <div class="map-pin pin-2"></div>
+            <div class="map-pin pin-3"></div>
+            <div class="map-pin pin-4"></div>
+            <div class="map-pin pin-5"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CTA
+========================= -->
+
+<section class="cta">
+
+    <h2>
+        Your event deserves
+        the right people.
+    </h2>
+
+    <p>
+        Whether you're planning a wedding, corporate function,
+        birthday or celebration, EventHub brings everything together.
+    </p>
+
+    <div class="cta-buttons">
+
+        <button
+            class="cta-primary"
+            onclick="openModal('plannerModal')">
+            Plan My Event
+        </button>
+
+        <button
+            class="cta-secondary"
+            onclick="openModal('vendorModal')">
+            Become a Vendor
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer class="footer">
+
+    <div class="footer-grid">
+
+        <div class="footer-brand">
+
+            <a href="#" class="logo">
+                <span class="logo-mark">EH</span>
+                <span>EventHub Zambia</span>
+            </a>
+
+            <p>
+                Zambia's event marketplace connecting people with
+                trusted event professionals and businesses.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h4>Marketplace</h4>
+
+            <div class="footer-links">
+                <a href="#vendors">Find Vendors</a>
+                <a href="#events">Events</a>
+                <a href="#vendors">Venues</a>
+                <a href="#vendors">Services</a>
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <h4>For Vendors</h4>
+
+            <div class="footer-links">
+                <a href="#" onclick="openModal('vendorModal');return false;">
+                    Become a Vendor
+                </a>
+                <a href="#">Vendor Dashboard</a>
+                <a href="#">Pricing</a>
+                <a href="#">Vendor Resources</a>
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <h4>Company</h4>
+
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <span>
+            © 2026 EventHub Zambia. All rights reserved.
+        </span>
+
+        <span>
+            Plan. Connect. Celebrate.
+        </span>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     VENDOR PROFILE MODAL
+========================================================= -->
+
+<div class="modal profile-modal" id="profileModal">
+
+    <div class="modal-box">
+
+        <div class="profile-cover">
+
+            <img id="profileCoverImage" src="" alt="">
+
+            <button
+                class="profile-close"
+                onclick="closeModal('profileModal')"
+                aria-label="Close profile">
+                <i class="ri-close-line"></i>
+            </button>
+
+
+            <div class="profile-cover-content">
+
+                <div class="profile-identity">
+
+                    <div class="profile-logo">
+                        <img id="profileLogo" src="" alt="">
+                    </div>
+
+                    <div>
+
+                        <div class="profile-name"
+                             id="profileName">
+                            Vendor Name
+                        </div>
+
+                        <div class="profile-verified" id="profileVerified">
+                            <i class="ri-verified-badge-fill"></i>
+                            Verified Vendor
+                        </div>
+
+                        <div class="profile-location"
+                             id="profileLocation">
+                            Lusaka, Zambia
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-top-actions">
+
+                    <button
+                        class="profile-whatsapp"
+                        id="profileWhatsApp">
+                        <i class="ri-whatsapp-line"></i>
+                        WhatsApp
+                    </button>
+
+                    <button
+                        class="profile-quote"
+                        onclick="openQuoteFromProfile()">
+                        Request Quote
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-body">
+
+            <div class="profile-layout">
+
+                <main class="profile-main">
+
+                    <!-- ABOUT -->
+
+                    <section class="profile-section">
+
+                        <h3>About</h3>
+
+                        <p id="profileAbout"></p>
+
+                        <div class="profile-facts">
+
+                            <div class="fact">
+                                <strong id="profileExperience">8+</strong>
+                                <span>Years Experience</span>
+                            </div>
+
+                            <div class="fact">
+                                <strong id="profileEvents">250+</strong>
+                                <span>Events</span>
+                            </div>
+
+                            <div class="fact">
+                                <strong id="profileRating">4.9</strong>
+                                <span>Average Rating</span>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- SERVICES -->
+
+                    <section class="profile-section">
+
+                        <h3>Services</h3>
+
+                        <div
+                            class="service-tags"
+                            id="profileServices">
+                        </div>
+
+                    </section>
+
+
+                    <!-- PACKAGES -->
+
+                    <section class="profile-section">
+
+                        <h3>Packages</h3>
+
+                        <div
+                            class="packages"
+                            id="profilePackages">
+                        </div>
+
+                    </section>
+
+
+                    <!-- PORTFOLIO -->
+
+                    <section class="profile-section">
+
+                        <h3>Portfolio</h3>
+
+                        <div
+                            class="portfolio-grid"
+                            id="profilePortfolio">
+                        </div>
+
+                    </section>
+
+
+                    <!-- REVIEWS -->
+
+                    <section class="profile-section">
+
+                        <h3>Reviews</h3>
+
+                        <div class="review-summary">
+
+                            <div class="average-rating">
+
+                                <strong id="reviewAverage">
+                                    4.9
+                                </strong>
+
+                                <div class="stars">
+                                    ★★★★★
+                                </div>
+
+                                <small id="reviewCount">
+                                    38 reviews
+                                </small>
+
+                            </div>
+
+
+                            <div class="review-bars">
+
+                                <div class="review-bar">
+                                    5
+                                    <div class="bar">
+                                        <span style="width:90%"></span>
+                                    </div>
+                                    90%
+                                </div>
+
+                                <div class="review-bar">
+                                    4
+                                    <div class="bar">
+                                        <span style="width:7%"></span>
+                                    </div>
+                                    7%
+                                </div>
+
+                                <div class="review-bar">
+                                    3
+                                    <div class="bar">
+                                        <span style="width:2%"></span>
+                                    </div>
+                                    2%
+                                </div>
+
+                                <div class="review-bar">
+                                    2
+                                    <div class="bar">
+                                        <span style="width:1%"></span>
+                                    </div>
+                                    1%
+                                </div>
+
+                                <div class="review-bar">
+                                    1
+                                    <div class="bar">
+                                        <span style="width:0%"></span>
+                                    </div>
+                                    0%
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div id="profileReviews"></div>
+
+                    </section>
+
+                </main>
+
+
+                <!-- SIDEBAR -->
+
+                <aside class="profile-sidebar">
+
+                    <div class="availability-card">
+
+                        <div class="availability-status">
+
+                            <span class="status-dot"></span>
+
+                            <span id="availabilityText">
+                                Currently accepting enquiries
+                            </span>
+
+                        </div>
+
+                        <p>
+                            Contact this vendor to check availability
+                            for your event date.
+                        </p>
+
+                    </div>
+
+
+                    <section class="profile-section">
+
+                        <h3>Connect</h3>
+
+                        <p>
+                            Ready to discuss your event?
+                            Send the vendor your requirements.
+                        </p>
+
+                        <button
+                            class="sidebar-contact sidebar-whatsapp"
+                            id="sidebarWhatsApp">
+
+                            <i class="ri-whatsapp-line"></i>
+                            Contact on WhatsApp
+
+                        </button>
+
+                        <button
+                            class="sidebar-contact sidebar-quote"
+                            onclick="openQuoteFromProfile()">
+
+                            <i class="ri-file-list-3-line"></i>
+                            Request a Quote
+
+                        </button>
+
+                    </section>
+
+
+                    <section class="profile-section">
+
+                        <h3>Event Types</h3>
+
+                        <div
+                            class="service-tags"
+                            id="profileEventTypes">
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     QUOTE MODAL
+========================= -->
+
+<div class="modal" id="quoteModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h3>Request a Quote</h3>
+
+            <button
+                class="modal-close"
+                onclick="closeModal('quoteModal')"
+                aria-label="Close">
+                <i class="ri-close-line"></i>
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <div style="margin-bottom:20px;color:#777;font-size:13px;">
+                Requesting a quote from
+                <strong id="quoteVendorName"></strong>
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="quoteName">Your Name</label>
+                    <input
+                        type="text"
+                        id="quoteName"
+                        placeholder="Full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="quotePhone">Phone Number</label>
+                    <input
+                        type="tel"
+                        id="quotePhone"
+                        placeholder="+260">
+                </div>
+
+                <div class="form-group">
+                    <label for="quoteEvent">Event Type</label>
+
+                    <select id="quoteEvent">
+                        <option>Wedding</option>
+                        <option>Birthday</option>
+                        <option>Corporate Event</option>
+                        <option>Graduation</option>
+                        <option>Traditional Ceremony</option>
+                        <option>Other</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="quoteDate">Event Date</label>
+                    <input
+                        type="date"
+                        id="quoteDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="quoteLocation">Location</label>
+                    <input
+                        type="text"
+                        id="quoteLocation"
+                        placeholder="Event location">
+                </div>
+
+                <div class="form-group">
+                    <label for="quoteGuests">Guest Count</label>
+                    <input
+                        type="number"
+                        id="quoteGuests"
+                        min="0"
+                        placeholder="e.g. 150">
+                </div>
+
+                <div class="form-group full">
+                    <label for="quoteRequirements">Requirements</label>
+
+                    <textarea
+                        id="quoteRequirements"
+                        placeholder="Tell the vendor what you need..."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="submitQuote()">
+
+                Send Quote Request
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PLAN EVENT MODAL
+========================= -->
+
+<div class="modal" id="plannerModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h3>Plan My Event</h3>
+
+            <button
+                class="modal-close"
+                onclick="closeModal('plannerModal')"
+                aria-label="Close">
+                <i class="ri-close-line"></i>
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="plannerName">Your Name</label>
+                    <input
+                        type="text"
+                        id="plannerName"
+                        placeholder="Full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="plannerPhone">Phone Number</label>
+                    <input
+                        type="tel"
+                        id="plannerPhone"
+                        placeholder="+260">
+                </div>
+
+                <div class="form-group">
+                    <label for="plannerEventType">Event Type</label>
+
+                    <select id="plannerEventType">
+                        <option>Wedding</option>
+                        <option>Birthday</option>
+                        <option>Corporate Event</option>
+                        <option>Graduation</option>
+                        <option>Traditional Ceremony</option>
+                        <option>Other</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="plannerDate">Event Date</label>
+                    <input type="date" id="plannerDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="plannerLocation">Location</label>
+                    <input
+                        type="text"
+                        id="plannerLocation"
+                        placeholder="City / location">
+                </div>
+
+                <div class="form-group">
+                    <label for="plannerGuests">Guest Count</label>
+                    <input
+                        type="number"
+                        id="plannerGuests"
+                        min="0"
+                        placeholder="Estimated guests">
+                </div>
+
+                <div class="form-group full">
+
+                    <label for="plannerNeeds">What do you need?</label>
+
+                    <textarea
+                        id="plannerNeeds"
+                        placeholder="Tell us about your event and the services you need..."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="savePlannerRequest()">
+
+                Start Planning
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     VENDOR MODAL
+========================= -->
+
+<div class="modal" id="vendorModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h3>Become a Vendor</h3>
+
+            <button
+                class="modal-close"
+                onclick="closeModal('vendorModal')"
+                aria-label="Close">
+                <i class="ri-close-line"></i>
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <p style="color:#777;font-size:13px;margin-bottom:22px;">
+                List your business on EventHub Zambia and connect
+                with customers planning events.
+            </p>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="vendorBusinessName">Business Name</label>
+                    <input
+                        type="text"
+                        id="vendorBusinessName"
+                        placeholder="Business name">
+                </div>
+
+                <div class="form-group">
+                    <label for="vendorContactPerson">Contact Person</label>
+                    <input
+                        type="text"
+                        id="vendorContactPerson"
+                        placeholder="Full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="vendorPhone">Phone</label>
+                    <input
+                        type="tel"
+                        id="vendorPhone"
+                        placeholder="+260">
+                </div>
+
+                <div class="form-group">
+                    <label for="vendorEmail">Email</label>
+                    <input
+                        type="email"
+                        id="vendorEmail"
+                        placeholder="Business email">
+                </div>
+
+                <div class="form-group">
+                    <label for="vendorCategory">Category</label>
+
+                    <select id="vendorCategory">
+                        <option value="Venue">Venue</option>
+                        <option value="Decor">Decor</option>
+                        <option value="Photography">Photography</option>
+                        <option value="Catering">Catering</option>
+                        <option value="DJ">DJ & Entertainment</option>
+                        <option value="Beauty">Beauty</option>
+                        <option value="Car Hire">Car Hire</option>
+                        <option value="Fashion & Outfits">Fashion & Outfits</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="vendorLocation">Location</label>
+
+                    <select id="vendorLocation">
+                        <option>Lusaka</option>
+                        <option>Ndola</option>
+                        <option>Kitwe</option>
+                        <option>Livingstone</option>
+                        <option>Other</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group full">
+                    <label for="vendorFacebookUrl">Facebook Page / Profile URL <span style="font-weight:500;text-transform:none;letter-spacing:0;color:#999;">(optional)</span></label>
+                    <input
+                        type="url"
+                        id="vendorFacebookUrl"
+                        placeholder="https://facebook.com/yourbusiness">
+                </div>
+
+                <div class="form-group full">
+
+                    <label for="vendorDescription">Tell us about your business</label>
+
+                    <textarea
+                        id="vendorDescription"
+                        placeholder="Describe your services..."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="saveVendorApplication()">
+
+                Submit Vendor Application
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     AUTHENTICATION MODAL
+========================= -->
+<div class="modal" id="authModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="authTitle">Welcome back</h3>
+            <button class="modal-close" onclick="closeModal('authModal')" aria-label="Close"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="modal-content">
+            <form id="authForm" onsubmit="submitAuthForm(event)">
+                <div class="form-grid">
+                    <div class="form-group full" id="authNameGroup">
+                        <label for="authName">Full Name</label>
+                        <input type="text" id="authName" placeholder="Your full name">
+                    </div>
+                    <div class="form-group full" id="authPhoneGroup">
+                        <label for="authPhone">Phone Number</label>
+                        <input type="tel" id="authPhone" placeholder="+260">
+                    </div>
+                    <div class="form-group full">
+                        <label for="authEmail">Email</label>
+                        <input type="email" id="authEmail" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group full">
+                        <label for="authPassword">Password</label>
+                        <input type="password" id="authPassword" placeholder="Minimum 6 characters" minlength="6" required>
+                    </div>
+                    <div class="form-group full" id="authRoleGroup">
+                        <label for="authRole">Account Type</label>
+                        <select id="authRole">
+                            <option value="customer">Customer — I am planning an event</option>
+                            <option value="vendor">Vendor — I provide event services</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="auth-divider"><span>OR</span></div>
+
+                <button
+                    class="facebook-auth-btn"
+                    id="facebookAuthBtn"
+                    type="button"
+                    onclick="signInWithFacebook()">
+                    <i class="ri-facebook-fill"></i>
+                    <span id="facebookAuthText">Continue with Facebook</span>
+                </button>
+
+                <button class="submit-btn" id="authSubmit" type="submit">Login</button>
+            </form>
+            <div id="authSwitch" style="text-align:center;margin-top:16px;color:#777;font-size:12px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     LIGHTBOX
+========================= -->
+
+<div class="lightbox" id="lightbox">
+
+    <button
+        class="lightbox-close"
+        onclick="closeLightbox()"
+        aria-label="Close image">
+        <i class="ri-close-line"></i>
+    </button>
+
+    <img id="lightboxImage" src="" alt="Portfolio">
+
+</div>
+
+
+<!-- =========================
+     TOAST
+========================= -->
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="firebaseStatus" style="position:fixed;left:14px;bottom:14px;z-index:1499;background:#111;color:#fff;padding:8px 11px;border-radius:5px;font-size:10px;opacity:0;pointer-events:none;">Firebase connected</div>
+
+
+
+<!-- =========================
+     FIREBASE
+========================= -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script>
+/* Firebase configuration for EventHub Zambia */
+const firebaseConfig = {
+    apiKey: "AIzaSyAre2ZWfxE4JkIJYJEnIdZaIaTVeXI9v8M",
+    authDomain: "events-ab1fe.firebaseapp.com",
+    projectId: "events-ab1fe",
+    storageBucket: "events-ab1fe.firebasestorage.app",
+    messagingSenderId: "369661184847",
+    appId: "1:369661184847:web:5ab9279cde342e7d0b133a"
+};
+
+let auth;
+let db;
+
+try {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    window.eventHubFirebase = { auth, db };
+    window.eventHubFirebaseReady = true;
+} catch (error) {
+    window.eventHubFirebaseReady = false;
+    console.error('EventHub Firebase initialization failed:', error);
+    window.eventHubFirebaseError = error;
+}
+
+let currentUser = null;
+
+/* Escape any value before interpolating it into HTML. Firestore vendor
+   documents are written by end users, so they must never reach innerHTML raw. */
+function escapeHtml(value) {
+    return String(value === null || value === undefined ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+if (auth) {
+    auth.onAuthStateChanged(async (user) => {
+        currentUser = user || null;
+        window.eventHubCurrentUser = currentUser;
+        updateAuthUI();
+        if (user) {
+            await loadUserProfile(user.uid);
+            if (window.eventHubPendingClaim) {
+                setTimeout(() => openClaimModal(), 150);
+            }
+        }
+    });
+}
+
+async function loadUserProfile(uid) {
+    if (!db) return;
+    try {
+        const snap = await db.collection('users').doc(uid).get();
+        window.eventHubUserProfile = snap.exists ? snap.data() : null;
+    } catch (error) {
+        console.error('User profile load error:', error);
+    }
+}
+
+function updateAuthUI() {
+    const loginBtn = document.querySelector('.login-btn');
+    const signupBtn = document.querySelector('.signup-btn');
+    if (!loginBtn || !signupBtn) return;
+
+    if (currentUser) {
+        loginBtn.textContent = 'Dashboard';
+        loginBtn.onclick = () => openDashboard();
+        signupBtn.textContent = 'Logout';
+        signupBtn.onclick = () => logoutUser();
+    } else {
+        loginBtn.textContent = 'Login';
+        loginBtn.onclick = () => openAuthModal('login');
+        signupBtn.textContent = 'Sign Up';
+        signupBtn.onclick = () => openAuthModal('register');
+    }
+}
+
+function openDashboard() {
+    const role = window.eventHubUserProfile?.role || 'customer';
+    if (role === 'vendor') {
+        openVendorDashboard();
+    } else {
+        const name = window.eventHubUserProfile?.name || currentUser?.email || '';
+        showToast(`Signed in as ${name}. Customer dashboard is next in the build.`);
+    }
+}
+
+function openVendorDashboard() {
+    if (!currentUser) { openAuthModal('login'); return; }
+    const name = window.eventHubUserProfile?.name || currentUser.email;
+    showToast(`Welcome back, ${name}. Vendor dashboard is next in the build.`);
+}
+
+async function logoutUser() {
+    try {
+        await auth.signOut();
+        window.eventHubUserProfile = null;
+        showToast('You have been logged out.');
+    } catch (error) {
+        showToast('Unable to log out right now.');
+        console.error(error);
+    }
+}
+
+function friendlyFirebaseError(error) {
+    const code = error?.code || '';
+    const messages = {
+        'auth/email-already-in-use': 'That email is already registered.',
+        'auth/invalid-email': 'Please enter a valid email address.',
+        'auth/weak-password': 'Password must be at least 6 characters.',
+        'auth/user-not-found': 'No account was found with that email.',
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/invalid-credential': 'Incorrect email or password.',
+        'auth/too-many-requests': 'Too many attempts. Please try again later.',
+        'auth/unauthorized-domain': 'This website domain is not authorized in Firebase Authentication.',
+        'auth/api-key-not-valid.-please-pass-a-valid-api-key.': 'Firebase rejected the Web API key. Check the Firebase Web app configuration.',
+        'auth/network-request-failed': 'Network error. Check the website connection and try again.',
+        'auth/operation-not-allowed': 'Facebook sign-in is not enabled in Firebase Authentication yet.',
+        'auth/popup-blocked': 'Your browser blocked the Facebook login window. Allow pop-ups for EventHub and try again.',
+        'auth/popup-closed-by-user': 'Facebook login was cancelled.',
+        'auth/account-exists-with-different-credential': 'An account already exists with this email using another sign-in method.'
+    };
+    return messages[code] || error?.message || 'Something went wrong. Please try again.';
+}
+
+function firebaseUnavailable() {
+    showToast('Firebase is not connected. Please refresh the page or contact the site administrator.');
+    console.error('Firebase is unavailable.', window.eventHubFirebaseError || '');
+}
+
+async function registerAccount() {
+    if (!auth || !db) { firebaseUnavailable(); return; }
+
+    const name = document.getElementById('authName').value.trim();
+    const phone = document.getElementById('authPhone').value.trim();
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const role = document.getElementById('authRole').value;
+
+    if (!name || !email || !password) {
+        showToast('Name, email and password are required.');
+        return;
+    }
+
+    try {
+        const credential = await auth.createUserWithEmailAndPassword(email, password);
+        await credential.user.updateProfile({ displayName: name });
+
+        const profile = {
+            uid: credential.user.uid,
+            name,
+            phone,
+            email,
+            role,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        await db.collection('users').doc(credential.user.uid).set(profile);
+        window.eventHubUserProfile = profile;
+
+        if (role === 'vendor') {
+            await db.collection('vendors').doc(credential.user.uid).set({
+                ownerId: credential.user.uid,
+                businessName: '',
+                contactPerson: name,
+                email,
+                phone,
+                category: '',
+                location: '',
+                description: '',
+                verified: false,
+                featured: false,
+                status: 'draft',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        closeModal('authModal');
+        showToast(role === 'vendor' ? 'Vendor account created. Complete your business profile.' : 'Account created successfully.');
+        document.getElementById('authForm').reset();
+        if (role === 'vendor' && !window.eventHubPendingClaim) {
+            setTimeout(() => openModal('vendorModal'), 300);
+        }
+    } catch (error) {
+        showToast(friendlyFirebaseError(error));
+        console.error(error);
+    }
+}
+
+async function loginAccount() {
+    if (!auth) { firebaseUnavailable(); return; }
+
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+        showToast('Enter your email and password.');
+        return;
+    }
+
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
+        closeModal('authModal');
+        showToast('Login successful.');
+        document.getElementById('authForm').reset();
+    } catch (error) {
+        showToast(friendlyFirebaseError(error));
+        console.error(error);
+    }
+}
+
+async function signInWithFacebook() {
+    if (!auth || !db) { firebaseUnavailable(); return; }
+
+    const button = document.getElementById('facebookAuthBtn');
+    const text = document.getElementById('facebookAuthText');
+    const originalText = text ? text.textContent : 'Continue with Facebook';
+    if (button) button.disabled = true;
+    if (text) text.textContent = 'Connecting to Facebook...';
+
+    try {
+        const provider = new firebase.auth.FacebookAuthProvider();
+        provider.addScope('email');
+        provider.setCustomParameters({ display: 'popup' });
+
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        const isNewUser = !!result.additionalUserInfo?.isNewUser;
+        const selectedRole = document.getElementById('authRole')?.value || 'customer';
+        const selectedPhone = document.getElementById('authPhone')?.value.trim() || '';
+        const displayName = user.displayName || 'EventHub User';
+        const email = user.email || '';
+
+        if (isNewUser) {
+            await db.collection('users').doc(user.uid).set({
+                uid: user.uid,
+                name: displayName,
+                phone: selectedPhone,
+                email,
+                role: selectedRole,
+                provider: 'facebook.com',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            if (selectedRole === 'vendor') {
+                await db.collection('vendors').doc(user.uid).set({
+                    ownerId: user.uid,
+                    businessName: '',
+                    contactPerson: displayName,
+                    email,
+                    phone: selectedPhone,
+                    category: '',
+                    location: '',
+                    description: '',
+                    verified: false,
+                    featured: false,
+                    status: 'draft',
+                    authProvider: 'facebook.com',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            }
+        } else {
+            await db.collection('users').doc(user.uid).set({
+                uid: user.uid,
+                name: displayName,
+                email,
+                provider: 'facebook.com',
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+
+        await loadUserProfile(user.uid);
+        closeModal('authModal');
+        document.getElementById('authForm').reset();
+        showToast(isNewUser ? 'Facebook account connected successfully.' : 'Logged in with Facebook.');
+    } catch (error) {
+        console.error('Facebook sign-in error:', error);
+        const extra = error?.code === 'auth/account-exists-with-different-credential'
+            ? 'An EventHub account already exists with this email. Log in using that account first, then link Facebook.'
+            : friendlyFirebaseError(error);
+        showToast(extra);
+    } finally {
+        if (button) button.disabled = false;
+        if (text) text.textContent = originalText;
+    }
+}
+
+function setAuthMode(mode) {
+    const register = mode === 'register';
+    document.getElementById('authTitle').textContent = register ? 'Create your EventHub account' : 'Welcome back';
+    document.getElementById('authSubmit').textContent = register ? 'Create Account' : 'Login';
+    const fbText = document.getElementById('facebookAuthText');
+    if (fbText) fbText.textContent = register ? 'Sign up with Facebook' : 'Log in with Facebook';
+    document.getElementById('authNameGroup').style.display = register ? 'grid' : 'none';
+    document.getElementById('authPhoneGroup').style.display = register ? 'grid' : 'none';
+    document.getElementById('authRoleGroup').style.display = register ? 'grid' : 'none';
+    document.getElementById('authSwitch').innerHTML = register
+        ? `Already have an account? <button type="button" onclick="setAuthMode('login')">Login</button>`
+        : `New to EventHub? <button type="button" onclick="setAuthMode('register')">Create an account</button>`;
+    window.eventHubAuthMode = mode;
+}
+
+function openAuthModal(mode = 'login') {
+    setAuthMode(mode);
+    openModal('authModal');
+}
+
+async function submitAuthForm(e) {
+    e.preventDefault();
+    if (window.eventHubAuthMode === 'register') {
+        await registerAccount();
+    } else {
+        await loginAccount();
+    }
+}
+
+async function saveVendorApplication() {
+    if (!currentUser) {
+        closeModal('vendorModal');
+        openAuthModal('register');
+        showToast('Create an account first to become a vendor.');
+        return;
+    }
+    if (!db) { firebaseUnavailable(); return; }
+
+    const businessName = document.getElementById('vendorBusinessName').value.trim();
+    const contactPerson = document.getElementById('vendorContactPerson').value.trim();
+    const phone = document.getElementById('vendorPhone').value.trim();
+    const email = document.getElementById('vendorEmail').value.trim();
+    const category = document.getElementById('vendorCategory').value;
+    const location = document.getElementById('vendorLocation').value;
+    const description = document.getElementById('vendorDescription').value.trim();
+    const facebookUrlRaw = document.getElementById('vendorFacebookUrl')?.value.trim() || '';
+    const facebookUrl = safeUrl(facebookUrlRaw, '');
+
+    if (!businessName || !contactPerson || !phone || !email || !category || !location) {
+        showToast('Please complete the required vendor fields.');
+        return;
+    }
+
+    if (facebookUrlRaw && !facebookUrl) {
+        showToast('Please enter a valid Facebook URL starting with https://');
+        return;
+    }
+
+    try {
+        const vendorRef = db.collection('vendors').doc(currentUser.uid);
+        const existing = await vendorRef.get();
+
+        await vendorRef.set({
+            ownerId: currentUser.uid,
+            businessName,
+            contactPerson,
+            phone,
+            email,
+            category,
+            location,
+            description,
+            facebookUrl,
+            verified: false,
+            featured: false,
+            status: 'pending',
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            ...(existing.exists ? {} : { createdAt: firebase.firestore.FieldValue.serverTimestamp() }),
+            ...(window.eventHubPendingClaim ? {
+                source: 'facebook',
+                sourceBusinessName: window.eventHubPendingClaim.businessName || businessName,
+                sourceFacebookUrl: window.eventHubPendingClaim.facebookUrl || facebookUrl,
+                claimStatus: 'submitted'
+            } : {})
+        }, { merge: true });
+
+        await db.collection('users').doc(currentUser.uid).set({
+            role: 'vendor',
+            name: contactPerson,
+            phone,
+            email,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        window.eventHubUserProfile = { ...(window.eventHubUserProfile || {}), role: 'vendor', name: contactPerson, phone, email };
+        closeModal('vendorModal');
+        showToast('Vendor application submitted for review.');
+        document.getElementById('vendorBusinessName').value = '';
+        document.getElementById('vendorContactPerson').value = '';
+        document.getElementById('vendorPhone').value = '';
+        document.getElementById('vendorEmail').value = '';
+        document.getElementById('vendorCategory').selectedIndex = 0;
+        document.getElementById('vendorLocation').selectedIndex = 0;
+        document.getElementById('vendorDescription').value = '';
+        if (document.getElementById('vendorFacebookUrl')) document.getElementById('vendorFacebookUrl').value = '';
+        window.eventHubPendingClaim = null;
+        loadFirebaseVendors();
+    } catch (error) {
+        console.error(error);
+        showToast('Vendor application could not be saved. Check Firestore rules.');
+    }
+}
+
+async function savePlannerRequest() {
+    if (!currentUser) {
+        closeModal('plannerModal');
+        openAuthModal('register');
+        showToast('Create an account to save your event plan.');
+        return;
+    }
+    if (!db) { firebaseUnavailable(); return; }
+
+    const eventType = document.getElementById('plannerEventType').value;
+    const eventDate = document.getElementById('plannerDate').value;
+    const location = document.getElementById('plannerLocation').value.trim();
+    const guests = Number(document.getElementById('plannerGuests').value || 0);
+    const needs = document.getElementById('plannerNeeds').value.trim();
+    const name = document.getElementById('plannerName').value.trim();
+    const phone = document.getElementById('plannerPhone').value.trim();
+
+    if (!name || !phone || !eventDate) {
+        showToast('Please add your name, phone number and event date.');
+        return;
+    }
+
+    try {
+        await db.collection('events').add({
+            customerId: currentUser.uid,
+            name,
+            phone,
+            eventType,
+            eventDate,
+            location,
+            guestCount: guests,
+            notes: needs,
+            status: 'new',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        closeModal('plannerModal');
+        ['plannerName','plannerPhone','plannerDate','plannerLocation','plannerGuests','plannerNeeds']
+            .forEach(id => { document.getElementById(id).value = ''; });
+        showToast('Your event plan has been saved.');
+    } catch (error) {
+        console.error(error);
+        showToast('Could not save your event plan.');
+    }
+}
+
+async function saveQuoteRequest() {
+    if (!currentUser) {
+        closeModal('quoteModal');
+        openAuthModal('register');
+        showToast('Create an account to send a quote request.');
+        return;
+    }
+    if (!db) { firebaseUnavailable(); return; }
+
+    const vendorName = document.getElementById('quoteVendorName').textContent.trim();
+    const vendor = quoteVendorId ? vendors[quoteVendorId] : null;
+    const name = document.getElementById('quoteName').value.trim();
+    const phone = document.getElementById('quotePhone').value.trim();
+
+    if (!name || !phone) {
+        showToast('Please add your name and phone number.');
+        return;
+    }
+
+    try {
+        await db.collection('eventRequests').add({
+            customerId: currentUser.uid,
+            vendorId: vendor?.id || null,
+            vendorName,
+            packageName: quotePackageName || null,
+            name,
+            phone,
+            eventType: document.getElementById('quoteEvent').value,
+            eventDate: document.getElementById('quoteDate').value,
+            location: document.getElementById('quoteLocation').value.trim(),
+            guestCount: Number(document.getElementById('quoteGuests').value || 0),
+            requirements: document.getElementById('quoteRequirements').value.trim(),
+            status: 'new',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        closeModal('quoteModal');
+        ['quoteName','quotePhone','quoteDate','quoteLocation','quoteGuests','quoteRequirements']
+            .forEach(id => { document.getElementById(id).value = ''; });
+        showToast('Quote request sent.');
+    } catch (error) {
+        console.error(error);
+        showToast('Could not send the quote request.');
+    }
+}
+
+if (window.eventHubFirebaseReady) {
+    console.log('EventHub Firebase connected:', firebase.app().options.projectId);
+}
+
+</script>
+
+<script>
+/* =========================================================
+   VENDOR DATABASE
+   This structure is ready to be replaced by PHP/MySQL later.
+========================================================= */
+
+const vendors = {
+
+    "royal-gardens":{
+        name:"Royal Gardens",
+        category:"Venue",
+        location:"Lusaka",
+        rating:"4.9",
+        reviews:"38",
+        experience:"9+",
+        events:"320+",
+        phone:"260970000001",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Royal Gardens is a premium event venue offering elegant indoor and outdoor spaces for weddings, corporate functions, private celebrations and special occasions. Our team focuses on creating refined environments with professional event support.",
+
+        services:[
+            "Wedding Venue",
+            "Corporate Functions",
+            "Private Events",
+            "Outdoor Events",
+            "Reception Setup",
+            "Event Coordination"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Corporate Events",
+            "Birthdays",
+            "Graduations",
+            "Private Celebrations"
+        ],
+
+        packages:[
+            {
+                name:"Classic Package",
+                price:"K5,000",
+                items:[
+                    "Venue hire",
+                    "Tables & chairs",
+                    "Basic setup",
+                    "Parking"
+                ]
+            },
+            {
+                name:"Premium Package",
+                price:"K8,500",
+                items:[
+                    "Premium venue",
+                    "Full reception setup",
+                    "Decor coordination",
+                    "Dedicated event support"
+                ]
+            },
+            {
+                name:"Luxury Package",
+                price:"K15,000",
+                items:[
+                    "Exclusive venue",
+                    "Premium décor",
+                    "Event coordination",
+                    "VIP setup"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Chipo M.","★★★★★","Beautiful venue and very professional team."],
+            ["Brian K.","★★★★★","The venue looked even better in person."],
+            ["Martha C.","★★★★☆","Great location and excellent service."]
+        ]
+    },
+
+
+    "elegant-moments":{
+        name:"Elegant Moments",
+        category:"Decor",
+        location:"Lusaka",
+        rating:"4.8",
+        reviews:"31",
+        experience:"7+",
+        events:"210+",
+        phone:"260970000002",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Elegant Moments specialises in sophisticated event décor, floral styling, reception styling and customised event concepts for clients who want a polished and memorable celebration.",
+
+        services:[
+            "Wedding Décor",
+            "Floral Styling",
+            "Reception Styling",
+            "Backdrop Design",
+            "Corporate Décor",
+            "Custom Themes"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Birthdays",
+            "Corporate Events",
+            "Baby Showers",
+            "Private Events"
+        ],
+
+        packages:[
+            {
+                name:"Essential Décor",
+                price:"K3,500",
+                items:[
+                    "Backdrop",
+                    "Table setup",
+                    "Basic centrepieces",
+                    "Entrance décor"
+                ]
+            },
+            {
+                name:"Signature Décor",
+                price:"K6,500",
+                items:[
+                    "Full reception styling",
+                    "Floral arrangements",
+                    "Premium backdrop",
+                    "Table styling"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Natasha L.","★★★★★","The décor was exactly what we wanted."],
+            ["Sarah K.","★★★★★","Elegant, professional and creative."],
+            ["Mwape B.","★★★★☆","Very good service and communication."]
+        ]
+    },
+
+
+    "glow-beauty":{
+        name:"Glow Beauty",
+        category:"Beauty",
+        location:"Lusaka",
+        rating:"4.7",
+        reviews:"26",
+        experience:"6+",
+        events:"180+",
+        phone:"260970000003",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Glow Beauty provides professional bridal, event and occasion beauty services with a focus on polished, long-lasting looks.",
+
+        services:[
+            "Bridal Makeup",
+            "Hair Styling",
+            "Nail Services",
+            "Makeup",
+            "Beauty Packages"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Birthdays",
+            "Graduations",
+            "Photoshoots"
+        ],
+
+        packages:[
+            {
+                name:"Event Glam",
+                price:"K1,200",
+                items:[
+                    "Professional makeup",
+                    "Hair styling",
+                    "Touch-up kit"
+                ]
+            },
+            {
+                name:"Bridal Glam",
+                price:"K2,500",
+                items:[
+                    "Bridal makeup",
+                    "Hair styling",
+                    "Trial session",
+                    "Touch-up support"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1526045478516-99145907023c?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Faith M.","★★★★★","Very professional and the makeup lasted all day."],
+            ["Chileshe P.","★★★★☆","Beautiful work and friendly service."]
+        ]
+    },
+
+
+    "executive-rides":{
+        name:"Executive Rides",
+        category:"Car Hire",
+        location:"Lusaka",
+        rating:"4.8",
+        reviews:"29",
+        experience:"8+",
+        events:"400+",
+        phone:"260970000004",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Executive Rides provides premium and reliable event transportation for weddings, corporate functions, airport transfers and special occasions.",
+
+        services:[
+            "Wedding Cars",
+            "Luxury Cars",
+            "Airport Transfers",
+            "Corporate Transport",
+            "Chauffeur Service"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Corporate Events",
+            "Airport Transfers",
+            "Private Events"
+        ],
+
+        packages:[
+            {
+                name:"Executive",
+                price:"K2,500",
+                items:[
+                    "Luxury vehicle",
+                    "Professional driver",
+                    "Event-day service"
+                ]
+            },
+            {
+                name:"VIP",
+                price:"K4,500",
+                items:[
+                    "Premium vehicle",
+                    "Chauffeur",
+                    "Full-day service",
+                    "Decorated vehicle"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Daniel M.","★★★★★","The car was clean and arrived on time."],
+            ["Brenda K.","★★★★★","Excellent wedding transportation."]
+        ]
+    },
+
+
+    "golden-plate":{
+        name:"Golden Plate Catering",
+        category:"Catering",
+        location:"Ndola",
+        rating:"4.9",
+        reviews:"42",
+        experience:"10+",
+        events:"500+",
+        phone:"260970000005",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Golden Plate Catering provides event catering for weddings, corporate functions, private celebrations and large gatherings across the Copperbelt.",
+
+        services:[
+            "Wedding Catering",
+            "Corporate Catering",
+            "Buffet",
+            "Cocktail Catering",
+            "Dessert Tables",
+            "Waiter Service"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Corporate Events",
+            "Birthdays",
+            "Graduations",
+            "Private Events"
+        ],
+
+        packages:[
+            {
+                name:"Classic Buffet",
+                price:"K4,500",
+                items:[
+                    "Buffet setup",
+                    "Two main dishes",
+                    "Two sides",
+                    "Waiter service"
+                ]
+            },
+            {
+                name:"Premium Banquet",
+                price:"K7,500",
+                items:[
+                    "Premium menu",
+                    "Full buffet setup",
+                    "Dessert",
+                    "Professional service team"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Mwaka C.","★★★★★","Excellent food and professional service."],
+            ["Joseph B.","★★★★★","Our guests loved the food."],
+            ["Tasha N.","★★★★★","Everything was delivered as agreed."]
+        ]
+    },
+
+
+    "prime-lens":{
+        name:"Prime Lens Photography",
+        category:"Photography",
+        location:"Kitwe",
+        rating:"4.8",
+        reviews:"34",
+        experience:"8+",
+        events:"280+",
+        phone:"260970000006",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Prime Lens Photography captures weddings, corporate events, birthdays and milestone celebrations with a documentary and editorial approach.",
+
+        services:[
+            "Wedding Photography",
+            "Event Photography",
+            "Video Coverage",
+            "Drone Coverage",
+            "Photo Booth",
+            "Album Design"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Corporate Events",
+            "Birthdays",
+            "Graduations",
+            "Traditional Ceremonies"
+        ],
+
+        packages:[
+            {
+                name:"Essential",
+                price:"K2,800",
+                items:[
+                    "Photography",
+                    "Edited images",
+                    "Online gallery"
+                ]
+            },
+            {
+                name:"Complete",
+                price:"K5,500",
+                items:[
+                    "Photography",
+                    "Video",
+                    "Drone coverage",
+                    "Premium album"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Kelvin T.","★★★★★","Amazing photos and very professional."],
+            ["Natasha M.","★★★★★","They captured every important moment."]
+        ]
+    },
+
+
+    "royal-sound":{
+        name:"Royal Sound Entertainment",
+        category:"DJ",
+        location:"Lusaka",
+        rating:"4.9",
+        reviews:"45",
+        experience:"11+",
+        events:"600+",
+        phone:"260970000007",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1571266028243-d220c9c3b0c7?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1571266028243-d220c9c3b0c7?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Royal Sound Entertainment provides DJs, MCs, professional sound systems and entertainment solutions for events of all sizes.",
+
+        services:[
+            "DJ Services",
+            "MC Services",
+            "Sound Systems",
+            "Lighting",
+            "Live Entertainment"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Corporate Events",
+            "Birthdays",
+            "Parties",
+            "Private Events"
+        ],
+
+        packages:[
+            {
+                name:"DJ Package",
+                price:"K3,000",
+                items:[
+                    "Professional DJ",
+                    "Sound system",
+                    "Basic lighting"
+                ]
+            },
+            {
+                name:"Premium Entertainment",
+                price:"K6,000",
+                items:[
+                    "DJ",
+                    "MC",
+                    "Premium sound",
+                    "Lighting"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1571266028243-d220c9c3b0c7?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Moses K.","★★★★★","The music was excellent and the DJ was professional."],
+            ["Chanda P.","★★★★★","Royal Sound made our reception amazing."]
+        ]
+    },
+
+
+    "grand-hall":{
+        name:"Grand Hall Events",
+        category:"Venue",
+        location:"Livingstone",
+        rating:"4.6",
+        reviews:"21",
+        experience:"6+",
+        events:"160+",
+        phone:"260970000008",
+        verified:false,
+
+        cover:"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Grand Hall Events offers spacious event facilities in Livingstone suitable for weddings, conferences, celebrations and private functions.",
+
+        services:[
+            "Event Venue",
+            "Conference Venue",
+            "Wedding Reception",
+            "Private Events",
+            "Parking"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Corporate Events",
+            "Conferences",
+            "Birthdays",
+            "Graduations"
+        ],
+
+        packages:[
+            {
+                name:"Hall Hire",
+                price:"K4,000",
+                items:[
+                    "Venue hire",
+                    "Tables & chairs",
+                    "Basic setup"
+                ]
+            },
+            {
+                name:"Conference Package",
+                price:"K6,500",
+                items:[
+                    "Hall",
+                    "Seating setup",
+                    "PA system",
+                    "Event support"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Brian S.","★★★★☆","Spacious and convenient venue."],
+            ["Linda C.","★★★★★","Good venue for our conference."]
+        ]
+    },
+
+
+    "mwezi-couture":{
+        name:"Mwezi Couture Studio",
+        category:"Fashion & Outfits",
+        location:"Lusaka",
+        rating:"4.9",
+        reviews:"46",
+        experience:"8+",
+        events:"185+",
+        phone:"260970000009",
+        verified:true,
+
+        cover:"https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1800&q=90",
+
+        logo:"https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=500&q=90",
+
+        about:
+        "Mwezi Couture Studio is a fashion and outfit design studio creating custom looks for weddings, traditional ceremonies, engagements, graduations, birthdays and corporate occasions. Clients can request bespoke designs, tailoring, styling and selected outfit rentals.",
+
+        services:[
+            "Custom Outfit Design",
+            "Wedding Dresses",
+            "Bridal Party Wear",
+            "Groom & Groomsmen Suits",
+            "Traditional Ceremony Wear",
+            "Custom Tailoring",
+            "Outfit Styling",
+            "Selected Outfit Rentals"
+        ],
+
+        eventTypes:[
+            "Weddings",
+            "Kitchen Parties",
+            "Engagements",
+            "Traditional Ceremonies",
+            "Graduations",
+            "Birthdays",
+            "Corporate Events"
+        ],
+
+        packages:[
+            {
+                name:"Custom Outfit",
+                price:"K2,500",
+                items:[
+                    "Design consultation",
+                    "Measurements",
+                    "Custom pattern",
+                    "One fitting"
+                ]
+            },
+            {
+                name:"Bridal Package",
+                price:"K8,500",
+                items:[
+                    "Bridal gown design",
+                    "Bridesmaid styling",
+                    "Fittings",
+                    "Final alterations"
+                ]
+            },
+            {
+                name:"Groom & Groomsmen",
+                price:"K6,000",
+                items:[
+                    "Suit styling",
+                    "Measurements",
+                    "Coordinated looks",
+                    "Final fitting"
+                ]
+            }
+        ],
+
+        portfolio:[
+            "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=85"
+        ],
+
+        customerReviews:[
+            ["Natasha M.","★★★★★","The custom design and fitting process was excellent."],
+            ["Chanda K.","★★★★★","Beautiful traditional ceremony outfits and great finishing."],
+            ["Ruth B.","★★★★☆","Professional service and the final outfit looked exactly like the concept."]
+        ]
+    }
+
+};
+
+/* Attach static vendor IDs for Firebase quote records */
+Object.entries(vendors).forEach(([id, vendor]) => { vendor.id = id; });
+
+/* =========================================================
+   FIRESTORE VENDOR MARKETPLACE
+========================================================= */
+const firestoreVendorIds = new Set();
+
+function safeVendorText(value, fallback = '') {
+    return value === null || value === undefined || value === '' ? fallback : String(value);
+}
+
+function safeUrl(value, fallback = '') {
+    const raw = safeVendorText(value, '').trim();
+    if (!raw) return fallback;
+    try {
+        const url = new URL(raw);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : fallback;
+    } catch (_) {
+        return fallback;
+    }
+}
+
+function safePhone(value) {
+    return safeVendorText(value, '').replace(/\D/g, '');
+}
+
+function safeStringList(list, fallback) {
+    const items = Array.isArray(list) ? list.map(v => safeVendorText(v, '').trim()).filter(Boolean) : [];
+    return items.length ? items : fallback;
+}
+
+function normalizeFirestoreVendor(id, data) {
+    const name = safeVendorText(data.businessName || data.name, 'EventHub Vendor');
+    const category = safeVendorText(data.category, 'Other');
+    const location = safeVendorText(data.location, 'Zambia');
+    const facebookUrl = safeUrl(data.facebookUrl || data.sourceFacebookUrl, '');
+    const cover = safeUrl(data.coverImage || data.cover, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=90');
+    const logo = safeUrl(data.logo || data.logoUrl, 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=90');
+    const portfolio = (Array.isArray(data.portfolio) ? data.portfolio : []).map(u => safeUrl(u, '')).filter(Boolean);
+    const packages = (Array.isArray(data.packages) ? data.packages : [])
+        .filter(p => p && typeof p === 'object')
+        .map(p => ({
+            name: safeVendorText(p.name, 'Package'),
+            price: safeVendorText(p.price, 'On request'),
+            items: safeStringList(p.items, [])
+        }));
+    const customerReviews = (Array.isArray(data.customerReviews) ? data.customerReviews : [])
+        .filter(Array.isArray)
+        .map(r => [safeVendorText(r[0], 'Customer'), safeVendorText(r[1], ''), safeVendorText(r[2], '')]);
+    const reviews = Number(data.reviews || 0);
+    const ratingNum = Number(data.rating || 0);
+    return {
+        id,
+        name,
+        category,
+        location,
+        rating: ratingNum ? ratingNum.toFixed(1) : 'New',
+        reviews: String(Number.isFinite(reviews) ? reviews : 0),
+        experience: safeVendorText(data.experience, 'New'),
+        events: safeVendorText(data.events, '—'),
+        phone: safePhone(data.phone),
+        cover,
+        logo,
+        about: safeVendorText(data.description || data.about, 'EventHub vendor profile.'),
+        services: safeStringList(data.services, [category]),
+        eventTypes: safeStringList(data.eventTypes, ['Weddings','Birthdays','Corporate Events','Graduations']),
+        packages,
+        portfolio: portfolio.length ? portfolio : [cover],
+        customerReviews,
+        facebookUrl,
+        verified: Boolean(data.verified),
+        featured: Boolean(data.featured),
+        price: Number(data.priceFrom || data.price || 0) || 0
+    };
+}
+
+function renderFirestoreVendorCard(vendor) {
+    const card = document.createElement('article');
+    card.className = 'vendor-card firestore-vendor-card';
+    card.dataset.name = vendor.name;
+    card.dataset.category = vendor.category;
+    card.dataset.location = vendor.location;
+    card.dataset.rating = Number(vendor.rating) || 0;
+    card.dataset.price = vendor.price || 0;
+    card.dataset.featured = vendor.featured ? '1' : '0';
+    card.dataset.vendor = vendor.id;
+    card.dataset.source = 'firebase';
+
+    const e = escapeHtml;
+    const verified = vendor.verified ? '<span class="verified-badge"><i class="ri-verified-badge-fill"></i> Verified</span>' : '';
+    const rating = Number(vendor.rating) > 0 ? `<span class="vendor-rating"><i class="ri-star-fill"></i> ${e(vendor.rating)}</span>` : '<span class="vendor-rating">New</span>';
+    card.innerHTML = `
+        <div class="vendor-image">
+            <img src="${e(vendor.cover)}" alt="${e(vendor.name)}" loading="lazy">
+            ${vendor.featured ? '<span class="featured-badge">Featured</span>' : ''}
+            ${verified}
+            <span class="source-badge"><i class="ri-database-2-line"></i> EventHub</span>
+            <button class="favorite-btn" type="button" data-action="favorite"><i class="ri-heart-line"></i></button>
+        </div>
+        <div class="vendor-body">
+            <div class="vendor-category">${e(vendor.category)}</div>
+            <h3 class="vendor-name">${e(vendor.name)}</h3>
+            <div class="vendor-meta">
+                <span><i class="ri-map-pin-line"></i> ${e(vendor.location)}</span>
+                ${rating}
+            </div>
+            <div class="vendor-price">${vendor.price > 0 ? `Starting from <strong>K${e(vendor.price.toLocaleString())}</strong>` : '<strong>Contact vendor for pricing</strong>'}</div>
+            <div class="vendor-actions">
+                <button class="profile-btn" type="button" data-action="profile">View Profile</button>
+                ${vendor.phone ? '<button class="whatsapp-btn" type="button" data-action="whatsapp"><i class="ri-whatsapp-line"></i> WhatsApp</button>' : ''}
+            </div>
+            ${vendor.facebookUrl ? '<button type="button" class="facebook-card-btn" data-action="facebook"><i class="ri-facebook-fill"></i> Facebook</button>' : ''}
+        </div>`;
+
+    // Bind handlers with closures instead of inline onclick strings so vendor IDs
+    // never get interpolated into JavaScript.
+    card.querySelector('[data-action="favorite"]').addEventListener('click', function(){ toggleFavorite(this); });
+    card.querySelector('[data-action="profile"]').addEventListener('click', () => openVendorProfile(vendor.id));
+    card.querySelector('[data-action="whatsapp"]')?.addEventListener('click', () => contactWhatsAppById(vendor.id));
+    card.querySelector('[data-action="facebook"]')?.addEventListener('click', () => openVendorFacebook(vendor.id));
+    return card;
+}
+
+function whatsappUrlFor(vendor) {
+    return `https://wa.me/${safePhone(vendor.phone)}?text=` + encodeURIComponent(
+        `Hello ${vendor.name}, I found your business on EventHub Zambia and would like to enquire about your services.`
+    );
+}
+
+function contactWhatsAppById(vendorId) {
+    const vendor = vendors[vendorId];
+    if (!vendor || !safePhone(vendor.phone)) { showToast('Vendor WhatsApp number is not available.'); return; }
+    window.open(whatsappUrlFor(vendor), '_blank', 'noopener,noreferrer');
+}
+
+function openVendorFacebook(vendorId) {
+    const vendor = vendors[vendorId];
+    if (!vendor || !vendor.facebookUrl) { showToast('Facebook link not available.'); return; }
+    window.open(vendor.facebookUrl, '_blank', 'noopener,noreferrer');
+}
+
+let vendorsLoading = null;
+
+function loadFirebaseVendors() {
+    if (!db) return Promise.resolve();
+    if (vendorsLoading) return vendorsLoading;
+    vendorsLoading = (async () => {
+        try {
+            const snap = await db.collection('vendors').limit(100).get();
+            const grid = document.getElementById('vendorGrid');
+            if (!grid) return;
+            let loaded = 0;
+            snap.forEach(doc => {
+                const data = doc.data() || {};
+                // Draft profiles have no business details yet; don't list them publicly.
+                if (data.status === 'draft' || !safeVendorText(data.businessName || data.name, '').trim()) return;
+                // Never let a Firestore document overwrite a built-in vendor profile.
+                if (vendors[doc.id] && !firestoreVendorIds.has(doc.id)) return;
+
+                const vendor = normalizeFirestoreVendor(doc.id, data);
+                vendors[vendor.id] = vendor;
+                loaded++;
+
+                const existing = grid.querySelector(`[data-vendor="${CSS.escape(vendor.id)}"]`);
+                const card = renderFirestoreVendorCard(vendor);
+                if (existing) existing.replaceWith(card);
+                else grid.appendChild(card);
+                firestoreVendorIds.add(vendor.id);
+            });
+            sortVendors();
+            filterVendors();
+            const status = document.getElementById('firebaseStatus');
+            if (status) status.textContent = `Firebase connected • ${loaded} vendor profile${loaded === 1 ? '' : 's'} loaded`;
+        } catch (error) {
+            console.error('Firestore vendor load error:', error);
+            showToast('Vendor database could not be loaded. Static marketplace is still available.');
+        } finally {
+            vendorsLoading = null;
+        }
+    })();
+    return vendorsLoading;
+}
+
+function externalVendorQuery() {
+    const query = document.getElementById('facebookVendorQuery')?.value.trim() || 'event vendors';
+    const location = document.getElementById('facebookVendorLocation')?.value || 'Lusaka';
+    return `${query} ${location} Zambia`;
+}
+
+function searchFacebookVendors() {
+    const fullQuery = externalVendorQuery();
+    const url = `https://www.facebook.com/search/pages/?q=${encodeURIComponent(fullQuery)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    showToast(`Opening Facebook search for ${fullQuery}.`);
+}
+
+function searchGoogleVendors() {
+    const fullQuery = externalVendorQuery();
+    const url = `https://www.google.com/search?q=${encodeURIComponent(fullQuery)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    showToast(`Opening Google search for ${fullQuery}.`);
+}
+
+function searchGoogleMapsVendors() {
+    const fullQuery = externalVendorQuery();
+    const url = `https://www.google.com/maps/search/${encodeURIComponent(fullQuery)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    showToast(`Opening Google Maps for ${fullQuery}.`);
+}
+
+function openFreeVendorRegistration() {
+    window.eventHubPendingClaim = null;
+    openModal('vendorModal');
+}
+
+function claimVendorListing(businessName, facebookUrl = '', category = '', location = '') {
+    window.eventHubPendingClaim = {
+        businessName: businessName || 'Facebook business',
+        facebookUrl: safeUrl(facebookUrl, ''),
+        category,
+        location
+    };
+    if (!currentUser) {
+        openAuthModal('register');
+        showToast('Create an account first. We will then pre-fill the vendor claim form.');
+        return;
+    }
+    openClaimModal();
+}
+
+function openClaimModal() {
+    const claim = window.eventHubPendingClaim || {};
+    openModal('vendorModal');
+    if (document.getElementById('vendorBusinessName')) document.getElementById('vendorBusinessName').value = claim.businessName || '';
+    if (document.getElementById('vendorCategory') && claim.category) document.getElementById('vendorCategory').value = claim.category;
+    if (document.getElementById('vendorLocation') && claim.location) document.getElementById('vendorLocation').value = claim.location;
+    if (document.getElementById('vendorFacebookUrl')) document.getElementById('vendorFacebookUrl').value = claim.facebookUrl || '';
+    if (document.getElementById('vendorDescription') && claim.facebookUrl) {
+        document.getElementById('vendorDescription').value = `Claim request for the Facebook business/page: ${claim.businessName}. Facebook URL: ${claim.facebookUrl}`;
+    }
+    showToast('Vendor claim form pre-filled. Complete your details and submit.');
+}
+
+
+/* =========================================================
+   HERO SLIDER
+========================================================= */
+
+let currentSlide = 0;
+
+const slides = document.querySelectorAll(".hero-slide");
+const dots = document.querySelectorAll(".slider-dot");
+
+function showSlide(index){
+
+    currentSlide = (index + slides.length) % slides.length;
+
+    slides.forEach(slide => {
+        slide.classList.remove("active");
+    });
+
+    dots.forEach(dot => {
+        dot.classList.remove("active");
+    });
+
+    slides[currentSlide].classList.add("active");
+
+    if(dots[currentSlide]){
+        dots[currentSlide].classList.add("active");
+    }
+}
+
+let slideTimer = null;
+
+function restartSlideTimer(){
+    clearInterval(slideTimer);
+    slideTimer = setInterval(() => showSlide(currentSlide + 1), 6000);
+}
+
+function changeSlide(direction){
+    showSlide(currentSlide + direction);
+    restartSlideTimer();
+}
+
+function goToSlide(index){
+    showSlide(index);
+    restartSlideTimer();
+}
+
+restartSlideTimer();
+
+
+/* =========================================================
+   HERO SEARCH
+========================================================= */
+
+function heroSearch(){
+
+    const value =
+        document.getElementById("heroSearch").value.trim();
+
+    if(!value){
+        document.getElementById("vendorSearch").focus();
+        document.getElementById("vendors").scrollIntoView({
+            behavior:"smooth"
+        });
+        return;
+    }
+
+    document.getElementById("vendorSearch").value = value;
+
+    document.getElementById("locationFilter").value = "";
+
+    quickCategory("");
+
+    document.getElementById("vendors").scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   MARKETPLACE FILTERING
+========================================================= */
+
+function filterVendors(){
+
+    const search =
+        document.getElementById("vendorSearch")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const category =
+        document.getElementById("categoryFilter").value;
+
+    const location =
+        document.getElementById("locationFilter").value;
+
+    const cards =
+        document.querySelectorAll("#vendorGrid .vendor-card");
+
+    let visible = 0;
+
+    cards.forEach(card => {
+
+        const name =
+            (card.dataset.name || "").toLowerCase();
+
+        const cardCategory =
+            card.dataset.category || "";
+
+        const cardLocation =
+            card.dataset.location || "";
+
+        const vendor = vendors[card.dataset.vendor];
+        const serviceText = vendor && Array.isArray(vendor.services)
+            ? vendor.services.join(" ").toLowerCase()
+            : "";
+
+        const matchesSearch =
+            !search ||
+            name.includes(search) ||
+            cardCategory.toLowerCase().includes(search) ||
+            cardLocation.toLowerCase().includes(search) ||
+            serviceText.includes(search);
+
+        const matchesCategory =
+            !category ||
+            cardCategory === category;
+
+        const matchesLocation =
+            !location ||
+            cardLocation === location;
+
+        const show =
+            matchesSearch &&
+            matchesCategory &&
+            matchesLocation;
+
+        card.style.display =
+            show ? "" : "none";
+
+        if(show){
+            visible++;
+        }
+
+    });
+
+    document.getElementById("vendorCount")
+        .textContent = visible;
+
+    document.getElementById("noResults").style.display =
+        visible === 0 ? "block" : "none";
+
+}
+
+
+/* =========================================================
+   QUICK CATEGORIES
+========================================================= */
+
+function quickCategory(category){
+
+    document.getElementById("categoryFilter").value =
+        category;
+
+    document.querySelectorAll(".category-pill")
+        .forEach(pill => {
+            pill.classList.toggle("active", pill.dataset.category === category);
+        });
+
+    filterVendors();
+
+}
+
+
+/* =========================================================
+   SORTING
+========================================================= */
+
+function sortVendors(){
+
+    const sort =
+        document.getElementById("sortFilter").value;
+
+    const grid =
+        document.getElementById("vendorGrid");
+
+    const cards =
+        Array.from(grid.querySelectorAll(".vendor-card"));
+
+    cards.sort((a,b) => {
+
+        if(sort === "featured"){
+            return Number(b.dataset.featured) -
+                   Number(a.dataset.featured);
+        }
+
+        if(sort === "rating"){
+            return (Number(b.dataset.rating) || 0) -
+                   (Number(a.dataset.rating) || 0);
+        }
+
+        if(sort === "priceLow"){
+            // Vendors without a listed price go last.
+            const pa = Number(a.dataset.price) || Infinity;
+            const pb = Number(b.dataset.price) || Infinity;
+            return pa === pb ? 0 : pa - pb;
+        }
+
+        if(sort === "priceHigh"){
+            return Number(b.dataset.price) -
+                   Number(a.dataset.price);
+        }
+
+        return 0;
+
+    });
+
+    cards.forEach(card => {
+        grid.appendChild(card);
+    });
+
+}
+
+
+/* =========================================================
+   FAVOURITES
+========================================================= */
+
+function toggleFavorite(button){
+
+    button.classList.toggle("active");
+
+    const icon =
+        button.querySelector("i");
+
+    if(button.classList.contains("active")){
+
+        icon.className = "ri-heart-fill";
+
+        showToast("Vendor added to favourites.");
+
+    }else{
+
+        icon.className = "ri-heart-line";
+
+        showToast("Vendor removed from favourites.");
+
+    }
+
+}
+
+
+/* =========================================================
+   VENDOR PROFILE
+========================================================= */
+
+let activeVendor = null;
+
+function makeTag(text){
+    const tag = document.createElement("span");
+    tag.className = "service-tag";
+    tag.textContent = text;
+    return tag;
+}
+
+function openVendorProfile(vendorId){
+
+    const vendor = vendors[vendorId];
+
+    if(!vendor){
+        showToast("Vendor profile unavailable.");
+        return;
+    }
+
+    activeVendor = vendorId;
+
+    document.getElementById("profileCoverImage").src =
+        vendor.cover;
+
+    document.getElementById("profileCoverImage").alt =
+        vendor.name;
+
+    document.getElementById("profileLogo").src =
+        vendor.logo;
+
+    document.getElementById("profileLogo").alt =
+        `${vendor.name} logo`;
+
+    document.getElementById("profileName").textContent =
+        vendor.name;
+
+    document.getElementById("profileVerified").style.display =
+        vendor.verified ? "" : "none";
+
+    const locationEl = document.getElementById("profileLocation");
+    locationEl.innerHTML = '<i class="ri-map-pin-line"></i> ';
+    locationEl.appendChild(document.createTextNode(`${vendor.location}, Zambia`));
+
+    document.getElementById("profileAbout").textContent =
+        vendor.about;
+
+    document.getElementById("profileExperience").textContent =
+        vendor.experience;
+
+    document.getElementById("profileEvents").textContent =
+        vendor.events;
+
+    document.getElementById("profileRating").textContent =
+        vendor.rating;
+
+    document.getElementById("reviewAverage").textContent =
+        vendor.rating;
+
+    document.getElementById("reviewCount").textContent =
+        `${vendor.reviews} reviews`;
+
+
+    /* SERVICES */
+
+    const services =
+        document.getElementById("profileServices");
+
+    services.innerHTML = "";
+
+    vendor.services.forEach(service => services.appendChild(makeTag(service)));
+
+
+    /* EVENT TYPES */
+
+    const eventTypes =
+        document.getElementById("profileEventTypes");
+
+    eventTypes.innerHTML = "";
+
+    vendor.eventTypes.forEach(type => eventTypes.appendChild(makeTag(type)));
+
+
+    /* PACKAGES */
+
+    const packageContainer =
+        document.getElementById("profilePackages");
+
+    packageContainer.innerHTML = "";
+
+    if(!vendor.packages.length){
+        const empty = document.createElement("p");
+        empty.textContent = "Contact the vendor for package details.";
+        packageContainer.appendChild(empty);
+    }
+
+    vendor.packages.forEach(pkg => {
+
+        const packageElement =
+            document.createElement("div");
+
+        packageElement.className = "package";
+
+        packageElement.innerHTML = `
+
+            <div class="package-top">
+
+                <h4>${escapeHtml(pkg.name)}</h4>
+
+                <div class="package-price">
+                    From ${escapeHtml(String(pkg.price).replace(/^from\s+/i, ""))}
+                </div>
+
+            </div>
+
+            <ul>
+                ${pkg.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+            </ul>
+
+            <button type="button">
+                Request This Package
+            </button>
+
+        `;
+
+        packageElement.querySelector("button")
+            .addEventListener("click", () => requestPackageQuote(vendorId, pkg.name));
+
+        packageContainer.appendChild(packageElement);
+
+    });
+
+
+    /* PORTFOLIO */
+
+    const portfolio =
+        document.getElementById("profilePortfolio");
+
+    portfolio.innerHTML = "";
+
+    vendor.portfolio.forEach(image => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "portfolio-item";
+
+        const img = document.createElement("img");
+        img.src = image;
+        img.alt = `${vendor.name} portfolio`;
+        img.loading = "lazy";
+        img.addEventListener("click", () => openLightbox(image));
+
+        item.appendChild(img);
+        portfolio.appendChild(item);
+
+    });
+
+
+    /* REVIEWS */
+
+    const reviews =
+        document.getElementById("profileReviews");
+
+    reviews.innerHTML = "";
+
+    if(!vendor.customerReviews.length){
+        const empty = document.createElement("p");
+        empty.textContent = "No reviews yet.";
+        reviews.appendChild(empty);
+    }
+
+    vendor.customerReviews.forEach(review => {
+
+        const element =
+            document.createElement("div");
+
+        element.className = "review";
+
+        element.innerHTML = `
+
+            <div class="review-head">
+
+                <span class="review-name">
+                    ${escapeHtml(review[0])}
+                </span>
+
+                <span class="stars">
+                    ${escapeHtml(review[1])}
+                </span>
+
+            </div>
+
+            <p>
+                ${escapeHtml(review[2])}
+            </p>
+
+        `;
+
+        reviews.appendChild(element);
+
+    });
+
+
+    /* WHATSAPP */
+
+    const hasPhone = Boolean(safePhone(vendor.phone));
+
+    ["profileWhatsApp","sidebarWhatsApp"].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.style.display = hasPhone ? "" : "none";
+        btn.onclick = () => contactWhatsAppById(vendorId);
+    });
+
+
+    openModal("profileModal");
+
+}
+
+
+/* =========================================================
+   QUOTE FROM PROFILE
+========================================================= */
+
+let quoteVendorId = null;
+let quotePackageName = null;
+
+function openQuoteFromProfile(){
+
+    if(!activeVendor){
+        return;
+    }
+
+    const vendor =
+        vendors[activeVendor];
+
+    closeModal("profileModal");
+
+    quoteVendorId = activeVendor;
+    quotePackageName = null;
+
+    document.getElementById("quoteVendorName")
+        .textContent = vendor.name;
+
+    openModal("quoteModal");
+
+}
+
+
+/* =========================================================
+   PACKAGE QUOTE
+========================================================= */
+
+function requestPackageQuote(vendorId,packageName){
+
+    const vendor = vendors[vendorId];
+    if(!vendor) return;
+
+    closeModal("profileModal");
+
+    quoteVendorId = vendorId;
+    quotePackageName = packageName;
+
+    document.getElementById("quoteVendorName")
+        .textContent =
+        `${vendor.name} — ${packageName}`;
+
+    document.getElementById("quoteRequirements")
+        .value =
+        `I am interested in the ${packageName} package.`;
+
+    openModal("quoteModal");
+
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function openModal(id){
+
+    document.getElementById(id)
+        .classList.add("active");
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+function closeModal(id){
+
+    document.getElementById(id)
+        .classList.remove("active");
+
+    if(!document.querySelector(".modal.active")){
+        document.body.style.overflow = "";
+    }
+
+}
+
+
+document.querySelectorAll(".modal")
+    .forEach(modal => {
+
+        modal.addEventListener("click",function(e){
+
+            if(e.target === modal){
+                closeModal(modal.id);
+            }
+
+        });
+
+    });
+
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key === "Escape"){
+
+        if(document.getElementById("lightbox").classList.contains("active")){
+            closeLightbox();
+            return;
+        }
+
+        document.querySelectorAll(".modal.active")
+            .forEach(modal => {
+                modal.classList.remove("active");
+            });
+
+        document.body.style.overflow = "";
+
+    }
+
+});
+
+
+/* =========================================================
+   QUOTE SUBMISSION
+========================================================= */
+
+function submitQuote(){
+    saveQuoteRequest();
+}
+
+
+/* =========================================================
+   LIGHTBOX
+========================================================= */
+
+function openLightbox(image){
+
+    document.getElementById("lightboxImage")
+        .src = image;
+
+    document.getElementById("lightbox")
+        .classList.add("active");
+
+}
+
+
+function closeLightbox(){
+
+    document.getElementById("lightbox")
+        .classList.remove("active");
+
+}
+
+document.getElementById("lightbox")
+    .addEventListener("click", function(e){
+        if(e.target === this) closeLightbox();
+    });
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    },3000);
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+document.querySelector(".mobile-toggle")
+    .addEventListener("click",function(){
+
+        const nav =
+            document.querySelector(".nav");
+
+        if(nav.style.display === "flex"){
+
+            nav.style.display = "";
+
+        }else{
+
+            nav.style.position = "absolute";
+            nav.style.top = "75px";
+            nav.style.left = "5%";
+            nav.style.right = "5%";
+            nav.style.background = "#050505";
+            nav.style.padding = "20px";
+            nav.style.display = "flex";
+            nav.style.flexDirection = "column";
+            nav.style.alignItems = "flex-start";
+            nav.style.border = "1px solid rgba(255,255,255,.1)";
+            nav.style.borderRadius = "10px";
+
+        }
+
+    });
+
+/* Close the mobile menu after picking a link. */
+document.querySelectorAll(".nav a").forEach(link => {
+    link.addEventListener("click", () => {
+        if(window.innerWidth <= 900){
+            document.querySelector(".nav").style.display = "";
+        }
+    });
+});
+
+/* The header buttons are hidden on small screens, so expose login/sign-up in the mobile menu. */
+(function addMobileAuthLinks(){
+    const nav = document.querySelector(".nav");
+    const link = document.createElement("a");
+    link.href = "#";
+    link.className = "mobile-auth-link";
+    link.textContent = "Login / Sign Up";
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+        nav.style.display = "";
+        if(currentUser) openDashboard();
+        else openAuthModal("login");
+    });
+    nav.appendChild(link);
+    const style = document.createElement("style");
+    style.textContent = "@media(min-width:901px){.mobile-auth-link{display:none}}";
+    document.head.appendChild(style);
+})();
+
+
+/* =========================================================
+   ENTER KEY SEARCH
+========================================================= */
+
+const facebookVendorQuery = document.getElementById('facebookVendorQuery');
+if (facebookVendorQuery) {
+    facebookVendorQuery.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') searchFacebookVendors();
+    });
+}
+
+document.getElementById("heroSearch")
+    .addEventListener("keydown",function(e){
+
+        if(e.key === "Enter"){
+            heroSearch();
+        }
+
+    });
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+setAuthMode('login');
+updateAuthUI();
+sortVendors();
+filterVendors();
+loadFirebaseVendors();
+
+</script>
+
+
+<script>
+const howSteps = [
+    {
+        label: 'Step 01',
+        icon: 'ri-search-eye-line',
+        title: 'Discover the right professionals.',
+        text: 'Search by category, location, rating or price to narrow down exactly what your event needs.'
+    },
+    {
+        label: 'Step 02',
+        icon: 'ri-chat-3-line',
+        title: 'Connect with the right vendor.',
+        text: 'Open a profile, compare packages, check services and contact vendors directly from EventHub.'
+    },
+    {
+        label: 'Step 03',
+        icon: 'ri-gift-line',
+        title: 'Bring the event to life.',
+        text: 'Request a quote, confirm the details and focus on creating an event worth remembering.'
+    }
+];
+
+function activateHowStep(index){
+    const cards = document.querySelectorAll('#howSteps .step');
+    const item = howSteps[index];
+    if(!item || !cards[index]) return;
+
+    cards.forEach((card, i) => {
+        const active = i === index;
+        card.classList.toggle('active', active);
+        card.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    const icon = document.getElementById('howDetailIcon');
+    const iconElement = icon ? icon.querySelector('i') : null;
+    if(iconElement) iconElement.className = item.icon;
+
+    document.getElementById('howDetailLabel').textContent = item.label;
+    document.getElementById('howDetailTitle').textContent = item.title;
+    document.getElementById('howDetailText').textContent = item.text;
+}
+</script>
+</body>
+</html>
