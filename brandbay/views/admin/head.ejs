@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title><%= title %> · BrandBay Admin</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+<%
+  const navItem = (href, label, badge) => ({ href, label, badge, active: href === '/admin' ? path === '/admin' || path === '/admin/' : path.startsWith(href) });
+  const groups = [
+    ['Work', [navItem('/admin', 'Dashboard'), navItem('/admin/requests', 'Service requests', counts.newRequests), navItem('/admin/orders', 'Orders', counts.pendingOrders), navItem('/admin/messages', 'Messages', counts.unreadMessages), navItem('/admin/subscribers', 'Subscribers')]],
+    ['Website', Object.entries(resources).map(([key, r]) => navItem(`/admin/content/${key}`, r.label))],
+  ];
+  if (currentUser.role === 'admin') groups.push(['Administration', [navItem('/admin/users', 'Users'), navItem('/admin/settings', 'Settings')]]);
+%>
+<div class="admin-shell">
+  <aside class="admin-sidebar" data-nav>
+    <a class="brand" href="/admin">BrandBay<span>.</span> <small>Admin</small></a>
+    <% for (const [label, items] of groups) { %>
+      <p class="admin-group"><%= label %></p>
+      <ul>
+        <% for (const item of items) { %>
+          <li><a href="<%= item.href %>" class="<%= item.active ? 'active' : '' %>"><%= item.label %><% if (item.badge) { %><span class="badge"><%= item.badge %></span><% } %></a></li>
+        <% } %>
+      </ul>
+    <% } %>
+    <div class="admin-sidebar-foot">
+      <a href="/" target="_blank" rel="noopener">View website ↗</a>
+      <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-btn" type="submit">Sign out (<%= currentUser.name.split(' ')[0] %>)</button></form>
+    </div>
+  </aside>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="nav-toggle" type="button" aria-expanded="false" data-nav-toggle><span class="sr-only">Menu</span><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
+      <h1><%= title %></h1>
+    </header>
+    <main class="admin-content" id="main">
+      <% for (const f of flash) { %><div class="flash flash-<%= f.type %>" role="status"><%= f.message %></div><% } %>

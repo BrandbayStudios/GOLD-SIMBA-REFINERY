@@ -1,0 +1,43 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Gallery</span>
+    <h1>Our <em>logofolio</em> &amp; poster designs.</h1>
+    <p class="lead">Identities and campaign artwork created for businesses across Zambia.</p>
+    <div class="chip-row">
+      <a class="chip" href="#logos">Our Logofolio</a>
+      <a class="chip" href="#posters">Our Poster Designs</a>
+    </div>
+  </div>
+</section>
+<section class="section" id="logos">
+  <div class="container">
+    <h2>Our Logofolio</h2>
+    <div class="gallery-grid" data-lightbox-group>
+      <% for (const item of logos) { %>
+        <button class="gallery-item" type="button" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
+          <img src="<%= item.image %>" alt="<%= item.title %> logo" loading="lazy">
+          <span><%= item.title %></span>
+        </button>
+      <% } %>
+    </div>
+  </div>
+</section>
+<section class="section section-dark" id="posters">
+  <div class="container">
+    <h2>Our Poster Designs</h2>
+    <div class="gallery-grid posters" data-lightbox-group>
+      <% for (const item of posters) { %>
+        <button class="gallery-item" type="button" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
+          <img src="<%= item.image %>" alt="<%= item.title %> poster" loading="lazy">
+          <span><%= item.title %></span>
+        </button>
+      <% } %>
+    </div>
+    <% if (settings.instagram_url) { %>
+      <div class="center mt-xl"><a class="btn btn-gold" href="<%= settings.instagram_url %>" target="_blank" rel="noopener">See more on our Instagram</a></div>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/lightbox') %>
+<%- include('partials/foot') %>

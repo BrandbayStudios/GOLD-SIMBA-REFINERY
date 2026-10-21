@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container narrow">
+    <h1>Your cart</h1>
+    <% if (!lines.length) { %>
+      <div class="empty card"><p>Your cart is empty.</p><a class="btn btn-gold" href="/store">Browse the store</a></div>
+    <% } else { %>
+      <form method="post" action="/cart/update" class="card">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <%# Pressing Enter in a quantity field submits the first button, so make that "update", not "remove". %>
+        <button class="sr-only" type="submit" tabindex="-1" aria-hidden="true">Update cart</button>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th class="num">Total</th><th><span class="sr-only">Remove</span></th></tr></thead>
+            <tbody>
+              <% for (const l of lines) { %>
+                <tr>
+                  <td><a href="/store/<%= l.product.slug %>"><%= l.product.name %></a><% if (l.product.unit) { %><br><small class="muted"><%= l.product.unit %></small><% } %></td>
+                  <td><%= lib.money(l.product.price) %></td>
+                  <td><input class="qty" type="number" name="qty_<%= l.product.id %>" value="<%= l.qty %>" min="0" max="999" aria-label="Quantity of <%= l.product.name %>"></td>
+                  <td class="num"><%= lib.money(l.total) %></td>
+                  <td><button class="link-btn" type="submit" name="remove" value="<%= l.product.id %>">Remove</button></td>
+                </tr>
+              <% } %>
+            </tbody>
+            <tfoot><tr><th colspan="3">Subtotal</th><th class="num"><%= lib.money(subtotal) %></th><th></th></tr></tfoot>
+          </table>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-outline-dark" type="submit">Update cart</button>
+          <a class="btn btn-gold" href="/checkout">Checkout</a>
+        </div>
+      </form>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

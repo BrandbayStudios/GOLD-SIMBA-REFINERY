@@ -1,0 +1,41 @@
+<%- include('head') %>
+<div class="toolbar">
+  <% if (resource.filter) { const opts = resource.fields.find((f) => f.name === resource.filter).options; %>
+    <div class="filter-row">
+      <a class="chip<%= !filterValue ? ' active' : '' %>" href="/admin/content/<%= resourceKey %>">All</a>
+      <% for (const o of opts) { %><a class="chip<%= filterValue === o ? ' active' : '' %>" href="?<%= resource.filter %>=<%= o %>"><%= o %></a><% } %>
+    </div>
+  <% } %>
+  <a class="btn btn-gold btn-sm" href="/admin/content/<%= resourceKey %>/new<%= filterValue ? `?${resource.filter}=${filterValue}` : '' %>">Add <%= resource.singular %></a>
+</div>
+<div class="panel table-wrap">
+  <table class="table">
+    <thead><tr>
+      <% for (const c of resource.columns) { const f = resource.fields.find((x) => x.name === c); %><th><%= c === 'published_at' ? 'Published' : f ? (f.type === 'image' ? '' : f.label.replace(/\s*\(.*\)$/, '')) : c %></th><% } %>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      <% if (!rows.length) { %><tr><td colspan="<%= resource.columns.length + 1 %>" class="muted">Nothing here yet.</td></tr><% } %>
+      <% for (const row of rows) { %>
+        <tr>
+          <% for (const c of resource.columns) { const f = resource.fields.find((x) => x.name === c) || {}; const v = row[c]; %>
+            <td>
+              <% if (f.type === 'image') { %><% if (v) { %><img class="thumb" src="<%= v %>" alt=""><% } %>
+              <% } else if (f.type === 'checkbox') { %><%= v ? '✓' : '—' %>
+              <% } else if (f.type === 'money') { %><%= lib.money(v) %>
+              <% } else if (c === 'stock') { %><%= v === null ? '∞' : v %>
+              <% } else if (c === 'published_at') { %><%= lib.formatDate(v) %>
+              <% } else if (c === resource.columns.find((x) => (resource.fields.find((y) => y.name === x) || {}).type === 'text')) { %><a href="/admin/content/<%= resourceKey %>/<%= row.id %>"><strong><%= v %></strong></a>
+              <% } else { %><%= String(v ?? '').length > 90 ? String(v).slice(0, 90) + '…' : v %><% } %>
+            </td>
+          <% } %>
+          <td class="num actions">
+            <a href="/admin/content/<%= resourceKey %>/<%= row.id %>">Edit</a>
+            <% if (resource.publicUrl && row.published) { %><a href="<%= resource.publicUrl(row) %>" target="_blank" rel="noopener">View</a><% } %>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('foot') %>

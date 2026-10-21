@@ -1,0 +1,13 @@
+<article class="service-card">
+  <div class="service-icon"><%- include('icon', { name: service.icon }) %></div>
+  <h3><a href="/services/<%= service.slug %>"><%= service.name %></a></h3>
+  <% if (service.tagline) { %><p class="service-tagline"><%= service.tagline %></p><% } %>
+  <ul class="ticks">
+    <% for (const item of lib.lines(service.items)) { %><li><%- include('icon', { name: 'check' }) %><%= item %></li><% } %>
+  </ul>
+  <% if (service.closing) { %><p class="service-closing"><%= service.closing %></p><% } %>
+  <div class="service-actions">
+    <a class="btn btn-outline btn-sm" href="/services/<%= service.slug %>">Learn more</a>
+    <a class="btn btn-gold btn-sm" href="/apply?service=<%= service.slug %>">Apply</a>
+  </div>
+</article>

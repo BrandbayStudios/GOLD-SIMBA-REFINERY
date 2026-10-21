@@ -1,0 +1,77 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">About BrandBay</span>
+    <h1>Where branding meets <em>technology</em>.</h1>
+    <p class="lead">At BrandBay Studio, we merge expertise in branding and technology to craft bespoke solutions that elevate brands to new heights. With a passion for innovation and a commitment to excellence, we empower our clients to stand out in the digital landscape.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <h2>Join us in shaping the future of branding and technology.</h2>
+      <p>Our platform connects entrepreneurs and companies with top-tier designs, revolutionizing the branding experience. Whether you're a startup in need of a striking logo or an established company seeking fresh marketing materials, we're here to transform your vision into unforgettable brand success.</p>
+      <a class="btn btn-gold" href="/contact">Get In Touch With Us Today</a>
+    </div>
+    <div class="card card-dark">
+      <span class="eyebrow">Innovation Studios</span>
+      <h3>Why choose us?</h3>
+      <p>Choose Brandbay Innovation Studio as your personal branding partner and let our passionate team of designers and strategists help you stand out from the crowd. Whether you're an individual entrepreneur with a big idea or a creative professional seeking to establish your personal brand, we offer personalized solutions tailored to your unique vision and goals.</p>
+      <p>From captivating logo design to comprehensive branding strategies, we're committed to delivering exceptional results that reflect your personality and resonate with your target audience.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark">
+  <div class="container">
+    <div class="duo">
+      <div class="card card-glass">
+        <div class="stars">★★★★★</div>
+        <h3>Individual Branding</h3>
+        <p>Personalized personal branding solutions that help you stand out — from a signature identity to the content that carries it.</p>
+      </div>
+      <div class="card card-glass">
+        <div class="stars">★★★★★</div>
+        <h3>Corporate Branding</h3>
+        <p>Corporate branding expertise that elevates your brand to new heights, with a strategic approach tailored to your goals and an image that makes a lasting impression.</p>
+      </div>
+    </div>
+    <div class="section-head center mt-xl">
+      <span class="eyebrow">Why choose us?</span>
+      <h2>Built on innovation, proof and craft</h2>
+    </div>
+    <div class="pillars pillars-3">
+      <div class="pillar"><div class="pillar-icon"><%- include('partials/icon', { name: 'bulb' }) %></div><h3>Innovation</h3><p>We remain at the forefront of industry trends, incorporating the latest tools to create groundbreaking solutions.</p></div>
+      <div class="pillar"><div class="pillar-icon"><%- include('partials/icon', { name: 'star' }) %></div><h3>Proven Track Record</h3><p>We believe in customer satisfaction, and our portfolio proves it with the number of successful projects completed.</p></div>
+      <div class="pillar"><div class="pillar-icon"><%- include('partials/icon', { name: 'gear' }) %></div><h3>Creative Excellence</h3><p>Highly skilled and creative designers, developers and marketing experts who are passionate about growing your brand.</p></div>
+    </div>
+  </div>
+</section>
+
+<% if (certificates.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head row">
+      <div>
+        <span class="eyebrow">Compliance</span>
+        <h2>Fully registered and compliant</h2>
+        <p class="muted">We are a formally registered Zambian business, so you can contract us with confidence.</p>
+      </div>
+      <a class="btn btn-outline" href="/terms">View our T's &amp; C's</a>
+    </div>
+    <div class="cert-grid" data-lightbox-group>
+      <% for (const c of certificates) { %>
+        <button class="cert" type="button" data-lightbox="<%= c.image %>" data-caption="<%= c.title %>">
+          <img src="<%= c.image %>" alt="<%= c.title %>" loading="lazy">
+          <span><%= c.title %></span>
+        </button>
+      <% } %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/testimonials') %>
+<%- include('partials/lightbox') %>
+<%- include('partials/foot') %>

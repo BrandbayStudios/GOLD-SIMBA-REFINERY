@@ -1,0 +1,7 @@
+<nav class="tabs" aria-label="Account">
+  <a href="/account" class="<%= path === '/account' ? 'active' : '' %>">Dashboard</a>
+  <a href="/account/profile" class="<%= path === '/account/profile' ? 'active' : '' %>">Profile</a>
+  <a href="/apply">New request</a>
+  <% if (currentUser.role !== 'client') { %><a href="/admin">Admin</a><% } %>
+  <form method="post" action="/logout" class="inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-btn" type="submit">Sign out</button></form>
+</nav>

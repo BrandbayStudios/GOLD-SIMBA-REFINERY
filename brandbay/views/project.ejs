@@ -1,0 +1,42 @@
+<%- include('partials/head') %>
+<section class="page-hero compact">
+  <div class="container">
+    <a class="crumb" href="/projects">← All projects</a>
+    <% if (project.category) { %><span class="eyebrow"><%= project.category %></span><% } %>
+    <h1><%= project.title %></h1>
+    <% if (project.summary) { %><p class="lead"><%= project.summary %></p><% } %>
+    <% if (project.client) { %><p class="muted">Client: <%= project.client %></p><% } %>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="project-images" data-lightbox-group>
+      <% for (const img of [project.image, project.image_2].filter(Boolean)) { %>
+        <button class="project-image" type="button" data-lightbox="<%= img %>" data-caption="<%= project.title %>">
+          <img src="<%= img %>" alt="<%= project.title %>">
+        </button>
+      <% } %>
+    </div>
+    <% if (project.body) { %>
+      <div class="prose">
+        <% for (const p of lib.paragraphs(project.body)) { %><p><%= p %></p><% } %>
+      </div>
+    <% } %>
+    <div class="cta-inline">
+      <p>Want something like this for your brand?</p>
+      <a class="btn btn-gold" href="/apply">Start your project</a>
+    </div>
+  </div>
+</section>
+<% if (related.length) { %>
+<section class="section section-paper">
+  <div class="container">
+    <h2>More projects</h2>
+    <div class="project-grid three">
+      <% for (const p of related) { %><%- include('partials/project-card', { project: p }) %><% } %>
+    </div>
+  </div>
+</section>
+<% } %>
+<%- include('partials/lightbox') %>
+<%- include('partials/foot') %>

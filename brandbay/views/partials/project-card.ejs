@@ -1,0 +1,10 @@
+<a class="project-card" href="/projects/<%= project.slug %>" data-category="<%= project.category || '' %>">
+  <div class="project-media">
+    <% if (project.image) { %><img src="<%= project.image %>" alt="<%= project.title %>" loading="lazy"><% } %>
+  </div>
+  <div class="project-body">
+    <% if (project.category) { %><span class="eyebrow"><%= project.category %></span><% } %>
+    <h3><%= project.title %></h3>
+    <% if (project.summary) { %><p><%= project.summary %></p><% } %>
+  </div>
+</a>

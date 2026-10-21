@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container narrow">
+    <div class="center">
+      <div class="success-mark"><%- include('../partials/icon', { name: 'check' }) %></div>
+      <h1>Thank you, <%= order.name.split(' ')[0] %>!</h1>
+      <p class="lead">Your order has been received.</p>
+      <p class="reference"><%= order.reference %></p>
+    </div>
+    <div class="card">
+      <h2>How to pay</h2>
+      <%- include('../partials/text', { text: settings.payment_instructions }) %>
+      <p>Payment method: <strong><%= lib.PAYMENT_METHODS[order.payment_method] %></strong></p>
+      <ul class="summary">
+        <% for (const i of items) { %><li><span><%= i.quantity %> × <%= i.name %></span><span><%= lib.money(i.line_total) %></span></li><% } %>
+      </ul>
+      <p class="summary-total"><span>Total</span><strong><%= lib.money(order.subtotal) %></strong></p>
+    </div>
+    <div class="hero-actions center">
+      <% if (currentUser) { %><a class="btn btn-gold" href="/account/orders/<%= order.id %>">Track this order</a><% } else { %><a class="btn btn-gold" href="/register">Create an account to track it</a><% } %>
+      <a class="btn btn-outline" href="/store">Continue shopping</a>
+    </div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

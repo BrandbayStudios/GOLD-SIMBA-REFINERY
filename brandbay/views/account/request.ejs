@@ -1,0 +1,40 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container">
+    <a class="crumb" href="/account">← Dashboard</a>
+    <div class="section-head row">
+      <div><span class="eyebrow"><%= request.reference %></span><h1><%= request.service %></h1></div>
+      <%- include('../partials/status', { value: request.status, labels: lib.REQUEST_STATUSES }) %>
+    </div>
+    <div class="split">
+      <div>
+        <% if (request.status === 'quoted' && request.quote_amount != null) { %>
+          <div class="card quote-card">
+            <h2>Your quote</h2>
+            <p class="price large"><%= lib.money(request.quote_amount) %></p>
+            <p><%= config.depositPercent %>% deposit to start: <strong><%= lib.money(request.quote_amount * config.depositPercent / 100) %></strong>. Balance on completion: <strong><%= lib.money(request.quote_amount * (100 - config.depositPercent) / 100) %></strong>.</p>
+            <form method="post" action="/account/requests/<%= request.id %>/accept">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-gold" type="submit">Accept quote</button>
+              <a class="btn btn-outline-dark" href="#messages">Ask a question</a>
+            </form>
+          </div>
+        <% } %>
+        <%- include('../partials/thread', { messages, action: `/account/requests/${request.id}/messages` }) %>
+      </div>
+      <aside class="card">
+        <h2>Request details</h2>
+        <dl class="details">
+          <dt>Submitted</dt><dd><%= lib.formatDate(request.created_at, true) %></dd>
+          <% if (request.quote_amount != null) { %><dt>Quote</dt><dd><%= lib.money(request.quote_amount) %></dd><% } %>
+          <% if (request.budget) { %><dt>Budget</dt><dd><%= request.budget %></dd><% } %>
+          <% if (request.timeline) { %><dt>Timeline</dt><dd><%= request.timeline %></dd><% } %>
+          <% if (request.company) { %><dt>Business</dt><dd><%= request.company %></dd><% } %>
+          <% if (request.attachment) { %><dt>Attachment</dt><dd><a href="/account/requests/<%= request.id %>/attachment">Download</a></dd><% } %>
+        </dl>
+        <% if (request.description) { %><h3>Brief</h3><%- include('../partials/text', { text: request.description }) %><% } %>
+      </aside>
+    </div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

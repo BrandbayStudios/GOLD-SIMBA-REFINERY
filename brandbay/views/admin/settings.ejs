@@ -1,0 +1,14 @@
+<%- include('head') %>
+<% if (!mailEnabled) { %>
+  <div class="flash flash-info">Email is not configured, so notifications are only written to the server log. Set the SMTP_* environment variables to send real emails (see README).</div>
+<% } %>
+<form class="panel form" method="post" action="/admin/settings">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% for (const f of fields) { %>
+    <label><%= f.label %>
+      <% if (f.type === 'textarea') { %><textarea name="<%= f.name %>" rows="<%= f.rows || 4 %>"><%= values[f.name] || '' %></textarea><% } else { %><input name="<%= f.name %>" value="<%= values[f.name] || '' %>"><% } %>
+    </label>
+  <% } %>
+  <button class="btn btn-gold" type="submit">Save settings</button>
+</form>
+<%- include('foot') %>

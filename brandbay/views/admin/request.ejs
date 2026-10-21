@@ -1,0 +1,50 @@
+<%- include('head') %>
+<a class="crumb" href="/admin/requests">← All requests</a>
+<div class="admin-grid wide-left">
+  <div>
+    <section class="panel">
+      <div class="panel-head">
+        <h2><%= request.reference %> · <%= request.service %></h2>
+        <%- include('../partials/status', { value: request.status, labels: lib.REQUEST_STATUSES }) %>
+      </div>
+      <dl class="details">
+        <dt>Client</dt><dd><%= request.name %><% if (client) { %> <span class="tag">Has account</span><% } %></dd>
+        <dt>Email</dt><dd><a href="mailto:<%= request.email %>"><%= request.email %></a></dd>
+        <% if (request.phone) { %><dt>Phone</dt><dd><a href="tel:<%= request.phone %>"><%= request.phone %></a><% const wa = request.phone.replace(/\D/g, ''); if (wa) { %> · <a href="https://wa.me/<%= wa %>" target="_blank" rel="noopener">WhatsApp</a><% } %></dd><% } %>
+        <% if (request.company) { %><dt>Business</dt><dd><%= request.company %></dd><% } %>
+        <dt>Budget</dt><dd><%= request.budget || '—' %></dd>
+        <dt>Timeline</dt><dd><%= request.timeline || '—' %></dd>
+        <dt>Received</dt><dd><%= lib.formatDate(request.created_at, true) %></dd>
+        <% if (request.attachment) { %><dt>Attachment</dt><dd><a href="/admin/requests/<%= request.id %>/attachment">Download brief</a></dd><% } %>
+      </dl>
+      <% if (request.description) { %><h3>Brief</h3><div class="prose"><%- include('../partials/text', { text: request.description }) %></div><% } %>
+    </section>
+    <section class="panel">
+      <%- include('../partials/thread', { messages, action: `/admin/requests/${request.id}/messages` }) %>
+      <p class="muted">Messages are emailed to the client and shown on their dashboard.</p>
+    </section>
+  </div>
+  <div>
+    <form class="panel form" method="post" action="/admin/requests/<%= request.id %>">
+      <h2>Manage</h2>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label>Status
+        <select name="status">
+          <% for (const [key, label] of Object.entries(lib.REQUEST_STATUSES)) { %><option value="<%= key %>"<%= request.status === key ? ' selected' : '' %>><%= label %></option><% } %>
+        </select>
+      </label>
+      <label>Quote amount (<%= config.currency %>)<input type="number" name="quote_amount" min="0" step="0.01" value="<%= request.quote_amount ?? '' %>"></label>
+      <p class="muted">Set the status to “Quote sent” so the client can accept it from their dashboard. Deposit is <%= config.depositPercent %>%.</p>
+      <label>Internal notes<textarea name="admin_notes" rows="5"><%= request.admin_notes || '' %></textarea></label>
+      <label class="check"><input type="checkbox" name="notify_client" value="1" checked> Email the client about status or quote changes</label>
+      <button class="btn btn-gold btn-block" type="submit">Save changes</button>
+    </form>
+    <% if (currentUser.role === 'admin') { %>
+      <form class="panel" method="post" action="/admin/requests/<%= request.id %>/delete" data-confirm="Delete <%= request.reference %> and its messages? This cannot be undone.">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="btn btn-danger btn-sm" type="submit">Delete request</button>
+      </form>
+    <% } %>
+  </div>
+</div>
+<%- include('foot') %>

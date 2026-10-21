@@ -1,0 +1,20 @@
+<%- include('head') %>
+<a class="crumb" href="/admin/messages">← All messages</a>
+<section class="panel">
+  <h2><%= message.subject || 'Website message' %></h2>
+  <dl class="details">
+    <dt>From</dt><dd><%= message.name || '—' %></dd>
+    <dt>Email</dt><dd><a href="mailto:<%= message.email %>?subject=<%= encodeURIComponent('Re: ' + (message.subject || 'Your message to BrandBay')) %>"><%= message.email %></a></dd>
+    <% if (message.phone) { %><dt>Phone</dt><dd><a href="tel:<%= message.phone %>"><%= message.phone %></a></dd><% } %>
+    <dt>Received</dt><dd><%= lib.formatDate(message.created_at, true) %></dd>
+  </dl>
+  <div class="prose"><%- include('../partials/text', { text: message.message }) %></div>
+  <div class="form-actions">
+    <a class="btn btn-gold" href="mailto:<%= message.email %>?subject=<%= encodeURIComponent('Re: ' + (message.subject || 'Your message to BrandBay')) %>">Reply by email</a>
+    <form method="post" action="/admin/messages/<%= message.id %>/delete" data-confirm="Delete this message?">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="btn btn-danger" type="submit">Delete</button>
+    </form>
+  </div>
+</section>
+<%- include('foot') %>

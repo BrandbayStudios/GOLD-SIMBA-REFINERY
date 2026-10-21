@@ -1,0 +1,64 @@
+<%
+  const siteName = settings.site_name || 'BrandBay Innovation Studios';
+  const pageTitle = title ? `${title} | ${siteName}` : `${siteName} — ${settings.tagline || 'Brand | Build | Boost'}`;
+  const pageDescription = description || settings.hero_text || '';
+  const nav = [
+    ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'], ['/projects', 'Projects'],
+    ['/gallery', 'Gallery'], ['/store', 'Store'], ['/contact', 'Contact'],
+  ];
+  const isActive = (href) => href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+%><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %></title>
+  <meta name="description" content="<%= pageDescription %>">
+  <meta property="og:title" content="<%= pageTitle %>">
+  <meta property="og:description" content="<%= pageDescription %>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= config.baseUrl + path %>">
+  <link rel="canonical" href="<%= config.baseUrl + path %>">
+  <meta name="theme-color" content="#0b0f14">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="<%= siteName %> home">BrandbayStudios<span>.</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+      <span class="sr-only">Menu</span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+    <nav id="site-nav" class="site-nav" data-nav>
+      <ul>
+        <% for (const [href, label] of nav) { %>
+          <li><a href="<%= href %>" class="<%= isActive(href) ? 'active' : '' %>"<%- isActive(href) ? ' aria-current="page"' : '' %>><%= label %></a></li>
+        <% } %>
+      </ul>
+      <div class="nav-actions">
+        <a class="icon-link" href="/cart" aria-label="Cart (<%= cartCount %> items)">
+          <%- include('icon', { name: 'bag' }) %><% if (cartCount) { %><span class="badge"><%= cartCount %></span><% } %>
+        </a>
+        <% if (currentUser) { %>
+          <a class="icon-link" href="<%= currentUser.role === 'client' ? '/account' : '/admin' %>" aria-label="My account"><%- include('icon', { name: 'user' }) %></a>
+        <% } else { %>
+          <a class="nav-signin" href="/login">Sign in</a>
+        <% } %>
+        <a class="btn btn-gold btn-sm" href="/apply">Get In Touch</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<% if (flash.length) { %>
+  <div class="container flash-stack">
+    <% for (const f of flash) { %>
+      <div class="flash flash-<%= f.type %>" role="status"><%= f.message %></div>
+    <% } %>
+  </div>
+<% } %>

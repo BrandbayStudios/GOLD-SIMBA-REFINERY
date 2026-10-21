@@ -1,0 +1,41 @@
+<%- include('head') %>
+<a class="crumb" href="/admin/content/<%= resourceKey %>">← <%= resource.label %></a>
+<form class="panel form" method="post" action="/admin/content/<%= resourceKey %><%= row.id ? '/' + row.id : '' %>" enctype="multipart/form-data">
+  <%- include('../partials/errors') %>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% for (const f of resource.fields) { const v = row[f.name]; %>
+    <% if (f.type === 'checkbox') { %>
+      <label class="check"><input type="checkbox" name="<%= f.name %>" value="1"<%= v ? ' checked' : '' %>> <%= f.label %></label>
+    <% } else { %>
+      <label><%= f.label %><%= f.required ? '*' : '' %>
+        <% if (f.type === 'textarea') { %>
+          <textarea name="<%= f.name %>" rows="<%= f.rows || 4 %>"<%= f.required ? ' required' : '' %>><%= v ?? '' %></textarea>
+        <% } else if (f.type === 'select') { %>
+          <select name="<%= f.name %>"><% for (const o of f.options) { %><option<%= v === o ? ' selected' : '' %>><%= o %></option><% } %></select>
+        <% } else if (f.type === 'image') { %>
+          <% if (v) { %><span class="image-current"><img class="thumb lg" src="<%= v %>" alt=""><% if (!f.required) { %><span class="check"><input type="checkbox" name="<%= f.name %>_remove" value="1"> Remove</span><% } %></span><% } %>
+          <input type="file" name="<%= f.name %>" accept="image/jpeg,image/png,image/webp,image/gif"<%= f.required && !v ? ' required' : '' %>>
+        <% } else if (f.type === 'number' || f.type === 'money') { %>
+          <input type="number" name="<%= f.name %>" value="<%= v ?? '' %>" step="<%= f.type === 'money' ? '0.01' : '1' %>" min="<%= f.min ?? 0 %>"<%= f.max !== undefined ? ` max="${f.max}"` : '' %><%= f.required ? ' required' : '' %>>
+        <% } else { %>
+          <input name="<%= f.name %>" value="<%= v ?? '' %>"<%= f.required ? ' required' : '' %>>
+        <% } %>
+        <% if (f.hint) { %><small class="muted"><%= f.hint %></small><% } %>
+      </label>
+    <% } %>
+  <% } %>
+  <% if (resource.slugFrom && row.id) { %>
+    <label>URL slug<input name="slug" value="<%= row.slug || '' %>"><small class="muted">Changing this changes the page address.</small></label>
+  <% } %>
+  <div class="form-actions">
+    <button class="btn btn-gold" type="submit">Save <%= resource.singular %></button>
+    <a class="btn btn-outline-dark" href="/admin/content/<%= resourceKey %>">Cancel</a>
+  </div>
+</form>
+<% if (row.id) { %>
+  <form class="panel" method="post" action="/admin/content/<%= resourceKey %>/<%= row.id %>/delete" data-confirm="Delete this <%= resource.singular %>? This cannot be undone.">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button class="btn btn-danger btn-sm" type="submit">Delete <%= resource.singular %></button>
+  </form>
+<% } %>
+<%- include('foot') %>

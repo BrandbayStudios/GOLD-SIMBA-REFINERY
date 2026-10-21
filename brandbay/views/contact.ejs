@@ -1,0 +1,58 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Contact</span>
+    <h1>Let’s build something <em>bold</em>.</h1>
+    <p class="lead">For more information on our services, partnerships, fees and any other inquiries.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container split">
+    <div>
+      <div class="contact-cards">
+        <a class="contact-chip" href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%- include('partials/icon', { name: 'phone' }) %><span><small>Contact</small><%= settings.phone %></span></a>
+        <a class="contact-chip" href="mailto:<%= settings.email %>"><%- include('partials/icon', { name: 'mail' }) %><span><small>Email</small><%= settings.email %></span></a>
+        <% if (settings.whatsapp) { %>
+          <a class="contact-chip" href="https://wa.me/<%= settings.whatsapp.replace(/\D/g, '') %>" target="_blank" rel="noopener"><%- include('partials/icon', { name: 'whatsapp' }) %><span><small>WhatsApp</small>Chat with us</span></a>
+        <% } %>
+        <div class="contact-chip"><%- include('partials/icon', { name: 'pin' }) %><span><small>Offices</small><%= settings.address_1 %><br><%= settings.address_2 %></span></div>
+      </div>
+      <iframe class="map" title="Map of Cairo Road, Lusaka" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=<%= encodeURIComponent(settings.address_1 || 'Cairo Road, Lusaka, Zambia') %>&output=embed"></iframe>
+    </div>
+    <form class="card form" method="post" action="/contact">
+      <h2>Send us a message</h2>
+      <%- include('partials/errors') %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label>Full names<input name="name" autocomplete="name" value="<%= form.name || '' %>"></label>
+      <div class="form-row">
+        <label>Email address*<input type="email" name="email" required autocomplete="email" value="<%= form.email || '' %>"></label>
+        <label>Phone<input type="tel" name="phone" autocomplete="tel" value="<%= form.phone || '' %>"></label>
+      </div>
+      <label>Subject<input name="subject" value="<%= form.subject || '' %>"></label>
+      <label>Description*<textarea name="message" rows="6" required><%= form.message || '' %></textarea></label>
+      <button class="btn btn-gold btn-block" type="submit">Submit</button>
+      <p class="form-note">Ready to start a project? <a href="/apply">Apply for a service</a> to get a quote and tracking reference.</p>
+    </form>
+  </div>
+</section>
+<% if (faqs.length) { %>
+<section class="section section-paper">
+  <div class="container narrow">
+    <div class="section-head center">
+      <span class="eyebrow">FAQ</span>
+      <h2>Frequently asked questions</h2>
+    </div>
+    <div class="faq">
+      <% faqs.forEach((f, i) => { %>
+        <details<%= i === 0 ? ' open' : '' %>>
+          <summary><%= f.question %></summary>
+          <div><%- include('partials/text', { text: f.answer }) %></div>
+        </details>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+<%- include('partials/foot') %>

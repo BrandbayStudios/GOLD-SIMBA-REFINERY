@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">Account</span><h1>My profile</h1></div>
+    <%- include('nav') %>
+    <div class="duo">
+      <form class="card form" method="post" action="/account/profile">
+        <h2>Details</h2>
+        <%- include('../partials/errors') %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label>Full name<input name="name" required value="<%= form.name || '' %>"></label>
+        <label>Email<input type="email" value="<%= currentUser.email %>" disabled></label>
+        <label>Phone<input type="tel" name="phone" value="<%= form.phone || '' %>"></label>
+        <label>Business<input name="company" value="<%= form.company || '' %>"></label>
+        <button class="btn btn-gold" type="submit">Save</button>
+      </form>
+      <form class="card form" method="post" action="/account/password">
+        <h2>Change password</h2>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label>Current password<input type="password" name="current_password" required autocomplete="current-password"></label>
+        <label>New password<input type="password" name="new_password" required minlength="8" autocomplete="new-password"></label>
+        <label>Confirm new password<input type="password" name="new_password_confirm" required minlength="8" autocomplete="new-password"></label>
+        <button class="btn btn-outline-dark" type="submit">Change password</button>
+      </form>
+    </div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

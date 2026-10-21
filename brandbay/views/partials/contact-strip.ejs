@@ -1,0 +1,13 @@
+<section class="section">
+  <div class="container contact-strip">
+    <div>
+      <span class="eyebrow">Get in touch with us</span>
+      <h2>For more information on our services, partnerships, fees and any other inquiries</h2>
+    </div>
+    <div class="contact-strip-cards">
+      <a class="contact-chip" href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%- include('icon', { name: 'phone' }) %><span><small>Contact</small><%= settings.phone %></span></a>
+      <a class="contact-chip" href="mailto:<%= settings.email %>"><%- include('icon', { name: 'mail' }) %><span><small>Email</small><%= settings.email %></span></a>
+      <a class="btn btn-gold" href="/contact">Send us a message <%- include('icon', { name: 'arrow' }) %></a>
+    </div>
+  </div>
+</section>

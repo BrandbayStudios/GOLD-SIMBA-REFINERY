@@ -1,0 +1,46 @@
+</main>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a class="brand" href="/">BrandbayStudios<span>.</span></a>
+      <p class="muted"><%= settings.tagline %></p>
+      <div class="socials">
+        <% for (const [key, label] of [['facebook_url', 'Facebook'], ['instagram_url', 'Instagram'], ['linkedin_url', 'LinkedIn']]) { if (settings[key]) { %>
+          <a href="<%= settings[key] %>" target="_blank" rel="noopener" aria-label="<%= label %>"><%- include('icon', { name: label.toLowerCase() }) %></a>
+        <% } } %>
+      </div>
+    </div>
+    <div>
+      <h3>Address</h3>
+      <p><%= settings.address_1 %><br><%= settings.address_2 %></p>
+    </div>
+    <div>
+      <h3>Contacts</h3>
+      <p>
+        <a href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%= settings.phone %></a><br>
+        <a href="mailto:<%= settings.email %>"><%= settings.email %></a>
+      </p>
+      <p><a href="/terms">Terms &amp; Conditions</a> · <a href="/blog">Insights</a></p>
+    </div>
+    <div>
+      <h3>Subscribe to our newsletter</h3>
+      <form class="subscribe" method="post" action="/subscribe">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label class="sr-only" for="subscribe-email">Email address</label>
+        <input id="subscribe-email" type="email" name="email" placeholder="Email address" required autocomplete="email">
+        <button class="btn btn-gold" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+  <div class="container footer-base">
+    <p>© <%= new Date().getFullYear() %> BrandBay Innovation Studios. All Rights Reserved.</p>
+  </div>
+</footer>
+<% if (settings.whatsapp) { %>
+  <a class="whatsapp" href="https://wa.me/<%= settings.whatsapp.replace(/\D/g, '') %>" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+    <%- include('icon', { name: 'whatsapp' }) %>
+  </a>
+<% } %>
+<script src="/js/app.js" defer></script>
+</body>
+</html>

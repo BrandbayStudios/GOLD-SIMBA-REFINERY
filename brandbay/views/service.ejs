@@ -1,0 +1,50 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="container">
+    <a class="crumb" href="/services">← All services</a>
+    <div class="service-hero">
+      <div class="service-icon lg"><%- include('partials/icon', { name: service.icon }) %></div>
+      <div>
+        <h1><%= service.name %></h1>
+        <% if (service.tagline) { %><p class="lead"><%= service.tagline %></p><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container split">
+    <div>
+      <% for (const p of lib.paragraphs(service.intro)) { %><p><%= p %></p><% } %>
+      <h2>What’s included</h2>
+      <ul class="ticks ticks-lg">
+        <% for (const item of lib.lines(service.items)) { %><li><%- include('partials/icon', { name: 'check' }) %><%= item %></li><% } %>
+      </ul>
+      <% if (service.closing) { %><p class="service-closing"><%= service.closing %></p><% } %>
+    </div>
+    <aside class="card card-dark sticky">
+      <h3>Ready to start?</h3>
+      <p>Apply for <%= service.name.toLowerCase() %> and we’ll send you a tailored quote. Work starts on a 70% deposit with 30% on completion.</p>
+      <a class="btn btn-gold btn-block" href="/apply?service=<%= service.slug %>">Apply for this service</a>
+      <a class="btn btn-ghost btn-block" href="/contact">Ask a question</a>
+    </aside>
+  </div>
+</section>
+<% if (projects.length) { %>
+<section class="section section-paper">
+  <div class="container">
+    <div class="section-head row"><h2>Recent work</h2><a class="btn btn-outline-dark" href="/projects">All projects</a></div>
+    <div class="project-grid three">
+      <% for (const project of projects) { %><%- include('partials/project-card', { project }) %><% } %>
+    </div>
+  </div>
+</section>
+<% } %>
+<section class="section">
+  <div class="container">
+    <h2>Other services</h2>
+    <div class="chip-row">
+      <% for (const s of others) { %><a class="chip" href="/services/<%= s.slug %>"><%= s.name %></a><% } %>
+    </div>
+  </div>
+</section>
+<%- include('partials/foot') %>

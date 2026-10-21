@@ -1,0 +1,15 @@
+<%- include('head') %>
+<div class="toolbar"><p class="muted"><%= subscribers.length %> subscriber<%= subscribers.length === 1 ? '' : 's' %></p><a class="btn btn-gold btn-sm" href="/admin/subscribers.csv">Export CSV</a></div>
+<div class="panel table-wrap">
+  <table class="table">
+    <thead><tr><th>Email</th><th>Subscribed</th><th></th></tr></thead>
+    <tbody>
+      <% if (!subscribers.length) { %><tr><td colspan="3" class="muted">No subscribers yet.</td></tr><% } %>
+      <% for (const s of subscribers) { %>
+        <tr><td><%= s.email %></td><td><%= lib.formatDate(s.created_at) %></td>
+          <td class="num"><form method="post" action="/admin/subscribers/<%= s.id %>/delete" data-confirm="Remove <%= s.email %>?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-btn danger" type="submit">Remove</button></form></td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('foot') %>

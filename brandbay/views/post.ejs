@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<article>
+  <section class="page-hero compact">
+    <div class="container narrow">
+      <a class="crumb" href="/blog">← Insights</a>
+      <h1><%= post.title %></h1>
+      <p class="muted"><%= lib.formatDate(post.published_at) %></p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container narrow prose">
+      <% if (post.image) { %><img class="post-cover" src="<%= post.image %>" alt=""><% } %>
+      <% if (post.excerpt) { %><p class="lead"><%= post.excerpt %></p><% } %>
+      <%- include('partials/text', { text: post.body }) %>
+      <div class="cta-inline"><p>Ready to put this into practice?</p><a class="btn btn-gold" href="/apply">Work with us</a></div>
+    </div>
+  </section>
+</article>
+<%- include('partials/foot') %>

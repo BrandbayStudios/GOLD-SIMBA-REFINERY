@@ -1,0 +1,28 @@
+<%- include('head') %>
+<p class="muted">Staff can manage requests, orders, messages and website content. Admins can also manage users and settings.</p>
+<div class="panel table-wrap">
+  <table class="table">
+    <thead><tr><th>Name</th><th>Contact</th><th>Requests</th><th>Orders</th><th>Joined</th><th>Role</th></tr></thead>
+    <tbody>
+      <% for (const u of users) { %>
+        <tr>
+          <td><strong><%= u.name %></strong><% if (u.company) { %><br><small class="muted"><%= u.company %></small><% } %></td>
+          <td><%= u.email %><% if (u.phone) { %><br><small class="muted"><%= u.phone %></small><% } %></td>
+          <td><%= u.requests %></td>
+          <td><%= u.orders %></td>
+          <td><%= lib.formatDate(u.created_at) %></td>
+          <td>
+            <% if (u.id === currentUser.id) { %><span class="tag"><%= u.role %> (you)</span><% } else { %>
+              <form class="inline-form" method="post" action="/admin/users/<%= u.id %>/role">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <select name="role" aria-label="Role for <%= u.name %>"><% for (const r of ['client', 'staff', 'admin']) { %><option<%= u.role === r ? ' selected' : '' %>><%= r %></option><% } %></select>
+                <button class="btn btn-outline-dark btn-sm" type="submit">Save</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('foot') %>

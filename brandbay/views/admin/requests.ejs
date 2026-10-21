@@ -1,0 +1,32 @@
+<%- include('head') %>
+<form class="toolbar" method="get" action="/admin/requests">
+  <input type="search" name="q" value="<%= filters.q %>" placeholder="Search reference, name, email, service…" aria-label="Search requests">
+  <select name="status" aria-label="Status">
+    <option value="">All statuses</option>
+    <% for (const [key, label] of Object.entries(lib.REQUEST_STATUSES)) { %><option value="<%= key %>"<%= filters.status === key ? ' selected' : '' %>><%= label %></option><% } %>
+  </select>
+  <button class="btn btn-gold btn-sm" type="submit">Filter</button>
+  <a class="btn btn-outline-dark btn-sm" href="/admin/requests.csv?<%= new URLSearchParams({ q: filters.q, status: filters.status }) %>">Export CSV</a>
+</form>
+<p class="muted"><%= total %> request<%= total === 1 ? '' : 's' %></p>
+<div class="panel table-wrap">
+  <table class="table">
+    <thead><tr><th>Reference</th><th>Client</th><th>Service</th><th>Budget</th><th>Status</th><th>Quote</th><th>Received</th></tr></thead>
+    <tbody>
+      <% if (!requests.length) { %><tr><td colspan="7" class="muted">No requests match.</td></tr><% } %>
+      <% for (const r of requests) { %>
+        <tr>
+          <td><a href="/admin/requests/<%= r.id %>"><strong><%= r.reference %></strong></a></td>
+          <td><%= r.name %><br><small class="muted"><%= r.email %></small></td>
+          <td><%= r.service %></td>
+          <td><%= r.budget || '—' %></td>
+          <td><%- include('../partials/status', { value: r.status, labels: lib.REQUEST_STATUSES }) %></td>
+          <td><%= r.quote_amount != null ? lib.money(r.quote_amount) : '—' %></td>
+          <td><%= lib.formatDate(r.created_at) %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('pager', { query: { q: filters.q, status: filters.status } }) %>
+<%- include('foot') %>

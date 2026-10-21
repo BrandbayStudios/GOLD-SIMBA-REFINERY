@@ -1,0 +1,2 @@
+<% for (const para of lib.paragraphs(text)) { %><p><% lib.lines(para).forEach((line, i) => { %><% if (i) { %><br><% } %><%= line %><% }) %></p>
+<% } %>

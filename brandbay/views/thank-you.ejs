@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<section class="section">
+  <div class="container narrow center">
+    <div class="success-mark"><%- include('partials/icon', { name: 'check' }) %></div>
+    <h1>Request received</h1>
+    <p class="lead">Thank you for choosing BrandBay. Your reference number is</p>
+    <p class="reference"><%= reference %></p>
+    <p>We’ve emailed you a confirmation. Our team will review your request and get back to you with a quote.</p>
+    <div class="hero-actions center">
+      <% if (currentUser) { %>
+        <a class="btn btn-gold" href="/account">Go to my dashboard</a>
+      <% } else { %>
+        <a class="btn btn-gold" href="/register">Create an account to track it</a>
+      <% } %>
+      <a class="btn btn-outline" href="/projects">Browse our work</a>
+    </div>
+  </div>
+</section>
+<%- include('partials/foot') %>

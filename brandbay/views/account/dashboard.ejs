@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container">
+    <div class="section-head row">
+      <div><span class="eyebrow">Client dashboard</span><h1>Hello, <%= currentUser.name.split(' ')[0] %></h1></div>
+      <a class="btn btn-gold" href="/apply">Apply for a service</a>
+    </div>
+    <%- include('nav') %>
+    <h2>Service requests</h2>
+    <% if (!requests.length) { %>
+      <div class="empty card"><p>You haven’t applied for a service yet.</p><a class="btn btn-gold" href="/apply">Start a project</a></div>
+    <% } else { %>
+      <div class="table-wrap card">
+        <table class="table">
+          <thead><tr><th>Reference</th><th>Service</th><th>Status</th><th>Quote</th><th>Updated</th></tr></thead>
+          <tbody>
+            <% for (const r of requests) { %>
+              <tr>
+                <td><a href="/account/requests/<%= r.id %>"><strong><%= r.reference %></strong></a></td>
+                <td><%= r.service %></td>
+                <td><%- include('../partials/status', { value: r.status, labels: lib.REQUEST_STATUSES }) %></td>
+                <td><%= r.quote_amount != null ? lib.money(r.quote_amount) : '—' %></td>
+                <td><%= lib.formatDate(r.updated_at) %></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+    <h2>Store orders</h2>
+    <% if (!orders.length) { %>
+      <p class="muted">No orders yet. <a href="/store">Visit the store</a>.</p>
+    <% } else { %>
+      <div class="table-wrap card">
+        <table class="table">
+          <thead><tr><th>Reference</th><th>Placed</th><th>Status</th><th>Payment</th><th class="num">Total</th></tr></thead>
+          <tbody>
+            <% for (const o of orders) { %>
+              <tr>
+                <td><a href="/account/orders/<%= o.id %>"><strong><%= o.reference %></strong></a></td>
+                <td><%= lib.formatDate(o.created_at) %></td>
+                <td><%- include('../partials/status', { value: o.status, labels: lib.ORDER_STATUSES }) %></td>
+                <td><%- include('../partials/status', { value: o.payment_status, labels: lib.PAYMENT_STATUSES }) %></td>
+                <td class="num"><%= lib.money(o.subtotal) %></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

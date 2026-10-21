@@ -1,0 +1,28 @@
+<%- include('partials/head') %>
+<section class="page-hero compact">
+  <div class="container">
+    <span class="eyebrow">Insights</span>
+    <h1>Ideas on brand, build &amp; boost.</h1>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <% if (posts.length) { %>
+      <div class="project-grid three">
+        <% for (const post of posts) { %>
+          <a class="project-card" href="/blog/<%= post.slug %>">
+            <div class="project-media"><% if (post.image) { %><img src="<%= post.image %>" alt="" loading="lazy"><% } %></div>
+            <div class="project-body">
+              <span class="eyebrow"><%= lib.formatDate(post.published_at) %></span>
+              <h3><%= post.title %></h3>
+              <% if (post.excerpt) { %><p><%= post.excerpt %></p><% } %>
+            </div>
+          </a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <p class="empty">Our first articles are on the way. <a href="#subscribe-email">Subscribe</a> to hear when they land.</p>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/foot') %>

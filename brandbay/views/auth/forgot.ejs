@@ -1,0 +1,12 @@
+<%- include('../partials/head') %>
+<section class="section auth">
+  <form class="card form auth-card" method="post" action="/forgot-password">
+    <h1>Reset your password</h1>
+    <p class="muted">Enter your email and we’ll send you a link to choose a new password.</p>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label>Email<input type="email" name="email" required autocomplete="email"></label>
+    <button class="btn btn-gold btn-block" type="submit">Send reset link</button>
+    <p class="form-note"><a href="/login">Back to sign in</a></p>
+  </form>
+</section>
+<%- include('../partials/foot') %>

@@ -1,0 +1,20 @@
+<% if (testimonials.length) { %>
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Testimonials</span>
+      <h2>Trusted by the brands we build</h2>
+      <p class="muted">At BrandBay Innovation Studios, client satisfaction is at the center of everything we do. Our work is built on trust, professionalism, and delivering results that make a difference.</p>
+    </div>
+    <div class="testimonial-grid">
+      <% for (const t of testimonials) { %>
+        <figure class="testimonial">
+          <div class="stars" aria-label="<%= t.rating %> out of 5 stars"><%= '★'.repeat(Math.max(0, Math.min(5, t.rating))) %></div>
+          <blockquote><%= t.quote %></blockquote>
+          <figcaption><strong><%= t.name %></strong><% if (t.role) { %><span><%= t.role %></span><% } %></figcaption>
+        </figure>
+      <% } %>
+    </div>
+  </div>
+</section>
+<% } %>

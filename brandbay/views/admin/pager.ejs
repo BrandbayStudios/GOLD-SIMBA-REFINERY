@@ -1,0 +1,8 @@
+<% if (pages > 1) { %>
+  <nav class="pager" aria-label="Pages">
+    <% const q = (n) => { const u = new URLSearchParams(query); u.set('page', n); return '?' + u.toString(); }; %>
+    <% if (page > 1) { %><a href="<%= q(page - 1) %>">← Previous</a><% } %>
+    <span>Page <%= page %> of <%= pages %></span>
+    <% if (page < pages) { %><a href="<%= q(page + 1) %>">Next →</a><% } %>
+  </nav>
+<% } %>

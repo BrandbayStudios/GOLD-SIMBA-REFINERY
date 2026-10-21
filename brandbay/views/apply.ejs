@@ -1,0 +1,80 @@
+<%- include('partials/head') %>
+<section class="page-hero compact">
+  <div class="container">
+    <span class="eyebrow">Apply for service</span>
+    <h1>Tell us about your <em>project</em>.</h1>
+    <p class="lead">Share a few details and we’ll come back with a tailored quote. You’ll get a reference number you can track from your client dashboard.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container split">
+    <form class="card form" method="post" action="/apply" enctype="multipart/form-data">
+      <%- include('partials/errors') %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <fieldset>
+        <legend>Your details</legend>
+        <div class="form-row">
+          <label>Full names*<input name="name" required autocomplete="name" value="<%= form.name || '' %>"></label>
+          <label>Email address*<input type="email" name="email" required autocomplete="email" value="<%= form.email || '' %>"></label>
+        </div>
+        <div class="form-row">
+          <label>Phone / WhatsApp<input type="tel" name="phone" autocomplete="tel" value="<%= form.phone || '' %>"></label>
+          <label>Business / organisation<input name="company" autocomplete="organization" value="<%= form.company || '' %>"></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Your project</legend>
+        <label>Service applied for*
+          <select name="service" required>
+            <option value="">Choose a service</option>
+            <% for (const s of services) { %>
+              <optgroup label="<%= s.name %>">
+                <option<%= form.service === s.name ? ' selected' : '' %>><%= s.name %></option>
+                <% for (const item of lib.lines(s.items)) { %>
+                  <% const v = `${s.name} — ${item}`; %><option value="<%= v %>"<%= form.service === v ? ' selected' : '' %>><%= item %></option>
+                <% } %>
+              </optgroup>
+            <% } %>
+            <option value="Other"<%= form.service === 'Other' ? ' selected' : '' %>>Something else</option>
+          </select>
+        </label>
+        <div class="form-row">
+          <label>Budget
+            <select name="budget">
+              <option value="">Select a range</option>
+              <% for (const b of lib.BUDGETS) { %><option<%= form.budget === b ? ' selected' : '' %>><%= b %></option><% } %>
+            </select>
+          </label>
+          <label>Timeline
+            <select name="timeline">
+              <option value="">When do you need it?</option>
+              <% for (const t of lib.TIMELINES) { %><option<%= form.timeline === t ? ' selected' : '' %>><%= t %></option><% } %>
+            </select>
+          </label>
+        </div>
+        <label>Project description
+          <textarea name="description" rows="6" placeholder="What do you need, who is it for, and what does success look like?"><%= form.description || '' %></textarea>
+        </label>
+        <label>Brief or reference file <span class="muted">(optional — PDF, image, Word, PowerPoint or ZIP, max <%= config.maxUploadMb %>MB)</span>
+          <input type="file" name="attachment" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.pptx,.zip">
+        </label>
+      </fieldset>
+      <button class="btn btn-gold btn-lg btn-block" type="submit">Submit application</button>
+    </form>
+    <aside class="card card-dark sticky">
+      <h3>What happens next</h3>
+      <ol class="mini-steps">
+        <li>You receive a reference number by email.</li>
+        <li>Our team reviews your brief and sends a quote.</li>
+        <li>Accept the quote from your dashboard and pay the 70% deposit.</li>
+        <li>We deliver, with the 30% balance due on completion.</li>
+      </ol>
+      <p class="muted">Typical timelines: graphic design 3–7 working days, branding 5–14 working days, websites 1–4 weeks.</p>
+      <% if (!currentUser) { %>
+        <p><a href="/register">Create an account</a> with the same email to track your request.</p>
+      <% } %>
+    </aside>
+  </div>
+</section>
+<%- include('partials/foot') %>

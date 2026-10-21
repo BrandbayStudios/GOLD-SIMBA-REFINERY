@@ -1,0 +1,23 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container narrow">
+    <a class="crumb" href="/account">← Dashboard</a>
+    <div class="section-head row">
+      <div><span class="eyebrow">Order</span><h1><%= order.reference %></h1></div>
+      <div><%- include('../partials/status', { value: order.status, labels: lib.ORDER_STATUSES }) %> <%- include('../partials/status', { value: order.payment_status, labels: lib.PAYMENT_STATUSES }) %></div>
+    </div>
+    <div class="card">
+      <ul class="summary">
+        <% for (const i of items) { %><li><span><%= i.quantity %> × <%= i.name %></span><span><%= lib.money(i.line_total) %></span></li><% } %>
+      </ul>
+      <p class="summary-total"><span>Total</span><strong><%= lib.money(order.subtotal) %></strong></p>
+      <dl class="details">
+        <dt>Placed</dt><dd><%= lib.formatDate(order.created_at, true) %></dd>
+        <dt>Payment method</dt><dd><%= lib.PAYMENT_METHODS[order.payment_method] %></dd>
+        <dt>Delivery</dt><dd><%= order.delivery_method === 'delivery' ? `Delivery to ${order.address}` : 'Collect from studio' %></dd>
+      </dl>
+      <% if (order.payment_status === 'unpaid') { %><h3>How to pay</h3><%- include('../partials/text', { text: settings.payment_instructions }) %><% } %>
+    </div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

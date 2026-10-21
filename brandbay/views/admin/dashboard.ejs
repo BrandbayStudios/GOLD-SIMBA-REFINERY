@@ -1,0 +1,69 @@
+<%- include('head') %>
+<div class="kpis">
+  <a class="kpi" href="/admin/requests?status=new"><span>New requests</span><strong><%= byStatus.new %></strong></a>
+  <a class="kpi" href="/admin/requests"><span>Open requests</span><strong><%= stats.openRequests %></strong></a>
+  <div class="kpi"><span>Quoted value</span><strong><%= lib.money(stats.quoted) %></strong></div>
+  <a class="kpi" href="/admin/orders"><span>Store orders</span><strong><%= stats.orders %></strong></a>
+  <div class="kpi"><span>Paid store revenue</span><strong><%= lib.money(stats.revenue) %></strong></div>
+  <a class="kpi" href="/admin/users"><span>Client accounts</span><strong><%= stats.clients %></strong></a>
+  <a class="kpi" href="/admin/subscribers"><span>Subscribers</span><strong><%= stats.subscribers %></strong></a>
+  <a class="kpi" href="/admin/messages"><span>Unread messages</span><strong><%= counts.unreadMessages %></strong></a>
+</div>
+
+<div class="admin-grid">
+  <section class="panel">
+    <h2>Request pipeline</h2>
+    <% const maxStatus = Math.max(1, ...Object.values(byStatus)); %>
+    <ul class="bars">
+      <% for (const [key, label] of Object.entries(lib.REQUEST_STATUSES)) { %>
+        <li><a href="/admin/requests?status=<%= key %>"><span><%= label %></span><span class="bar-track"><span class="bar-fill status-bg-<%= key %> w-<%= Math.round(byStatus[key] / maxStatus * 20) * 5 %>"></span></span><strong><%= byStatus[key] %></strong></a></li>
+      <% } %>
+    </ul>
+  </section>
+  <section class="panel">
+    <h2>Most requested services</h2>
+    <% if (!byService.length) { %><p class="muted">No requests yet.</p><% } %>
+    <% const maxService = Math.max(1, ...byService.map((s) => s.n)); %>
+    <ul class="bars">
+      <% for (const s of byService) { %>
+        <li><span title="<%= s.service %>"><%= s.service %></span><span class="bar-track"><span class="bar-fill w-<%= Math.round(s.n / maxService * 20) * 5 %>"></span></span><strong><%= s.n %></strong></li>
+      <% } %>
+    </ul>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-head"><h2>Latest requests</h2><a href="/admin/requests">View all</a></div>
+  <% if (!recentRequests.length) { %><p class="muted">Requests submitted on the website will appear here.</p><% } else { %>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Reference</th><th>Client</th><th>Service</th><th>Status</th><th>Received</th></tr></thead>
+    <tbody>
+      <% for (const r of recentRequests) { %>
+        <tr><td><a href="/admin/requests/<%= r.id %>"><strong><%= r.reference %></strong></a></td><td><%= r.name %><br><small class="muted"><%= r.email %></small></td><td><%= r.service %></td><td><%- include('../partials/status', { value: r.status, labels: lib.REQUEST_STATUSES }) %></td><td><%= lib.formatDate(r.created_at) %></td></tr>
+      <% } %>
+    </tbody>
+  </table></div>
+  <% } %>
+</section>
+
+<div class="admin-grid">
+  <section class="panel">
+    <div class="panel-head"><h2>Latest orders</h2><a href="/admin/orders">View all</a></div>
+    <% if (!recentOrders.length) { %><p class="muted">No orders yet.</p><% } %>
+    <ul class="list">
+      <% for (const o of recentOrders) { %>
+        <li><a href="/admin/orders/<%= o.id %>"><strong><%= o.reference %></strong> · <%= o.name %></a><span><%= lib.money(o.subtotal) %> <%- include('../partials/status', { value: o.status, labels: lib.ORDER_STATUSES }) %></span></li>
+      <% } %>
+    </ul>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h2>Latest messages</h2><a href="/admin/messages">View all</a></div>
+    <% if (!recentMessages.length) { %><p class="muted">No messages yet.</p><% } %>
+    <ul class="list">
+      <% for (const m of recentMessages) { %>
+        <li><a href="/admin/messages/<%= m.id %>"><% if (!m.is_read) { %><span class="dot" aria-label="Unread"></span><% } %><strong><%= m.name || m.email %></strong> · <%= m.subject || m.message.slice(0, 50) %></a><span class="muted"><%= lib.formatDate(m.created_at) %></span></li>
+      <% } %>
+    </ul>
+  </section>
+</div>
+<%- include('foot') %>

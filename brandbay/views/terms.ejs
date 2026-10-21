@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<section class="page-hero compact">
+  <div class="container"><span class="eyebrow">Compliance</span><h1>Terms &amp; Conditions</h1></div>
+</section>
+<section class="section">
+  <div class="container narrow prose">
+    <% for (const para of lib.paragraphs(settings.terms)) { %>
+      <% if (para.length < 60 && !/[.:]$/.test(para)) { %><h2><%= para %></h2><% } else { %><%- include('partials/text', { text: para }) %><% } %>
+    <% } %>
+    <p class="muted">Questions about these terms? <a href="/contact">Contact us</a>.</p>
+  </div>
+</section>
+<%- include('partials/foot') %>

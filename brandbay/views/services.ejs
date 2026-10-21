@@ -1,0 +1,32 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Our services</span>
+    <h1>Complete solutions to <em>brand, build and boost</em>.</h1>
+    <p class="lead">Your business deserves more than just design — it deserves strategy, innovation, and results. We provide complete solutions to help businesses build strong brands, establish a professional presence, and grow in the digital space.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="service-grid">
+      <% for (const service of services) { %><%- include('partials/service-card', { service }) %><% } %>
+    </div>
+  </div>
+</section>
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">How we work</span>
+      <h2>From brief to delivery</h2>
+    </div>
+    <ol class="steps">
+      <li><strong>Apply</strong><span>Tell us what you need through the service form. You get a reference number straight away.</span></li>
+      <li><strong>Quote</strong><span>We review your brief and send a tailored quote to your dashboard and email.</span></li>
+      <li><strong>Deposit</strong><span>Work starts on a 70% deposit, with the remaining 30% due on completion.</span></li>
+      <li><strong>Deliver</strong><span>Follow progress and talk to the team from your client dashboard until final files are delivered.</span></li>
+    </ol>
+    <div class="center"><a class="btn btn-gold btn-lg" href="/apply">Apply for a service</a></div>
+  </div>
+</section>
+<%- include('partials/contact-strip') %>
+<%- include('partials/foot') %>

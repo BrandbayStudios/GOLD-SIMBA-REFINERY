@@ -1,0 +1,19 @@
+<%- include('head') %>
+<div class="panel table-wrap">
+  <table class="table">
+    <thead><tr><th></th><th>From</th><th>Subject</th><th>Received</th></tr></thead>
+    <tbody>
+      <% if (!messages.length) { %><tr><td colspan="4" class="muted">No messages yet.</td></tr><% } %>
+      <% for (const m of messages) { %>
+        <tr class="<%= m.is_read ? '' : 'unread' %>">
+          <td><% if (!m.is_read) { %><span class="dot" aria-label="Unread"></span><% } %></td>
+          <td><a href="/admin/messages/<%= m.id %>"><strong><%= m.name || '—' %></strong></a><br><small class="muted"><%= m.email %></small></td>
+          <td><%= m.subject || m.message.slice(0, 80) %></td>
+          <td><%= lib.formatDate(m.created_at, true) %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('pager', { query: {} }) %>
+<%- include('foot') %>

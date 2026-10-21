@@ -1,0 +1,27 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Our recent projects</span>
+    <h1>Work that makes brands <em>impossible to ignore</em>.</h1>
+    <p class="lead">Have a look at some of our recent branding, graphic design and digital marketing work.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <% if (categories.length > 1) { %>
+      <div class="filter-row" role="group" aria-label="Filter projects" data-filter-group>
+        <button class="chip active" type="button" data-filter="">All</button>
+        <% for (const c of categories) { %><button class="chip" type="button" data-filter="<%= c %>"><%= c %></button><% } %>
+      </div>
+    <% } %>
+    <% if (projects.length) { %>
+      <div class="project-grid" data-filter-target>
+        <% for (const project of projects) { %><%- include('partials/project-card', { project }) %><% } %>
+      </div>
+    <% } else { %>
+      <p class="empty">New projects are coming soon.</p>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/contact-strip') %>
+<%- include('partials/foot') %>

@@ -1,0 +1,47 @@
+<%- include('../partials/head') %>
+<section class="section">
+  <div class="container split">
+    <form class="card form" method="post" action="/checkout">
+      <h1>Checkout</h1>
+      <%- include('../partials/errors') %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% if (!currentUser) { %><p class="muted">Have an account? <a href="/login?next=/checkout">Sign in</a> to track this order.</p><% } %>
+      <fieldset>
+        <legend>Contact</legend>
+        <label>Full name*<input name="name" required autocomplete="name" value="<%= form.name || '' %>"></label>
+        <div class="form-row">
+          <label>Email*<input type="email" name="email" required autocomplete="email" value="<%= form.email || '' %>"></label>
+          <label>Phone*<input type="tel" name="phone" required autocomplete="tel" value="<%= form.phone || '' %>"></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Delivery</legend>
+        <div class="radio-cards">
+          <label class="radio-card"><input type="radio" name="delivery_method" value="collect"<%= form.delivery_method !== 'delivery' ? ' checked' : '' %>><span><strong>Collect</strong><small><%= settings.address_1 %></small></span></label>
+          <label class="radio-card"><input type="radio" name="delivery_method" value="delivery"<%= form.delivery_method === 'delivery' ? ' checked' : '' %>><span><strong>Delivery</strong><small>Fee confirmed with your order</small></span></label>
+        </div>
+        <label>Delivery address<textarea name="address" rows="2" autocomplete="street-address"><%= form.address || '' %></textarea></label>
+      </fieldset>
+      <fieldset>
+        <legend>Payment</legend>
+        <div class="radio-cards">
+          <% for (const [key, label] of Object.entries(lib.PAYMENT_METHODS)) { %>
+            <label class="radio-card"><input type="radio" name="payment_method" value="<%= key %>"<%= form.payment_method === key ? ' checked' : '' %>><span><strong><%= label %></strong></span></label>
+          <% } %>
+        </div>
+        <p class="muted">You won’t be charged now. We confirm your order and send payment details by email and phone.</p>
+      </fieldset>
+      <label>Order notes<textarea name="notes" rows="3" placeholder="Sizes, finishes, artwork notes…"><%= form.notes || '' %></textarea></label>
+      <button class="btn btn-gold btn-lg btn-block" type="submit">Place order</button>
+    </form>
+    <aside class="card card-dark sticky">
+      <h2>Order summary</h2>
+      <ul class="summary">
+        <% for (const l of lines) { %><li><span><%= l.qty %> × <%= l.product.name %></span><span><%= lib.money(l.total) %></span></li><% } %>
+      </ul>
+      <p class="summary-total"><span>Subtotal</span><strong><%= lib.money(subtotal) %></strong></p>
+      <a href="/cart">Edit cart</a>
+    </aside>
+  </div>
+</section>
+<%- include('../partials/foot') %>
