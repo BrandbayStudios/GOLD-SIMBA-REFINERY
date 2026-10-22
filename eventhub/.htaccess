@@ -1,0 +1,12 @@
+# Fallback for Hostinger shared hosting when this folder's contents are
+# uploaded straight into public_html: route every request into public/,
+# so .env, vendor/, storage/ etc. are never served directly.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
