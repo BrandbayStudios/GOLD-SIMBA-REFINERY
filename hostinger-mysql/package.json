@@ -1,0 +1,14 @@
+{
+  "name": "goldsimba-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Always-on Node.js + Express + MySQL (Hostinger-compatible) backend for Gold SIMBA Refinery's booking system (public site, staff admin dashboard, customer tracker).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.24.3"
+  }
+}
