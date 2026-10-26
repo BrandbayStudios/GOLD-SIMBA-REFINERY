@@ -145,8 +145,9 @@
     padding-bottom:4px;
   }
   nav a:hover{color:var(--gold-1);}
-  .nav-links{display:flex;align-items:center;gap:38px;}
-  .nav-cta{display:flex;align-items:center;gap:18px;}
+  .nav-links{display:flex;align-items:center;gap:24px;}
+  .nav-cta{display:flex;align-items:center;gap:10px;}
+  .nav-cta .btn{padding:10px 14px;font-size:11px;}
   .menu-btn{display:none;background:none;border:1px solid var(--line);padding:9px 11px;color:var(--bone);border-radius:var(--radius);}
   .menu-btn:hover{border-color:var(--gold-2);}
 
