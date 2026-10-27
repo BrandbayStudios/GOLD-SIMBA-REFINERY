@@ -84,7 +84,8 @@ src/app.js              Express setup, security headers, sessions
 src/db.js               SQLite schema and helpers
 src/routes/             public, auth, account (client portal), shop, admin
 views/                  EJS templates (public pages, store, account, admin)
-public/                 CSS, JS, favicon and the studio's portfolio images
+public/                 CSS, JS and the studio's portfolio images
+public/brand/           logo files (gold and dark; stacked, horizontal and icon), favicons and the social-share image
 scripts/seed.js         BrandBay's existing website content
 tests/                  end-to-end tests (node:test)
 ```

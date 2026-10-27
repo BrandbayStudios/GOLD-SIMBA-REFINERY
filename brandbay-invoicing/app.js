@@ -705,7 +705,7 @@
       ${status === 'cancelled' ? '<div class="stamp stamp-void">VOID</div>' : ''}
       <header class="paper-head">
         <div class="paper-brand">
-          ${co.logo ? `<img src="${esc(co.logo)}" alt="${esc(co.name)}" class="paper-logo">` : `<div class="paper-wordmark">BrandBay<span>.</span></div>`}
+          <img src="${esc(co.logo || 'logo-dark.png')}" alt="${esc(co.name)}" class="paper-logo">
           <div class="paper-co">
             <strong>${esc(co.name)}</strong>
             ${co.address1 ? `<div>${esc(co.address1)}</div>` : ''}

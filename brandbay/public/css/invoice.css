@@ -76,3 +76,4 @@
 @media (max-width: 1100px) { .admin .paper-scroll .paper { zoom: 0.9; } }
 @media (max-width: 900px) { .paper-scroll .paper, .admin .paper-scroll .paper { zoom: 0.75; } }
 @media (max-width: 640px) { .paper-scroll .paper, .admin .paper-scroll .paper { zoom: 0.44; } }
+.paper-logo { display: block; height: 15mm; width: auto; }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title><%= title %> · BrandBay Admin</title>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <%- include('../partials/icons') %>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600;700&display=swap">
@@ -31,7 +31,7 @@
 %>
 <div class="admin-shell">
   <aside class="admin-sidebar" data-nav>
-    <a class="brand" href="/admin">BrandBay<span>.</span> <small>Admin</small></a>
+    <a class="brand" href="/admin"><img src="/brand/logo-horizontal-gold.png" alt="BrandBay" width="1231" height="223"><small>Admin</small></a>
     <% for (const [label, items] of groups) { %>
       <p class="admin-group"><%= label %></p>
       <ul>

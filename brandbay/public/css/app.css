@@ -439,3 +439,9 @@ textarea { resize: vertical; }
 .js .reveal.in { opacity: 1; transform: none; }
 .form > .btn:not(.btn-block) { justify-self: start; }
 .split > *, .duo > * { min-width: 0; }
+
+/* Logo */
+.brand { display: inline-flex; align-items: center; line-height: 0; }
+.brand img { display: block; height: 40px; width: auto; }
+.brand-footer img { height: auto; width: 180px; margin-bottom: 0.5rem; }
+@media (max-width: 400px) { .site-header .brand img { height: 32px; } }

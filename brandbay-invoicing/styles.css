@@ -222,3 +222,7 @@ textarea { resize: vertical; }
   .shell, .main, .content { display: block; padding: 0; margin: 0; }
   .paper { box-shadow: none; margin: 0; width: 210mm; min-height: 296mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Logo */
+.brand img { display: block; height: 30px; width: auto; margin-bottom: 0.35rem; }
+.paper-logo { height: 15mm; max-width: 80mm; }

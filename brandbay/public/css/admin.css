@@ -119,3 +119,5 @@ form.toolbar { justify-content: flex-start; }
 .danger-text { color: var(--danger); }
 .settings-form, .catalog-form { display: grid; gap: 1.5rem; }
 .save-bar { position: sticky; bottom: 0; padding: 1rem 0; background: linear-gradient(transparent, #f3f2ee 35%); }
+.admin-sidebar .brand { display: grid; gap: 0.35rem; justify-items: start; padding: 0 0.5rem 1rem; }
+.admin-sidebar .brand img { height: 30px; }
