@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://brandbaystudios.github.io/GOLD-SIMBA-REFINERY/sitemap.xml

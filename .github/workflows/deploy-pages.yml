@@ -30,6 +30,7 @@ jobs:
           mkdir -p dist
           cp *.html dist/
           cp -r assets dist/
+          cp robots.txt sitemap.xml dist/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
