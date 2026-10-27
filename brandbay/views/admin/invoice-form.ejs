@@ -1,0 +1,142 @@
+<%- include('head') %>
+<%
+  const d = doc.inv;
+  const isNew = !locals.existing;
+  const json = (v) => JSON.stringify(v).replace(/</g, '\\u003c');
+  const addTaxes = taxes.filter((t) => t.kind === 'add');
+  const groups = {};
+  for (const c of catalog) (groups[c.category_name] = groups[c.category_name] || []).push(c);
+%>
+<a class="crumb" href="<%= isNew ? '/admin/invoices' : `/admin/invoices/${existing.id}` %>">← <%= isNew ? 'All invoices & quotes' : existing.number %></a>
+<script type="application/json" id="invoice-data"><%- json({
+  catalog: catalog.map((c) => ({ id: c.id, category: c.category_name, name: c.name, unit: c.unit, price: c.price, taxId: c.tax_id })),
+  taxes: taxes.map((t) => ({ id: t.id, name: t.name, rate: t.rate, kind: t.kind })),
+  defaultTaxId: (addTaxes.find((t) => t.is_default) || addTaxes[0] || {}).id,
+  currencies: currencies.map((c) => ({ code: c.code, symbol: c.symbol })),
+  clients,
+}) %></script>
+
+<form class="invoice-editor" method="post" action="<%= isNew ? '/admin/invoices' : `/admin/invoices/${existing.id}` %>" data-invoice-editor>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <input type="hidden" name="request_id" value="<%= d.request_id || '' %>">
+  <div class="invoice-editor-main">
+    <%- include('../partials/errors') %>
+    <section class="panel">
+      <h2>Details</h2>
+      <div class="grid-3">
+        <label>Document type
+          <% if (isNew) { %>
+            <select name="type" data-doc-type>
+              <% for (const [k, v] of Object.entries(inv.DOC_TYPES)) { if (k !== 'receipt') { %><option value="<%= k %>"<%= d.type === k ? ' selected' : '' %>><%= v.label %></option><% } } %>
+            </select>
+          <% } else { %>
+            <input value="<%= inv.DOC_TYPES[d.type].label %>" disabled>
+          <% } %>
+        </label>
+        <label>Number<input name="number" value="<%= d.number %>" required maxlength="40"></label>
+        <label>Status
+          <select name="status">
+            <% for (const st of inv.MANUAL_STATUSES[d.type]) { %><option value="<%= st %>"<%= d.status === st ? ' selected' : '' %>><%= inv.STATUSES[st] %></option><% } %>
+          </select>
+        </label>
+        <label>Issue date<input type="date" name="issue_date" value="<%= d.issue_date %>" required></label>
+        <% if (d.type !== 'receipt') { %>
+          <label><span data-due-label><%= d.type === 'quotation' ? 'Valid until' : 'Due date' %></span><input type="date" name="due_date" value="<%= d.due_date || '' %>"></label>
+        <% } %>
+        <label>Reference / PO<input name="reference" value="<%= d.reference || '' %>" maxlength="120"></label>
+      </div>
+      <% if (isNew) { %><p class="muted small-note">Numbers are assigned automatically. Changing the type updates the number when you save.</p><% } %>
+    </section>
+
+    <section class="panel">
+      <h2>Bill to</h2>
+      <label>Client account <span class="muted">(optional — links the document to their dashboard)</span>
+        <select name="user_id" data-client-picker>
+          <option value="">No account — enter details below</option>
+          <% for (const c of clients) { %><option value="<%= c.id %>"<%= d.user_id === c.id ? ' selected' : '' %>><%= c.company ? `${c.company} — ${c.name}` : c.name %> (<%= c.email %>)</option><% } %>
+        </select>
+      </label>
+      <div class="grid-3">
+        <label>Contact name*<input name="client_name" value="<%= d.client_name || '' %>" required maxlength="160"></label>
+        <label>Company<input name="client_company" value="<%= d.client_company || '' %>" maxlength="160"></label>
+        <label>Email<input type="email" name="client_email" value="<%= d.client_email || '' %>" maxlength="200"></label>
+        <label>Phone<input name="client_phone" value="<%= d.client_phone || '' %>" maxlength="40"></label>
+        <label>TPIN<input name="client_tpin" value="<%= d.client_tpin || '' %>" maxlength="40"></label>
+        <label>Address<input name="client_address" value="<%= d.client_address || '' %>" maxlength="500"></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Services &amp; items</h2>
+      <div class="add-line">
+        <label class="grow">Add a BrandBay service
+          <select data-service-picker>
+            <option value="">Choose a service or sub-service…</option>
+            <% for (const [cat, list] of Object.entries(groups)) { %>
+              <optgroup label="<%= cat %>">
+                <% for (const c of list) { %><option value="<%= c.id %>"><%= c.name %><%= c.price ? ` — ${inv.money(c.price, '')}` : '' %></option><% } %>
+              </optgroup>
+            <% } %>
+          </select>
+        </label>
+        <button class="btn btn-outline-dark btn-sm" type="button" data-add-line>+ Custom line</button>
+      </div>
+      <div class="line-items" data-lines>
+        <% doc.items.forEach((it) => { %><%- include('invoice-line', { it, taxId: taxIdFor(it), addTaxes }) %><% }) %>
+      </div>
+      <template data-line-template><%- include('invoice-line', { it: { category: '', name: '', description: '', quantity: 1, unit: '', unit_price: 0, discount_percent: 0 }, taxId: '', addTaxes }) %></template>
+    </section>
+
+    <section class="panel">
+      <h2>Currency, tax &amp; payment</h2>
+      <div class="grid-3">
+        <label>Currency
+          <select name="currency" data-currency>
+            <% for (const c of currencies) { %><option value="<%= c.code %>"<%= d.currency === c.code ? ' selected' : '' %>><%= c.code %> — <%= c.name %></option><% } %>
+          </select>
+        </label>
+        <label>Discount on whole document (%)<input type="number" name="discount_percent" min="0" max="100" step="0.01" value="<%= d.discount_percent || 0 %>"></label>
+        <label>Withholding tax
+          <select name="withholding_id">
+            <option value="">None</option>
+            <% for (const t of taxes.filter((x) => x.kind === 'withhold')) { %><option value="<%= t.id %>"<%= String(withholdingId) === String(t.id) ? ' selected' : '' %>><%= t.name %> (<%= t.rate %>%)</option><% } %>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" name="show_deposit" value="1"<%= d.deposit_percent > 0 ? ' checked' : '' %>> Show deposit / balance split</label>
+        <label>Deposit (%)<input type="number" name="deposit_percent" min="0" max="100" step="1" value="<%= d.deposit_percent > 0 ? d.deposit_percent : inv.invoiceSettings().depositPercent %>"></label>
+      </div>
+      <fieldset class="checks">
+        <legend>Payment details shown on the document</legend>
+        <% if (!accounts.length) { %><p class="muted">No accounts yet. Add them in <a href="/admin/invoices/settings">Taxes, currency &amp; banks</a>.</p><% } %>
+        <% for (const a of accounts) { %>
+          <label class="check"><input type="checkbox" name="account_ids" value="<%= a.id %>"<%= accountIds.includes(a.id) ? ' checked' : '' %>> <%= a.label %><%= a.account_number ? ` — ${a.account_number}` : '' %><% if (!a.account_number) { %> <span class="muted">(no number yet, won’t print)</span><% } %></label>
+        <% } %>
+      </fieldset>
+    </section>
+
+    <section class="panel">
+      <h2>Notes &amp; terms</h2>
+      <label>Notes to client<textarea name="notes" rows="3" maxlength="5000"><%= d.notes || '' %></textarea></label>
+      <label>Terms &amp; conditions<textarea name="terms" rows="4" maxlength="5000"><%= d.terms || '' %></textarea></label>
+    </section>
+  </div>
+
+  <aside class="invoice-editor-side">
+    <div class="panel sticky-panel">
+      <h2>Summary</h2>
+      <dl class="totals" data-totals>
+        <dt>Subtotal</dt><dd data-t="subtotal">—</dd>
+        <dt>Discount</dt><dd data-t="discount">—</dd>
+        <dt>Tax</dt><dd data-t="tax">—</dd>
+        <dt class="strong">Total</dt><dd class="strong" data-t="total">—</dd>
+        <dt>Withholding</dt><dd data-t="withholding">—</dd>
+        <dt class="strong">Payable</dt><dd class="strong" data-t="payable">—</dd>
+        <dt>Deposit</dt><dd data-t="deposit">—</dd>
+      </dl>
+      <button class="btn btn-gold btn-block" type="submit"><%= isNew ? `Create ${inv.DOC_TYPES[d.type].label.toLowerCase()}` : 'Save changes' %></button>
+      <p class="muted small-note">The printed document shows the full tax breakdown by type.</p>
+    </div>
+  </aside>
+</form>
+<script src="/js/invoice-editor.js" defer></script>
+<%- include('foot') %>

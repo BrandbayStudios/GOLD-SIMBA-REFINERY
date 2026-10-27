@@ -192,6 +192,119 @@ CREATE TABLE IF NOT EXISTS order_items (
   line_total REAL NOT NULL
 );
 
+-- Invoicing ---------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS tax_rates (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  rate REAL NOT NULL DEFAULT 0,
+  kind TEXT NOT NULL DEFAULT 'add' CHECK (kind IN ('add','withhold')),
+  is_default INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS currencies (
+  code TEXT PRIMARY KEY,
+  symbol TEXT NOT NULL,
+  name TEXT NOT NULL,
+  rate_to_zmw REAL,
+  is_default INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS payment_accounts (
+  id INTEGER PRIMARY KEY,
+  type TEXT NOT NULL DEFAULT 'bank' CHECK (type IN ('bank','mobile')),
+  label TEXT NOT NULL,
+  bank_name TEXT,
+  provider TEXT,
+  account_name TEXT,
+  account_number TEXT,
+  branch TEXT,
+  branch_code TEXT,
+  swift TEXT,
+  currency TEXT,
+  is_default INTEGER NOT NULL DEFAULT 1,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+-- Priced sub-services used on invoices, grouped under the website's service categories.
+CREATE TABLE IF NOT EXISTS service_items (
+  id INTEGER PRIMARY KEY,
+  category_id INTEGER REFERENCES service_categories(id) ON DELETE SET NULL,
+  category_name TEXT NOT NULL,
+  name TEXT NOT NULL,
+  unit TEXT,
+  price REAL NOT NULL DEFAULT 0,
+  tax_id INTEGER REFERENCES tax_rates(id) ON DELETE SET NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS invoices (
+  id INTEGER PRIMARY KEY,
+  type TEXT NOT NULL CHECK (type IN ('invoice','quotation','proforma','receipt')),
+  number TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  status TEXT NOT NULL DEFAULT 'draft',
+  public_token TEXT NOT NULL UNIQUE,
+  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  request_id INTEGER REFERENCES service_requests(id) ON DELETE SET NULL,
+  source_id INTEGER REFERENCES invoices(id) ON DELETE SET NULL,
+  client_name TEXT NOT NULL,
+  client_company TEXT,
+  client_email TEXT,
+  client_phone TEXT,
+  client_address TEXT,
+  client_tpin TEXT,
+  issue_date TEXT NOT NULL,
+  due_date TEXT,
+  reference TEXT,
+  currency TEXT NOT NULL,
+  currency_symbol TEXT NOT NULL,
+  rate_to_zmw REAL,
+  discount_percent REAL NOT NULL DEFAULT 0,
+  withholding_name TEXT,
+  withholding_rate REAL NOT NULL DEFAULT 0,
+  deposit_percent REAL NOT NULL DEFAULT 0,
+  account_ids TEXT NOT NULL DEFAULT '[]',
+  notes TEXT,
+  terms TEXT,
+  sent_at TEXT,
+  created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Tax names and rates are copied onto each line so later rate changes never alter issued documents.
+CREATE TABLE IF NOT EXISTS invoice_items (
+  id INTEGER PRIMARY KEY,
+  invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+  position INTEGER NOT NULL DEFAULT 0,
+  category TEXT,
+  name TEXT NOT NULL,
+  description TEXT,
+  quantity REAL NOT NULL DEFAULT 1,
+  unit TEXT,
+  unit_price REAL NOT NULL DEFAULT 0,
+  discount_percent REAL NOT NULL DEFAULT 0,
+  tax_name TEXT,
+  tax_rate REAL NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS invoice_payments (
+  id INTEGER PRIMARY KEY,
+  invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+  paid_on TEXT NOT NULL,
+  amount REAL NOT NULL,
+  method TEXT NOT NULL,
+  reference TEXT,
+  recorded_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_invoices_user ON invoices(user_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_request ON invoices(request_id);
+CREATE INDEX IF NOT EXISTS idx_invoice_items_invoice ON invoice_items(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_invoice_payments_invoice ON invoice_payments(invoice_id);
 CREATE INDEX IF NOT EXISTS idx_requests_email ON service_requests(email);
 CREATE INDEX IF NOT EXISTS idx_requests_user ON service_requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);

@@ -11,12 +11,20 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/invoice.css">
 </head>
 <body class="admin">
 <%
-  const navItem = (href, label, badge) => ({ href, label, badge, active: href === '/admin' ? path === '/admin' || path === '/admin/' : path.startsWith(href) });
+  const invoicingPages = ['/admin/invoices/catalog', '/admin/invoices/settings'];
+  const navItem = (href, label, badge) => ({
+    href, label, badge,
+    active: href === '/admin' ? path === '/admin' || path === '/admin/'
+      : href === '/admin/invoices' ? path.startsWith(href) && !invoicingPages.includes(path)
+      : path.startsWith(href),
+  });
   const groups = [
-    ['Work', [navItem('/admin', 'Dashboard'), navItem('/admin/requests', 'Service requests', counts.newRequests), navItem('/admin/orders', 'Orders', counts.pendingOrders), navItem('/admin/messages', 'Messages', counts.unreadMessages), navItem('/admin/subscribers', 'Subscribers')]],
+    ['Work', [navItem('/admin', 'Dashboard'), navItem('/admin/requests', 'Service requests', counts.newRequests), navItem('/admin/invoices', 'Invoices & quotes', counts.overdueInvoices), navItem('/admin/orders', 'Orders', counts.pendingOrders), navItem('/admin/messages', 'Messages', counts.unreadMessages), navItem('/admin/subscribers', 'Subscribers')]],
+    ['Invoicing', [navItem('/admin/invoices/catalog', 'Service prices')].concat(currentUser.role === 'admin' ? [navItem('/admin/invoices/settings', 'Taxes, currency & banks')] : [])],
     ['Website', Object.entries(resources).map(([key, r]) => navItem(`/admin/content/${key}`, r.label))],
   ];
   if (currentUser.role === 'admin') groups.push(['Administration', [navItem('/admin/users', 'Users'), navItem('/admin/settings', 'Settings')]]);

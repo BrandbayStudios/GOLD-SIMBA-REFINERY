@@ -6,6 +6,7 @@ const lib = require('../lib');
 const mailer = require('../mailer');
 const config = require('../config');
 const { flash, requireAuth } = require('../middleware');
+const invoicing = require('../invoicing');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -17,7 +18,8 @@ function ownRequest(req) {
 router.get('/', (req, res) => {
   const requests = all('SELECT * FROM service_requests WHERE user_id = ? ORDER BY id DESC', req.user.id);
   const orders = all('SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC', req.user.id);
-  res.render('account/dashboard', { title: 'My dashboard', requests, orders });
+  const invoices = invoicing.list(...clientInvoices(req.user));
+  res.render('account/dashboard', { title: 'My dashboard', requests, orders, invoices, invoicing });
 });
 
 router.get('/requests/:id', (req, res, next) => {
@@ -59,6 +61,18 @@ router.get('/requests/:id/attachment', (req, res, next) => {
   const request = ownRequest(req);
   if (!request?.attachment) return next();
   res.download(path.join(config.privateDir, path.basename(request.attachment)));
+});
+
+// Clients see documents addressed to their account or their email address, once they are no longer drafts.
+function clientInvoices(user) {
+  return ["status != 'draft' AND (user_id = ? OR client_email = ? COLLATE NOCASE)", [user.id, user.email]];
+}
+
+router.get('/invoices/:id', (req, res, next) => {
+  const [where, params] = clientInvoices(req.user);
+  const doc = invoicing.load(`id = ? AND ${where}`, req.params.id, ...params);
+  if (!doc) return next();
+  res.render('account/invoice', { title: `${doc.label} ${doc.inv.number}`, doc, invoicing, is: invoicing.invoiceSettings() });
 });
 
 router.get('/orders/:id', (req, res, next) => {

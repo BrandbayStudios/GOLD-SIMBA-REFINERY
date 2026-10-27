@@ -1,0 +1,50 @@
+<%- include('head') %>
+<div class="kpis">
+  <div class="kpi"><span>Invoiced (<%= summary.symbol %>)</span><strong><%= inv.money(summary.invoiced, summary.symbol) %></strong></div>
+  <div class="kpi"><span>Received</span><strong><%= inv.money(summary.received, summary.symbol) %></strong></div>
+  <div class="kpi"><span>Outstanding</span><strong><%= inv.money(summary.outstanding, summary.symbol) %></strong></div>
+  <a class="kpi" href="/admin/invoices?status=overdue"><span>Overdue</span><strong><%= inv.money(summary.overdue, summary.symbol) %></strong></a>
+</div>
+<div class="toolbar">
+  <div class="form-actions">
+    <a class="btn btn-gold btn-sm" href="/admin/invoices/new?type=invoice">+ Invoice</a>
+    <a class="btn btn-outline-dark btn-sm" href="/admin/invoices/new?type=quotation">+ Quotation</a>
+    <a class="btn btn-outline-dark btn-sm" href="/admin/invoices/new?type=proforma">+ Proforma</a>
+  </div>
+</div>
+<form class="toolbar" method="get" action="/admin/invoices">
+  <input type="search" name="q" value="<%= filters.q %>" placeholder="Search number, client, email, reference…" aria-label="Search">
+  <select name="type" aria-label="Type">
+    <option value="">All types</option>
+    <% for (const [k, v] of Object.entries(inv.DOC_TYPES)) { %><option value="<%= k %>"<%= filters.type === k ? ' selected' : '' %>><%= v.label %></option><% } %>
+  </select>
+  <select name="status" aria-label="Status">
+    <option value="">All statuses</option>
+    <% for (const [k, v] of Object.entries(inv.STATUSES)) { %><option value="<%= k %>"<%= filters.status === k ? ' selected' : '' %>><%= v %></option><% } %>
+  </select>
+  <button class="btn btn-gold btn-sm" type="submit">Filter</button>
+  <a class="btn btn-outline-dark btn-sm" href="/admin/invoices/export.csv?<%= new URLSearchParams({ q: filters.q, type: filters.type, status: filters.status }) %>">Export CSV</a>
+</form>
+<p class="muted"><%= total %> document<%= total === 1 ? '' : 's' %>. Summary totals above count sent <%= summary.symbol %> invoices only.</p>
+<div class="panel table-wrap">
+  <table class="table">
+    <thead><tr><th>Number</th><th>Type</th><th>Client</th><th>Date</th><th>Due / valid</th><th>Status</th><th class="num">Total</th><th class="num">Balance</th></tr></thead>
+    <tbody>
+      <% if (!docs.length) { %><tr><td colspan="8" class="muted">No documents yet. Create one above, or from a service request.</td></tr><% } %>
+      <% for (const d of docs) { %>
+        <tr>
+          <td><a href="/admin/invoices/<%= d.id %>"><strong><%= d.number %></strong></a></td>
+          <td><%= d.label %></td>
+          <td><%= d.client_company || d.client_name %><% if (d.client_company) { %><br><small class="muted"><%= d.client_name %></small><% } %></td>
+          <td><%= lib.formatDate(d.issue_date) %></td>
+          <td><%= d.due_date ? lib.formatDate(d.due_date) : '—' %></td>
+          <td><%- include('../partials/status', { value: d.effective, labels: inv.STATUSES }) %></td>
+          <td class="num"><%= inv.money(d.type === 'receipt' ? d.t.paid : d.t.payable, d.currency_symbol) %></td>
+          <td class="num"><%= ['quotation', 'receipt'].includes(d.type) ? '—' : inv.money(Math.max(0, d.t.balance), d.currency_symbol) %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('pager', { query: { q: filters.q, type: filters.type, status: filters.status } }) %>
+<%- include('foot') %>

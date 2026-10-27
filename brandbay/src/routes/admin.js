@@ -5,6 +5,7 @@ const lib = require('../lib');
 const mailer = require('../mailer');
 const config = require('../config');
 const RESOURCES = require('./admin-resources');
+const invoicing = require('../invoicing');
 const { flash, requireStaff, requireAdmin, imageUpload, verifyCsrf, uploadedPath, discardUpload } = require('../middleware');
 
 const router = express.Router();
@@ -15,9 +16,13 @@ router.use((req, res, next) => {
     newRequests: get("SELECT COUNT(*) AS n FROM service_requests WHERE status = 'new'").n,
     unreadMessages: get('SELECT COUNT(*) AS n FROM contact_messages WHERE is_read = 0').n,
     pendingOrders: get("SELECT COUNT(*) AS n FROM orders WHERE status = 'pending'").n,
+    overdueInvoices: invoicing.withTotals(all("SELECT * FROM invoices WHERE type = 'invoice' AND status = 'sent' AND due_date < ?", invoicing.today()))
+      .filter((d) => d.effective === 'overdue').length,
   };
   next();
 });
+
+router.use('/invoices', require('./admin-invoices'));
 
 const PAGE_SIZE = 25;
 const page = (req) => Math.max(1, parseInt(req.query.page, 10) || 1);
@@ -33,6 +38,17 @@ function csv(rows, columns) {
 }
 
 // ---------- Dashboard ----------
+
+function billingSummary() {
+  const cur = invoicing.defaultCurrency();
+  const live = invoicing.list("type = 'invoice' AND status NOT IN ('draft','cancelled') AND currency = ?", [cur.code], { limit: 100000 });
+  return {
+    symbol: cur.symbol,
+    outstanding: live.reduce((sum, d) => sum + Math.max(0, d.t.balance), 0),
+    overdue: live.filter((d) => d.effective === 'overdue').reduce((sum, d) => sum + Math.max(0, d.t.balance), 0),
+    openQuotes: get("SELECT COUNT(*) AS n FROM invoices WHERE type = 'quotation' AND status IN ('draft','sent')").n,
+  };
+}
 
 router.get('/', (req, res) => {
   const revenue = get("SELECT COALESCE(SUM(subtotal), 0) AS total FROM orders WHERE payment_status = 'paid'").total;
@@ -61,6 +77,7 @@ router.get('/', (req, res) => {
     recentRequests: all('SELECT * FROM service_requests ORDER BY id DESC LIMIT 6'),
     recentOrders: all('SELECT * FROM orders ORDER BY id DESC LIMIT 5'),
     recentMessages: all('SELECT * FROM contact_messages ORDER BY id DESC LIMIT 5'),
+    billing: billingSummary(),
   });
 });
 
@@ -110,6 +127,8 @@ router.get('/requests/:id', (req, res, next) => {
     request,
     messages: all('SELECT * FROM request_messages WHERE request_id = ? ORDER BY id', request.id),
     client: request.user_id ? get('SELECT id, name, email, phone, company, created_at FROM users WHERE id = ?', request.user_id) : null,
+    invoices: invoicing.list('request_id = ?', [request.id]),
+    invoicing,
   });
 });
 

@@ -27,6 +27,26 @@
         </table>
       </div>
     <% } %>
+    <% if (invoices.length) { %>
+      <h2>Invoices &amp; quotations</h2>
+      <div class="table-wrap card">
+        <table class="table">
+          <thead><tr><th>Number</th><th>Type</th><th>Date</th><th>Status</th><th class="num">Total</th><th class="num">Balance</th></tr></thead>
+          <tbody>
+            <% for (const d of invoices) { %>
+              <tr>
+                <td><a href="/account/invoices/<%= d.id %>"><strong><%= d.number %></strong></a></td>
+                <td><%= d.label %></td>
+                <td><%= lib.formatDate(d.issue_date) %></td>
+                <td><%- include('../partials/status', { value: d.effective, labels: invoicing.STATUSES }) %></td>
+                <td class="num"><%= invoicing.money(d.type === 'receipt' ? d.t.paid : d.t.payable, d.currency_symbol) %></td>
+                <td class="num"><%= ['quotation', 'receipt'].includes(d.type) ? '—' : invoicing.money(Math.max(0, d.t.balance), d.currency_symbol) %></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
     <h2>Store orders</h2>
     <% if (!orders.length) { %>
       <p class="muted">No orders yet. <a href="/store">Visit the store</a>.</p>

@@ -72,3 +72,50 @@ form.toolbar { justify-content: flex-start; }
 @media (max-width: 480px) { .kpis { grid-template-columns: 1fr; } }
 /* Let wide tables scroll inside their panel instead of stretching the page. */
 .admin-content > *, .admin-grid > *, .panel { min-width: 0; }
+
+/* Invoicing */
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; align-items: end; margin-bottom: 0.9rem; }
+@media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
+.small-note { font-size: 0.82rem; margin: 0.5rem 0 0; }
+.kpi-action { font-family: var(--font-body) !important; font-size: 1.05rem !important; font-weight: 600; color: #7a5b00; }
+.invoice-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; }
+.invoice-bar-status { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; font-size: 0.9rem; }
+.invoice-bar .form-actions { margin: 0; gap: 0.5rem; }
+.invoice-bar form { display: inline; }
+.admin .paper-scroll { padding: 0; }
+.admin .paper { margin: 0; }
+.invoice-editor { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 1.5rem; align-items: start; }
+.invoice-editor-main { display: grid; gap: 1.5rem; min-width: 0; }
+.invoice-editor .panel > label { margin-bottom: 0.9rem; }
+.sticky-panel { position: sticky; top: 90px; }
+@media (max-width: 1100px) { .invoice-editor { grid-template-columns: 1fr; } .sticky-panel { position: static; } }
+.add-line { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; margin-bottom: 1rem; }
+.add-line .grow { flex: 1; min-width: 220px; }
+.line { border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem; margin-bottom: 0.75rem; background: #fdfcf9; }
+.line-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+.line-cat-label { font-size: 0.75rem; color: #8a7000; font-weight: 600; letter-spacing: 0.04em; }
+.line-tools { margin-left: auto; display: flex; gap: 0.3rem; }
+.icon-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: var(--white); cursor: pointer; font-size: 0.85rem; }
+.icon-btn.danger { color: var(--danger); }
+.line-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
+.line-grid .span-2 { grid-column: span 2; }
+@media (max-width: 560px) { .line-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.line-total { display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 0.8rem; border-radius: 8px; background: var(--gold-soft); align-self: end; font-size: 0.9rem; }
+.totals { display: grid; grid-template-columns: 1fr auto; gap: 0.45rem 1rem; margin: 0 0 1.25rem; font-size: 0.92rem; }
+.totals dt { color: var(--text-muted); }
+.totals dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.totals .strong { color: var(--text); font-weight: 700; border-top: 1px solid var(--line); padding-top: 0.45rem; }
+.checks { border: 0; padding: 0; margin: 0.5rem 0 0; display: grid; gap: 0.4rem; }
+.checks legend { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; padding: 0; }
+.price-table input, .price-table select { min-width: 110px; }
+.price-table td:first-child input { min-width: 220px; }
+.table td.center, .table th.center { text-align: center; }
+.account-block { border: 1px solid var(--line); border-radius: 10px; padding: 1rem; margin: 0 0 1rem; }
+.account-block legend { padding: 0 0.4rem; font-weight: 600; }
+.add-block { border: 1px dashed var(--line); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.75rem; }
+.add-block summary { cursor: pointer; font-weight: 600; }
+.add-block[open] summary { margin-bottom: 0.9rem; }
+.new-row td { background: #fbfaf5; }
+.danger-text { color: var(--danger); }
+.settings-form, .catalog-form { display: grid; gap: 1.5rem; }
+.save-bar { position: sticky; bottom: 0; padding: 1rem 0; background: linear-gradient(transparent, #f3f2ee 35%); }

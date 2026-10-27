@@ -1,0 +1,128 @@
+<%
+  const d = doc.inv;
+  const t = doc.t;
+  const m = (v) => invoicing.money(v, d.currency_symbol);
+  const status = doc.status;
+  const showSplit = d.deposit_percent > 0 && d.deposit_percent < 100 && d.type !== 'receipt';
+  const headline = d.type === 'quotation' ? ['Quoted total', t.payable]
+    : d.type === 'receipt' ? ['Amount received', t.paid]
+    : ['Amount due', Math.max(0, t.balance)];
+%>
+<article class="paper">
+  <% if (status === 'paid' && d.type !== 'quotation') { %><div class="stamp">PAID</div><% } %>
+  <% if (status === 'cancelled') { %><div class="stamp stamp-void">VOID</div><% } %>
+  <header class="paper-head">
+    <div class="paper-brand">
+      <div class="paper-wordmark">BrandBay<span>.</span></div>
+      <div class="paper-co">
+        <strong><%= settings.site_name %></strong>
+        <% if (settings.address_1) { %><div><%= settings.address_1 %></div><% } %>
+        <% if (settings.address_2) { %><div><%= settings.address_2 %></div><% } %>
+        <div><%= [settings.phone, settings.email].filter(Boolean).join(' · ') %></div>
+        <div><%= config.baseUrl.replace(/^https?:\/\//, '') %></div>
+        <% if (is.tpin) { %><div>TPIN: <%= is.tpin %></div><% } %>
+      </div>
+    </div>
+    <div class="paper-title">
+      <h2><%= doc.label %></h2>
+      <table class="meta">
+        <tr><th>No.</th><td><%= d.number %></td></tr>
+        <tr><th>Date</th><td><%= lib.formatDate(d.issue_date) %></td></tr>
+        <% if (d.type !== 'receipt' && d.due_date) { %><tr><th><%= d.type === 'quotation' ? 'Valid until' : 'Due' %></th><td><%= lib.formatDate(d.due_date) %></td></tr><% } %>
+        <% if (d.reference) { %><tr><th>Ref.</th><td><%= d.reference %></td></tr><% } %>
+        <tr><th>Currency</th><td><%= d.currency %></td></tr>
+      </table>
+    </div>
+  </header>
+
+  <section class="paper-parties">
+    <div>
+      <h3><%= d.type === 'receipt' ? 'Received from' : d.type === 'quotation' ? 'Prepared for' : 'Bill to' %></h3>
+      <% if (d.client_company) { %><strong><%= d.client_company %></strong><div><%= d.client_name %></div><% } else { %><strong><%= d.client_name %></strong><% } %>
+      <% if (d.client_address) { %><div><%- include('../partials/lines', { text: d.client_address }) %></div><% } %>
+      <% if (d.client_phone) { %><div><%= d.client_phone %></div><% } %>
+      <% if (d.client_email) { %><div><%= d.client_email %></div><% } %>
+      <% if (d.client_tpin) { %><div>TPIN: <%= d.client_tpin %></div><% } %>
+    </div>
+    <div class="paper-due">
+      <span><%= headline[0] %></span>
+      <strong><%= m(headline[1]) %></strong>
+    </div>
+  </section>
+
+  <table class="lines">
+    <thead><tr><th>#</th><th>Service / item</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Disc.</th><th>Tax</th><th class="num">Amount</th></tr></thead>
+    <tbody>
+      <% doc.items.forEach((it, i) => { %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><strong><%= it.name %></strong>
+            <% if (it.category) { %><div class="line-cat"><%= it.category %></div><% } %>
+            <% if (it.description) { %><div class="line-desc"><%= it.description %></div><% } %></td>
+          <td class="num"><%= it.quantity %><% if (it.unit) { %> <span class="unit"><%= it.unit %></span><% } %></td>
+          <td class="num"><%= m(it.unit_price) %></td>
+          <td class="num"><%= it.discount_percent ? `${it.discount_percent}%` : '—' %></td>
+          <td><%= it.tax_name ? `${it.tax_rate}%` : '—' %></td>
+          <td class="num"><%= m(t.lines[i].afterLine) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <section class="paper-bottom">
+    <div class="paper-pay">
+      <% if (doc.accounts.length && d.type !== 'receipt') { %>
+        <h3>Payment details</h3>
+        <% for (const a of doc.accounts) { %>
+          <div class="bank">
+            <% if (a.type === 'mobile') { %>
+              <strong><%= a.label || a.provider %></strong>
+              <div>Number: <%= a.account_number %></div>
+              <% if (a.account_name) { %><div>Name: <%= a.account_name %></div><% } %>
+            <% } else { %>
+              <strong><%= a.bank_name || a.label %></strong>
+              <% if (a.account_name) { %><div>Account name: <%= a.account_name %></div><% } %>
+              <div>Account no.: <%= a.account_number %><%= a.currency ? ` (${a.currency})` : '' %></div>
+              <% if (a.branch) { %><div>Branch: <%= a.branch %><%= a.branch_code ? ` · Code ${a.branch_code}` : '' %></div><% } %>
+              <% if (a.swift) { %><div>SWIFT: <%= a.swift %></div><% } %>
+            <% } %>
+          </div>
+        <% } %>
+        <p class="paper-small">Please use <strong><%= d.number %></strong> as your payment reference.</p>
+      <% } %>
+    </div>
+    <table class="sums">
+      <tr><th>Subtotal</th><td><%= m(t.subtotal) %></td></tr>
+      <% if (t.discount) { %><tr><th>Discount (<%= d.discount_percent %>%)</th><td>-<%= m(t.discount) %></td></tr><% } %>
+      <% for (const g of t.taxGroups) { %><tr><th><%= g.name %> <%= g.rate %>%<span class="sub">on <%= m(g.base) %></span></th><td><%= m(g.amount) %></td></tr><% } %>
+      <tr class="total"><th>Total</th><td><%= m(t.total) %></td></tr>
+      <% if (t.withholding) { %>
+        <tr><th>Less <%= d.withholding_name %> <%= d.withholding_rate %>%</th><td>-<%= m(t.withholding) %></td></tr>
+        <tr class="total"><th>Amount payable</th><td><%= m(t.payable) %></td></tr>
+      <% } %>
+      <% if (showSplit) { %>
+        <tr class="sums-split"><th>Deposit <%= d.deposit_percent %>%</th><td><%= m(t.deposit) %></td></tr>
+        <tr class="sums-split"><th>Balance on completion</th><td><%= m(t.payable - t.deposit) %></td></tr>
+      <% } %>
+      <% if (t.paid && d.type !== 'quotation') { %>
+        <tr><th>Paid</th><td>-<%= m(t.paid) %></td></tr>
+        <tr class="total"><th>Balance due</th><td><%= m(Math.max(0, t.balance)) %></td></tr>
+      <% } %>
+      <% if (d.currency !== 'ZMW' && d.rate_to_zmw) { %>
+        <tr class="fx"><th>ZMW equivalent @ <%= d.rate_to_zmw %></th><td><%= invoicing.money(t.payable * d.rate_to_zmw, 'K') %></td></tr>
+      <% } %>
+    </table>
+  </section>
+
+  <% if (doc.payments.length && d.type !== 'quotation') { %>
+    <section class="paper-notes">
+      <h3>Payments received</h3>
+      <table class="lines compact"><tbody>
+        <% for (const p of doc.payments) { %><tr><td><%= lib.formatDate(p.paid_on) %></td><td><%= p.method %></td><td><%= p.reference || '' %></td><td class="num"><%= m(p.amount) %></td></tr><% } %>
+      </tbody></table>
+    </section>
+  <% } %>
+  <% if (d.notes) { %><section class="paper-notes"><h3>Notes</h3><p><%- include('../partials/lines', { text: d.notes }) %></p></section><% } %>
+  <% if (d.terms) { %><section class="paper-notes"><h3>Terms &amp; conditions</h3><p><%- include('../partials/lines', { text: d.terms }) %></p></section><% } %>
+  <footer class="paper-foot"><%= is.footer %><span><%= settings.tagline %></span></footer>
+</article>

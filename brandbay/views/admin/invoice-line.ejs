@@ -1,0 +1,25 @@
+<div class="line" data-line>
+  <input type="hidden" name="item_category" value="<%= it.category || '' %>" data-f="category">
+  <div class="line-head">
+    <span class="line-cat-label" data-cat-label><%= it.category || 'Custom item' %></span>
+    <span class="line-tools">
+      <button type="button" class="icon-btn" data-move="-1" aria-label="Move up">↑</button>
+      <button type="button" class="icon-btn" data-move="1" aria-label="Move down">↓</button>
+      <button type="button" class="icon-btn danger" data-remove aria-label="Remove line">✕</button>
+    </span>
+  </div>
+  <div class="line-grid">
+    <label class="span-2">Service / item<input name="item_name" value="<%= it.name || '' %>" maxlength="300" data-f="name"></label>
+    <label class="span-2">Description<input name="item_description" value="<%= it.description || '' %>" maxlength="2000" placeholder="Scope, sizes, quantities…"></label>
+    <label>Qty<input type="number" name="item_qty" value="<%= it.quantity %>" min="0" step="any" data-f="qty"></label>
+    <label>Unit<input name="item_unit" value="<%= it.unit || '' %>" maxlength="60" data-f="unit"></label>
+    <label>Unit price<input type="number" name="item_price" value="<%= it.unit_price %>" min="0" step="0.01" data-f="price"></label>
+    <label>Disc. %<input type="number" name="item_discount" value="<%= it.discount_percent || 0 %>" min="0" max="100" step="0.01" data-f="discount"></label>
+    <label class="span-2">Tax
+      <select name="item_tax_id" data-f="tax">
+        <% for (const t of addTaxes) { %><option value="<%= t.id %>"<%= String(taxId) === String(t.id) || (!taxId && t.is_default) ? ' selected' : '' %>><%= t.name %> (<%= t.rate %>%)</option><% } %>
+      </select>
+    </label>
+    <div class="line-total span-2"><span>Line total</span><strong data-line-total>—</strong></div>
+  </div>
+</div>

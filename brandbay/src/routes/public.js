@@ -4,6 +4,7 @@ const { all, get, run, transaction } = require('../db');
 const lib = require('../lib');
 const mailer = require('../mailer');
 const config = require('../config');
+const invoicing = require('../invoicing');
 const path = require('node:path');
 const { flash, documentUpload, verifyCsrf, discardUpload } = require('../middleware');
 
@@ -235,6 +236,15 @@ router.get('/apply/thank-you', (req, res) => {
   const reference = req.session.lastRequest;
   if (!reference) return res.redirect('/apply');
   res.render('thank-you', { title: 'Request received', reference });
+});
+
+// Shareable, unguessable link to a document, for clients without an account.
+router.get('/invoice/:token', (req, res, next) => {
+  if (!/^[a-f0-9]{48}$/.test(req.params.token)) return next();
+  const doc = invoicing.load('public_token = ?', req.params.token);
+  if (!doc) return next();
+  res.set('X-Robots-Tag', 'noindex');
+  res.render('invoices/print', { doc, invoicing, is: invoicing.invoiceSettings(), autoPrint: req.query.print === '1' });
 });
 
 router.get('/terms', (req, res) => {

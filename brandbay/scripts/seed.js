@@ -3,6 +3,7 @@
 const bcrypt = require('bcryptjs');
 const { get, run, transaction } = require('../src/db');
 const { setSetting, getSettings } = require('../src/lib');
+const invoicing = require('../src/invoicing');
 
 const SETTINGS = {
   site_name: 'BrandBay Innovation Studios',
@@ -261,6 +262,7 @@ function seed() {
       );
     }
   });
+  invoicing.ensureDefaults();
 }
 
 module.exports = { seed };

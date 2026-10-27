@@ -8,6 +8,10 @@
   <a class="kpi" href="/admin/users"><span>Client accounts</span><strong><%= stats.clients %></strong></a>
   <a class="kpi" href="/admin/subscribers"><span>Subscribers</span><strong><%= stats.subscribers %></strong></a>
   <a class="kpi" href="/admin/messages"><span>Unread messages</span><strong><%= counts.unreadMessages %></strong></a>
+  <a class="kpi" href="/admin/invoices"><span>Invoices outstanding</span><strong><%= billing.symbol %><%= billing.outstanding.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></strong></a>
+  <a class="kpi" href="/admin/invoices?status=overdue"><span>Invoices overdue</span><strong><%= billing.symbol %><%= billing.overdue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></strong></a>
+  <a class="kpi" href="/admin/invoices?type=quotation"><span>Open quotations</span><strong><%= billing.openQuotes %></strong></a>
+  <a class="kpi" href="/admin/invoices/new?type=invoice"><span>Quick action</span><strong class="kpi-action">+ New invoice</strong></a>
 </div>
 
 <div class="admin-grid">

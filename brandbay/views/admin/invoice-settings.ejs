@@ -1,0 +1,129 @@
+<%- include('head') %>
+<form method="post" action="/admin/invoices/settings" class="settings-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <section class="panel">
+    <h2>Banking &amp; Mobile Money details</h2>
+    <p class="muted">Ticked “default” accounts are added to new documents; you can still choose per document. Accounts without a number never print.</p>
+    <% for (const a of accounts) { const k = `acc.${a.id}`; %>
+      <fieldset class="account-block">
+        <legend><span class="tag"><%= a.type === 'mobile' ? 'Mobile Money' : 'Bank' %></span> <%= a.label %></legend>
+        <div class="grid-3">
+          <label>Label<input name="<%= k %>.label" value="<%= a.label %>"></label>
+          <% if (a.type === 'mobile') { %>
+            <label>Provider<select name="<%= k %>.provider"><% for (const p of ['MTN MoMo', 'Airtel Money', 'Zamtel Kwacha', 'Other']) { %><option<%= a.provider === p ? ' selected' : '' %>><%= p %></option><% } %></select></label>
+            <label>Mobile number<input name="<%= k %>.account_number" value="<%= a.account_number || '' %>" placeholder="e.g. 0972015689"></label>
+            <label>Registered name<input name="<%= k %>.account_name" value="<%= a.account_name || '' %>"></label>
+          <% } else { %>
+            <label>Bank name<input name="<%= k %>.bank_name" value="<%= a.bank_name || '' %>" placeholder="e.g. Zanaco, Stanbic, FNB, Absa"></label>
+            <label>Account name<input name="<%= k %>.account_name" value="<%= a.account_name || '' %>"></label>
+            <label>Account number<input name="<%= k %>.account_number" value="<%= a.account_number || '' %>"></label>
+            <label>Branch<input name="<%= k %>.branch" value="<%= a.branch || '' %>"></label>
+            <label>Branch / sort code<input name="<%= k %>.branch_code" value="<%= a.branch_code || '' %>"></label>
+            <label>SWIFT / BIC<input name="<%= k %>.swift" value="<%= a.swift || '' %>"></label>
+            <label>Account currency<select name="<%= k %>.currency"><% for (const c of currencies) { %><option<%= a.currency === c.code ? ' selected' : '' %>><%= c.code %></option><% } %></select></label>
+          <% } %>
+        </div>
+        <div class="form-actions">
+          <label class="check"><input type="checkbox" name="<%= k %>.is_default" value="1"<%= a.is_default ? ' checked' : '' %>> Use by default</label>
+          <label class="check danger-text"><input type="checkbox" name="<%= k %>.delete" value="1"> Remove this account</label>
+        </div>
+      </fieldset>
+    <% } %>
+    <details class="add-block">
+      <summary>+ Add a bank account</summary>
+      <div class="grid-3">
+        <label>Bank name<input name="acc.newbank.bank_name"></label>
+        <label>Account name<input name="acc.newbank.account_name" value="<%= settings.site_name %>"></label>
+        <label>Account number<input name="acc.newbank.account_number"></label>
+        <label>Branch<input name="acc.newbank.branch"></label>
+        <label>Branch / sort code<input name="acc.newbank.branch_code"></label>
+        <label>SWIFT / BIC<input name="acc.newbank.swift"></label>
+        <label>Account currency<select name="acc.newbank.currency"><% for (const c of currencies) { %><option><%= c.code %></option><% } %></select></label>
+        <label class="check"><input type="checkbox" name="acc.newbank.is_default" value="1" checked> Use by default</label>
+      </div>
+    </details>
+    <details class="add-block">
+      <summary>+ Add a Mobile Money number</summary>
+      <div class="grid-3">
+        <label>Provider<select name="acc.newmobile.provider"><% for (const p of ['MTN MoMo', 'Airtel Money', 'Zamtel Kwacha', 'Other']) { %><option><%= p %></option><% } %></select></label>
+        <label>Mobile number<input name="acc.newmobile.account_number"></label>
+        <label>Registered name<input name="acc.newmobile.account_name" value="<%= settings.site_name %>"></label>
+        <label class="check"><input type="checkbox" name="acc.newmobile.is_default" value="1" checked> Use by default</label>
+      </div>
+    </details>
+  </section>
+
+  <section class="panel">
+    <h2>Tax types</h2>
+    <p class="muted">“Charged” taxes are added to each line (e.g. VAT). “Withheld” taxes are deducted by the client from the amount payable (e.g. Withholding Tax). Rates are copied onto each document when saved, so changing a rate never alters issued documents. Confirm current rates with ZRA.</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Name</th><th>Rate %</th><th>Type</th><th>Default</th><th>Remove</th></tr></thead>
+        <tbody>
+          <% for (const t of taxes) { %>
+            <tr>
+              <td><input name="tax.<%= t.id %>.name" value="<%= t.name %>" aria-label="Tax name" required></td>
+              <td><input type="number" name="tax.<%= t.id %>.rate" value="<%= t.rate %>" min="0" max="100" step="0.01" aria-label="Rate"></td>
+              <td><select name="tax.<%= t.id %>.kind" aria-label="Type"><option value="add"<%= t.kind === 'add' ? ' selected' : '' %>>Charged</option><option value="withhold"<%= t.kind === 'withhold' ? ' selected' : '' %>>Withheld</option></select></td>
+              <td class="center"><% if (t.kind === 'add') { %><input type="radio" name="default_tax" value="<%= t.id %>"<%= t.is_default ? ' checked' : '' %> aria-label="Default tax"><% } %></td>
+              <td class="center"><input type="checkbox" name="tax.<%= t.id %>.delete" value="1" aria-label="Remove <%= t.name %>"></td>
+            </tr>
+          <% } %>
+          <tr class="new-row">
+            <td><input name="tax.new.name" placeholder="New tax name" aria-label="New tax name"></td>
+            <td><input type="number" name="tax.new.rate" min="0" max="100" step="0.01" placeholder="0" aria-label="New tax rate"></td>
+            <td><select name="tax.new.kind" aria-label="New tax type"><option value="add">Charged</option><option value="withhold">Withheld</option></select></td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Currencies</h2>
+    <p class="muted">Rate to ZMW = how many Kwacha one unit is worth. When set, documents in that currency also show the Kwacha equivalent (the rate is fixed on each document when saved).</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Code</th><th>Symbol</th><th>Name</th><th>Rate to ZMW</th><th>Default</th><th>Remove</th></tr></thead>
+        <tbody>
+          <% for (const c of currencies) { %>
+            <tr>
+              <td><strong><%= c.code %></strong></td>
+              <td><input name="cur.<%= c.code %>.symbol" value="<%= c.symbol %>" maxlength="4" aria-label="Symbol"></td>
+              <td><input name="cur.<%= c.code %>.name" value="<%= c.name %>" aria-label="Name"></td>
+              <td><% if (c.code === 'ZMW') { %>1<% } else { %><input type="number" name="cur.<%= c.code %>.rate" value="<%= c.rate_to_zmw ?? '' %>" min="0" step="0.0001" placeholder="not set" aria-label="Rate"><% } %></td>
+              <td class="center"><input type="radio" name="default_currency" value="<%= c.code %>"<%= c.is_default ? ' checked' : '' %> aria-label="Default currency"></td>
+              <td class="center"><% if (c.code !== 'ZMW') { %><input type="checkbox" name="cur.<%= c.code %>.delete" value="1" aria-label="Remove <%= c.code %>"><% } %></td>
+            </tr>
+          <% } %>
+          <tr class="new-row">
+            <td><input name="cur.new.code" maxlength="3" placeholder="e.g. BWP" aria-label="New currency code"></td>
+            <td><input name="cur.new.symbol" maxlength="4" placeholder="P" aria-label="New currency symbol"></td>
+            <td><input name="cur.new.name" placeholder="Botswana Pula" aria-label="New currency name"></td>
+            <td><input type="number" name="cur.new.rate" min="0" step="0.0001" aria-label="New currency rate"></td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Defaults &amp; numbering</h2>
+    <div class="grid-3">
+      <label>Company TPIN<input name="tpin" value="<%= s.tpin %>" placeholder="Shown on every document"></label>
+      <label>Invoices due after (days)<input type="number" name="due_days" min="0" value="<%= s.dueDays %>"></label>
+      <label>Quotations valid for (days)<input type="number" name="valid_days" min="0" value="<%= s.validDays %>"></label>
+      <label>Default deposit (%)<input type="number" name="deposit_percent" min="0" max="100" value="<%= s.depositPercent %>"></label>
+      <% for (const [k, v] of Object.entries(inv.DOC_TYPES)) { %>
+        <label>Next <%= v.label.toLowerCase() %> number<input type="number" name="next_<%= k %>" min="1" value="<%= counters[k] %>"><small class="muted">Next: <%= inv.nextNumber(k).number %></small></label>
+      <% } %>
+    </div>
+    <label>Default terms &amp; conditions<textarea name="terms" rows="4"><%= s.terms %></textarea></label>
+    <label>Document footer<input name="footer" value="<%= s.footer %>"></label>
+  </section>
+  <div class="save-bar"><button class="btn btn-gold" type="submit">Save invoice settings</button></div>
+</form>
+<%- include('foot') %>

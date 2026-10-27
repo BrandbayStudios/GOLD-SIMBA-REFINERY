@@ -1,0 +1,42 @@
+<%- include('head') %>
+<p class="muted">BrandBay’s services and sub-services. Standard prices (in <%= currency.code %>) fill in automatically when you add a service to an invoice or quotation, and can still be changed per document. Categories come from <a href="/admin/content/services">Website → Services</a>.</p>
+<form method="post" action="/admin/invoices/catalog" class="catalog-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <%
+    const byCat = {};
+    for (const it of items) (byCat[it.category_name] = byCat[it.category_name] || []).push(it);
+  %>
+  <% for (const [cat, list] of Object.entries(byCat)) { %>
+    <section class="panel">
+      <h2><%= cat %></h2>
+      <div class="table-wrap">
+        <table class="table price-table">
+          <thead><tr><th>Sub-service</th><th>Unit</th><th>Price (<%= currency.symbol %>)</th><th>Default tax</th><th>Remove</th></tr></thead>
+          <tbody>
+            <% for (const it of list) { %>
+              <tr>
+                <td><input name="item.<%= it.id %>.name" value="<%= it.name %>" aria-label="Name" required></td>
+                <td><input name="item.<%= it.id %>.unit" value="<%= it.unit || '' %>" aria-label="Unit"></td>
+                <td><input type="number" name="item.<%= it.id %>.price" value="<%= it.price %>" min="0" step="0.01" aria-label="Price for <%= it.name %>"></td>
+                <td><select name="item.<%= it.id %>.tax_id" aria-label="Tax"><option value="">No default</option><% for (const t of taxes) { %><option value="<%= t.id %>"<%= it.tax_id === t.id ? ' selected' : '' %>><%= t.name %> (<%= t.rate %>%)</option><% } %></select></td>
+                <td class="center"><input type="checkbox" name="item.<%= it.id %>.delete" value="1" aria-label="Remove <%= it.name %>"></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% } %>
+  <section class="panel">
+    <h2>Add a sub-service</h2>
+    <div class="grid-3">
+      <label>Category<select name="item.new.category_id"><% for (const c of categories) { %><option value="<%= c.id %>"><%= c.name %></option><% } %></select></label>
+      <label>Name<input name="item.new.name" placeholder="e.g. Letterhead Design"></label>
+      <label>Unit<input name="item.new.unit" placeholder="per project"></label>
+      <label>Price (<%= currency.symbol %>)<input type="number" name="item.new.price" min="0" step="0.01" value="0"></label>
+      <label>Default tax<select name="item.new.tax_id"><% for (const t of taxes) { %><option value="<%= t.id %>"<%= t.is_default ? ' selected' : '' %>><%= t.name %> (<%= t.rate %>%)</option><% } %></select></label>
+    </div>
+  </section>
+  <div class="save-bar"><button class="btn btn-gold" type="submit">Save prices</button></div>
+</form>
+<%- include('foot') %>

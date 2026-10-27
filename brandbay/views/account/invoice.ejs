@@ -1,0 +1,18 @@
+<%- include('../partials/head', { extraCss: '/css/invoice.css' }) %>
+<section class="section">
+  <div class="container">
+    <a class="crumb" href="/account">← Dashboard</a>
+    <div class="section-head row">
+      <div><span class="eyebrow"><%= doc.label %></span><h1><%= doc.inv.number %></h1></div>
+      <div class="form-actions">
+        <%- include('../partials/status', { value: doc.status, labels: invoicing.STATUSES }) %>
+        <a class="btn btn-gold" href="/invoice/<%= doc.inv.public_token %>?print=1" target="_blank" rel="noopener">Download / print PDF</a>
+      </div>
+    </div>
+    <% if (doc.inv.type === 'quotation' && ['sent'].includes(doc.inv.status) && doc.inv.request_id) { %>
+      <p class="flash flash-info">To accept this quotation, open your <a href="/account/requests/<%= doc.inv.request_id %>">service request</a> or reply to us.</p>
+    <% } %>
+    <div class="paper-scroll"><%- include('../invoices/paper', { doc, invoicing, is }) %></div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

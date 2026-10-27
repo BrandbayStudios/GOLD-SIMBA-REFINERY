@@ -39,6 +39,19 @@
       <label class="check"><input type="checkbox" name="notify_client" value="1" checked> Email the client about status or quote changes</label>
       <button class="btn btn-gold btn-block" type="submit">Save changes</button>
     </form>
+    <section class="panel">
+      <h2>Billing</h2>
+      <% if (!invoices.length) { %><p class="muted">No quotations or invoices yet.</p><% } %>
+      <ul class="list">
+        <% for (const d of invoices) { %>
+          <li><a href="/admin/invoices/<%= d.id %>"><strong><%= d.number %></strong> · <%= d.label %></a><span><%= invoicing.money(d.t.payable, d.currency_symbol) %> <%- include('../partials/status', { value: d.effective, labels: invoicing.STATUSES }) %></span></li>
+        <% } %>
+      </ul>
+      <div class="form-actions">
+        <a class="btn btn-gold btn-sm" href="/admin/invoices/new?type=quotation&request=<%= request.id %>">Create quotation</a>
+        <a class="btn btn-outline-dark btn-sm" href="/admin/invoices/new?type=invoice&request=<%= request.id %>">Create invoice</a>
+      </div>
+    </section>
     <% if (currentUser.role === 'admin') { %>
       <form class="panel" method="post" action="/admin/requests/<%= request.id %>/delete" data-confirm="Delete <%= request.reference %> and its messages? This cannot be undone.">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">

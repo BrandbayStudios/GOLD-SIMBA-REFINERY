@@ -66,6 +66,9 @@
     });
   }
 
+  // Read-only link fields select their whole value for easy copying.
+  document.querySelectorAll('[data-select-on-focus]').forEach((el) => el.addEventListener('focus', () => el.select()));
+
   // Confirm destructive actions.
   document.addEventListener('submit', (e) => {
     const form = e.target.closest('[data-confirm]');
