@@ -1191,6 +1191,7 @@ let currentUser = null;
 function loadData(){
   const d = localStorage.getItem('saferouteData');
   if(d){ try{ const p=JSON.parse(d); DATA={...DATA,...p}; }catch(e){} }
+  DATA.quotations = (DATA.quotations||[]).map(normalizeQuote);
 }
 function saveData(){
   localStorage.setItem('saferouteData', JSON.stringify(DATA));
@@ -1390,8 +1391,11 @@ function renderDashboard(){
 // ══════════════════════
 //  INVOICE MODULE
 // ══════════════════════
+function chargesSubtotal(doc){
+  return CHARGE_KEYS.reduce((s,k)=>s+(doc[k]||0),0)+(doc.custom_lines||[]).reduce((s,cl)=>s+(cl.amount||0),0);
+}
 function calcInvTotal(inv){
-  const allCharges = (inv.customs_duty||0)+(inv.customs_vat||0)+(inv.asycuda_fees||0)+(inv.agency||0)+(inv.customs_excise||0)+(inv.customs_deposit||0)+(inv.freight_air||0)+(inv.freight_sea||0)+(inv.freight_road||0)+(inv.bank_charges||0)+(inv.insurance||0)+(inv.customs_attendance||0)+(inv.clearance_fees||0)+(inv.bonding||0)+(inv.export_doc||0)+(inv.project_cargo||0)+(inv.oversized_cargo||0)+(inv.permit_acquisition||0)+(inv.cargo_tracking||0)+(inv.express_clearance||0)+(inv.consultancy||0)+(inv.risk_advisory||0)+(inv.cargo_handling||0)+(inv.loading_supervision||0)+(inv.forklift_hire||0)+(inv.crane_hire||0)+(inv.palletizing||0)+(inv.repacking||0)+(inv.storage||0)+(inv.warehouse||0)+(inv.inventory||0)+(inv.security_fees||0)+(inv.inspection||0)+(inv.escort||0)+(inv.delivery||0)+(inv.disbursements||0)+(inv.courier||0)+(inv.interagent||0)+(inv.storage_penalties||0)+(inv.late_penalties||0)+(inv.demurrage||0)+(inv.reprocessing||0)+(inv.waiting_time||0)+(inv.cancellation||0)+(inv.custom_lines||[]).reduce((s,cl)=>s+(cl.amount||0),0);
+  const allCharges = chargesSubtotal(inv);
   const taxAmt = (inv.tax_lines||[]).reduce((s,t)=>s+(allCharges*(t.rate||0)/100),0);
   return allCharges + taxAmt + (inv.shipping||0);
 }
@@ -1488,54 +1492,14 @@ function invoiceForm(inv){
     </div>
     <div class="form-group">
       <label class="form-label">Amount Paid</label>
-      <input id="inv_paid" type="number" step="0.01" class="form-control" value="${n.paid||0}" oninput="calcInvoiceLive()">
+      <input id="inv_paid" type="number" step="0.01" class="form-control" value="${n.paid||0}">
     </div>
     <div class="form-group">
       <label class="form-label">Shipping & Handling</label>
-      <input id="inv_shipping" type="number" step="0.01" class="form-control" value="${n.shipping||0}" oninput="calcInvoiceLive()">
+      <input id="inv_shipping" type="number" step="0.01" class="form-control" value="${n.shipping||0}" oninput="calcDocLive('inv')">
     </div>
   </div>
-  <div class="form-grid">
-    <div class="form-group">
-      <label class="form-label">Customer</label>
-      <select id="inv_customer" class="form-control" onchange="fillCustomerData(this.value,'inv')">
-        <option value="">— Select Customer —</option>
-        ${customerOptions(n.customer_id)}
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Customer TPIN</label>
-      <input id="inv_tpin" class="form-control" value="${n.tpin||''}">
-    </div>
-  </div>
-  <div class="form-grid-3">
-    <div class="form-group">
-      <label class="form-label">P.O. Number</label>
-      <input id="inv_po_no" class="form-control" value="${n.po_no||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Exchange Rate</label>
-      <input id="inv_exchange_rate" class="form-control" placeholder="e.g. $19.3" value="${n.exchange_rate||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Ship Via</label>
-      <input id="inv_ship_via" class="form-control" placeholder="e.g. Air / Sea / Road" value="${n.ship_via||''}">
-    </div>
-  </div>
-  <div class="form-grid-3">
-    <div class="form-group">
-      <label class="form-label">Ship Date</label>
-      <input id="inv_ship_date" type="date" class="form-control" value="${n.ship_date||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Terms</label>
-      <input id="inv_terms_field" class="form-control" placeholder="e.g. Net 30" value="${n.terms_field||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">File / Receipt No.</label>
-      <input id="inv_file_no" class="form-control" placeholder="e.g. 0256/CML/2026" value="${n.file_no||''}">
-    </div>
-  </div>
+  ${docDetailsHTML('inv', n)}
   <div class="form-grid-3">
     <div class="form-group">
       <label class="form-label">Sales Representative</label>
@@ -1544,56 +1508,15 @@ function invoiceForm(inv){
     <div></div><div></div>
   </div>
 
-  <div class="section-divider">Consignment Details</div>
-  <div class="form-grid">
-    <div class="form-group">
-      <label class="form-label">Consignment Description</label>
-      <textarea id="inv_desc" class="form-control" rows="2">${n.consignment_desc||''}</textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Shipper</label>
-      <input id="inv_shipper" class="form-control" value="${n.shipper||''}">
-    </div>
-  </div>
-  <div class="form-grid-3">
-    <div class="form-group">
-      <label class="form-label">No. of Packages</label>
-      <input id="inv_pkgs" class="form-control" value="${n.packages||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Weight</label>
-      <input id="inv_weight" class="form-control" value="${n.weight||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Container No.</label>
-      <input id="inv_container" class="form-control" value="${n.container||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Vessel Name</label>
-      <input id="inv_vessel" class="form-control" value="${n.vessel||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">B/E Number</label>
-      <input id="inv_bill_no" class="form-control" value="${n.bill_no||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">MAWB/HAWB</label>
-      <input id="inv_mawb" class="form-control" value="${n.mawb||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Flight Number</label>
-      <input id="inv_flight" class="form-control" value="${n.flight||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Truck Number</label>
-      <input id="inv_truck" class="form-control" value="${n.truck||''}">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Road Manifest</label>
-      <input id="inv_manifest" class="form-control" value="${n.manifest||''}">
-    </div>
-  </div>
+  ${consignmentHTML('inv', n)}
 
+  ${chargesSectionHTML('inv', n, 'INVOICE TOTAL', 'All business carried out subject to Standard Trading Conditions of the Zambian Customs Clearing and Forwarding Association.')}`;
+}
+
+// ── SHARED: Services & Charges / Tax / Custom lines / Notes / Totals ──
+// Used by both the invoice (p='inv') and quotation (p='q') forms so they stay identical.
+function chargesSectionHTML(p, n, totalLabel, notesDefault){
+  return `
   <div style="font-family:'Montserrat',Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#441D9E;padding:7px 12px;border-radius:6px;background:rgba(68,29,158,0.07);border-left:3px solid rgba(68,29,158,0.22);margin:18px 0 8px 0">Services & Charges</div>
   <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Pick from the list or type your own service description.</p>
 
@@ -1602,102 +1525,39 @@ function invoiceForm(inv){
     <div>
       <label class="form-label">Select or type a service</label>
       <div style="position:relative">
-        <input id="service_name_input" list="service_suggestions" class="form-control" placeholder="Type or pick a service..." style="padding-right:8px">
-        <datalist id="service_suggestions">
-          <option value="Clearing & Forwarding Agent Fees">
-          <option value="Customs Deposit">
-          <option value="Customs Excise Duty">
-          <option value="Freight – Air">
-          <option value="Freight – Sea">
-          <option value="Freight – Road">
-          <option value="Bank / Transaction Charges">
-          <option value="Insurance Arrangement">
-          <option value="Customs Attendance / RIB">
-          <option value="Final Customs Clearance Fees">
-          <option value="Bonding / Unbonding Entry">
-          <option value="Export Documentation">
-          <option value="Project Cargo Handling">
-          <option value="Abnormal / Oversized Cargo Logistics">
-          <option value="Permit Acquisition (ZABS / Ministry)">
-          <option value="Cargo Tracking & Monitoring">
-          <option value="Express / Urgent Clearance">
-          <option value="Consultancy & Advisory">
-          <option value="Risk Management & Compliance Advisory">
-          <option value="Cargo Handling / Offloading Fee">
-          <option value="Loading & Unloading Supervision">
-          <option value="Forklift Hire">
-          <option value="Crane Hire">
-          <option value="Palletizing / Depalletizing">
-          <option value="Repacking / Relabeling">
-          <option value="Storage Charges (Bonded & Non-Bonded)">
-          <option value="Warehouse Management Fee">
-          <option value="Inventory / Stock Control">
-          <option value="Security / Cargo Protection Fees">
-          <option value="Physical Inspection Coordination">
-          <option value="Escort / Verification Services">
-          <option value="Delivery / Collection">
-          <option value="Disbursements">
-          <option value="Courier Costs">
-          <option value="Interagent Charges">
-          <option value="Storage Penalties (After Free Period)">
-          <option value="Late Clearance Penalties">
-          <option value="Demurrage / Detention Escalation">
-          <option value="Reprocessing / Amendment Fees">
-          <option value="Waiting Time Charges (Truck Delays)">
-          <option value="Cancellation / Rescheduling Fees">
+        <input id="${p}_service_name_input" list="${p}_service_suggestions" class="form-control" placeholder="Type or pick a service..." style="padding-right:8px">
+        <datalist id="${p}_service_suggestions">
+          ${Object.keys(SERVICE_KEY_MAP).map(l=>`<option value="${l}">`).join('')}
         </datalist>
       </div>
     </div>
     <div>
       <label class="form-label">Amount</label>
-      <input id="service_amount_input" type="number" step="0.01" class="form-control" placeholder="0.00">
+      <input id="${p}_service_amount_input" type="number" step="0.01" class="form-control" placeholder="0.00">
     </div>
-    <button type="button" onclick="addServiceLine()" style="height:38px;padding:0 16px;background:linear-gradient(135deg,var(--brand-purple),var(--brand-blue));color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Montserrat',Helvetica,sans-serif;cursor:pointer;white-space:nowrap">+ Add</button>
+    <button type="button" onclick="addServiceLine('${p}')" style="height:38px;padding:0 16px;background:linear-gradient(135deg,var(--brand-purple),var(--brand-blue));color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Montserrat',Helvetica,sans-serif;cursor:pointer;white-space:nowrap">+ Add</button>
   </div>
 
   <!-- Added service lines -->
-  <div class="charge-table" id="serviceLinesWrap">
-    ${(()=>{
-      const fixed = [
-        ['Clearing & Forwarding Agent Fees','agency'],['Customs Deposit','customs_deposit'],['Customs Excise Duty','customs_excise'],
-        ['Freight – Air','freight_air'],['Freight – Sea','freight_sea'],['Freight – Road','freight_road'],
-        ['Bank / Transaction Charges','bank_charges'],['Insurance Arrangement','insurance'],
-        ['Customs Attendance / RIB','customs_attendance'],['Final Customs Clearance Fees','clearance_fees'],
-        ['Bonding / Unbonding Entry','bonding'],['Export Documentation','export_doc'],
-        ['Project Cargo Handling','project_cargo'],['Abnormal / Oversized Cargo Logistics','oversized_cargo'],
-        ['Permit Acquisition (ZABS / Ministry)','permit_acquisition'],['Cargo Tracking & Monitoring','cargo_tracking'],
-        ['Express / Urgent Clearance','express_clearance'],['Consultancy & Advisory','consultancy'],
-        ['Risk Management & Compliance Advisory','risk_advisory'],
-        ['Cargo Handling / Offloading Fee','cargo_handling'],['Loading & Unloading Supervision','loading_supervision'],
-        ['Forklift Hire','forklift_hire'],['Crane Hire','crane_hire'],['Palletizing / Depalletizing','palletizing'],
-        ['Repacking / Relabeling','repacking'],['Storage Charges','storage'],['Warehouse Management Fee','warehouse'],
-        ['Inventory / Stock Control','inventory'],['Security / Cargo Protection','security_fees'],
-        ['Physical Inspection','inspection'],['Escort / Verification','escort'],
-        ['Delivery / Collection','delivery'],['Disbursements','disbursements'],
-        ['Courier Costs','courier'],['Interagent Charges','interagent'],
-        ['Storage Penalties','storage_penalties'],['Late Clearance Penalties','late_penalties'],
-        ['Demurrage / Detention','demurrage'],['Reprocessing / Amendment Fees','reprocessing'],
-        ['Waiting Time Charges','waiting_time'],['Cancellation / Rescheduling','cancellation'],
-      ];
-      return fixed.filter(([,k])=>(n[k]||0)>0).map(([label,key])=>`
-        <div class="charge-row" id="svc_${key}">
+  <div class="charge-table" id="${p}_serviceLinesWrap">
+    ${SERVICE_FIELDS.filter(([,k])=>(n[k]||0)>0).map(([label,key])=>`
+        <div class="charge-row" id="${p}_svc_${key}">
           <span class="charge-label" title="${label}">${label}</span>
-          <input id="inv_${key}" type="number" step="0.01" class="form-control charge-amt" value="${n[key]||0}" oninput="calcInvoiceLive()">
-          <button type="button" class="charge-del" onclick="removeServiceLine('${key}','svc_${key}')" title="Remove">&#10005;</button>
-        </div>`).join('');
-    })()}
+          <input id="${p}_${key}" type="number" step="0.01" class="form-control charge-amt" value="${n[key]||0}" oninput="calcDocLive('${p}')">
+          <button type="button" class="charge-del" onclick="removeServiceLine('${p}','${key}')" title="Remove">&#10005;</button>
+        </div>`).join('')}
   </div>
 
   <div style="font-family:'Montserrat',Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#086CC8;padding:7px 12px;border-radius:6px;background:rgba(8,108,200,0.07);border-left:3px solid rgba(8,108,200,0.22);margin:18px 0 8px 0">Tax Type</div>
 
   <!-- Active taxes list -->
-  <div class="charge-table" id="taxLinesWrap">
+  <div class="charge-table" id="${p}_taxLinesWrap">
     ${(n.tax_lines||[{type:'VAT',rate:n.vat_pct||0}]).map((t,i)=>`
-    <div class="charge-row tax-line-row" id="taxrow_${i}" style="grid-template-columns:1fr 100px 90px 28px">
+    <div class="charge-row tax-line-row" id="${p}_taxrow_${i}" style="grid-template-columns:1fr 100px 90px 28px">
       <span class="charge-label">${t.type}</span>
       <span style="font-size:11px;color:var(--text3);align-self:center">${t.rate}% of subtotal</span>
-      <input type="number" step="0.01" class="form-control charge-amt tax-rate-input" data-type="${t.type}" value="${t.rate||0}" oninput="calcInvoiceLive()" placeholder="%">
-      <button type="button" class="charge-del" onclick="removeTaxLine(${i})" title="Remove">&#10005;</button>
+      <input type="number" step="0.01" class="form-control charge-amt tax-rate-input" data-type="${t.type}" value="${t.rate||0}" oninput="calcDocLive('${p}')" placeholder="%">
+      <button type="button" class="charge-del" onclick="removeTaxLine('${p}',${i})" title="Remove">&#10005;</button>
     </div>`).join('')}
   </div>
 
@@ -1705,55 +1565,121 @@ function invoiceForm(inv){
   <div style="display:grid;grid-template-columns:1fr 90px auto;gap:8px;align-items:flex-end;margin-top:8px;margin-bottom:4px">
     <div>
       <label class="form-label">Tax Type</label>
-      <input id="tax_type_input" list="tax_type_suggestions" class="form-control" placeholder="e.g. VAT, WHT, Excise Duty...">
-      <datalist id="tax_type_suggestions">
-        <option value="VAT (16%)">
-        <option value="VAT (0%)">
-        <option value="Withholding Tax (WHT)">
-        <option value="Excise Duty">
-        <option value="Import Duty">
-        <option value="Export Levy">
-        <option value="Tourism Levy">
-        <option value="Carbon Tax">
-        <option value="Customs Surcharge">
-        <option value="Tax Exempt">
+      <input id="${p}_tax_type_input" list="${p}_tax_type_suggestions" class="form-control" placeholder="e.g. VAT, WHT, Excise Duty...">
+      <datalist id="${p}_tax_type_suggestions">
+        ${TAX_TYPE_SUGGESTIONS.map(t=>`<option value="${t}">`).join('')}
       </datalist>
     </div>
     <div>
       <label class="form-label">Rate (%)</label>
-      <input id="tax_rate_input" type="number" step="0.01" min="0" class="form-control" placeholder="0">
+      <input id="${p}_tax_rate_input" type="number" step="0.01" min="0" class="form-control" placeholder="0">
     </div>
-    <button type="button" onclick="addTaxLine()" style="height:38px;padding:0 14px;background:linear-gradient(135deg,var(--brand-purple),var(--brand-blue));color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Montserrat',Helvetica,sans-serif;cursor:pointer;white-space:nowrap">+ Add</button>
+    <button type="button" onclick="addTaxLine('${p}')" style="height:38px;padding:0 14px;background:linear-gradient(135deg,var(--brand-purple),var(--brand-blue));color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Montserrat',Helvetica,sans-serif;cursor:pointer;white-space:nowrap">+ Add</button>
   </div>
   <p style="font-size:11px;color:var(--text3);margin-bottom:16px">Each tax is calculated on the subtotal and stacked. Set rate to 0 for tax-exempt.</p>
 
   <div style="font-family:'Montserrat',Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#16a34a;padding:7px 12px;border-radius:6px;background:rgba(22,163,74,0.06);border-left:3px solid rgba(22,163,74,0.25);margin:18px 0 8px 0">Custom / Additional Services</div>
-  <div id="customLinesWrap">
+  <div id="${p}_customLinesWrap">
     ${(n.custom_lines||[]).map((cl,i)=>`
-    <div class="charge-row custom-line-row" id="clrow_${i}">
-      <input type="text" class="form-control cl-name" placeholder="Type service description..." value="${cl.name||''}" oninput="calcInvoiceLive()" style="flex:2">
-      <input type="number" step="0.01" class="form-control cl-amount charge-amt" placeholder="0.00" value="${cl.amount||0}" oninput="calcInvoiceLive()">
-      <button type="button" class="charge-del" onclick="removeCustomLine(${i})" title="Remove">&#10005;</button>
+    <div class="charge-row custom-line-row" id="${p}_clrow_${i}">
+      <input type="text" class="form-control cl-name" placeholder="Type service description..." value="${(cl.name||'').replace(/"/g,'&quot;')}" oninput="calcDocLive('${p}')" style="flex:2">
+      <input type="number" step="0.01" class="form-control cl-amount charge-amt" placeholder="0.00" value="${cl.amount||0}" oninput="calcDocLive('${p}')">
+      <button type="button" class="charge-del" onclick="removeCustomLine('${p}',${i})" title="Remove">&#10005;</button>
     </div>`).join('')}
   </div>
-  <button type="button" onclick="addCustomLine()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:1.5px dashed rgba(22,163,74,0.4);background:rgba(22,163,74,0.04);color:#16a34a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Montserrat',Helvetica,sans-serif;margin-bottom:16px">
+  <button type="button" onclick="addCustomLine('${p}')" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:1.5px dashed rgba(22,163,74,0.4);background:rgba(22,163,74,0.04);color:#16a34a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Montserrat',Helvetica,sans-serif;margin-bottom:16px">
     &#43; Add Custom Service Line
   </button>
 
   <div class="form-group">
     <label class="form-label">Notes / Terms</label>
-    <textarea id="inv_notes" class="form-control" rows="2">${n.notes||'All business carried out subject to Standard Trading Conditions of the Zambian Customs Clearing and Forwarding Association.'}</textarea>
+    <textarea id="${p}_notes" class="form-control" rows="2">${n.notes||notesDefault}</textarea>
   </div>
 
   <div class="card" style="background:var(--bg3);margin-top:8px;border:1.5px solid var(--border2)">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
       <span style="color:var(--text2)">Service Subtotal:</span>
-      <strong id="live_sub" style="text-align:right;color:var(--text)">K 0.00</strong>
-      <span style="color:var(--text2)">VAT (<span id="live_vpct">16</span>%):</span>
-      <strong id="live_vat" style="text-align:right;color:var(--text)">K 0.00</strong>
-      <span style="color:var(--brand-purple);font-size:14px;font-weight:700;font-family:'Montserrat',Helvetica,sans-serif">INVOICE TOTAL:</span>
-      <strong id="live_total" style="text-align:right;color:var(--brand-purple);font-size:18px;font-family:'Montserrat',Helvetica,sans-serif">K 0.00</strong>
+      <strong id="${p}_live_sub" style="text-align:right;color:var(--text)">K 0.00</strong>
+      <span style="color:var(--text2)">Tax (<span id="${p}_live_vpct">0%</span>):</span>
+      <strong id="${p}_live_vat" style="text-align:right;color:var(--text)">K 0.00</strong>
+      <span style="color:var(--text2)">Shipping & Handling:</span>
+      <strong id="${p}_live_ship" style="text-align:right;color:var(--text)">K 0.00</strong>
+      <span style="color:var(--brand-purple);font-size:14px;font-weight:700;font-family:'Montserrat',Helvetica,sans-serif">${totalLabel}:</span>
+      <strong id="${p}_live_total" style="text-align:right;color:var(--brand-purple);font-size:18px;font-family:'Montserrat',Helvetica,sans-serif">K 0.00</strong>
     </div>
+  </div>`;
+}
+
+// ── SHARED: Document Details + Consignment Details fields (same IDs pattern for inv/q) ──
+function docDetailsHTML(p, n){
+  return `
+  <div class="form-grid">
+    <div class="form-group">
+      <label class="form-label">Customer</label>
+      <select id="${p}_customer" class="form-control" onchange="fillCustomerData(this.value,'${p}')">
+        <option value="">— Select Customer —</option>
+        ${customerOptions(n.customer_id)}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Customer TPIN</label>
+      <input id="${p}_tpin" class="form-control" value="${n.tpin||''}">
+    </div>
+  </div>
+  <div class="form-grid-3">
+    <div class="form-group">
+      <label class="form-label">P.O. Number</label>
+      <input id="${p}_po_no" class="form-control" value="${n.po_no||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Exchange Rate</label>
+      <input id="${p}_exchange_rate" class="form-control" placeholder="e.g. $19.3" value="${n.exchange_rate||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ship Via</label>
+      <input id="${p}_ship_via" class="form-control" placeholder="e.g. Air / Sea / Road" value="${n.ship_via||''}">
+    </div>
+  </div>
+  <div class="form-grid-3">
+    <div class="form-group">
+      <label class="form-label">Ship Date</label>
+      <input id="${p}_ship_date" type="date" class="form-control" value="${n.ship_date||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Terms</label>
+      <input id="${p}_terms_field" class="form-control" placeholder="e.g. Net 30" value="${n.terms_field||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">File / Receipt No.</label>
+      <input id="${p}_file_no" class="form-control" placeholder="e.g. 0256/CML/2026" value="${n.file_no||''}">
+    </div>
+  </div>`;
+}
+function consignmentHTML(p, n){
+  const fld = (label,key,id) => `
+    <div class="form-group">
+      <label class="form-label">${label}</label>
+      <input id="${p}_${id}" class="form-control" value="${n[key]||''}">
+    </div>`;
+  return `
+  <div class="section-divider">Consignment Details</div>
+  <div class="form-grid">
+    <div class="form-group">
+      <label class="form-label">Consignment Description</label>
+      <textarea id="${p}_desc" class="form-control" rows="2">${n.consignment_desc||''}</textarea>
+    </div>
+    ${fld('Shipper','shipper','shipper')}
+  </div>
+  <div class="form-grid-3">
+    ${fld('No. of Packages','packages','pkgs')}
+    ${fld('Weight','weight','weight')}
+    ${fld('Container No.','container','container')}
+    ${fld('Vessel Name','vessel','vessel')}
+    ${fld('B/E Number','bill_no','bill_no')}
+    ${fld('MAWB/HAWB','mawb','mawb')}
+    ${fld('Flight Number','flight','flight')}
+    ${fld('Truck Number','truck','truck')}
+    ${fld('Road Manifest','manifest','manifest')}
   </div>`;
 }
 
@@ -1795,81 +1721,102 @@ const SERVICE_KEY_MAP = {
   'Demurrage / Detention Escalation':'demurrage','Reprocessing / Amendment Fees':'reprocessing',
   'Waiting Time Charges (Truck Delays)':'waiting_time','Cancellation / Rescheduling Fees':'cancellation',
 };
-function addServiceLine(){
-  const nameEl = document.getElementById('service_name_input');
-  const amtEl  = document.getElementById('service_amount_input');
+const SERVICE_FIELDS = [
+  ['Clearing & Forwarding Agent Fees','agency'],['Customs Deposit','customs_deposit'],['Customs Excise Duty','customs_excise'],
+  ['Freight – Air','freight_air'],['Freight – Sea','freight_sea'],['Freight – Road','freight_road'],
+  ['Bank / Transaction Charges','bank_charges'],['Insurance Arrangement','insurance'],
+  ['Customs Attendance / RIB','customs_attendance'],['Final Customs Clearance Fees','clearance_fees'],
+  ['Bonding / Unbonding Entry','bonding'],['Export Documentation','export_doc'],
+  ['Project Cargo Handling','project_cargo'],['Abnormal / Oversized Cargo Logistics','oversized_cargo'],
+  ['Permit Acquisition (ZABS / Ministry)','permit_acquisition'],['Cargo Tracking & Monitoring','cargo_tracking'],
+  ['Express / Urgent Clearance','express_clearance'],['Consultancy & Advisory','consultancy'],
+  ['Risk Management & Compliance Advisory','risk_advisory'],
+  ['Cargo Handling / Offloading Fee','cargo_handling'],['Loading & Unloading Supervision','loading_supervision'],
+  ['Forklift Hire','forklift_hire'],['Crane Hire','crane_hire'],['Palletizing / Depalletizing','palletizing'],
+  ['Repacking / Relabeling','repacking'],['Storage Charges','storage'],['Warehouse Management Fee','warehouse'],
+  ['Inventory / Stock Control','inventory'],['Security / Cargo Protection','security_fees'],
+  ['Physical Inspection','inspection'],['Escort / Verification','escort'],
+  ['Delivery / Collection','delivery'],['Disbursements','disbursements'],
+  ['Courier Costs','courier'],['Interagent Charges','interagent'],
+  ['Storage Penalties','storage_penalties'],['Late Clearance Penalties','late_penalties'],
+  ['Demurrage / Detention','demurrage'],['Reprocessing / Amendment Fees','reprocessing'],
+  ['Waiting Time Charges','waiting_time'],['Cancellation / Rescheduling','cancellation'],
+];
+// Every numeric charge field on an invoice/quotation (legacy ZRA keys + service keys)
+const CHARGE_KEYS = ['customs_duty','customs_vat','asycuda_fees',...SERVICE_FIELDS.map(([,k])=>k)];
+const TAX_TYPE_SUGGESTIONS = ['VAT (16%)','VAT (0%)','Withholding Tax (WHT)','Excise Duty','Import Duty','Export Levy','Tourism Levy','Carbon Tax','Customs Surcharge','Tax Exempt'];
+
+function addServiceLine(p){
+  const nameEl = document.getElementById(`${p}_service_name_input`);
+  const amtEl  = document.getElementById(`${p}_service_amount_input`);
   const name   = nameEl?.value?.trim();
   if(!name){ nameEl?.focus(); return; }
   const amount = parseFloat(amtEl?.value)||0;
-  const wrap   = document.getElementById('serviceLinesWrap');
+  const wrap   = document.getElementById(`${p}_serviceLinesWrap`);
   if(!wrap) return;
 
   const knownKey = SERVICE_KEY_MAP[name];
   if(knownKey){
     // Use a mapped fixed field — don't duplicate
-    if(document.getElementById(`svc_${knownKey}`)){
-      const inp = document.getElementById(`inv_${knownKey}`);
+    if(document.getElementById(`${p}_svc_${knownKey}`)){
+      const inp = document.getElementById(`${p}_${knownKey}`);
       if(inp){ inp.value = (parseFloat(inp.value)||0)+amount||amount; inp.focus(); }
-      nameEl.value=''; amtEl.value=''; calcInvoiceLive(); return;
+      nameEl.value=''; amtEl.value=''; calcDocLive(p); return;
     }
     const row = document.createElement('div');
-    row.className='charge-row'; row.id=`svc_${knownKey}`;
+    row.className='charge-row'; row.id=`${p}_svc_${knownKey}`;
     row.innerHTML=`<span class="charge-label" title="${name}">${name}</span>
-      <input id="inv_${knownKey}" type="number" step="0.01" class="form-control charge-amt" value="${amount}" oninput="calcInvoiceLive()">
-      <button type="button" class="charge-del" onclick="removeServiceLine('${knownKey}','svc_${knownKey}')" title="Remove">&#10005;</button>`;
+      <input id="${p}_${knownKey}" type="number" step="0.01" class="form-control charge-amt" value="${amount}" oninput="calcDocLive('${p}')">
+      <button type="button" class="charge-del" onclick="removeServiceLine('${p}','${knownKey}')" title="Remove">&#10005;</button>`;
     wrap.appendChild(row);
   } else {
     // Unknown / fully custom — goes into custom_lines pool
     const idx = Date.now();
     const row = document.createElement('div');
-    row.className='charge-row custom-line-row'; row.id=`clrow_svc_${idx}`;
-    row.innerHTML=`<input type="text" class="form-control cl-name" value="${name.replace(/"/g,'&quot;')}" oninput="calcInvoiceLive()" style="flex:2;font-size:12px;padding:4px 8px;height:30px;border:none;background:transparent">
-      <input type="number" step="0.01" class="form-control cl-amount charge-amt" value="${amount}" oninput="calcInvoiceLive()">
-      <button type="button" class="charge-del" onclick="this.closest('.custom-line-row').remove();calcInvoiceLive()" title="Remove">&#10005;</button>`;
+    row.className='charge-row custom-line-row'; row.id=`${p}_clrow_svc_${idx}`;
+    row.innerHTML=`<input type="text" class="form-control cl-name" value="${name.replace(/"/g,'&quot;')}" oninput="calcDocLive('${p}')" style="flex:2;font-size:12px;padding:4px 8px;height:30px;border:none;background:transparent">
+      <input type="number" step="0.01" class="form-control cl-amount charge-amt" value="${amount}" oninput="calcDocLive('${p}')">
+      <button type="button" class="charge-del" onclick="this.closest('.custom-line-row').remove();calcDocLive('${p}')" title="Remove">&#10005;</button>`;
     // Append to customLinesWrap instead
-    const cw = document.getElementById('customLinesWrap');
+    const cw = document.getElementById(`${p}_customLinesWrap`);
     if(cw) cw.appendChild(row);
   }
-  nameEl.value=''; amtEl.value=''; nameEl.focus(); calcInvoiceLive();
+  nameEl.value=''; amtEl.value=''; nameEl.focus(); calcDocLive(p);
 }
-function removeServiceLine(key, rowId){
-  const inp = document.getElementById(`inv_${key}`);
+function removeServiceLine(p, key){
+  const inp = document.getElementById(`${p}_${key}`);
   if(inp) inp.value='0';
-  document.getElementById(rowId)?.remove();
-  calcInvoiceLive();
+  document.getElementById(`${p}_svc_${key}`)?.remove();
+  calcDocLive(p);
 }
-
-// ── ADVISORY (legacy alias — now handled by addServiceLine) ──
-function addAdvisoryLine(){ addServiceLine(); }
-function removeAdvisoryLine(key){ removeServiceLine(key,`adr_${key}`); }
 
 // ── CUSTOM LINE ITEMS ──
 let _clCount = 0;
-function addCustomLine(){
-  const wrap = document.getElementById('customLinesWrap');
+function addCustomLine(p){
+  const wrap = document.getElementById(`${p}_customLinesWrap`);
   if(!wrap) return;
   const idx = _clCount++;
   const row = document.createElement('div');
   row.className = 'charge-row custom-line-row';
-  row.id = `clrow_new_${idx}`;
+  row.id = `${p}_clrow_new_${idx}`;
   row.innerHTML = `
-    <input type="text" class="form-control cl-name" placeholder="Type service description..." oninput="calcInvoiceLive()" style="font-size:12px;padding:4px 8px;height:30px;border:none;background:transparent;flex:2">
-    <input type="number" step="0.01" class="form-control cl-amount charge-amt" placeholder="0.00" value="0" oninput="calcInvoiceLive()">
-    <button type="button" class="charge-del" onclick="this.closest('.custom-line-row').remove();calcInvoiceLive()" title="Remove">&#10005;</button>`;
+    <input type="text" class="form-control cl-name" placeholder="Type service description..." oninput="calcDocLive('${p}')" style="font-size:12px;padding:4px 8px;height:30px;border:none;background:transparent;flex:2">
+    <input type="number" step="0.01" class="form-control cl-amount charge-amt" placeholder="0.00" value="0" oninput="calcDocLive('${p}')">
+    <button type="button" class="charge-del" onclick="this.closest('.custom-line-row').remove();calcDocLive('${p}')" title="Remove">&#10005;</button>`;
   wrap.appendChild(row);
   row.querySelector('.cl-name').focus();
-  calcInvoiceLive();
+  calcDocLive(p);
 }
-function removeCustomLine(idx){
-  document.getElementById(`clrow_${idx}`)?.remove();
-  calcInvoiceLive();
+function removeCustomLine(p, idx){
+  document.getElementById(`${p}_clrow_${idx}`)?.remove();
+  calcDocLive(p);
 }
-function getCustomLinesTotal(){
-  return Array.from(document.querySelectorAll('#customLinesWrap .cl-amount'))
+function getCustomLinesTotal(p){
+  return Array.from(document.querySelectorAll(`#${p}_customLinesWrap .cl-amount`))
     .reduce((s,el)=>s+(parseFloat(el.value)||0), 0);
 }
-function getCustomLinesData(){
-  return Array.from(document.querySelectorAll('#customLinesWrap .custom-line-row')).map(row=>({
+function getCustomLinesData(p){
+  return Array.from(document.querySelectorAll(`#${p}_customLinesWrap .custom-line-row`)).map(row=>({
     name: row.querySelector('.cl-name')?.value?.trim()||'',
     amount: parseFloat(row.querySelector('.cl-amount')?.value)||0,
   })).filter(cl=>cl.name||cl.amount);
@@ -1877,57 +1824,101 @@ function getCustomLinesData(){
 
 // ── TAX LINES ──
 let _taxCount = 0;
-function addTaxLine(){
-  const typeEl = document.getElementById('tax_type_input');
-  const rateEl = document.getElementById('tax_rate_input');
+function addTaxLine(p){
+  const typeEl = document.getElementById(`${p}_tax_type_input`);
+  const rateEl = document.getElementById(`${p}_tax_rate_input`);
   const type = typeEl?.value?.trim();
   if(!type){ typeEl?.focus(); return; }
   const rate = parseFloat(rateEl?.value)||0;
-  const wrap = document.getElementById('taxLinesWrap');
+  const wrap = document.getElementById(`${p}_taxLinesWrap`);
   if(!wrap) return;
   const idx = _taxCount++;
   const row = document.createElement('div');
   row.className = 'charge-row tax-line-row';
-  row.id = `taxrow_new_${idx}`;
+  row.id = `${p}_taxrow_new_${idx}`;
   row.style.cssText = 'grid-template-columns:1fr 100px 90px 28px';
   row.innerHTML = `
     <span class="charge-label">${type}</span>
     <span style="font-size:11px;color:var(--text3);align-self:center">${rate}% of subtotal</span>
-    <input type="number" step="0.01" class="form-control charge-amt tax-rate-input" data-type="${type}" value="${rate}" oninput="calcInvoiceLive()" placeholder="%">
-    <button type="button" class="charge-del" onclick="this.closest('.tax-line-row').remove();calcInvoiceLive()" title="Remove">&#10005;</button>`;
+    <input type="number" step="0.01" class="form-control charge-amt tax-rate-input" data-type="${type}" value="${rate}" oninput="calcDocLive('${p}')" placeholder="%">
+    <button type="button" class="charge-del" onclick="this.closest('.tax-line-row').remove();calcDocLive('${p}')" title="Remove">&#10005;</button>`;
   wrap.appendChild(row);
   typeEl.value = ''; rateEl.value = '';
   typeEl.focus();
-  calcInvoiceLive();
+  calcDocLive(p);
 }
-function removeTaxLine(idx){
-  document.getElementById(`taxrow_${idx}`)?.remove();
-  calcInvoiceLive();
+function removeTaxLine(p, idx){
+  document.getElementById(`${p}_taxrow_${idx}`)?.remove();
+  calcDocLive(p);
 }
-function getTaxLinesData(){
-  return Array.from(document.querySelectorAll('#taxLinesWrap .tax-line-row')).map(row=>({
+function getTaxLinesData(p){
+  return Array.from(document.querySelectorAll(`#${p}_taxLinesWrap .tax-line-row`)).map(row=>({
     type: row.querySelector('.charge-label')?.textContent?.trim()||'Tax',
     rate: parseFloat(row.querySelector('.tax-rate-input')?.value)||0,
   }));
 }
-function getTaxTotal(sub){
-  return getTaxLinesData().reduce((s,t)=>s+(sub*(t.rate||0)/100), 0);
+function getTaxTotal(p, sub){
+  return getTaxLinesData(p).reduce((s,t)=>s+(sub*(t.rate||0)/100), 0);
 }
 
-function calcInvoiceLive(){
+function calcDocLive(p){
   const g = id => parseFloat(document.getElementById(id)?.value)||0;
-  const sub = g('inv_customs_duty')+g('inv_customs_vat')+g('inv_asycuda_fees')+g('inv_agency')+g('inv_customs_excise')+g('inv_customs_deposit')+g('inv_freight_air')+g('inv_freight_sea')+g('inv_freight_road')+g('inv_bank_charges')+g('inv_insurance')+g('inv_customs_attendance')+g('inv_clearance_fees')+g('inv_bonding')+g('inv_export_doc')+g('inv_project_cargo')+g('inv_oversized_cargo')+g('inv_permit_acquisition')+g('inv_cargo_tracking')+g('inv_express_clearance')+g('inv_consultancy')+g('inv_risk_advisory')+g('inv_cargo_handling')+g('inv_loading_supervision')+g('inv_forklift_hire')+g('inv_crane_hire')+g('inv_palletizing')+g('inv_repacking')+g('inv_storage')+g('inv_warehouse')+g('inv_inventory')+g('inv_security_fees')+g('inv_inspection')+g('inv_escort')+g('inv_delivery')+g('inv_disbursements')+g('inv_courier')+g('inv_interagent')+g('inv_storage_penalties')+g('inv_late_penalties')+g('inv_demurrage')+g('inv_reprocessing')+g('inv_waiting_time')+g('inv_cancellation')+getCustomLinesTotal();
-  const taxAmt = getTaxTotal(sub);
-  const total = sub + taxAmt;
-  const s=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=cur(v); };
-  s('live_sub',sub); s('live_vat',taxAmt); s('live_total',total);
-  const vp_el=document.getElementById('live_vpct');
+  const sub = CHARGE_KEYS.reduce((s,k)=>s+g(`${p}_${k}`),0)+getCustomLinesTotal(p);
+  const taxAmt = getTaxTotal(p, sub);
+  const shipping = g(`${p}_shipping`);
+  const total = sub + taxAmt + shipping;
+  const s=(id,v)=>{ const el=document.getElementById(`${p}_${id}`); if(el) el.textContent=cur(v); };
+  s('live_sub',sub); s('live_vat',taxAmt); s('live_ship',shipping); s('live_total',total);
+  const vp_el=document.getElementById(`${p}_live_vpct`);
   if(vp_el){
-    const taxes = getTaxLinesData();
+    const taxes = getTaxLinesData(p);
     vp_el.textContent = taxes.length ? taxes.map(t=>`${t.type} ${t.rate}%`).join(' + ') : '0%';
   }
 }
+function calcInvoiceLive(){ calcDocLive('inv'); }
+function calcQuoteLive(){ calcDocLive('q'); }
 
+// Fields shared by invoices and quotations, read from the form with prefix p
+function collectDocFields(p){
+  const g = id => document.getElementById(`${p}_${id}`)?.value||'';
+  const gn = id => parseFloat(document.getElementById(`${p}_${id}`)?.value)||0;
+  const custId = parseInt(g('customer'));
+  const cust = DATA.customers.find(c=>c.id===custId);
+  const doc = {
+    id: APP.editingId||Date.now(),
+    number: g('number'),
+    date: g('date'),
+    customer_id: custId,
+    customer_name: cust?cust.company||cust.name:'Unknown',
+    file_no: g('file_no'),
+    tpin: g('tpin'),
+    po_no: g('po_no'),
+    sales_rep: g('sales_rep'),
+    ship_via: g('ship_via'),
+    ship_date: g('ship_date'),
+    terms_field: g('terms_field'),
+    exchange_rate: g('exchange_rate'),
+    shipping: gn('shipping'),
+    consignment_desc: g('desc'),
+    shipper: g('shipper'),
+    packages: g('pkgs'),
+    weight: g('weight'),
+    container: g('container'),
+    vessel: g('vessel'),
+    bill_no: g('bill_no'),
+    mawb: g('mawb'),
+    flight: g('flight'),
+    truck: g('truck'),
+    manifest: g('manifest'),
+    vat_pct: 0,
+    tax_lines: getTaxLinesData(p),
+    status: g('status'),
+    notes: g('notes'),
+    custom_lines: getCustomLinesData(p),
+  };
+  CHARGE_KEYS.forEach(k=>{ doc[k]=gn(k); });
+  return doc;
+}
 function fillCustomerData(custId, prefix){
   const c = DATA.customers.find(x=>x.id==custId);
   if(!c) return;
@@ -1938,87 +1929,12 @@ function fillCustomerData(custId, prefix){
 function saveInvoice(){
   const g = id => document.getElementById(id)?.value||'';
   const gn = id => parseFloat(document.getElementById(id)?.value)||0;
-  const custId = parseInt(g('inv_customer'));
-  const cust = DATA.customers.find(c=>c.id===custId);
   const inv = {
-    id: APP.editingId||Date.now(),
-    number: g('inv_number'),
-    date: g('inv_date'),
+    ...collectDocFields('inv'),
     due_date: g('inv_due_date'),
-    customer_id: custId,
-    customer_name: cust?cust.company||cust.name:'Unknown',
-    file_no: g('inv_file_no'),
     lpo_no: g('inv_lpo'),
     receipt_no: g('inv_receipt'),
-    tpin: g('inv_tpin'),
-    po_no: g('inv_po_no'),
-    sales_rep: g('inv_sales_rep'),
-    ship_via: g('inv_ship_via'),
-    ship_date: g('inv_ship_date'),
-    terms_field: g('inv_terms_field'),
-    exchange_rate: g('inv_exchange_rate'),
     paid: gn('inv_paid'),
-    shipping: gn('inv_shipping'),
-    consignment_desc: g('inv_desc'),
-    shipper: g('inv_shipper'),
-    packages: g('inv_pkgs'),
-    weight: g('inv_weight'),
-    container: g('inv_container'),
-    vessel: g('inv_vessel'),
-    bill_no: g('inv_bill_no'),
-    mawb: g('inv_mawb'),
-    flight: g('inv_flight'),
-    truck: g('inv_truck'),
-    manifest: g('inv_manifest'),
-    customs_duty: gn('inv_customs_duty'),
-    customs_vat: gn('inv_customs_vat'),
-    asycuda_fees: gn('inv_asycuda_fees'),
-    agency: gn('inv_agency'),
-    customs_excise: gn('inv_customs_excise'),
-    customs_deposit: gn('inv_customs_deposit'),
-    freight_air: gn('inv_freight_air'),
-    freight_sea: gn('inv_freight_sea'),
-    freight_road: gn('inv_freight_road'),
-    bank_charges: gn('inv_bank_charges'),
-    insurance: gn('inv_insurance'),
-    customs_attendance: gn('inv_customs_attendance'),
-    clearance_fees: gn('inv_clearance_fees'),
-    bonding: gn('inv_bonding'),
-    export_doc: gn('inv_export_doc'),
-    project_cargo: gn('inv_project_cargo'),
-    oversized_cargo: gn('inv_oversized_cargo'),
-    permit_acquisition: gn('inv_permit_acquisition'),
-    cargo_tracking: gn('inv_cargo_tracking'),
-    express_clearance: gn('inv_express_clearance'),
-    consultancy: gn('inv_consultancy'),
-    risk_advisory: gn('inv_risk_advisory'),
-    cargo_handling: gn('inv_cargo_handling'),
-    loading_supervision: gn('inv_loading_supervision'),
-    forklift_hire: gn('inv_forklift_hire'),
-    crane_hire: gn('inv_crane_hire'),
-    palletizing: gn('inv_palletizing'),
-    repacking: gn('inv_repacking'),
-    storage: gn('inv_storage'),
-    warehouse: gn('inv_warehouse'),
-    inventory: gn('inv_inventory'),
-    security_fees: gn('inv_security_fees'),
-    inspection: gn('inv_inspection'),
-    escort: gn('inv_escort'),
-    delivery: gn('inv_delivery'),
-    disbursements: gn('inv_disbursements'),
-    courier: gn('inv_courier'),
-    interagent: gn('inv_interagent'),
-    storage_penalties: gn('inv_storage_penalties'),
-    late_penalties: gn('inv_late_penalties'),
-    demurrage: gn('inv_demurrage'),
-    reprocessing: gn('inv_reprocessing'),
-    waiting_time: gn('inv_waiting_time'),
-    cancellation: gn('inv_cancellation'),
-    vat_pct: 0,
-    tax_lines: getTaxLinesData(),
-    status: g('inv_status'),
-    notes: g('inv_notes'),
-    custom_lines: getCustomLinesData(),
   };
   if(APP.editingId){
     const idx = DATA.invoices.findIndex(i=>i.id===APP.editingId);
@@ -2057,15 +1973,15 @@ function previewInvoice(id){
   document.getElementById('previewBody').innerHTML = buildInvoiceHTML(inv);
   openModal('previewModal');
 }
-function buildInvoiceHTML(inv){
+function buildInvoiceHTML(inv, kind='invoice'){
+  const isQuote = kind==='quotation';
   const f = n=>parseFloat(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const customTotal = (inv.custom_lines||[]).reduce((s,cl)=>s+(cl.amount||0),0);
-  const sub = (inv.customs_duty||0)+(inv.customs_vat||0)+(inv.asycuda_fees||0)+(inv.agency||0)+(inv.customs_excise||0)+(inv.customs_deposit||0)+(inv.freight_air||0)+(inv.freight_sea||0)+(inv.freight_road||0)+(inv.bank_charges||0)+(inv.insurance||0)+(inv.customs_attendance||0)+(inv.clearance_fees||0)+(inv.bonding||0)+(inv.export_doc||0)+(inv.project_cargo||0)+(inv.oversized_cargo||0)+(inv.permit_acquisition||0)+(inv.cargo_tracking||0)+(inv.express_clearance||0)+(inv.consultancy||0)+(inv.risk_advisory||0)+(inv.cargo_handling||0)+(inv.loading_supervision||0)+(inv.forklift_hire||0)+(inv.crane_hire||0)+(inv.palletizing||0)+(inv.repacking||0)+(inv.storage||0)+(inv.warehouse||0)+(inv.inventory||0)+(inv.security_fees||0)+(inv.inspection||0)+(inv.escort||0)+(inv.delivery||0)+(inv.disbursements||0)+(inv.courier||0)+(inv.interagent||0)+(inv.storage_penalties||0)+(inv.late_penalties||0)+(inv.demurrage||0)+(inv.reprocessing||0)+(inv.waiting_time||0)+(inv.cancellation||0)+customTotal;
+  const sub = chargesSubtotal(inv);
   const vatPct = (inv.tax_lines||[]).reduce((s,t)=>s+(t.rate||0),0);
   const vatAmt = (inv.tax_lines||[]).reduce((s,t)=>s+(sub*(t.rate||0)/100),0);
   const shipping = inv.shipping||0;
   const total = sub+vatAmt+shipping;
-  const paid = inv.paid||0;
+  const paid = isQuote ? 0 : (inv.paid||0);
   const totalDue = total-paid;
   const cust_obj = DATA.customers.find(c=>c.id===inv.customer_id)||{};
 
@@ -2126,7 +2042,7 @@ function buildInvoiceHTML(inv){
           <img src="${LOGO_B64}" style="width:150px;height:auto;object-fit:contain" alt="Saferoute Logistics">
         </td>
         <td style="text-align:right;vertical-align:top">
-          <div style="font-size:28pt;font-weight:900;color:#441D9E;line-height:1;letter-spacing:1px">INVOICE</div>
+          <div style="font-size:28pt;font-weight:900;color:#441D9E;line-height:1;letter-spacing:1px">${isQuote?'QUOTATION':'INVOICE'}</div>
           <div style="font-size:11pt;font-weight:800;color:#333;margin-top:2px">SAFEROUTE LOGISTICS LIMITED</div>
           <div style="font-size:8pt;color:#555;margin-top:6px;line-height:1.7">
             www.saferouteglobal.com<br>
@@ -2143,7 +2059,7 @@ function buildInvoiceHTML(inv){
     <table style="width:100%;border-collapse:collapse;background:#e8eaf6;border-radius:6px;margin-bottom:14px">
       <tr>
         <td style="padding:8px 14px;border-right:2px solid #fff">
-          <span style="font-size:8pt;color:#555;font-weight:700">INVOICE#</span>
+          <span style="font-size:8pt;color:#555;font-weight:700">${isQuote?'QUOTE#':'INVOICE#'}</span>
           <span style="font-size:10pt;font-weight:800;color:#222;margin-left:8px">${inv.number||''}</span>
         </td>
         <td style="padding:8px 14px;border-right:2px solid #fff">
@@ -2159,12 +2075,13 @@ function buildInvoiceHTML(inv){
 
     <!-- ── BILL TO ── -->
     <div style="margin-bottom:14px">
-      <div style="font-size:9pt;font-weight:800;color:#222;margin-bottom:4px">BILL TO:</div>
+      <div style="font-size:9pt;font-weight:800;color:#222;margin-bottom:4px">${isQuote?'QUOTE FOR:':'BILL TO:'}</div>
       <div style="font-size:8.5pt;color:#333;line-height:1.7">
         ${inv.tpin?`TPIN: ${inv.tpin}<br>`:''}
         Name: ${inv.customer_name||'—'}<br>
         ${cust_obj.address?`Address: ${cust_obj.address}<br>`:''}
         ${cust_obj.phone?`Phone Number: ${cust_obj.phone}`:'Phone Number: N/A'}
+        ${isQuote&&(inv.service_type||inv.origin||inv.destination)?`<br>Service: ${inv.service_type||'—'}${inv.origin?` | Origin: ${inv.origin}`:''}${inv.destination?` | Destination: ${inv.destination}`:''}`:''}
       </div>
     </div>
 
@@ -2177,7 +2094,7 @@ function buildInvoiceHTML(inv){
           <th style="padding:7px 10px;text-align:left;font-weight:700;color:#333">Ship Date</th>
           <th style="padding:7px 10px;text-align:left;font-weight:700;color:#333">Ship Via</th>
           <th style="padding:7px 10px;text-align:left;font-weight:700;color:#333">Terms</th>
-          <th style="padding:7px 10px;text-align:left;font-weight:700;color:#333">Due Date</th>
+          <th style="padding:7px 10px;text-align:left;font-weight:700;color:#333">${isQuote?'Valid Until':'Due Date'}</th>
         </tr>
       </thead>
       <tbody>
@@ -2187,7 +2104,7 @@ function buildInvoiceHTML(inv){
           <td style="padding:7px 10px">${inv.ship_date||'N/A'}</td>
           <td style="padding:7px 10px">${inv.ship_via||'N/A'}</td>
           <td style="padding:7px 10px">${inv.terms_field||'—'}</td>
-          <td style="padding:7px 10px">${inv.due_date||'—'}</td>
+          <td style="padding:7px 10px">${(isQuote?inv.valid_until:inv.due_date)||'—'}</td>
         </tr>
       </tbody>
     </table>
@@ -2245,7 +2162,10 @@ function buildInvoiceHTML(inv){
               <td style="padding:7px 12px;font-weight:700;color:#333">SHIPPING &<br>HANDLING:</td>
               <td style="padding:7px 12px;text-align:right;font-weight:600;vertical-align:middle">${f(shipping)}</td>
             </tr>
-            <tr style="border-bottom:1px solid #e0e4f0">
+            ${isQuote?`<tr style="background:#e8eaf6">
+              <td style="padding:8px 12px;font-weight:800;color:#222;font-size:9.5pt">TOTAL:</td>
+              <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:9.5pt;color:#441D9E">${f(total)}</td>
+            </tr>`:`<tr style="border-bottom:1px solid #e0e4f0">
               <td style="padding:7px 12px;font-weight:700;color:#333">TOTAL:</td>
               <td style="padding:7px 12px;text-align:right;font-weight:700">${f(total)}</td>
             </tr>
@@ -2256,7 +2176,7 @@ function buildInvoiceHTML(inv){
             <tr style="background:#e8eaf6">
               <td style="padding:8px 12px;font-weight:800;color:#222;font-size:9.5pt">TOTAL DUE:</td>
               <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:9.5pt;color:#441D9E">${f(totalDue)}</td>
-            </tr>
+            </tr>`}
           </table>
         </td>
       </tr>
@@ -2416,9 +2336,20 @@ function renderQuotations(){
     </div>
   </div>`;
 }
-function calcQuoteTotal(q){
-  const sub=(q.air_freight||0)+(q.sea_freight||0)+(q.road_freight||0)+(q.customs_clearance||0)+(q.warehousing||0)+(q.handling||0)+(q.other||0);
-  return sub*(1+(q.vat_pct||16)/100);
+function calcQuoteTotal(q){ return calcInvTotal(q); }
+// Upgrade quotations saved with the old fixed-charge layout to the invoice field layout
+function normalizeQuote(q){
+  if(!q || q.tax_lines) return q;
+  const n = {...q};
+  [['customs_clearance','clearance_fees'],['air_freight','freight_air'],['sea_freight','freight_sea'],['road_freight','freight_road'],['warehousing','warehouse'],['handling','cargo_handling']]
+    .forEach(([o,k])=>{ if(q[o]) n[k]=(n[k]||0)+q[o]; delete n[o]; });
+  n.custom_lines = q.other ? [{name:'Other Charges',amount:q.other}] : [];
+  delete n.other;
+  n.tax_lines = [{type:'VAT',rate:q.vat_pct||16}];
+  n.vat_pct = 0;
+  if(q.cargo_desc!==undefined){ n.consignment_desc=q.cargo_desc; delete n.cargo_desc; }
+  if(q.terms!==undefined){ n.notes=q.terms; delete n.terms; }
+  return n;
 }
 function openQuotationModal(id=null){
   APP.editingId=id;
@@ -2430,64 +2361,69 @@ function openQuotationModal(id=null){
 }
 function quotationForm(q){
   const n=q||{};
+  const services=['Road Freight','Sea Freight','Air Freight','Customs Clearance','Warehousing','Multi-Modal'];
   return `
+  <div class="section-divider">Document Details</div>
   <div class="form-grid-3">
-    <div class="form-group"><label class="form-label">Quote Number</label><input id="q_number" class="form-control" value="${n.number||genQuoteNum()}" readonly style="opacity:.7"></div>
-    <div class="form-group"><label class="form-label">Date</label><input id="q_date" type="date" class="form-control" value="${n.date||new Date().toISOString().slice(0,10)}"></div>
-    <div class="form-group"><label class="form-label">Status</label><select id="q_status" class="form-control"><option ${!n.status||n.status==='Pending'?'selected':''}>Pending</option><option ${n.status==='Accepted'?'selected':''}>Accepted</option><option ${n.status==='Rejected'?'selected':''}>Rejected</option></select></div>
-  </div>
-  <div class="form-grid">
-    <div class="form-group"><label class="form-label">Customer</label><select id="q_customer" class="form-control"><option value="">— Select —</option>${customerOptions(n.customer_id)}</select></div>
-    <div class="form-group"><label class="form-label">Service Type</label><select id="q_service" class="form-control"><option>Road Freight</option><option>Sea Freight</option><option>Air Freight</option><option>Customs Clearance</option><option>Warehousing</option><option>Multi-Modal</option></select></div>
-  </div>
-  <div class="form-grid">
-    <div class="form-group"><label class="form-label">Cargo Description</label><textarea id="q_desc" class="form-control">${n.cargo_desc||''}</textarea></div>
-    <div class="form-group"><label class="form-label">Origin</label><input id="q_origin" class="form-control" value="${n.origin||''}"></div>
-  </div>
-  <div class="form-grid">
-    <div class="form-group"><label class="form-label">Destination</label><input id="q_dest" class="form-control" value="${n.destination||''}"></div>
-    <div class="form-group"><label class="form-label">Terms & Conditions</label><textarea id="q_terms" class="form-control">${n.terms||'Valid for 30 days. Subject to Standard Trading Conditions.'}</textarea></div>
-  </div>
-  <div class="section-divider">Charges</div>
-  <div class="charge-table">
-    <div class="charge-row"><span class="charge-label">Customs Clearance</span><input id="q_customs" type="number" step="0.01" class="form-control charge-amt" value="${n.customs_clearance||0}" oninput="calcQuoteLive()"><div></div></div>
-    <div class="charge-row"><span class="charge-label">Air Freight</span><input id="q_air" type="number" step="0.01" class="form-control charge-amt" value="${n.air_freight||0}" oninput="calcQuoteLive()"><div></div></div>
-    <div class="charge-row"><span class="charge-label">Sea Freight</span><input id="q_sea" type="number" step="0.01" class="form-control charge-amt" value="${n.sea_freight||0}" oninput="calcQuoteLive()"><div></div></div>
-    <div class="charge-row"><span class="charge-label">Road Freight</span><input id="q_road" type="number" step="0.01" class="form-control charge-amt" value="${n.road_freight||0}" oninput="calcQuoteLive()"><div></div></div>
-    <div class="charge-row"><span class="charge-label">Warehousing</span><input id="q_ware" type="number" step="0.01" class="form-control charge-amt" value="${n.warehousing||0}" oninput="calcQuoteLive()"><div></div></div>
-    <div class="charge-row"><span class="charge-label">Handling Charges</span><input id="q_handling" type="number" step="0.01" class="form-control charge-amt" value="${n.handling||0}" oninput="calcQuoteLive()"><div></div></div>
-    <div class="charge-row"><span class="charge-label">Other Charges</span><input id="q_other" type="number" step="0.01" class="form-control charge-amt" value="${n.other||0}" oninput="calcQuoteLive()"><div></div></div>
-  </div>
-  <div class="form-grid-3">
-    <div class="form-group"><label class="form-label">VAT %</label><input id="q_vat" type="number" class="form-control" value="${n.vat_pct||16}" oninput="calcQuoteLive()"></div>
-  </div>
-  <div class="card" style="background:var(--bg3);margin-top:8px;border:1.5px solid var(--border2)">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
-      <span style="color:var(--text2)">Subtotal:</span><strong id="ql_sub" style="text-align:right;color:var(--text)">K 0.00</strong>
-      <span style="color:var(--text2)">VAT:</span><strong id="ql_vat" style="text-align:right;color:var(--text)">K 0.00</strong>
-      <span style="color:var(--brand-purple);font-weight:700;font-family:'Montserrat',Helvetica,sans-serif">TOTAL:</span><strong id="ql_total" style="text-align:right;color:var(--brand-purple);font-size:18px;font-family:'Montserrat',Helvetica,sans-serif">K 0.00</strong>
+    <div class="form-group">
+      <label class="form-label">Quote Number</label>
+      <input id="q_number" class="form-control" value="${n.number||genQuoteNum()}" readonly style="opacity:.7">
     </div>
-  </div>`;
-}
-function calcQuoteLive(){
-  const g=id=>parseFloat(document.getElementById(id)?.value)||0;
-  const sub=g('q_customs')+g('q_air')+g('q_sea')+g('q_road')+g('q_ware')+g('q_handling')+g('q_other');
-  const vp=g('q_vat'); const vatAmt=sub*vp/100; const total=sub+vatAmt;
-  const f=n=>n.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=cur(v);};
-  s('ql_sub',sub);s('ql_vat',vatAmt);s('ql_total',total);
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input id="q_date" type="date" class="form-control" value="${n.date||new Date().toISOString().slice(0,10)}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Valid Until</label>
+      <input id="q_valid_until" type="date" class="form-control" value="${n.valid_until||''}">
+    </div>
+  </div>
+  <div class="form-grid-3">
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select id="q_status" class="form-control">
+        <option ${!n.status||n.status==='Pending'?'selected':''}>Pending</option>
+        <option ${n.status==='Accepted'?'selected':''}>Accepted</option>
+        <option ${n.status==='Rejected'?'selected':''}>Rejected</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Service Type</label>
+      <select id="q_service" class="form-control">
+        ${services.map(sv=>`<option ${n.service_type===sv?'selected':''}>${sv}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Shipping & Handling</label>
+      <input id="q_shipping" type="number" step="0.01" class="form-control" value="${n.shipping||0}" oninput="calcDocLive('q')">
+    </div>
+  </div>
+  ${docDetailsHTML('q', n)}
+  <div class="form-grid-3">
+    <div class="form-group">
+      <label class="form-label">Sales Representative</label>
+      <input id="q_sales_rep" class="form-control" placeholder="Name of sales rep" value="${n.sales_rep||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Origin</label>
+      <input id="q_origin" class="form-control" value="${n.origin||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Destination</label>
+      <input id="q_dest" class="form-control" value="${n.destination||''}">
+    </div>
+  </div>
+
+  ${consignmentHTML('q', n)}
+
+  ${chargesSectionHTML('q', n, 'QUOTATION TOTAL', 'Valid for 30 days. All business carried out subject to Standard Trading Conditions of the Zambian Customs Clearing and Forwarding Association.')}`;
 }
 function saveQuotation(){
   const g=id=>document.getElementById(id)?.value||'';
-  const gn=id=>parseFloat(document.getElementById(id)?.value)||0;
-  const custId=parseInt(g('q_customer'));
-  const cust=DATA.customers.find(c=>c.id===custId);
   const q={
-    id:APP.editingId||Date.now(),number:g('q_number'),date:g('q_date'),
-    customer_id:custId,customer_name:cust?cust.company||cust.name:'Unknown',
-    service_type:g('q_service'),cargo_desc:g('q_desc'),origin:g('q_origin'),destination:g('q_dest'),
-    customs_clearance:gn('q_customs'),air_freight:gn('q_air'),sea_freight:gn('q_sea'),road_freight:gn('q_road'),warehousing:gn('q_ware'),handling:gn('q_handling'),other:gn('q_other'),
-    vat_pct:gn('q_vat'),terms:g('q_terms'),status:g('q_status'),
+    ...collectDocFields('q'),
+    valid_until:g('q_valid_until'),
+    service_type:g('q_service'),origin:g('q_origin'),destination:g('q_dest'),
   };
   if(APP.editingId){const idx=DATA.quotations.findIndex(x=>x.id===APP.editingId);DATA.quotations[idx]=q;toast('Quotation updated','success');}
   else{DATA.quotations.push(q);toast('Quotation created: '+q.number,'success');}
@@ -2497,48 +2433,16 @@ function deleteQuotation(id){if(!confirm('Delete this quotation?'))return;DATA.q
 function convertToInvoice(qid){
   const q=DATA.quotations.find(x=>x.id===qid);
   if(!q){return;}
-  const inv={...q,id:Date.now(),number:genInvoiceNum(),status:'Unpaid',clearance_fees:q.customs_clearance||0,warehouse:q.warehousing||0,freight_road:q.road_freight||0,freight_sea:q.sea_freight||0,freight_air:q.air_freight||0,customs_duty:0,customs_vat:0,asycuda_fees:0,agency:0,customs_excise:0,customs_deposit:0,bank_charges:0,insurance:0,customs_attendance:0,bonding:0,export_doc:0,project_cargo:0,oversized_cargo:0,permit_acquisition:0,cargo_tracking:0,express_clearance:0,consultancy:0,risk_advisory:0,cargo_handling:0,loading_supervision:0,forklift_hire:0,crane_hire:0,palletizing:0,repacking:0,inventory:0,security_fees:0,inspection:0,escort:0,delivery:0,disbursements:0,courier:0,interagent:0,storage_penalties:0,late_penalties:0,demurrage:0,reprocessing:0,waiting_time:0,cancellation:0,vat_pct:16,consignment_desc:q.cargo_desc||''};
+  // Quotations share the invoice field layout, so every row carries straight over
+  const {valid_until, service_type, origin, destination, ...rest} = q;
+  const inv={...rest,id:Date.now(),number:genInvoiceNum(),status:'Unpaid',paid:0,due_date:valid_until||'',quote_ref:q.number};
   DATA.invoices.push(inv);
   saveData();toast(`Converted to ${inv.number}`,'success');navigate('invoices');
 }
 function previewQuotation(id){
   const q=DATA.quotations.find(x=>x.id===id);
   if(!q)return;
-  const f=n=>parseFloat(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const sub=(q.customs_clearance||0)+(q.air_freight||0)+(q.sea_freight||0)+(q.road_freight||0)+(q.warehousing||0)+(q.handling||0)+(q.other||0);
-  const vatAmt=sub*(q.vat_pct||16)/100; const total=sub+vatAmt;
-  document.getElementById('previewBody').innerHTML=`<div id="invoicePreview"><div class="inv-page">
-    <div class="inv-header">
-      <div style="display:flex;align-items:flex-start;gap:14px">
-        <img src="${LOGO_B64}" style="width:130px;height:90px;object-fit:contain;flex-shrink:0" alt="Saferoute Logo">
-        <div><div class="inv-company-name">SAFEROUTE LOGISTICS LTD</div><div class="inv-company-tagline">Where Safety Meets Reliability</div><div class="inv-company-details">House No. 35 Nalikwanda Road, Woodlands, Lusaka, Zambia<br>Tel: +260 77 277 0526 | +260 96 337 2361</div></div>
-      </div>
-      <div style="text-align:right"><div style="background:#441D9E;color:#fff;padding:6px 14px;border-radius:6px;font-size:11pt;font-weight:900;letter-spacing:2px;margin-bottom:8px">QUOTATION</div><div style="font-size:9pt;color:#555"><strong>Quote No:</strong> ${q.number}<br><strong>Date:</strong> ${q.date}</div></div>
-    </div>
-    <div class="inv-grid">
-      <div><div class="inv-section-title">Quote For</div><div class="inv-field-row"><div class="inv-field-label">Customer</div><div class="inv-field-value">${q.customer_name||'—'}</div></div></div>
-      <div><div class="inv-section-title">Shipment Info</div><div class="inv-field-row"><div class="inv-field-label">Service</div><div class="inv-field-value">${q.service_type||'—'}</div></div><div class="inv-field-row"><div class="inv-field-label">Origin</div><div class="inv-field-value">${q.origin||'—'}</div></div><div class="inv-field-row"><div class="inv-field-label">Destination</div><div class="inv-field-value">${q.destination||'—'}</div></div><div class="inv-field-row"><div class="inv-field-label">Cargo</div><div class="inv-field-value">${q.cargo_desc||'—'}</div></div></div>
-    </div>
-    <table class="inv-charges-table"><thead><tr><th>SERVICE</th><th style="text-align:right">AMOUNT (${curCode()})</th></tr></thead>
-    <tbody>
-    ${[[' Customs Clearance',q.customs_clearance],['Air Freight',q.air_freight],['Sea Freight',q.sea_freight],['Road Freight',q.road_freight],['Warehousing',q.warehousing],['Handling',q.handling],['Other Charges',q.other]].filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td style="text-align:right;font-weight:600">${cur(r[1])}</td></tr>`).join('')}
-    </tbody>
-    <tfoot><tr><td>Subtotal</td><td style="text-align:right">${cur(sub)}</td></tr><tr><td>VAT @ ${q.vat_pct||16}%</td><td style="text-align:right">${cur(vatAmt)}</td></tr><tr class="inv-total-row"><td><strong>TOTAL</strong></td><td style="text-align:right"><strong>${cur(total)}</strong></td></tr></tfoot>
-    </table>
-    <div class="inv-terms"><strong>Terms:</strong> ${q.terms||'Valid for 30 days.'}</div>
-    <div class="inv-bank">
-      <div class="inv-bank-title">🏦 Bank Details — Payment Instructions</div>
-      <div class="inv-bank-row"><dt>Account Name:</dt><dd>SAFEROUTE LOGISTICS LTD</dd></div>
-      <div class="inv-bank-row"><dt>Bank:</dt><dd>Stanbic Bank Zambia Limited</dd></div>
-      <div class="inv-bank-row"><dt>Account No. (ZMW):</dt><dd>9130008231536</dd></div>
-      <div class="inv-bank-row"><dt>Account No. (USD):</dt><dd>9130008231552</dd></div>
-      <div class="inv-bank-row"><dt>Branch Name:</dt><dd>Woodlands</dd></div>
-      <div class="inv-bank-row"><dt>Branch Code:</dt><dd>1030</dd></div>
-      <div class="inv-bank-row"><dt>Branch Sort Code:</dt><dd>040030</dd></div>
-      <div class="inv-bank-row"><dt>SWIFT Code:</dt><dd>SBICZMLX</dd></div>
-    </div>
-    <div class="inv-footer-strip"><span>📞 +260 77 277 0526</span><span>✉ info@saferouteglobal.com</span><span>🌐 www.saferouteglobal.com</span><span>📍 Woodlands, Lusaka</span></div>
-  </div></div>`;
+  document.getElementById('previewBody').innerHTML = buildInvoiceHTML(q, 'quotation');
   openModal('previewModal');
 }
 
