@@ -5,7 +5,7 @@
   "description": "BrandBay Innovation Studios web app: marketing site, service requests, client portal, store and admin.",
   "main": "server.js",
   "engines": {
-    "node": ">=22.13"
+    "node": ">=22.16"
   },
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning server.js",

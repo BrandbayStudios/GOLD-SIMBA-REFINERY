@@ -2,6 +2,7 @@
 <%
   const d = doc.inv;
   const isNew = !locals.existing;
+  const isReceipt = d.type === 'receipt';
   const json = (v) => JSON.stringify(v).replace(/</g, '\\u003c');
   const addTaxes = taxes.filter((t) => t.kind === 'add');
   const groups = {};
@@ -25,7 +26,10 @@
       <h2>Details</h2>
       <div class="grid-3">
         <label>Document type
-          <% if (isNew) { %>
+          <% if (isNew && isReceipt) { %>
+            <input type="hidden" name="type" value="receipt">
+            <input value="<%= inv.DOC_TYPES.receipt.label %>" disabled>
+          <% } else if (isNew) { %>
             <select name="type" data-doc-type>
               <% for (const [k, v] of Object.entries(inv.DOC_TYPES)) { if (k !== 'receipt') { %><option value="<%= k %>"<%= d.type === k ? ' selected' : '' %>><%= v.label %></option><% } } %>
             </select>
@@ -45,11 +49,11 @@
         <% } %>
         <label>Reference / PO<input name="reference" value="<%= d.reference || '' %>" maxlength="120"></label>
       </div>
-      <% if (isNew) { %><p class="muted small-note">Numbers are assigned automatically. Changing the type updates the number when you save.</p><% } %>
+      <% if (isNew && !isReceipt) { %><p class="muted small-note">Numbers are assigned automatically. Changing the type updates the number when you save.</p><% } %>
     </section>
 
     <section class="panel">
-      <h2>Bill to</h2>
+      <h2><%= isReceipt ? 'Received from' : 'Bill to' %></h2>
       <label>Client account <span class="muted">(optional — links the document to their dashboard)</span>
         <select name="user_id" data-client-picker>
           <option value="">No account — enter details below</option>
@@ -66,8 +70,24 @@
       </div>
     </section>
 
+    <% if (isReceipt) { %>
+      <section class="panel">
+        <h2>Payment received</h2>
+        <div class="grid-3">
+          <label>Date received<input type="date" name="paid_on" value="<%= payment.paid_on %>" required></label>
+          <label>Method
+            <select name="method">
+              <% for (const mth of inv.PAYMENT_METHODS) { %><option<%= payment.method === mth ? ' selected' : '' %>><%= mth %></option><% } %>
+            </select>
+          </label>
+          <label>Transaction reference<input name="payment_reference" value="<%= payment.reference || '' %>" maxlength="120"></label>
+        </div>
+        <p class="muted small-note">The amount received is the total of the items below. To receipt a payment against an invoice, record the payment on that invoice instead.</p>
+      </section>
+    <% } %>
+
     <section class="panel">
-      <h2>Services &amp; items</h2>
+      <h2><%= isReceipt ? 'What the payment was for' : 'Services & items' %></h2>
       <div class="add-line">
         <label class="grow">Add a BrandBay service
           <select data-service-picker>
@@ -88,7 +108,7 @@
     </section>
 
     <section class="panel">
-      <h2>Currency, tax &amp; payment</h2>
+      <h2><%= isReceipt ? 'Currency & tax' : 'Currency, tax & payment' %></h2>
       <div class="grid-3">
         <label>Currency
           <select name="currency" data-currency>
@@ -96,6 +116,7 @@
           </select>
         </label>
         <label>Discount on whole document (%)<input type="number" name="discount_percent" min="0" max="100" step="0.01" value="<%= d.discount_percent || 0 %>"></label>
+        <% if (!isReceipt) { %>
         <label>Withholding tax
           <select name="withholding_id">
             <option value="">None</option>
@@ -104,7 +125,9 @@
         </label>
         <label class="check"><input type="checkbox" name="show_deposit" value="1"<%= d.deposit_percent > 0 ? ' checked' : '' %>> Show deposit / balance split</label>
         <label>Deposit (%)<input type="number" name="deposit_percent" min="0" max="100" step="1" value="<%= d.deposit_percent > 0 ? d.deposit_percent : inv.invoiceSettings().depositPercent %>"></label>
+        <% } %>
       </div>
+      <% if (!isReceipt) { %>
       <fieldset class="checks">
         <legend>Payment details shown on the document</legend>
         <% if (!accounts.length) { %><p class="muted">No accounts yet. Add them in <a href="/admin/invoices/settings">Taxes, currency &amp; banks</a>.</p><% } %>
@@ -112,6 +135,7 @@
           <label class="check"><input type="checkbox" name="account_ids" value="<%= a.id %>"<%= accountIds.includes(a.id) ? ' checked' : '' %>> <%= a.label %><%= a.account_number ? ` — ${a.account_number}` : '' %><% if (!a.account_number) { %> <span class="muted">(no number yet, won’t print)</span><% } %></label>
         <% } %>
       </fieldset>
+      <% } %>
     </section>
 
     <section class="panel">
@@ -129,9 +153,13 @@
         <dt>Discount</dt><dd data-t="discount">—</dd>
         <dt>Tax</dt><dd data-t="tax">—</dd>
         <dt class="strong">Total</dt><dd class="strong" data-t="total">—</dd>
-        <dt>Withholding</dt><dd data-t="withholding">—</dd>
-        <dt class="strong">Payable</dt><dd class="strong" data-t="payable">—</dd>
-        <dt>Deposit</dt><dd data-t="deposit">—</dd>
+        <% if (isReceipt) { %>
+          <dt class="strong">Amount received</dt><dd class="strong" data-t="payable">—</dd>
+        <% } else { %>
+          <dt>Withholding</dt><dd data-t="withholding">—</dd>
+          <dt class="strong">Payable</dt><dd class="strong" data-t="payable">—</dd>
+          <dt>Deposit</dt><dd data-t="deposit">—</dd>
+        <% } %>
       </dl>
       <button class="btn btn-gold btn-block" type="submit"><%= isNew ? `Create ${inv.DOC_TYPES[d.type].label.toLowerCase()}` : 'Save changes' %></button>
       <p class="muted small-note">The printed document shows the full tax breakdown by type.</p>

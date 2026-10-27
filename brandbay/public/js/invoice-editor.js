@@ -36,15 +36,19 @@
     const taxable = round2(subtotal - discount);
     const total = round2(taxable + tax);
     const whtSel = form.elements.withholding_id;
-    const wht = whtSel.value ? round2(taxable * taxRate(whtSel.value) / 100) : 0;
+    const wht = whtSel && whtSel.value ? round2(taxable * taxRate(whtSel.value) / 100) : 0;
     const payable = round2(total - wht);
-    const showDeposit = form.elements.show_deposit.checked;
+    // Receipts have no withholding or deposit fields.
+    const showDeposit = Boolean(form.elements.show_deposit && form.elements.show_deposit.checked);
     const out = {
       subtotal, discount: -discount, tax, total, withholding: -wht, payable,
       deposit: showDeposit ? round2(payable * pct(form.elements.deposit_percent.value) / 100) : 0,
     };
-    for (const [k, v] of Object.entries(out)) form.querySelector(`[data-t="${k}"]`).textContent = money(v);
-    form.elements.deposit_percent.disabled = !showDeposit;
+    for (const [k, v] of Object.entries(out)) {
+      const cell = form.querySelector(`[data-t="${k}"]`);
+      if (cell) cell.textContent = money(v);
+    }
+    if (form.elements.deposit_percent) form.elements.deposit_percent.disabled = !showDeposit;
   }
 
   function addLine(values) {
