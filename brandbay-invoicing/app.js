@@ -90,10 +90,16 @@
       const raw = localStorage.getItem(STORE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed && parsed.settings && Array.isArray(parsed.docs)) return parsed;
+        if (parsed && parsed.settings && Array.isArray(parsed.docs)) return normalize(parsed);
       }
     } catch (e) { /* fall through to defaults */ }
     return defaultData();
+  }
+
+  // Older saves have payments without ids; receipts need them to link to a payment.
+  function normalize(d) {
+    d.docs.forEach((x) => { (x.payments || []).forEach((p) => { if (!p.id) p.id = uid(); }); });
+    return d;
   }
 
   function save() {
@@ -199,6 +205,54 @@
     return d.status;
   }
 
+  // ---------------------------------------------------------------- receipts
+
+  // A receipt issued from an invoice payment mirrors that payment and is changed through the invoice.
+  function isLinkedReceipt(d) { return d.type === 'receipt' && Boolean(d.sourceId); }
+
+  // What a receipt acknowledges: the amount received and, when linked, where the invoice stands after that payment.
+  function receiptDetails(r) {
+    const out = { amount: totals(r).paid, invoice: null };
+    const src = r.sourceId ? doc(r.sourceId) : null;
+    if (!src || (src.type !== 'invoice' && src.type !== 'proforma')) return out;
+    const pays = (src.payments || []).filter((p) => num(p.amount) > 0);
+    const ordered = pays.map((p, i) => ({ p, i })).sort((a, b) => (a.p.date || '').localeCompare(b.p.date || '') || a.i - b.i).map((x) => x.p);
+    const at = ordered.findIndex((p) => p.receiptId === r.id);
+    // Paid to date counts every payment up to and including the one this receipt is for.
+    const upTo = at >= 0 ? ordered.slice(0, at + 1) : ordered;
+    const paidToDate = round2(upTo.reduce((sum, p) => sum + num(p.amount), 0));
+    const total = totals(src).payable;
+    out.invoice = { id: src.id, number: src.number, label: DOC_TYPES[src.type].label, total, paidToDate, balance: round2(Math.max(0, total - paidToDate)) };
+    return out;
+  }
+
+  function issueReceipt(src, payment) {
+    const r = newDoc('receipt', src);
+    Object.assign(r, { sourceId: src.id, reference: src.number, issueDate: payment.date || today(), notes: '' });
+    r.payments = [{ id: uid(), date: payment.date, amount: num(payment.amount), method: payment.method, ref: payment.ref || '' }];
+    commitNumber(r);
+    data.docs.push(r);
+    payment.receiptId = r.id;
+    return r;
+  }
+
+  // Keeps an invoice's receipts in step with its payments: edited payments update their receipt, removed ones void it.
+  function syncReceipts(src, previousPayments) {
+    const current = new Map((src.payments || []).map((p) => [p.id, p]));
+    for (const old of previousPayments || []) {
+      if (!old.receiptId) continue;
+      const r = doc(old.receiptId);
+      if (!r) continue;
+      const p = current.get(old.id);
+      if (!p) { r.status = 'cancelled'; continue; }
+      p.receiptId = r.id;
+      r.payments = [{ id: (r.payments[0] && r.payments[0].id) || uid(), date: p.date, amount: num(p.amount), method: p.method, ref: p.ref || '' }];
+      r.issueDate = p.date || r.issueDate;
+      r.reference = src.number;
+      r.currency = src.currency;
+    }
+  }
+
   // ---------------------------------------------------------------- document factory
 
   function newDoc(type, fromDoc) {
@@ -210,7 +264,7 @@
       status: 'draft',
       clientId: fromDoc ? fromDoc.clientId : '',
       issueDate: today(),
-      dueDate: addDays(today(), type === 'quotation' ? s.validDays : s.dueDays),
+      dueDate: type === 'receipt' ? '' : addDays(today(), type === 'quotation' ? s.validDays : s.dueDays),
       currency: fromDoc ? fromDoc.currency : s.defaultCurrency,
       reference: fromDoc ? fromDoc.number : '',
       items: fromDoc ? JSON.parse(JSON.stringify(fromDoc.items)) : [blankItem()],
@@ -218,12 +272,17 @@
       withholdingId: fromDoc ? fromDoc.withholdingId : '',
       depositPercent: type === 'receipt' ? 0 : s.depositPercent,
       showDeposit: type !== 'receipt',
-      bankIds: s.banks.filter((b) => b.active).map((b) => b.id),
+      bankIds: type === 'receipt' ? [] : s.banks.filter((b) => b.active).map((b) => b.id),
       notes: fromDoc ? fromDoc.notes : '',
-      terms: s.terms,
+      terms: type === 'receipt' ? '' : s.terms,
       payments: [],
       created: new Date().toISOString(),
     };
+    if (type === 'receipt') {
+      d.status = 'paid';
+      d.withholdingId = '';
+      d.payments = [{ id: uid(), date: today(), amount: 0, method: PAYMENT_METHODS[0], ref: '' }];
+    }
     return d;
   }
 
@@ -399,6 +458,11 @@
     if (id) {
       const existing = doc(id);
       if (!existing) return renderMissing();
+      if (isLinkedReceipt(existing)) {
+        toast('This receipt mirrors a payment on an invoice. Change that payment, or void this receipt.', true);
+        location.hash = `#/view/${existing.id}`;
+        return;
+      }
       draft = JSON.parse(JSON.stringify(existing));
     } else {
       const fromId = new URLSearchParams(location.hash.split('?')[1] || '').get('from');
@@ -424,13 +488,13 @@
                 <select name="status">${statusOptions(draft.type, draft.status)}</select>
               </label>
               <label>Issue date<input type="date" name="issueDate" value="${esc(draft.issueDate)}" required></label>
-              <label><span id="dueLabel">${draft.type === 'quotation' ? 'Valid until' : 'Due date'}</span><input type="date" name="dueDate" value="${esc(draft.dueDate)}"></label>
+              <label data-not-receipt><span id="dueLabel">${draft.type === 'quotation' ? 'Valid until' : 'Due date'}</span><input type="date" name="dueDate" value="${esc(draft.dueDate)}"></label>
               <label>Reference / PO<input name="reference" value="${esc(draft.reference)}" placeholder="e.g. BB-2026-0001"></label>
             </div>
           </section>
 
           <section class="panel">
-            <div class="panel-head"><h2>Bill to</h2><button class="link" type="button" data-act="new-client">+ New client</button></div>
+            <div class="panel-head"><h2 id="clientHeading">${draft.type === 'receipt' ? 'Received from' : 'Bill to'}</h2><button class="link" type="button" data-act="new-client">+ New client</button></div>
             <select name="clientId" aria-label="Client">
               <option value="">Choose a client…</option>
               ${[...data.clients].sort((a, b) => (a.company || a.name).localeCompare(b.company || b.name)).map((c) => `<option value="${c.id}" ${draft.clientId === c.id ? 'selected' : ''}>${esc(c.company ? `${c.company} — ${c.name}` : c.name)}</option>`).join('')}
@@ -448,8 +512,18 @@
             </div>
           </section>
 
+          <section class="panel" data-receipt-only>
+            <h2>Payment received</h2>
+            <div class="grid-3">
+              <label>Date received<input type="date" data-rp="date" value="${esc(receiptPayment().date)}"></label>
+              <label>Method<select data-rp="method">${PAYMENT_METHODS.map((m) => `<option ${receiptPayment().method === m ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+              <label>Transaction reference<input data-rp="ref" value="${esc(receiptPayment().ref)}" placeholder="Transaction ID"></label>
+            </div>
+            <p class="muted small">The amount received is the total of the items below. To receipt a payment on an invoice, record the payment on that invoice instead.</p>
+          </section>
+
           <section class="panel">
-            <div class="panel-head"><h2>Services &amp; items</h2></div>
+            <div class="panel-head"><h2 id="itemsHeading">${draft.type === 'receipt' ? 'What the payment was for' : 'Services &amp; items'}</h2></div>
             <div class="add-service">
               <label class="grow">Add a service
                 <select id="servicePicker">
@@ -463,25 +537,25 @@
           </section>
 
           <section class="panel">
-            <h2>Currency, tax &amp; payment</h2>
+            <h2 id="moneyHeading">${draft.type === 'receipt' ? 'Currency &amp; tax' : 'Currency, tax &amp; payment'}</h2>
             <div class="grid-3">
               <label>Currency
                 <select name="currency">${s.currencies.map((c) => `<option value="${c.code}" ${draft.currency === c.code ? 'selected' : ''}>${esc(c.code)} — ${esc(c.name)}</option>`).join('')}</select>
               </label>
               <label>Discount on whole document (%)<input type="number" name="discount" min="0" max="100" step="0.01" value="${esc(draft.discount)}"></label>
-              <label>Withholding tax
+              <label data-not-receipt>Withholding tax
                 <select name="withholdingId"><option value="">None</option>${s.taxes.filter((t) => t.kind === 'withhold').map((t) => `<option value="${t.id}" ${draft.withholdingId === t.id ? 'selected' : ''}>${esc(t.name)} (${t.rate}%)</option>`).join('')}</select>
               </label>
-              <label>Deposit required (%)<input type="number" name="depositPercent" min="0" max="100" step="1" value="${esc(draft.depositPercent)}"></label>
-              <label class="check"><input type="checkbox" name="showDeposit" ${draft.showDeposit ? 'checked' : ''}> Show deposit &amp; balance split</label>
+              <label data-not-receipt>Deposit required (%)<input type="number" name="depositPercent" min="0" max="100" step="1" value="${esc(draft.depositPercent)}"></label>
+              <label class="check" data-not-receipt><input type="checkbox" name="showDeposit" ${draft.showDeposit ? 'checked' : ''}> Show deposit &amp; balance split</label>
             </div>
-            <fieldset class="banks">
+            <fieldset class="banks" data-not-receipt>
               <legend>Show these payment details</legend>
               ${s.banks.length ? s.banks.map((b) => `<label class="check"><input type="checkbox" name="bank" value="${b.id}" ${draft.bankIds.includes(b.id) ? 'checked' : ''}> ${esc(b.label)}${b.accountNumber ? '' : ' <span class="muted">(no account number yet)</span>'}</label>`).join('') : '<p class="muted">No payment details yet — add them in <a href="#/settings">Settings</a>.</p>'}
             </fieldset>
           </section>
 
-          <section class="panel" id="paymentsPanel" ${draft.type === 'quotation' ? 'hidden' : ''}>
+          <section class="panel" id="paymentsPanel" data-not-receipt>
             <div class="panel-head"><h2>Payments received</h2><button class="link" type="button" data-act="add-payment">+ Record payment</button></div>
             <div id="payments"></div>
           </section>
@@ -499,6 +573,7 @@
       </div>`;
 
     const form = $('#docForm');
+    applyTypeVisibility();
     drawItems();
     drawPayments();
     drawPreview();
@@ -522,9 +597,25 @@
     $('#topbarActions').onclick = onEditorClick;
   }
 
+  // A standalone receipt records its one payment in the "Payment received" panel.
+  function receiptPayment() {
+    if (!draft.payments || !draft.payments.length) draft.payments = [{ id: uid(), date: draft.issueDate || today(), amount: 0, method: PAYMENT_METHODS[0], ref: '' }];
+    return draft.payments[0];
+  }
+
+  function applyTypeVisibility() {
+    const receipt = draft.type === 'receipt';
+    $$('[data-not-receipt]').forEach((el) => { el.hidden = receipt; });
+    $$('[data-receipt-only]').forEach((el) => { el.hidden = !receipt; });
+    if (draft.type === 'quotation') $('#paymentsPanel').hidden = true;
+    $('#clientHeading').textContent = receipt ? 'Received from' : 'Bill to';
+    $('#itemsHeading').textContent = receipt ? 'What the payment was for' : 'Services & items';
+    $('#moneyHeading').textContent = receipt ? 'Currency & tax' : 'Currency, tax & payment';
+  }
+
   function statusOptions(type, current) {
     const allowed = type === 'quotation' ? ['draft', 'sent', 'accepted', 'declined', 'cancelled']
-      : type === 'receipt' ? ['paid']
+      : type === 'receipt' ? ['paid', 'cancelled']
         : ['draft', 'sent', 'cancelled'];
     if (!allowed.includes(current)) allowed.unshift(current);
     return allowed.map((k) => `<option value="${k}" ${current === k ? 'selected' : ''}>${STATUSES[k]}</option>`).join('');
@@ -598,6 +689,8 @@
       $('[data-line-total]', itemEl).textContent = money(lineNet(it), draft.currency);
     } else if (payEl && t.dataset.p) {
       draft.payments[Number(payEl.dataset.pay)][t.dataset.p] = t.value;
+    } else if (t.dataset.rp) {
+      receiptPayment()[t.dataset.rp] = t.value;
     } else if (t.name === 'bank') {
       draft.bankIds = $$('input[name="bank"]:checked').map((x) => x.value);
     } else if (t.name === 'showDeposit') {
@@ -610,9 +703,14 @@
         $('input[name="number"]').value = draft.number;
       }
       draft.status = draft.type === 'receipt' ? 'paid' : 'draft';
+      if (draft.type === 'receipt') {
+        draft.payments = [receiptPayment()];
+        draft.dueDate = '';
+      }
       $('select[name="status"]').innerHTML = statusOptions(draft.type, draft.status);
       $('#dueLabel').textContent = draft.type === 'quotation' ? 'Valid until' : 'Due date';
-      $('#paymentsPanel').hidden = draft.type === 'quotation';
+      applyTypeVisibility();
+      drawPayments();
       setTitle(`${wasNew ? 'New' : 'Edit'} ${DOC_TYPES[draft.type].label.toLowerCase()}`);
     } else if (t.name) {
       draft[t.name] = t.value;
@@ -636,7 +734,7 @@
       case 'down': if (idx < draft.items.length - 1) { [draft.items[idx + 1], draft.items[idx]] = [draft.items[idx], draft.items[idx + 1]]; drawItems(); } break;
       case 'add-payment': {
         const t = totals(draft);
-        draft.payments.push({ date: today(), amount: Math.max(0, t.balance) || '', method: PAYMENT_METHODS[0], ref: '' });
+        draft.payments.push({ id: uid(), date: today(), amount: Math.max(0, t.balance) || '', method: PAYMENT_METHODS[0], ref: '' });
         drawPayments();
         break;
       }
@@ -667,13 +765,24 @@
     const errors = [];
     if (!draft.number.trim()) errors.push('Enter a document number.');
     if (data.docs.some((d) => d.id !== draft.id && d.number.trim().toLowerCase() === draft.number.trim().toLowerCase())) errors.push(`Number ${draft.number} is already used.`);
-    if (!draft.clientId) errors.push('Choose who this is billed to.');
+    if (!draft.clientId) errors.push(draft.type === 'receipt' ? 'Choose who the payment was received from.' : 'Choose who this is billed to.');
     if (!draft.items.length || !draft.items.some((i) => i.name.trim())) errors.push('Add at least one service or item.');
     if (draft.items.some((i) => num(i.qty) < 0 || num(i.price) < 0)) errors.push('Quantities and prices cannot be negative.');
+    if (draft.type === 'receipt' && totals(draft).payable <= 0) errors.push('The amount received must be greater than zero.');
     if (errors.length) { toast(errors[0], true); return; }
 
     draft.items = draft.items.filter((i) => i.name.trim() || num(i.price));
-    draft.payments = (draft.payments || []).filter((p) => num(p.amount) > 0);
+    if (draft.type === 'receipt') {
+      // A standalone receipt has exactly one payment, always equal to its total.
+      const p = receiptPayment();
+      draft.payments = [{ ...p, date: p.date || draft.issueDate, amount: totals(draft).payable }];
+      Object.assign(draft, { withholdingId: '', depositPercent: 0, showDeposit: false, bankIds: [], dueDate: '' });
+    } else {
+      draft.payments = (draft.payments || []).filter((p) => num(p.amount) > 0);
+      draft.payments.forEach((p) => { if (!p.id) p.id = uid(); });
+    }
+    const before = doc(draft.id);
+    if (before && draft.type !== 'receipt') syncReceipts(draft, before.payments);
     draft.discount = num(draft.discount);
     draft.depositPercent = num(draft.depositPercent);
     draft.updated = new Date().toISOString();
@@ -696,7 +805,8 @@
     const label = DOC_TYPES[d.type].label;
     const cur = currency(d.currency);
     // Accounts without a number are skipped so an unfinished setup never prints blank details.
-    const banks = s.banks.filter((b) => d.bankIds.includes(b.id) && b.accountNumber);
+    const banks = d.type === 'receipt' ? [] : s.banks.filter((b) => d.bankIds.includes(b.id) && b.accountNumber);
+    const rd = d.type === 'receipt' ? receiptDetails(d) : null;
     const status = effectiveStatus(d);
     const zmwRate = d.currency !== 'ZMW' && cur && num(cur.rate) ? num(cur.rate) : 0;
 
@@ -776,6 +886,13 @@
                 ${b.branch ? `<div>Branch: ${esc(b.branch)}${b.branchCode ? ` · Code ${esc(b.branchCode)}` : ''}</div>` : ''}
                 ${b.swift ? `<div>SWIFT: ${esc(b.swift)}</div>` : ''}</div>`).join('')}
             <p class="small">Please use <strong>${esc(d.number)}</strong> as your payment reference.</p>` : ''}
+          ${rd && rd.invoice ? `<h3>Applied to ${esc(rd.invoice.label.toLowerCase())} ${esc(rd.invoice.number)}</h3>
+            <table class="sums">
+              <tr><th>${esc(rd.invoice.label)} total</th><td>${money(rd.invoice.total, d.currency)}</td></tr>
+              <tr><th>This payment</th><td>${money(rd.amount, d.currency)}</td></tr>
+              <tr><th>Paid to date</th><td>${money(rd.invoice.paidToDate, d.currency)}</td></tr>
+              <tr class="total"><th>Balance remaining</th><td>${money(rd.invoice.balance, d.currency)}</td></tr>
+            </table>` : ''}
         </div>
         <table class="sums">
           <tr><th>Subtotal</th><td>${money(t.subtotal, d.currency)}</td></tr>
@@ -786,14 +903,15 @@
           ${d.showDeposit && num(d.depositPercent) > 0 && num(d.depositPercent) < 100 && d.type !== 'receipt' ? `
             <tr class="split"><th>Deposit ${num(d.depositPercent)}%</th><td>${money(t.deposit, d.currency)}</td></tr>
             <tr class="split"><th>Balance on completion</th><td>${money(t.payable - t.deposit, d.currency)}</td></tr>` : ''}
-          ${t.paid && d.type !== 'quotation' ? `<tr><th>Paid</th><td>-${money(t.paid, d.currency)}</td></tr><tr class="total"><th>Balance due</th><td>${money(Math.max(0, t.balance), d.currency)}</td></tr>` : ''}
+          ${d.type === 'receipt' ? `<tr class="total"><th>Amount received</th><td>${money(t.paid || t.payable, d.currency)}</td></tr>` : ''}
+          ${t.paid && d.type !== 'quotation' && d.type !== 'receipt' ? `<tr><th>Paid</th><td>-${money(t.paid, d.currency)}</td></tr><tr class="total"><th>Balance due</th><td>${money(Math.max(0, t.balance), d.currency)}</td></tr>` : ''}
           ${zmwRate ? `<tr class="fx"><th>ZMW equivalent @ ${zmwRate}</th><td>K${round2(t.payable * zmwRate).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>` : ''}
         </table>
       </section>
 
       ${(d.payments || []).filter((p) => num(p.amount) > 0).length && d.type !== 'quotation' ? `
         <section class="paper-payments">
-          <h3>Payments received</h3>
+          <h3>${d.type === 'receipt' ? 'Payment details' : 'Payments received'}</h3>
           <table class="lines compact"><tbody>${d.payments.filter((p) => num(p.amount) > 0).map((p) => `<tr><td>${fmtDate(p.date)}</td><td>${esc(p.method)}</td><td>${esc(p.ref)}</td><td class="num">${money(p.amount, d.currency)}</td></tr>`).join('')}</tbody></table>
         </section>` : ''}
 
@@ -811,21 +929,27 @@
     const label = DOC_TYPES[d.type].label;
     setTitle(`${label} ${d.number}`);
     const status = effectiveStatus(d);
+    const linked = isLinkedReceipt(d);
     actions(`
-      <a class="btn btn-outline btn-sm" href="#/edit/${d.id}">Edit</a>
+      ${linked ? '' : `<a class="btn btn-outline btn-sm" href="#/edit/${d.id}">Edit</a>`}
       <button class="btn btn-gold btn-sm" type="button" data-act="print">Print / Save PDF</button>`);
     const t = totals(d);
+    const rd = d.type === 'receipt' ? receiptDetails(d) : null;
+    const pays = (d.payments || []).filter((p) => num(p.amount) > 0);
+    const c = client(d.clientId);
     $('#app').innerHTML = `
       <div class="view-bar">
-        <div>${statusBadge(status)} ${d.type !== 'quotation' && t.balance > 0 ? `<span class="muted">Balance ${money(t.balance, d.currency)}</span>` : ''}</div>
+        <div>${statusBadge(status)}
+          ${d.type !== 'quotation' && d.type !== 'receipt' && t.balance > 0 ? `<span class="muted">Balance ${money(t.balance, d.currency)}</span>` : ''}
+          ${rd ? `<span class="muted">Received ${money(rd.amount, d.currency)}${rd.invoice ? ` · balance remaining on <a href="#/view/${rd.invoice.id}">${esc(rd.invoice.number)}</a>: ${money(rd.invoice.balance, d.currency)}` : ''}</span>` : ''}</div>
         <div class="view-actions">
           ${d.type === 'quotation' ? `<a class="btn btn-gold btn-sm" href="#/new/invoice?from=${d.id}">Convert to invoice</a><a class="btn btn-outline btn-sm" href="#/new/proforma?from=${d.id}">Convert to proforma</a>` : ''}
           ${d.type === 'proforma' ? `<a class="btn btn-gold btn-sm" href="#/new/invoice?from=${d.id}">Convert to invoice</a>` : ''}
-          ${d.type === 'invoice' && t.balance > 0 && status !== 'cancelled' ? `<button class="btn btn-gold btn-sm" type="button" data-act="pay">Record payment</button>` : ''}
-          ${d.type === 'invoice' && t.paid > 0 ? `<button class="btn btn-outline btn-sm" type="button" data-act="receipt">Issue receipt</button>` : ''}
+          ${(d.type === 'invoice' || d.type === 'proforma') && t.balance > 0 && status !== 'cancelled' ? `<button class="btn btn-gold btn-sm" type="button" data-act="pay">Record payment</button>` : ''}
           ${['draft'].includes(d.status) && d.type !== 'receipt' ? `<button class="btn btn-outline btn-sm" type="button" data-act="mark-sent">Mark as sent</button>` : ''}
+          ${d.type === 'receipt' ? `<button class="btn btn-outline btn-sm" type="button" data-act="void">${d.status === 'cancelled' ? 'Restore receipt' : 'Void receipt'}</button>` : ''}
           <button class="btn btn-outline btn-sm" type="button" data-act="email">Email</button>
-          <button class="btn btn-outline btn-sm" type="button" data-act="duplicate">Duplicate</button>
+          ${linked ? '' : '<button class="btn btn-outline btn-sm" type="button" data-act="duplicate">Duplicate</button>'}
           <button class="btn btn-danger btn-sm" type="button" data-act="delete">Delete</button>
         </div>
       </div>
@@ -838,7 +962,22 @@
           <label>Reference<input name="ref" placeholder="Transaction ID"></label>
           <button class="btn btn-gold btn-sm" type="submit">Save payment</button>
         </div>
+        <label class="check"><input type="checkbox" name="issueReceipt" checked> Issue a receipt for this payment</label>
       </form>
+      ${pays.length && (d.type === 'invoice' || d.type === 'proforma') ? `<section class="panel">
+        <h2>Payments &amp; receipts</h2>
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>Date</th><th>Method</th><th>Reference</th><th class="num">Amount</th><th>Receipt</th><th></th></tr></thead>
+          <tbody>${pays.map((p) => {
+            const r = p.receiptId ? doc(p.receiptId) : null;
+            return `<tr>
+              <td>${fmtDate(p.date)}</td><td>${esc(p.method)}</td><td>${esc(p.ref)}</td><td class="num">${money(p.amount, d.currency)}</td>
+              <td>${r ? `<a href="#/view/${r.id}">${esc(r.number)}</a>${r.status === 'cancelled' ? ' <span class="muted">(void)</span>' : ''}` : `<button class="link" type="button" data-act="issue-receipt" data-pay="${esc(p.id)}">Issue receipt</button>`}</td>
+              <td><button class="link danger" type="button" data-act="remove-pay" data-pay="${esc(p.id)}">Remove</button></td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table></div>
+      </section>` : ''}
       <div class="paper-wrap single">${renderPaper(d)}</div>`;
 
     const handler = (e) => {
@@ -851,6 +990,8 @@
         case 'duplicate': {
           const copy = newDoc(d.type, d);
           copy.reference = '';
+          // A copied standalone receipt is a fresh payment received today for the same amount.
+          if (d.type === 'receipt') copy.payments = [{ ...(d.payments[0] || {}), id: uid(), date: today(), ref: '' }];
           commitNumber(copy);
           data.docs.push(copy);
           save();
@@ -858,24 +999,38 @@
           toast(`Duplicated as ${copy.number}.`);
           break;
         }
-        case 'receipt': {
-          const r = newDoc('receipt', d);
-          r.reference = d.number;
-          r.status = 'paid';
-          r.payments = JSON.parse(JSON.stringify(d.payments));
-          r.dueDate = '';
-          r.terms = '';
-          commitNumber(r);
-          data.docs.push(r);
+        case 'issue-receipt': {
+          const p = d.payments.find((x) => x.id === btn.dataset.pay);
+          if (!p) break;
+          const r = issueReceipt(d, p);
           save();
           location.hash = `#/view/${r.id}`;
-          toast(`Receipt ${r.number} created.`);
+          toast(`Receipt ${r.number} issued.`);
           break;
         }
+        case 'remove-pay': {
+          const p = d.payments.find((x) => x.id === btn.dataset.pay);
+          if (!p || !confirm(`Remove the payment of ${money(p.amount, d.currency)}?${p.receiptId ? ' Its receipt will be voided.' : ''}`)) break;
+          const prev = JSON.parse(JSON.stringify(d.payments));
+          d.payments = d.payments.filter((x) => x !== p);
+          // A receipt must never outlive the money it acknowledges.
+          syncReceipts(d, prev);
+          save();
+          route();
+          toast(p.receiptId ? 'Payment removed and its receipt voided.' : 'Payment removed.');
+          break;
+        }
+        case 'void':
+          d.status = d.status === 'cancelled' ? 'paid' : 'cancelled';
+          save();
+          route();
+          toast(d.status === 'cancelled' ? 'Receipt voided.' : 'Receipt restored.');
+          break;
         case 'email': {
-          const c = client(d.clientId);
           const tt = totals(d);
-          const body = `Dear ${c ? c.name : 'client'},\n\nPlease find attached ${label.toLowerCase()} ${d.number} dated ${fmtDate(d.issueDate)} for ${money(tt.payable, d.currency)}.${d.type === 'invoice' && d.dueDate ? `\nPayment is due by ${fmtDate(d.dueDate)}.` : ''}\n\nPlease use ${d.number} as your payment reference.\n\nKind regards,\n${data.settings.company.name}\n${data.settings.company.phone}`;
+          const body = d.type === 'receipt'
+            ? `Dear ${c ? c.name : 'client'},\n\nThank you for your payment of ${money(rd.amount, d.currency)} received on ${fmtDate((d.payments[0] || {}).date || d.issueDate)}.${rd.invoice ? `\nIt has been applied to ${rd.invoice.label.toLowerCase()} ${rd.invoice.number}. Balance remaining: ${money(rd.invoice.balance, d.currency)}.` : ''}\n\nYour receipt ${d.number} is attached.\n\nKind regards,\n${data.settings.company.name}\n${data.settings.company.phone}`
+            : `Dear ${c ? c.name : 'client'},\n\nPlease find attached ${label.toLowerCase()} ${d.number} dated ${fmtDate(d.issueDate)} for ${money(tt.payable, d.currency)}.${d.type === 'invoice' && d.dueDate ? `\nPayment is due by ${fmtDate(d.dueDate)}.` : ''}\n\nPlease use ${d.number} as your payment reference.\n\nKind regards,\n${data.settings.company.name}\n${data.settings.company.phone}`;
           location.href = `mailto:${encodeURIComponent(c && c.email || '')}?subject=${encodeURIComponent(`${label} ${d.number} — ${data.settings.company.name}`)}&body=${encodeURIComponent(body)}`;
           toast('Tip: use Print / Save PDF to attach the document.');
           break;
@@ -883,6 +1038,8 @@
         case 'delete':
           if (confirm(`Delete ${label.toLowerCase()} ${d.number}? This cannot be undone.`)) {
             data.docs = data.docs.filter((x) => x.id !== d.id);
+            // Unlink the payment a deleted receipt was issued for, so a new receipt can be issued.
+            data.docs.forEach((x) => (x.payments || []).forEach((p) => { if (p.receiptId === d.id) delete p.receiptId; }));
             save();
             location.hash = '#/documents';
             toast('Deleted.');
@@ -899,11 +1056,13 @@
       const amount = num(f.get('amount'));
       if (amount <= 0) { toast('Enter an amount greater than zero.', true); return; }
       d.payments = d.payments || [];
-      d.payments.push({ date: f.get('date'), amount, method: f.get('method'), ref: String(f.get('ref') || '').trim() });
+      const payment = { id: uid(), date: f.get('date'), amount, method: f.get('method'), ref: String(f.get('ref') || '').trim() };
+      d.payments.push(payment);
       if (d.status === 'draft') d.status = 'sent';
+      const r = f.get('issueReceipt') ? issueReceipt(d, payment) : null;
       save();
       route();
-      toast('Payment recorded.');
+      toast(r ? `Payment recorded. Receipt ${r.number} issued.` : 'Payment recorded.');
     });
   }
 
