@@ -1,0 +1,9 @@
+<%# Section background: a looping video or a photo, with a dark overlay (opacity in percent), as on the original site. %>
+<div class="bg-media" aria-hidden="true">
+  <% if (locals.video) { %>
+    <video class="bg-video" src="/media/video/<%= video %>.mp4" poster="/media/video/<%= video %>.jpg" autoplay muted loop playsinline preload="<%= locals.eager ? 'auto' : 'metadata' %>" disablepictureinpicture></video>
+  <% } else { %>
+    <img src="/media/bg/<%= image %>.webp" alt="" loading="<%= locals.eager ? 'eager' : 'lazy' %>" data-parallax>
+  <% } %>
+</div>
+<div class="bg-overlay overlay-<%= Math.round((locals.overlay ?? 60) / 5) * 5 %>" aria-hidden="true"></div>

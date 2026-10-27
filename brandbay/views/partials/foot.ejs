@@ -1,36 +1,39 @@
 </main>
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div>
+<footer class="site-footer bg-section">
+  <div class="bg-media" aria-hidden="true"><img src="/media/bg/bg-footer-keyboard.webp" alt="" loading="lazy" data-parallax></div>
+  <div class="bg-overlay overlay-55" aria-hidden="true"></div>
+  <div class="container footer-grid" data-reveal-group>
+    <div class="footer-brand" data-reveal="fade-up">
       <a class="brand brand-footer" href="/"><img src="/brand/logo-stacked-gold.png" alt="<%= settings.site_name %>" width="954" height="565" loading="lazy"></a>
-      <p class="muted"><%= settings.tagline %></p>
-      <div class="socials">
-        <% for (const [key, label] of [['facebook_url', 'Facebook'], ['instagram_url', 'Instagram'], ['linkedin_url', 'LinkedIn']]) { if (settings[key]) { %>
-          <a href="<%= settings[key] %>" target="_blank" rel="noopener" aria-label="<%= label %>"><%- include('icon', { name: label.toLowerCase() }) %></a>
-        <% } } %>
-      </div>
     </div>
-    <div>
+    <div data-reveal="fade-up">
       <h3>Address</h3>
       <p><%= settings.address_1 %><br><%= settings.address_2 %></p>
     </div>
-    <div>
+    <div data-reveal="fade-up">
       <h3>Contacts</h3>
       <p>
         <a href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%= settings.phone %></a><br>
         <a href="mailto:<%= settings.email %>"><%= settings.email %></a>
       </p>
-      <p><a href="/terms">Terms &amp; Conditions</a> · <a href="/blog">Insights</a></p>
     </div>
-    <div>
+    <div data-reveal="fade-up">
       <h3>Subscribe to our newsletter</h3>
       <form class="subscribe" method="post" action="/subscribe">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <label class="sr-only" for="subscribe-email">Email address</label>
         <input id="subscribe-email" type="email" name="email" placeholder="Email address" required autocomplete="email">
-        <button class="btn btn-gold" type="submit">Submit</button>
+        <button class="btn btn-gold btn-shine" type="submit">Submit</button>
       </form>
+      <div class="socials">
+        <% for (const [key, label] of [['facebook_url', 'Facebook'], ['instagram_url', 'Instagram'], ['tiktok_url', 'TikTok'], ['linkedin_url', 'LinkedIn']]) { if (settings[key]) { %>
+          <a href="<%= settings[key] %>" target="_blank" rel="noopener" aria-label="<%= label %>"><%- include('icon', { name: label.toLowerCase() }) %></a>
+        <% } } %>
+      </div>
     </div>
+  </div>
+  <div class="container footer-links">
+    <a href="/about">About</a><a href="/services">Services</a><a href="/projects">Projects</a><a href="/gallery">Gallery</a><a href="/store">Store</a><a href="/contact">Contact</a><a href="/terms">Terms &amp; Conditions</a><a href="/blog">Insights</a>
   </div>
   <div class="container footer-base">
     <p>© <%= new Date().getFullYear() %> BrandBay Innovation Studios. All Rights Reserved.</p>
@@ -41,6 +44,7 @@
     <%- include('icon', { name: 'whatsapp' }) %>
   </a>
 <% } %>
+<button class="to-top" type="button" data-to-top aria-label="Back to top">↑</button>
 <script src="/js/app.js" defer></script>
 </body>
 </html>

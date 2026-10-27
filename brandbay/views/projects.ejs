@@ -1,27 +1,32 @@
 <%- include('partials/head') %>
-<section class="page-hero">
-  <div class="container">
-    <span class="eyebrow">Our recent projects</span>
-    <h1>Work that makes brands <em>impossible to ignore</em>.</h1>
-    <p class="lead">Have a look at some of our recent branding, graphic design and digital marketing work.</p>
+
+<section class="bg-section section-pad page-top">
+  <%- include('partials/bg', { image: 'bg-footer-keyboard', overlay: 73, eager: true }) %>
+  <div class="container center narrow-text">
+    <h1 class="page-title text-gold" data-split>OUR RECENT PROJECTS</h1>
+    <p class="lead-light" data-reveal="fade-up">Have a look at some of our recent branding, graphic design works</p>
   </div>
+  <% if (categories.length > 1) { %>
+    <div class="container filter-row center-row" role="group" aria-label="Filter projects" data-filter-group data-reveal="fade-up">
+      <button class="chip chip-dark active" type="button" data-filter="">All</button>
+      <% for (const c of categories) { %><button class="chip chip-dark" type="button" data-filter="<%= c %>"><%= c %></button><% } %>
+    </div>
+  <% } %>
+  <% if (projects.length) { %>
+    <div class="container mockup-grid" data-filter-target data-reveal-group>
+      <% for (const p of projects) { %>
+        <a class="mockup-card" href="/projects/<%= p.slug %>" data-category="<%= p.category || '' %>" data-reveal="zoom">
+          <img src="<%= p.image %>" alt="<%= p.title %>" loading="lazy">
+          <span class="mockup-info">
+            <% if (p.category) { %><small><%= p.category %></small><% } %>
+            <strong><%= p.title %></strong>
+            <em>View project <%- include('partials/icon', { name: 'arrow' }) %></em>
+          </span>
+        </a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <p class="center lead-light">New projects are coming soon.</p>
+  <% } %>
 </section>
-<section class="section">
-  <div class="container">
-    <% if (categories.length > 1) { %>
-      <div class="filter-row" role="group" aria-label="Filter projects" data-filter-group>
-        <button class="chip active" type="button" data-filter="">All</button>
-        <% for (const c of categories) { %><button class="chip" type="button" data-filter="<%= c %>"><%= c %></button><% } %>
-      </div>
-    <% } %>
-    <% if (projects.length) { %>
-      <div class="project-grid" data-filter-target>
-        <% for (const project of projects) { %><%- include('partials/project-card', { project }) %><% } %>
-      </div>
-    <% } else { %>
-      <p class="empty">New projects are coming soon.</p>
-    <% } %>
-  </div>
-</section>
-<%- include('partials/contact-strip') %>
 <%- include('partials/foot') %>

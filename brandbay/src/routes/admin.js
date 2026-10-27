@@ -322,6 +322,7 @@ const SETTING_FIELDS = [
   { name: 'address_2', label: 'Address (secondary)' },
   { name: 'facebook_url', label: 'Facebook URL' },
   { name: 'instagram_url', label: 'Instagram URL' },
+  { name: 'tiktok_url', label: 'TikTok URL' },
   { name: 'linkedin_url', label: 'LinkedIn URL' },
   { name: 'google_site_verification', label: 'Google Search Console verification code (content of the meta tag)' },
   { name: 'bing_site_verification', label: 'Bing Webmaster Tools verification code' },

@@ -5,7 +5,7 @@ const abs = (p) => (p && /^https?:\/\//.test(p) ? p : `${config.baseUrl}${p || '
 
 // The studio as a local business. Used on every page so search engines can tie pages to one entity.
 function organization(settings, services = []) {
-  const sameAs = ['facebook_url', 'instagram_url', 'linkedin_url'].map((k) => settings[k]).filter(Boolean);
+  const sameAs = ['facebook_url', 'instagram_url', 'tiktok_url', 'linkedin_url'].map((k) => settings[k]).filter(Boolean);
   const org = {
     '@type': 'ProfessionalService',
     '@id': `${config.baseUrl}/#organization`,

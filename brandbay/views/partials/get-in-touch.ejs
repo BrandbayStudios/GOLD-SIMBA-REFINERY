@@ -1,0 +1,25 @@
+<%# "Get In Touch With Us" block shared by Services and Contact, as on the original site. %>
+<section class="bg-section section-pad" id="get-in-touch">
+  <%- include('bg', { video: locals.video, image: locals.image, overlay: locals.overlay }) %>
+  <div class="container touch-split">
+    <div data-reveal="slide-right">
+      <h2 class="section-title text-gold left">Get In Touch With Us</h2>
+      <p class="lead-light">For more information on our services, partnerships, fees and any other inquiries</p>
+      <div class="touch-lines">
+        <a class="touch-line" href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%- include('icon', { name: 'phone' }) %><span><small>Contact</small><%= settings.phone %></span></a>
+        <a class="touch-line" href="mailto:<%= settings.email %>"><%- include('icon', { name: 'mail' }) %><span><small>Email</small><%= settings.email %></span></a>
+        <% if (settings.whatsapp) { %><a class="touch-line" href="https://wa.me/<%= settings.whatsapp.replace(/\D/g, '') %>" target="_blank" rel="noopener"><%- include('icon', { name: 'whatsapp' }) %><span><small>WhatsApp</small>Chat with us</span></a><% } %>
+      </div>
+    </div>
+    <form class="glass-form" method="post" action="/contact" data-reveal="slide-left">
+      <% if (locals.errors && errors.length) { %><%- include('errors') %><% } %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label>FULL NAMES<input name="name" autocomplete="name" value="<%= (locals.form && form.name) || '' %>"></label>
+      <label>EMAIL ADDRESS*<input type="email" name="email" required autocomplete="email" value="<%= (locals.form && form.email) || '' %>"></label>
+      <label>PHONE<input type="tel" name="phone" autocomplete="tel" value="<%= (locals.form && form.phone) || '' %>"></label>
+      <label>DESCRIPTION*<textarea name="message" rows="4" required><%= (locals.form && form.message) || '' %></textarea></label>
+      <button class="btn btn-gold btn-block btn-shine" type="submit">SUBMIT</button>
+    </form>
+  </div>
+</section>

@@ -1,4 +1,6 @@
 const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const { get, all, run } = require('./db');
 const config = require('./config');
 
@@ -84,6 +86,16 @@ function clean(v, max = 5000) {
   return String(v ?? '').trim().slice(0, max);
 }
 
+// Service card photo: /media/services/<slug>.webp when it exists, otherwise a generic studio photo.
+const serviceImageCache = new Map();
+function serviceImage(slug) {
+  if (!serviceImageCache.has(slug)) {
+    const file = path.join(config.root, 'public', 'media', 'services', `${path.basename(String(slug))}.webp`);
+    serviceImageCache.set(slug, fs.existsSync(file) ? `/media/services/${path.basename(String(slug))}.webp` : '/media/bg/bg-laptop-desk.webp');
+  }
+  return serviceImageCache.get(slug);
+}
+
 function getSettings() {
   const out = {};
   for (const row of all('SELECT key, value FROM settings')) out[row.key] = row.value;
@@ -111,5 +123,6 @@ module.exports = {
   isEmail,
   clean,
   getSettings,
+  serviceImage,
   setSetting,
 };

@@ -21,8 +21,8 @@
   --radius-sm: 8px;
   --shadow: 0 10px 30px rgba(11, 15, 20, 0.08);
   --shadow-lg: 0 24px 60px rgba(11, 15, 20, 0.18);
-  --font-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
-  --font-body: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --container: 1200px;
   --header-h: 76px;
 }

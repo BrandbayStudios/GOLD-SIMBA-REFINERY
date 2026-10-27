@@ -1,43 +1,53 @@
 <%- include('partials/head') %>
-<section class="page-hero">
-  <div class="container">
-    <span class="eyebrow">Gallery</span>
-    <h1>Our <em>logofolio</em> &amp; poster designs.</h1>
-    <p class="lead">Identities and campaign artwork created for businesses across Zambia.</p>
-    <div class="chip-row">
-      <a class="chip" href="#logos">Our Logofolio</a>
-      <a class="chip" href="#posters">Our Poster Designs</a>
-    </div>
+
+<section class="section-pad section-ink page-top" id="logos">
+  <div class="container center">
+    <h1 class="page-title" data-split>Our Logofolio</h1>
+    <p class="lead-light" data-reveal="fade-up">Identities crafted for businesses across Zambia. Tap any logo to view it full size.</p>
   </div>
-</section>
-<section class="section" id="logos">
-  <div class="container">
-    <h2>Our Logofolio</h2>
-    <div class="gallery-grid" data-lightbox-group>
-      <% for (const item of logos) { %>
-        <button class="gallery-item" type="button" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
-          <img src="<%= item.image %>" alt="<%= item.title %> logo" loading="lazy">
-          <span><%= item.title %></span>
-        </button>
-      <% } %>
-    </div>
-  </div>
-</section>
-<section class="section section-dark" id="posters">
-  <div class="container">
-    <h2>Our Poster Designs</h2>
-    <div class="gallery-grid posters" data-lightbox-group>
-      <% for (const item of posters) { %>
-        <button class="gallery-item" type="button" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
-          <img src="<%= item.image %>" alt="<%= item.title %> poster" loading="lazy">
-          <span><%= item.title %></span>
-        </button>
-      <% } %>
-    </div>
-    <% if (settings.instagram_url) { %>
-      <div class="center mt-xl"><a class="btn btn-gold" href="<%= settings.instagram_url %>" target="_blank" rel="noopener">See more on our Instagram</a></div>
+  <div class="container logo-wall logo-wall-lg" data-reveal-group data-lightbox-group>
+    <% for (const item of logos) { %>
+      <button class="logo-tile" type="button" data-reveal="zoom" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
+        <img src="<%= item.image %>" alt="<%= item.title %> logo" loading="lazy">
+        <span><%= item.title %></span>
+      </button>
     <% } %>
   </div>
 </section>
+
+<section class="section-pad section-white" id="posters">
+  <div class="container center">
+    <h2 class="section-title dark" data-reveal="fade-up">Our Poster Designs</h2>
+  </div>
+  <div class="container poster-masonry" data-reveal-group data-lightbox-group>
+    <% for (const item of posters) { %>
+      <button class="poster-tile" type="button" data-reveal="fade-up" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
+        <img src="<%= item.image %>" alt="<%= item.title %> poster" loading="lazy">
+        <span><%= item.title %></span>
+      </button>
+    <% } %>
+  </div>
+</section>
+
+<section class="bg-section section-pad" id="instagram">
+  <%- include('partials/bg', { video: 'instagram', overlay: 86 }) %>
+  <div class="container center narrow-text">
+    <h2 class="section-title" data-reveal="fade-up">Our Instagram</h2>
+    <p class="lead-light" data-reveal="fade-up">Fresh designs, behind-the-scenes and client launches — follow along.</p>
+  </div>
+  <div class="insta-marquee" aria-hidden="true">
+    <div class="insta-track">
+      <% for (const pass of [0, 1]) { for (const item of posters.slice(0, 10)) { %><img src="<%= item.image %>" alt="" loading="lazy"><% } } %>
+    </div>
+  </div>
+  <div class="center">
+    <% if (settings.instagram_url) { %>
+      <a class="btn btn-gold btn-lg btn-shine" href="<%= settings.instagram_url %>" target="_blank" rel="noopener" data-reveal="fade-up">Follow us on Instagram</a>
+    <% } else { %>
+      <a class="btn btn-gold btn-lg btn-shine" href="/apply" data-reveal="fade-up">Start your design project</a>
+    <% } %>
+  </div>
+</section>
+
 <%- include('partials/lightbox') %>
 <%- include('partials/foot') %>

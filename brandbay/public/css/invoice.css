@@ -3,11 +3,11 @@
   --ink: #0b0f14; --gold: #e3b400;
   position: relative; width: 210mm; min-height: 297mm; margin: 0 auto; padding: 16mm 15mm 14mm;
   background: #fff; color: #1a1d21; box-shadow: 0 10px 40px rgba(11, 15, 20, 0.12);
-  font: 400 10pt/1.5 'Poppins', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden; text-align: left;
+  font: 400 10pt/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif; display: flex; flex-direction: column; overflow: hidden; text-align: left;
 }
 .paper::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--ink) 70%, var(--gold) 70%); }
-.paper h2, .paper-wordmark { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; }
-.paper h3 { font: 600 7.5pt 'Poppins', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7000; margin: 0 0 0.4em; }
+.paper h2, .paper-wordmark { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400; }
+.paper h3 { font: 600 7.5pt "Helvetica Neue", Helvetica, Arial, sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7000; margin: 0 0 0.4em; }
 .paper p { margin: 0; }
 .paper-head { display: flex; justify-content: space-between; gap: 2rem; margin-bottom: 9mm; }
 .paper-brand { display: grid; gap: 0.6rem; }
@@ -24,7 +24,7 @@
 .paper-parties strong { font-size: 10.5pt; }
 .paper-due { background: var(--ink); color: #fff; border-radius: 8px; padding: 4mm 6mm; text-align: right; display: flex; flex-direction: column; justify-content: center; min-width: 60mm; }
 .paper-due span { font-size: 7.5pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
-.paper-due strong { font: 400 18pt 'DM Serif Display', Georgia, serif; }
+.paper-due strong { font: 400 18pt "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .paper .lines { width: 100%; border-collapse: collapse; font-size: 9pt; }
 .paper .lines th { background: #f6f4ee; font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.08em; color: #4a515c; font-weight: 600; text-align: left; padding: 2.5mm 2mm; border: 0; }
 .paper .lines td { padding: 2.5mm 2mm; border-bottom: 1px solid #eeebe3; vertical-align: top; }
@@ -47,16 +47,16 @@
 .paper-notes { margin-top: 5mm; font-size: 8.5pt; color: #4a515c; }
 .paper-foot { margin-top: auto; padding-top: 6mm; display: flex; justify-content: space-between; gap: 1rem; font-size: 8pt; color: #6b7280; border-top: 1px solid #e8e5dc; }
 .paper-foot span { color: #8a7000; letter-spacing: 0.15em; text-transform: uppercase; font-size: 7pt; }
-.stamp { position: absolute; bottom: 45mm; right: 22mm; transform: rotate(-14deg); border: 3px solid #1e8e5a; color: #1e8e5a; font: 700 22pt 'Poppins', sans-serif; letter-spacing: 0.2em; padding: 2mm 6mm; border-radius: 6px; opacity: 0.75; }
+.stamp { position: absolute; bottom: 45mm; right: 22mm; transform: rotate(-14deg); border: 3px solid #1e8e5a; color: #1e8e5a; font: 700 22pt "Helvetica Neue", Helvetica, Arial, sans-serif; letter-spacing: 0.2em; padding: 2mm 6mm; border-radius: 6px; opacity: 0.75; }
 .stamp-void { border-color: #c0392b; color: #c0392b; }
 
 /* Paper on screen: scrolls sideways on narrow screens instead of squashing. */
 .paper-scroll { overflow-x: auto; padding: 1rem 0 2rem; }
 
 /* Standalone print page (public link) */
-.print-page { margin: 0; background: #e9e7e1; font-family: 'Poppins', system-ui, sans-serif; }
+.print-page { margin: 0; background: #e9e7e1; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .print-bar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.8rem 1.25rem; background: #0b0f14; color: #eef0f3; font-size: 0.9rem; }
-.print-btn { background: #e3b400; color: #0b0f14; border: 0; border-radius: 999px; padding: 0.6rem 1.2rem; font: 600 0.9rem 'Poppins', sans-serif; cursor: pointer; }
+.print-btn { background: #e3b400; color: #0b0f14; border: 0; border-radius: 999px; padding: 0.6rem 1.2rem; font: 600 0.9rem "Helvetica Neue", Helvetica, Arial, sans-serif; cursor: pointer; }
 .print-btn:hover { background: #ffcc01; }
 
 @media print {

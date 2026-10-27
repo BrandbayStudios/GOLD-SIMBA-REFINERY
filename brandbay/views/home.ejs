@@ -1,131 +1,118 @@
 <%- include('partials/head') %>
-<%
-  const words = (settings.hero_title || 'Where Bold Brands Are Engineered to Win.').split(' ');
-  const split = Math.max(1, words.length - 3);
-%>
-<section class="hero">
+
+<section class="bg-section hero-video" id="top">
+  <%- include('partials/bg', { video: 'hero', overlay: 52, eager: true }) %>
   <div class="hero-glow" aria-hidden="true"></div>
-  <div class="container hero-inner">
-    <div class="hero-copy">
-      <p class="eyebrow">Branding, Design &amp; Digital Agency · Lusaka, Zambia</p>
-      <h1><%= words.slice(0, split).join(' ') %> <em><%= words.slice(split).join(' ') %></em></h1>
-      <p class="hero-tag"><%= settings.tagline %></p>
-      <p class="lead"><%= settings.hero_text %></p>
-      <div class="hero-actions">
-        <a class="btn btn-gold btn-lg" href="/apply">Apply For Service <%- include('partials/icon', { name: 'arrow' }) %></a>
-        <a class="btn btn-ghost btn-lg" href="/about">Learn more</a>
+  <div class="container hero-center">
+    <p class="hero-kicker" data-reveal="fade-down">BrandBay Innovation Studios <span>·</span> Lusaka, Zambia</p>
+    <h1 class="hero-title" data-split>
+      Where <span class="text-gold shimmer">Bold Brands</span> Are Engineered to Win.
+    </h1>
+    <p class="pill" data-reveal="zoom"><%= settings.tagline || 'Brand | Build | Boost' %></p>
+    <p class="hero-text" data-reveal="fade-up"><%= settings.hero_text %></p>
+    <div class="hero-buttons" data-reveal="fade-up">
+      <a class="btn btn-white btn-lg btn-shine" href="/apply">Apply For Service</a>
+      <a class="btn btn-gold btn-lg btn-shine" href="/about">Learn more</a>
+    </div>
+  </div>
+  <a class="scroll-cue" href="#what-is" aria-label="Scroll down"><span></span></a>
+</section>
+
+<div class="gold-band" aria-hidden="true">
+  <div class="gold-band-track">
+    <% for (const pass of [0, 1]) { for (const s of services) { for (const item of lib.lines(s.items).slice(0, 3)) { %>
+      <span><%= item %></span><span class="dot">✦</span>
+    <% } } } %>
+  </div>
+</div>
+
+<section class="bg-section section-pad" id="what-is">
+  <%- include('partials/bg', { image: 'bg-laptop-desk', overlay: 82 }) %>
+  <div class="container center narrow-text">
+    <h2 class="section-title" data-reveal="fade-up">What is Brandbay Studio?</h2>
+    <p class="lead-light" data-reveal="fade-up">BrandBay Innovation Studios is a multidisciplinary creative and technology firm in Lusaka, Zambia, focused on building market-leading brands. We don’t just design visuals, we build structured brand ecosystems engineered for authority, visibility, and revenue growth.</p>
+  </div>
+  <div class="container pillar-row" data-reveal-group>
+    <% for (const [icon, label] of [['bulb', 'Strategic Thinking'], ['pen', 'High-Level Creative Execution'], ['code', 'Digital Infrastructure'], ['megaphone', 'Performance-Driven Marketing']]) { %>
+      <div class="pillar-card tilt" data-reveal="zoom">
+        <div class="pillar-card-icon"><%- include('partials/icon', { name: icon }) %></div>
+        <h3><%= label %></h3>
       </div>
-    </div>
-    <div class="hero-mosaic" aria-hidden="true">
-      <% logos.slice(0, 6).forEach((logo, i) => { %>
-        <div class="mosaic-tile t<%= i %>"><img src="<%= logo.image %>" alt="" loading="<%= i < 3 ? 'eager' : 'lazy' %>"></div>
-      <% }) %>
-    </div>
-  </div>
-  <div class="container stat-row">
-    <div><strong><%= stats.brands %>+</strong><span>Brand identities crafted</span></div>
-    <div><strong><%= stats.services %></strong><span>Integrated service lines</span></div>
-    <div><strong><%= stats.projects %>+</strong><span>Showcased projects</span></div>
-    <div><strong>2</strong><span>Offices — Lusaka &amp; Copperbelt</span></div>
+    <% } %>
   </div>
 </section>
 
-<section class="section">
-  <div class="container split">
-    <div>
-      <span class="eyebrow">What is BrandBay Studio?</span>
-      <h2>We don’t just design visuals. We build brand ecosystems.</h2>
-      <p class="lead">BrandBay Innovation Studios is a multidisciplinary creative and technology firm in Lusaka, Zambia, focused on building market-leading brands. We build structured brand ecosystems engineered for authority, visibility, and revenue growth.</p>
-      <a class="btn btn-outline" href="/about">About the studio</a>
-    </div>
-    <div class="pillars">
-      <% for (const [icon, label, text] of [
-        ['bulb', 'Strategic Thinking', 'Every brief starts with your market, your audience and your goals.'],
-        ['pen', 'High-Level Creative Execution', 'Identity, print and digital design crafted to a premium standard.'],
-        ['code', 'Digital Infrastructure', 'Websites, apps, e-commerce and EPOS that run your business.'],
-        ['megaphone', 'Performance-Driven Marketing', 'Campaigns measured on reach, leads and revenue.'],
-      ]) { %>
-        <div class="pillar">
-          <div class="pillar-icon"><%- include('partials/icon', { name: icon }) %></div>
-          <h3><%= label %></h3>
-          <p><%= text %></p>
-        </div>
-      <% } %>
-    </div>
+<section class="bg-section section-pad" id="services">
+  <%- include('partials/bg', { image: 'bg-services', overlay: 60 }) %>
+  <div class="container center narrow-text">
+    <h2 class="section-title" data-reveal="fade-up">Our services</h2>
+    <p class="lead-light" data-reveal="fade-up">Your business deserves more than just design — it deserves strategy, innovation, and results.</p>
+    <p class="lead-light small" data-reveal="fade-up">At <strong>BrandBay Innovation Studios</strong>, we provide complete solutions to help businesses build strong brands, establish a professional presence, and grow in the digital space.</p>
   </div>
-</section>
-
-<section class="section section-dark">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Our services</span>
-      <h2>Your business deserves more than just design — it deserves strategy, innovation, and results.</h2>
-      <p class="muted">We provide complete solutions to help businesses build strong brands, establish a professional presence, and grow in the digital space.</p>
-    </div>
-    <div class="service-grid">
-      <% for (const service of services) { %><%- include('partials/service-card', { service }) %><% } %>
-    </div>
+  <div class="container service-cards" data-reveal-group>
+    <% for (const service of services) { %><%- include('partials/service-tile', { service }) %><% } %>
   </div>
 </section>
 
 <% if (logos.length) { %>
-<section class="section">
-  <div class="container section-head center">
-    <span class="eyebrow">Glimpse of our work</span>
-    <h2>Behind every great brand is a powerful identity.</h2>
-    <p class="muted">Here’s a glimpse of some of the logos we’ve crafted to help businesses stand out, build trust, and leave lasting impressions.</p>
+<section class="section-pad section-ink" id="work">
+  <div class="container center narrow-text">
+    <h2 class="section-title" data-reveal="fade-up">Glimpse of our work</h2>
+    <p class="lead-light" data-reveal="fade-up">Behind every great brand is a powerful identity.<br>Here’s a glimpse of some of the logos we’ve crafted to help businesses stand out, build trust, and leave lasting impressions.</p>
   </div>
-  <div class="marquee" aria-label="Logos we have designed">
-    <div class="marquee-track">
-      <% for (const pass of [0, 1]) { for (const logo of logos) { %>
-        <figure class="marquee-item"<%- pass ? ' aria-hidden="true"' : '' %>><img src="<%= logo.image %>" alt="<%= pass ? '' : logo.title + ' logo' %>" loading="lazy"></figure>
-      <% } } %>
+  <div class="logo-marquee" aria-hidden="true">
+    <div class="logo-marquee-track">
+      <% for (const pass of [0, 1]) { for (const logo of logos.slice(0, 12)) { %><img src="<%= logo.image %>" alt="" loading="lazy"><% } } %>
     </div>
   </div>
-  <div class="container center"><a class="btn btn-outline" href="/gallery">View the full logofolio</a></div>
+  <div class="container logo-wall" data-reveal-group data-lightbox-group>
+    <% for (const logo of logos) { %>
+      <button class="logo-tile" type="button" data-reveal="zoom" data-lightbox="<%= logo.image %>" data-caption="<%= logo.title %>">
+        <img src="<%= logo.image %>" alt="<%= logo.title %> logo" loading="lazy">
+        <span><%= logo.title %></span>
+      </button>
+    <% } %>
+  </div>
+  <div class="center"><a class="btn btn-outline btn-shine" href="/gallery" data-reveal="fade-up">View our full logofolio</a></div>
 </section>
 <% } %>
 
-<% if (projects.length) { %>
-<section class="section section-paper">
-  <div class="container">
-    <div class="section-head row">
-      <div>
-        <span class="eyebrow">Recent projects</span>
-        <h2>Work engineered to win</h2>
-      </div>
-      <a class="btn btn-outline-dark" href="/projects">All projects <%- include('partials/icon', { name: 'arrow' }) %></a>
-    </div>
-    <div class="project-grid">
-      <% for (const project of projects) { %><%- include('partials/project-card', { project }) %><% } %>
-    </div>
+<section class="section-pad section-ink section-ink-2" id="testimonials">
+  <div class="container center narrow-text">
+    <h2 class="section-title" data-reveal="fade-up">TESTIMONIALS</h2>
+    <p class="lead-light" data-reveal="fade-up">At <strong>BrandBay Innovation Studios</strong>, client satisfaction is at the center of everything we do. Our work is built on trust, professionalism, and delivering results that make a difference.</p>
   </div>
-</section>
-<% } %>
+  <div class="container quote-grid" data-reveal-group>
+    <% for (const t of testimonials) { %>
+      <figure class="quote-card tilt" data-reveal="fade-up">
+        <div class="stars" aria-label="<%= t.rating %> out of 5 stars"><%= '★'.repeat(Math.max(0, Math.min(5, t.rating))) %></div>
+        <blockquote><%= t.quote %></blockquote>
+        <figcaption><%= t.name %><% if (t.role) { %><span><%= t.role %></span><% } %></figcaption>
+      </figure>
+    <% } %>
+  </div>
 
-<%- include('partials/testimonials') %>
-
-<section class="section">
-  <div class="container cta-panel">
-    <div>
-      <span class="eyebrow">Start today. Scale tomorrow. Stay ahead.</span>
-      <h2>Your Brand Deserves More Than Average.</h2>
-      <p class="lead">Partner with BrandBay Innovation Studios and build with clarity, precision, and innovation.</p>
+  <div class="container cta-split" id="trabajar-juntos">
+    <div data-reveal="slide-right">
+      <h2 class="cta-title">Your Brand Deserves More Than Average.</h2>
+      <p class="lead-light">Partner with <span class="text-gold">BrandBay Innovation Studios</span> and build with clarity, precision, and innovation.</p>
+      <p class="cta-strap">Start Today. Scale Tomorrow. Stay Ahead</p>
     </div>
-    <form class="card form quick-apply" method="post" action="/apply">
+    <form class="glass-form" method="post" action="/apply" data-reveal="slide-left">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-      <label>Full names<input name="name" required autocomplete="name" value="<%= currentUser ? currentUser.name : '' %>"></label>
-      <label>Your email*<input type="email" name="email" required autocomplete="email" value="<%= currentUser ? currentUser.email : '' %>"></label>
-      <label>Service applied for*
+      <label>Full Names<input name="name" required autocomplete="name" value="<%= currentUser ? currentUser.name : '' %>"></label>
+      <label>Your Email*<input type="email" name="email" required autocomplete="email" value="<%= currentUser ? currentUser.email : '' %>"></label>
+      <label>Service Applied For*
         <select name="service" required>
           <option value="">Choose a service</option>
           <% for (const s of services) { %><option><%= s.name %></option><% } %>
         </select>
       </label>
-      <button class="btn btn-gold btn-block" type="submit">Submit</button>
-      <p class="form-note">Want to add a budget, timeline or brief? <a href="/apply">Use the full form</a>.</p>
+      <button class="btn btn-gold btn-block btn-shine" type="submit">Submit</button>
     </form>
   </div>
 </section>
+
+<%- include('partials/lightbox') %>
 <%- include('partials/foot') %>

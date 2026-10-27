@@ -6,11 +6,14 @@
   const pageDescription = fullDescription.length <= 160 ? fullDescription : `${fullDescription.slice(0, 157).replace(/[\s,;:.]+\S*$/, '')}…`;
   const canonical = config.baseUrl + (path === '/' ? '/' : path.replace(/\/$/, ''));
   const shareImage = locals.ogImage ? seo.abs(locals.ogImage) : `${config.baseUrl}/brand/og-image.jpg`;
+  // Same menu as the original site: Projects opens a sub-menu with Gallery.
   const nav = [
-    ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'], ['/projects', 'Projects'],
-    ['/gallery', 'Gallery'], ['/store', 'Store'], ['/contact', 'Contact'],
+    ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'],
+    ['/projects', 'Projects', [['/projects', 'Recent projects'], ['/gallery', 'Gallery']]],
+    ['/contact', 'Contact'], ['/store', 'Store'],
   ];
-  const isActive = (href) => href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+  const isActive = (href, sub) => href === '/' ? path === '/'
+    : path === href || path.startsWith(href + '/') || (sub || []).some(([h]) => path === h || path.startsWith(h + '/'));
 %><!doctype html>
 <html lang="en">
 <head>
@@ -38,15 +41,15 @@
   <% if (settings.bing_site_verification) { %><meta name="msvalidate.01" content="<%= settings.bing_site_verification %>"><% } %>
   <meta name="theme-color" content="#0b0f14">
   <%- include('icons') %>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/site.css">
+  <% if (path === '/') { %><link rel="preload" as="image" href="/media/video/hero.jpg"><% } %>
   <% if (locals.extraCss) { %><link rel="stylesheet" href="<%= extraCss %>"><% } %>
   <% if (!locals.noindex) { %><script type="application/ld+json"><%- seo.graph([seo.organization(settings, orgServices), seo.website(settings), ...(locals.schema || [])]) %></script><% } %>
 </head>
-<body>
+<body class="<%= path === '/' ? 'is-home' : '' %>">
 <a class="skip-link" href="#main">Skip to content</a>
+<div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
 <header class="site-header" data-header>
   <div class="container header-inner">
     <a class="brand" href="/"><img src="/brand/logo-horizontal-gold.png" alt="<%= siteName %>" width="1231" height="223"></a>
@@ -55,8 +58,15 @@
     </button>
     <nav id="site-nav" class="site-nav" data-nav>
       <ul>
-        <% for (const [href, label] of nav) { %>
-          <li><a href="<%= href %>" class="<%= isActive(href) ? 'active' : '' %>"<%- isActive(href) ? ' aria-current="page"' : '' %>><%= label %></a></li>
+        <% for (const [href, label, sub] of nav) { %>
+          <li class="<%= sub ? 'has-sub' : '' %>">
+            <a href="<%= href %>" class="<%= isActive(href, sub) ? 'active' : '' %>"<%- isActive(href, sub) ? ' aria-current="page"' : '' %>><%= label %><% if (sub) { %> <span class="caret" aria-hidden="true">▾</span><% } %></a>
+            <% if (sub) { %>
+              <ul class="sub-menu">
+                <% for (const [h, l] of sub) { %><li><a href="<%= h %>"><%= l %></a></li><% } %>
+              </ul>
+            <% } %>
+          </li>
         <% } %>
       </ul>
       <div class="nav-actions">
@@ -68,7 +78,7 @@
         <% } else { %>
           <a class="nav-signin" href="/login">Sign in</a>
         <% } %>
-        <a class="btn btn-gold btn-sm" href="/apply">Get In Touch</a>
+        <a class="btn btn-gold btn-sm btn-shine" href="/contact">Get In Touch</a>
       </div>
     </nav>
   </div>

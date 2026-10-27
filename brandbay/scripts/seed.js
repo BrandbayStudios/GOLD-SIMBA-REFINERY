@@ -95,26 +95,34 @@ const SERVICES = [
   },
 ];
 
+// Logofolio and posters in the same order as the original website's gallery.
 const LOGOS = [
-  ['Zambia Innovation Hub', 'zambia-innovation-hub'], ['Faiheart Fashion Zone', 'faiheart-fashion-zone'],
-  ['Crafty Hands Furniture', 'crafty-hands'], ['The Fashion Fortress', 'the-fashion-fortress'],
-  ['My Melanine ZM', 'my-melanine'], ['Drizzly Bites', 'drizzly-bites'], ["Samakayi's BouChic", 'samakayis-bouchic'],
-  ['Mauya Loans', 'mauya-loans'], ['Electric Fusion Bar & Lounge', 'electric-fusion'], ['Esther Chungu', 'esther-chungu'],
-  ['Glam Beauty Xperience', 'glam-beauty-xperience'], ['Lemavko Tailoring & Fashion', 'lemavko'],
-  ["Darlo's Nurture", 'darlos-nurture'], ["Tutee's Cakery", 'tutees-cakery'], ['Trinity University', 'trinity-university'],
-  ['Yellow Bird Tailoring & Design', 'yellow-bird'], ['FreshQ Chickens', 'freshq-chickens'], ['Ruburma', 'ruburma'],
-  ['Berth MediCare', 'berth-medicare'], ['Cheves Enterprises', 'cheves-enterprises'],
+  ['Al Faris Gold Leaching & Refining', 'al-faris'], ['Zambia Innovation Hub', 'zambia-innovation-hub'],
+  ['Faiheart Fashion Zone', 'faiheart-fashion-zone'], ['Crafty Hands Furniture', 'crafty-hands'],
+  ['The Fashion Fortress', 'the-fashion-fortress'], ['My Melanine ZM', 'my-melanine'], ['Drizzly Bites', 'drizzly-bites'],
+  ["Samakayi's BouChic", 'samakayis-bouchic'], ['Mauya Loans', 'mauya-loans'], ['Electric Fusion Bar & Lounge', 'electric-fusion'],
+  ['Mark-M Technical Solutions', 'mark-m'], ['Daily Devotion', 'daily-devotion'], ['Esther Chungu', 'esther-chungu'],
+  ['Glam Beauty Xperience', 'glam-beauty-xperience'], ['Daily Devotion (dark)', 'daily-devotion-dark'],
+  ['La Sienne Nails', 'la-sienne-nails'], ['Lemavko Tailoring & Fashion', 'lemavko'], ["Darlo's Nurture", 'darlos-nurture'],
+  ['Entrio', 'entrio'], ['The Treasure Chest', 'the-treasure-chest'], ["Tutee's Cakery", 'tutees-cakery'],
+  ['Trinity University', 'trinity-university'], ['Yellow Bird Tailoring & Design', 'yellow-bird'], ['FreshQ Chickens', 'freshq-chickens'],
+  ['Ruburma', 'ruburma'], ['Berth MediCare', 'berth-medicare'], ['Cheves Enterprises', 'cheves-enterprises'],
   ['Raine Exquisite Cakes', 'raine-exquisite-cakes'], ['Nails Galore', 'nails-galore'], ['Money Mark Loans', 'money-mark-loans'],
 ];
 
 const POSTERS = [
-  ['Digital Literacy Campaign', 'digital-literacy-campaign'], ['Ruburma Agro Solutions', 'ruburma-agro'],
+  ['Digital Literacy Campaign', 'digital-literacy-campaign'], ["Niza's Beauty Glow", 'nizas-beauty-glow'],
+  ['Drizzly Bites Menu', 'drizzly-bites-menu'], ['The Hair Haven', 'the-hair-haven'], ['Yellow Bird Designs & Tailoring', 'yellow-bird-designs'],
+  ['DNC Designs', 'dnc-designs'], ['The Treasure Chest Sale', 'treasure-chest-sale'], ['Ruburma Agro Solutions', 'ruburma-agro'],
   ['Mauya Soft Loans', 'mauya-soft-loans'], ['Upskilling Training Opportunity', 'upskilling-training'],
   ["Women's Day Buffet", 'womens-day-buffet'], ['Al Faris Gold Leaching & Refinery', 'al-faris-gold-refinery'],
   ['Mobile Massage', 'mobile-massage'], ['Goldspeed × Yango Partner', 'goldspeed-yango'],
   ['Pasachi i-Store Trade & Save', 'pasachi-istore'], ["Kei'lah's Spa & Hair Lounge", 'keilahs-spa'],
-  ['Valentines Platters', 'valentines-platters'], ['DNC Designs', 'dnc-designs'],
+  ['Valentines Platters', 'valentines-platters'],
 ];
+
+// The first 24 logos appear in the home page "Glimpse of our work" showcase, as on the original site.
+const FEATURED_LOGOS = 24;
 
 const COMPLIANCE = [
   ['Certificate of Registration (PACRA)', 'certificate-registration'],
@@ -235,7 +243,7 @@ function seed() {
     if (empty('gallery_items')) {
       LOGOS.forEach(([title, file], i) =>
         run('INSERT INTO gallery_items (album, title, image, featured, sort_order) VALUES (?, ?, ?, ?, ?)',
-          'logos', title, `/media/logos/${file}.webp`, i < 17 ? 1 : 0, i));
+          'logos', title, `/media/logos/${file}.webp`, i < FEATURED_LOGOS ? 1 : 0, i));
       POSTERS.forEach(([title, file], i) =>
         run('INSERT INTO gallery_items (album, title, image, sort_order) VALUES (?, ?, ?, ?)',
           'posters', title, `/media/posters/${file}.webp`, i));
@@ -281,11 +289,25 @@ function seed() {
   invoicing.ensureDefaults();
 }
 
-// Fills in service introductions on databases created before they existed; never overwrites edited text.
+// Fills in content added after a database was first created; never overwrites edited text.
 function backfillContent() {
   for (const [slug, intro] of Object.entries(SERVICE_INTROS)) {
     run("UPDATE service_categories SET intro = ? WHERE slug = ? AND (intro IS NULL OR intro = '')", intro, slug);
   }
+  // One-time: bring the gallery in line with the original site (all designs, original order).
+  if (getSettings().content_gallery_v2) return;
+  transaction(() => {
+    const place = (album, list) => list.forEach(([title, file], i) => {
+      const image = `/media/${album}/${file}.webp`;
+      const featured = album === 'logos' && i < FEATURED_LOGOS ? 1 : 0;
+      const existing = get('SELECT id FROM gallery_items WHERE image = ?', image);
+      if (existing) run('UPDATE gallery_items SET sort_order = ?, featured = ? WHERE id = ?', i, featured, existing.id);
+      else run('INSERT INTO gallery_items (album, title, image, featured, sort_order) VALUES (?, ?, ?, ?, ?)', album, title, image, featured, i);
+    });
+    place('logos', LOGOS);
+    place('posters', POSTERS);
+    setSetting('content_gallery_v2', '1');
+  });
 }
 
 module.exports = { seed, backfillContent };
