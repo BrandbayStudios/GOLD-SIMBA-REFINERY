@@ -121,6 +121,3 @@ form.toolbar { justify-content: flex-start; }
 .save-bar { position: sticky; bottom: 0; padding: 1rem 0; background: linear-gradient(transparent, #f3f2ee 35%); }
 .admin-sidebar .brand { display: grid; gap: 0.35rem; justify-items: start; padding: 0 0.5rem 1rem; }
 .admin-sidebar .brand img { height: 30px; }
-
-.payment-actions { display: flex; gap: 0.9rem; align-items: center; white-space: nowrap; }
-.payment-actions form { display: inline; }

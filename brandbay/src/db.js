@@ -314,13 +314,6 @@ CREATE INDEX IF NOT EXISTS idx_messages_request ON request_messages(request_id);
 
 db.exec(SCHEMA);
 
-// Migrations for databases created by earlier versions.
-const columns = (table) => db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
-if (!columns('invoice_payments').includes('receipt_id')) {
-  // The receipt issued for this payment (an invoices row of type 'receipt').
-  db.exec('ALTER TABLE invoice_payments ADD COLUMN receipt_id INTEGER');
-}
-
 function all(sql, ...params) {
   return db.prepare(sql).all(...params);
 }
@@ -333,9 +326,7 @@ function run(sql, ...params) {
   return db.prepare(sql).run(...params);
 }
 
-// Nested calls join the outer transaction, so helpers that use one can be composed.
 function transaction(fn) {
-  if (db.isTransaction) return fn();
   db.exec('BEGIN');
   try {
     const result = fn();

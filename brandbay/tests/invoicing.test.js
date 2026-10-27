@@ -174,9 +174,9 @@ test('full workflow: request → quotation → invoice → payment → receipt, 
   assert.equal(invoiceDoc.t.payable, 3480);
   assert.equal(get('SELECT status FROM invoices WHERE id = ?', quoteId).status, 'accepted');
 
-  // Part payment with a receipt, then full payment without one.
+  // Part payment, then full payment.
   await admin.get(`/admin/invoices/${invoiceId}`);
-  await admin.post(`/admin/invoices/${invoiceId}/payments`, { amount: '2436', paid_on: '2026-10-05', method: 'Mobile Money', reference: 'MP123', issue_receipt: '1' });
+  await admin.post(`/admin/invoices/${invoiceId}/payments`, { amount: '2436', paid_on: '2026-10-05', method: 'Mobile Money', reference: 'MP123' });
   let after = invoicing.load('id = ?', invoiceId);
   assert.equal(after.status, 'partial');
   assert.equal(after.t.balance, 1044);
@@ -184,32 +184,12 @@ test('full workflow: request → quotation → invoice → payment → receipt, 
   after = invoicing.load('id = ?', invoiceId);
   assert.equal(after.status, 'paid');
 
-  // The first payment's receipt acknowledges that payment only, and the balance left after it.
-  const [first, second] = after.payments;
-  assert.ok(first.receipt_id);
-  assert.equal(second.receipt_id, null);
-  const receipt = invoicing.load('id = ?', first.receipt_id);
+  // Receipt carries the payments over.
+  const rec = await admin.post(`/admin/invoices/${invoiceId}/receipt`, {});
+  const receipt = invoicing.load('id = ?', idOf(rec.location));
   assert.equal(receipt.inv.type, 'receipt');
-  assert.equal(receipt.inv.reference, after.inv.number);
-  assert.equal(receipt.inv.issue_date, '2026-10-05');
-  assert.equal(receipt.t.paid, 2436);
+  assert.equal(receipt.t.paid, 3480);
   assert.equal(receipt.status, 'paid');
-  assert.deepEqual(receipt.receipt.invoice && [receipt.receipt.invoice.total, receipt.receipt.invoice.paidToDate, receipt.receipt.invoice.balance], [3480, 2436, 1044]);
-  const receiptPaper = await browser().get(`/invoice/${receipt.inv.public_token}`);
-  assert.match(receiptPaper.text, /Amount received/);
-  assert.match(receiptPaper.text, /Balance remaining/);
-  assert.match(receiptPaper.text, /K1,044\.00/);
-  // Linked receipts can't be edited directly.
-  assert.equal((await admin.get(`/admin/invoices/${receipt.inv.id}/edit`)).status, 302);
-
-  // Issue a receipt for the second payment afterwards; it shows the invoice as settled.
-  await admin.get(`/admin/invoices/${invoiceId}`);
-  await admin.post(`/admin/invoices/${invoiceId}/payments/${second.id}/receipt`, {});
-  const secondReceiptId = get('SELECT receipt_id FROM invoice_payments WHERE id = ?', second.id).receipt_id;
-  const secondReceipt = invoicing.load('id = ?', secondReceiptId);
-  assert.equal(secondReceipt.t.paid, 1044);
-  assert.equal(secondReceipt.receipt.invoice.balance, 0);
-  assert.match((await admin.get(`/admin/invoices/${invoiceId}`)).text, new RegExp(secondReceipt.inv.number));
 
   // Public link works without signing in; the print page shows the PAID stamp.
   const pub = await browser().get(`/invoice/${after.inv.public_token}`);
@@ -274,70 +254,4 @@ test('validation and number uniqueness', async () => {
   });
   assert.equal(dup.status, 422);
   assert.match(dup.text, /already used/);
-});
-
-test('standalone receipts, and removing a payment voids its receipt', async () => {
-  const admin = browser();
-  await admin.login('admin@test.local', 'admin-password');
-  const form = await admin.get('/admin/invoices/new?type=receipt');
-  assert.equal(form.status, 200);
-  assert.match(form.text, /Payment received/);
-  assert.match(form.text, /name="type" value="receipt"/);
-  assert.doesNotMatch(form.text, /name="withholding_id"/);
-
-  const vat = invoicing.defaultTax();
-  const gross = (n) => Math.round(n * (100 + vat.rate)) / 100;
-  const zero = await admin.post('/admin/invoices', {
-    type: 'receipt', client_name: 'Walk-in', issue_date: '2026-10-12', currency: 'ZMW', item_name: 'Nothing', item_price: '0', item_tax_id: String(vat.id),
-  });
-  assert.equal(zero.status, 422);
-  assert.match(zero.text, /greater than zero/);
-
-  const res = await admin.post('/admin/invoices', {
-    type: 'receipt', number: '', status: 'paid', client_name: 'Walk-in client', issue_date: '2026-10-12', currency: 'ZMW',
-    paid_on: '2026-10-12', method: 'Cash', payment_reference: 'CASH-1',
-    item_name: 'Business cards', item_qty: '1', item_price: '500', item_discount: '0', item_tax_id: String(vat.id), discount_percent: '0',
-    withholding_id: String(get("SELECT id FROM tax_rates WHERE kind = 'withhold'").id), show_deposit: '1', deposit_percent: '50',
-  });
-  assert.equal(res.status, 302);
-  const id = idOf(res.location);
-  let r = invoicing.load('id = ?', id);
-  assert.match(r.inv.number, /^REC-\d{4}-\d{4}$/);
-  assert.equal(r.inv.withholding_rate, 0);
-  assert.equal(r.inv.deposit_percent, 0);
-  assert.equal(r.t.paid, gross(500));
-  assert.equal(r.payments[0].method, 'Cash');
-  assert.equal(r.receipt.invoice, null);
-
-  // Editing re-records the single payment at the new total.
-  await admin.get(`/admin/invoices/${id}/edit`);
-  const saved = await admin.post(`/admin/invoices/${id}`, {
-    number: r.inv.number, status: 'paid', client_name: 'Walk-in client', issue_date: '2026-10-12', currency: 'ZMW',
-    paid_on: '2026-10-13', method: 'Mobile Money', payment_reference: 'MM-9',
-    item_name: 'Business cards', item_qty: '2', item_price: '500', item_discount: '0', item_tax_id: String(vat.id), discount_percent: '0',
-  });
-  assert.equal(saved.status, 302, saved.text.match(/<ul class="errors?[^>]*>[\s\S]*?<\/ul>/)?.[0]);
-  r = invoicing.load('id = ?', id);
-  assert.equal(r.payments.length, 1);
-  assert.equal(r.t.paid, gross(1000));
-  assert.equal(r.payments[0].paid_on, '2026-10-13');
-  assert.match((await browser().get(`/invoice/${r.inv.public_token}`)).text, new RegExp(`K${gross(1000).toLocaleString('en-US', { minimumFractionDigits: 2 })}`));
-
-  // A payment's receipt is voided when the payment is removed.
-  const invRes = await admin.post('/admin/invoices', {
-    type: 'invoice', number: '', status: 'sent', client_name: 'Chanda', issue_date: '2026-10-01', due_date: '2026-10-30', currency: 'ZMW',
-    item_name: 'Flyer', item_qty: '1', item_price: '100', item_discount: '0', item_tax_id: String(vat.id), discount_percent: '0',
-  });
-  const invoiceId = idOf(invRes.location);
-  await admin.get(`/admin/invoices/${invoiceId}`);
-  await admin.post(`/admin/invoices/${invoiceId}/payments`, { amount: String(gross(100)), paid_on: '2026-10-02', method: 'Cash', issue_receipt: '1' });
-  const pay = get('SELECT * FROM invoice_payments WHERE invoice_id = ?', invoiceId);
-  assert.ok(pay.receipt_id);
-  // Quotations and receipts don't take payments.
-  await admin.post(`/admin/invoices/${pay.receipt_id}/payments`, { amount: '1', paid_on: '2026-10-02', method: 'Cash' });
-  assert.equal(all('SELECT id FROM invoice_payments WHERE invoice_id = ?', pay.receipt_id).length, 1);
-
-  await admin.post(`/admin/invoices/${invoiceId}/payments/${pay.id}/delete`, {});
-  assert.equal(get('SELECT status FROM invoices WHERE id = ?', pay.receipt_id).status, 'cancelled');
-  assert.equal(invoicing.load('id = ?', invoiceId).t.paid, 0);
 });

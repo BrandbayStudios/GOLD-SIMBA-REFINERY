@@ -1,19 +1,17 @@
 <%- include('head') %>
-<% const d = doc.inv, t = doc.t, m = (v) => inv.money(v, d.currency_symbol);
-   const isReceipt = d.type === 'receipt', linked = isReceipt && Boolean(d.source_id); %>
+<% const d = doc.inv, t = doc.t, m = (v) => inv.money(v, d.currency_symbol); %>
 <a class="crumb" href="/admin/invoices">← All invoices &amp; quotes</a>
 <div class="invoice-bar panel">
   <div class="invoice-bar-status">
     <%- include('../partials/status', { value: doc.status, labels: inv.STATUSES }) %>
     <% if (!['quotation', 'receipt'].includes(d.type)) { %><span>Balance <strong><%= m(Math.max(0, t.balance)) %></strong> of <%= m(t.payable) %></span><% } %>
-    <% if (isReceipt) { %><span>Received <strong><%= m(doc.receipt.amount) %></strong><% if (doc.receipt.invoice) { %> · balance remaining on <%= doc.receipt.invoice.number %>: <strong><%= m(doc.receipt.invoice.balance) %></strong><% } %></span><% } %>
     <% if (d.sent_at) { %><span class="muted">Sent <%= lib.formatDate(d.sent_at) %></span><% } %>
     <% if (request) { %><a href="/admin/requests/<%= request.id %>">Request <%= request.reference %></a><% } %>
-    <% if (source) { %><a href="/admin/invoices/<%= source.id %>"><%= isReceipt ? 'Payment for' : 'From' %> <%= source.number %></a><% } %>
+    <% if (source) { %><a href="/admin/invoices/<%= source.id %>">From <%= source.number %></a><% } %>
     <% for (const r of related) { %><a href="/admin/invoices/<%= r.id %>">→ <%= r.number %></a><% } %>
   </div>
   <div class="form-actions">
-    <% if (!linked) { %><a class="btn btn-outline-dark btn-sm" href="/admin/invoices/<%= d.id %>/edit">Edit</a><% } %>
+    <a class="btn btn-outline-dark btn-sm" href="/admin/invoices/<%= d.id %>/edit">Edit</a>
     <a class="btn btn-gold btn-sm" href="<%= publicUrl %>?print=1" target="_blank" rel="noopener">Print / PDF</a>
     <form method="post" action="/admin/invoices/<%= d.id %>/send" data-confirm="Email this <%= doc.label.toLowerCase() %> to <%= d.client_email || 'the client' %>?">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -28,13 +26,12 @@
         <form method="post" action="/admin/invoices/<%= d.id %>/status"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="<%= st %>"><button class="btn btn-outline-dark btn-sm" type="submit">Mark <%= st %></button></form>
       <% } } %>
     <% } %>
-    <% if (!linked) { %>
-      <form method="post" action="/admin/invoices/<%= d.id %>/duplicate"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-outline-dark btn-sm" type="submit">Duplicate</button></form>
+    <% if (d.type === 'invoice' && doc.payments.length) { %>
+      <form method="post" action="/admin/invoices/<%= d.id %>/receipt"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-outline-dark btn-sm" type="submit">Issue receipt</button></form>
     <% } %>
-    <% if (d.status !== 'cancelled') { %>
-      <form method="post" action="/admin/invoices/<%= d.id %>/status" data-confirm="<%= isReceipt ? 'Void receipt' : 'Cancel' %> <%= d.number %>? It will show as VOID."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="cancelled"><button class="btn btn-outline-dark btn-sm" type="submit"><%= isReceipt ? 'Void receipt' : 'Cancel' %></button></form>
-    <% } else if (isReceipt) { %>
-      <form method="post" action="/admin/invoices/<%= d.id %>/status"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="paid"><button class="btn btn-outline-dark btn-sm" type="submit">Restore receipt</button></form>
+    <form method="post" action="/admin/invoices/<%= d.id %>/duplicate"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-outline-dark btn-sm" type="submit">Duplicate</button></form>
+    <% if (d.status !== 'cancelled' && d.type !== 'receipt') { %>
+      <form method="post" action="/admin/invoices/<%= d.id %>/status" data-confirm="Cancel <%= d.number %>? It will show as VOID."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="cancelled"><button class="btn btn-outline-dark btn-sm" type="submit">Cancel</button></form>
     <% } %>
     <% if (currentUser.role === 'admin') { %>
       <form method="post" action="/admin/invoices/<%= d.id %>/delete" data-confirm="Permanently delete <%= d.number %> and its payments?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form>
@@ -45,31 +42,14 @@
 <div class="admin-grid wide-left">
   <div class="paper-scroll"><%- include('../invoices/paper', { doc, invoicing: inv, is }) %></div>
   <div>
-    <% if (isReceipt) { %>
-    <section class="panel">
-      <h2>Payment received</h2>
-      <ul class="list">
-        <% for (const p of doc.payments) { %>
-          <li><span><strong><%= m(p.amount) %></strong> · <%= p.method %><br><small class="muted"><%= lib.formatDate(p.paid_on) %><%= p.reference ? ` · ${p.reference}` : '' %></small></span></li>
-        <% } %>
-      </ul>
-      <% if (linked) { %><p class="muted">This receipt mirrors a payment on <a href="/admin/invoices/<%= d.source_id %>"><%= source ? source.number : 'the invoice' %></a>. Removing that payment voids this receipt.</p><% } %>
-    </section>
-    <% } else if (d.type !== 'quotation') { %>
+    <% if (d.type !== 'quotation') { %>
     <section class="panel">
       <h2>Payments</h2>
       <% if (!doc.payments.length) { %><p class="muted">No payments recorded yet.</p><% } %>
       <ul class="list">
-        <% for (const p of doc.payments) { const r = doc.paymentReceipts.get(p.id); %>
+        <% for (const p of doc.payments) { %>
           <li><span><strong><%= m(p.amount) %></strong> · <%= p.method %><br><small class="muted"><%= lib.formatDate(p.paid_on) %><%= p.reference ? ` · ${p.reference}` : '' %></small></span>
-            <span class="payment-actions">
-              <% if (r) { %>
-                <a href="/admin/invoices/<%= r.id %>"><%= r.number %></a><% if (r.status === 'cancelled') { %> <span class="tag">void</span><% } %>
-              <% } else { %>
-                <form method="post" action="/admin/invoices/<%= d.id %>/payments/<%= p.id %>/receipt"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-btn" type="submit">Issue receipt</button></form>
-              <% } %>
-              <form method="post" action="/admin/invoices/<%= d.id %>/payments/<%= p.id %>/delete" data-confirm="Remove this payment?<%= r ? ' Its receipt will be voided.' : '' %>"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-btn danger" type="submit">Remove</button></form>
-            </span></li>
+            <form method="post" action="/admin/invoices/<%= d.id %>/payments/<%= p.id %>/delete" data-confirm="Remove this payment?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="link-btn danger" type="submit">Remove</button></form></li>
         <% } %>
       </ul>
       <% if (d.type !== 'receipt' && d.status !== 'cancelled' && t.balance > 0) { %>
@@ -85,8 +65,6 @@
             <label>Reference<input name="reference" placeholder="Transaction ID"></label>
           </div>
           <% if (d.deposit_percent > 0 && !t.paid) { %><p class="muted">Deposit (<%= d.deposit_percent %>%): <%= m(t.deposit) %></p><% } %>
-          <label class="check"><input type="checkbox" name="issue_receipt" value="1" checked> Issue a receipt for this payment</label>
-          <label class="check"><input type="checkbox" name="email_receipt" value="1"<%= lib.isEmail(d.client_email) ? ' checked' : ' disabled' %>> Email the receipt to the client<% if (!lib.isEmail(d.client_email)) { %> <span class="muted">(no client email)</span><% } %></label>
           <button class="btn btn-gold" type="submit">Save payment</button>
         </form>
       <% } %>

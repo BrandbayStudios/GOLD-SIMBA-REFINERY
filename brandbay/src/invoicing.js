@@ -20,7 +20,7 @@ const MANUAL_STATUSES = {
   invoice: ['draft', 'sent', 'cancelled'],
   proforma: ['draft', 'sent', 'cancelled'],
   quotation: ['draft', 'sent', 'accepted', 'declined', 'cancelled'],
-  receipt: ['paid', 'cancelled'],
+  receipt: ['paid'],
 };
 
 const PAYMENT_METHODS = ['Mobile Money', 'Bank transfer', 'Cash', 'Cheque', 'Card'];
@@ -110,47 +110,7 @@ function load(where, ...params) {
     ? all(`SELECT * FROM payment_accounts WHERE id IN (${ids.map(() => '?').join(',')}) ORDER BY sort_order, id`, ...ids)
         .filter((a) => a.account_number)
     : [];
-  const doc = { inv, items, payments, t, accounts, status: effectiveStatus(inv, t), label: DOC_TYPES[inv.type].label };
-  if (inv.type === 'receipt') doc.receipt = receiptDetails(inv, t);
-  if (inv.type !== 'receipt') {
-    doc.paymentReceipts = new Map(all(
-      "SELECT p.id AS payment_id, r.id, r.number, r.status FROM invoice_payments p JOIN invoices r ON r.id = p.receipt_id WHERE p.invoice_id = ?",
-      inv.id,
-    ).map((r) => [r.payment_id, r]));
-  }
-  return doc;
-}
-
-// What a receipt acknowledges: the amount received and, for an invoice payment, where the invoice stands after it.
-function receiptDetails(receipt, t) {
-  const details = { amount: t.paid, invoice: null };
-  const source = receipt.source_id ? get('SELECT * FROM invoices WHERE id = ?', receipt.source_id) : null;
-  if (!source || source.type === 'receipt' || source.type === 'quotation') return details;
-  const items = all('SELECT * FROM invoice_items WHERE invoice_id = ?', source.id);
-  const payments = all('SELECT * FROM invoice_payments WHERE invoice_id = ? ORDER BY paid_on, id', source.id);
-  const st = totals(source, items, payments);
-  const linked = payments.find((p) => p.receipt_id === receipt.id);
-  // Paid to date counts every payment up to and including the one this receipt is for.
-  const upTo = linked ? payments.slice(0, payments.indexOf(linked) + 1) : payments;
-  const paidToDate = round2(upTo.reduce((s, p) => s + num(p.amount), 0));
-  details.invoice = {
-    id: source.id, number: source.number, label: DOC_TYPES[source.type].label,
-    total: st.payable, paidToDate, balance: round2(Math.max(0, st.payable - paidToDate)),
-  };
-  return details;
-}
-
-// Issues a receipt for one recorded payment of an invoice or proforma and links the two.
-function issueReceipt(doc, payment, createdBy) {
-  const fresh = draft('receipt', { source: doc });
-  Object.assign(fresh.inv, { status: 'paid', terms: '', notes: '', issue_date: payment.paid_on, reference: doc.inv.number });
-  const id = create(fresh.inv, fresh.items, {
-    createdBy,
-    sourceId: doc.inv.id,
-    payments: [{ paid_on: payment.paid_on, amount: payment.amount, method: payment.method, reference: payment.reference, recorded_by: payment.recorded_by ?? createdBy }],
-  });
-  run('UPDATE invoice_payments SET receipt_id = ? WHERE id = ?', id, payment.id);
-  return id;
+  return { inv, items, payments, t, accounts, status: effectiveStatus(inv, t), label: DOC_TYPES[inv.type].label };
 }
 
 function safeJson(text, fallback) {
@@ -272,25 +232,12 @@ function readForm(body) {
     terms: lib.clean(body.terms, 5000),
   };
 
-  // A standalone receipt records the payment itself: its amount is the document total.
-  const payment = type === 'receipt' ? {
-    paid_on: isIsoDate(body.paid_on) ? body.paid_on : inv.issue_date,
-    method: PAYMENT_METHODS.includes(body.method) ? body.method : PAYMENT_METHODS[0],
-    reference: lib.clean(body.payment_reference, 120),
-  } : null;
-  if (payment) {
-    inv.withholding_name = null;
-    inv.withholding_rate = 0;
-    inv.deposit_percent = 0;
-  }
-
   const errors = [];
-  if (!inv.client_name) errors.push(type === 'receipt' ? 'Enter who the payment was received from.' : 'Enter who this is billed to.');
+  if (!inv.client_name) errors.push('Enter who this is billed to.');
   if (inv.client_email && !lib.isEmail(inv.client_email)) errors.push('The client email address is not valid.');
   if (!items.some((it) => it.name)) errors.push('Add at least one service or item.');
   if (items.some((it) => it.quantity < 0 || it.unit_price < 0)) errors.push('Quantities and prices cannot be negative.');
-  if (payment && !errors.length && !(totals(inv, items).payable > 0)) errors.push('The amount received must be greater than zero.');
-  return { inv, items, errors, payment };
+  return { inv, items, errors };
 }
 
 const INV_COLUMNS = [
@@ -475,5 +422,5 @@ module.exports = {
   round2, num, today, addDays, isIsoDate, money,
   totals, effectiveStatus, load, list, withTotals, nextNumber,
   taxes, currencies, accounts, catalog, defaultTax, defaultCurrency, invoiceSettings,
-  readForm, create, update, draft, taxIdFor, ensureDefaults, issueReceipt, receiptDetails,
+  readForm, create, update, draft, taxIdFor, ensureDefaults,
 };

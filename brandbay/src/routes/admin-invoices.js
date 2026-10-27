@@ -26,26 +26,8 @@ function editorData(doc, extra = {}) {
         ?? taxes.find((t) => t.kind === 'withhold' && t.rate === doc.inv.withholding_rate)?.id ?? ''
       : '',
     inv,
-    // Payment fields for receipts: the receipt's own payment when editing, else today's date.
-    payment: doc.payment || (doc.payments && doc.payments[0]) || { paid_on: doc.inv.issue_date || inv.today(), method: inv.PAYMENT_METHODS[0], reference: '' },
     ...extra,
   };
-}
-
-// Receipts issued from an invoice payment mirror that payment, so only standalone receipts can be edited.
-const linkedReceipt = (doc) => doc.inv.type === 'receipt' && Boolean(doc.inv.source_id);
-
-async function emailReceipt(receiptId) {
-  const r = inv.load('id = ?', receiptId);
-  if (!r || !lib.isEmail(r.inv.client_email)) return false;
-  const info = r.receipt;
-  await mailer.send({
-    to: r.inv.client_email,
-    subject: `Receipt ${r.inv.number} from BrandBay Innovation Studios`,
-    text: `Dear ${r.inv.client_name},\n\nThank you for your payment of ${inv.money(info.amount, r.inv.currency_symbol)}.${info.invoice ? `\nIt has been applied to ${info.invoice.label.toLowerCase()} ${info.invoice.number}. Balance remaining: ${inv.money(info.invoice.balance, r.inv.currency_symbol)}.` : ''}\n\nView or download your receipt here:\n${config.baseUrl}/invoice/${r.inv.public_token}\n\nKind regards,\nBrandBay Innovation Studios`,
-  });
-  run("UPDATE invoices SET sent_at = datetime('now') WHERE id = ?", receiptId);
-  return true;
 }
 
 function find(req) {
@@ -273,17 +255,16 @@ router.get('/new', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { inv: data, items, errors, payment } = inv.readForm(req.body);
+  const { inv: data, items, errors } = inv.readForm(req.body);
   if (errors.length) {
-    return res.status(422).render('admin/invoice-form', { title: `New ${inv.DOC_TYPES[data.type].label.toLowerCase()}`, errors, ...editorData({ inv: data, items, payment }) });
+    return res.status(422).render('admin/invoice-form', { title: `New ${inv.DOC_TYPES[data.type].label.toLowerCase()}`, errors, ...editorData({ inv: data, items }) });
   }
   // A suggested number taken by a colleague in the meantime is reassigned automatically; a hand-typed one is not.
   const autoPattern = new RegExp(`^${inv.DOC_TYPES[data.type].prefix}-\\d{4}-\\d{4,}$`);
   if (data.number && !autoPattern.test(data.number) && get('SELECT 1 AS x FROM invoices WHERE number = ?', data.number)) {
-    return res.status(422).render('admin/invoice-form', { title: `New ${inv.DOC_TYPES[data.type].label.toLowerCase()}`, errors: [`Number ${data.number} is already used.`], ...editorData({ inv: data, items, payment }) });
+    return res.status(422).render('admin/invoice-form', { title: `New ${inv.DOC_TYPES[data.type].label.toLowerCase()}`, errors: [`Number ${data.number} is already used.`], ...editorData({ inv: data, items }) });
   }
-  const payments = payment ? [{ ...payment, amount: inv.totals(data, items).payable }] : [];
-  const id = inv.create(data, items, { createdBy: req.user.id, payments });
+  const id = inv.create(data, items, { createdBy: req.user.id });
   const saved = inv.load('id = ?', id);
   flash(req, 'success', `${saved.label} ${saved.inv.number} created.`);
   res.redirect(`/admin/invoices/${id}`);
@@ -307,34 +288,21 @@ router.get('/:id', (req, res, next) => {
 router.get('/:id/edit', (req, res, next) => {
   const doc = find(req);
   if (!doc) return next();
-  if (linkedReceipt(doc)) {
-    flash(req, 'info', 'This receipt mirrors a payment on an invoice. To change it, edit or remove that payment, or void this receipt.');
-    return res.redirect(`/admin/invoices/${doc.inv.id}`);
-  }
   res.render('admin/invoice-form', { title: `Edit ${doc.label.toLowerCase()} ${doc.inv.number}`, ...editorData(doc, { existing: doc.inv }) });
 });
 
 router.post('/:id', (req, res, next) => {
   const doc = find(req);
   if (!doc) return next();
-  if (linkedReceipt(doc)) return res.redirect(`/admin/invoices/${doc.inv.id}/edit`);
-  const { inv: data, items, errors, payment } = inv.readForm({ ...req.body, type: doc.inv.type });
+  const { inv: data, items, errors } = inv.readForm({ ...req.body, type: doc.inv.type });
   if (!data.number) errors.push('Enter a document number.');
   else if (get('SELECT 1 AS x FROM invoices WHERE number = ? AND id != ?', data.number, doc.inv.id)) errors.push(`Number ${data.number} is already used.`);
   if (errors.length) {
     return res.status(422).render('admin/invoice-form', {
-      title: `Edit ${doc.label.toLowerCase()} ${doc.inv.number}`, errors, ...editorData({ inv: { ...data, id: doc.inv.id }, items, payment }, { existing: doc.inv }),
+      title: `Edit ${doc.label.toLowerCase()} ${doc.inv.number}`, errors, ...editorData({ inv: { ...data, id: doc.inv.id }, items }, { existing: doc.inv }),
     });
   }
-  transaction(() => {
-    inv.update(doc.inv.id, data, items);
-    if (payment) {
-      // A standalone receipt has exactly one payment, always equal to its total.
-      run('DELETE FROM invoice_payments WHERE invoice_id = ?', doc.inv.id);
-      run('INSERT INTO invoice_payments (invoice_id, paid_on, amount, method, reference, recorded_by) VALUES (?, ?, ?, ?, ?, ?)',
-        doc.inv.id, payment.paid_on, inv.totals(data, items).payable, payment.method, payment.reference, req.user.id);
-    }
-  });
+  inv.update(doc.inv.id, data, items);
   flash(req, 'success', `${doc.label} ${data.number} saved.`);
   res.redirect(`/admin/invoices/${doc.inv.id}`);
 });
@@ -358,11 +326,6 @@ router.post('/:id/send', async (req, res, next) => {
     flash(req, 'error', 'Add a valid client email address before sending.');
     return res.redirect(`/admin/invoices/${doc.inv.id}`);
   }
-  if (doc.inv.type === 'receipt') {
-    await emailReceipt(doc.inv.id);
-    flash(req, 'success', mailer.enabled ? `Receipt sent to ${doc.inv.client_email}.` : 'Email is not configured yet, so share the receipt link instead.');
-    return res.redirect(`/admin/invoices/${doc.inv.id}`);
-  }
   const amount = doc.inv.type === 'quotation' ? doc.t.payable : Math.max(0, doc.t.balance);
   const accountsText = doc.accounts.map((a) => a.type === 'mobile'
     ? `${a.label}: ${a.account_number}${a.account_name ? ` (${a.account_name})` : ''}`
@@ -378,59 +341,27 @@ router.post('/:id/send', async (req, res, next) => {
   res.redirect(`/admin/invoices/${doc.inv.id}`);
 });
 
-router.post('/:id/payments', async (req, res, next) => {
+router.post('/:id/payments', (req, res, next) => {
   const doc = find(req);
   if (!doc) return next();
-  if (doc.inv.type === 'receipt' || doc.inv.type === 'quotation') return res.redirect(`/admin/invoices/${doc.inv.id}`);
   const amount = inv.round2(inv.num(req.body.amount));
   if (amount <= 0) {
     flash(req, 'error', 'Enter a payment amount greater than zero.');
-    return res.redirect(`/admin/invoices/${doc.inv.id}`);
+  } else {
+    run('INSERT INTO invoice_payments (invoice_id, paid_on, amount, method, reference, recorded_by) VALUES (?, ?, ?, ?, ?, ?)',
+      doc.inv.id, inv.isIsoDate(req.body.paid_on) ? req.body.paid_on : inv.today(), amount,
+      inv.PAYMENT_METHODS.includes(req.body.method) ? req.body.method : inv.PAYMENT_METHODS[0], lib.clean(req.body.reference, 120), req.user.id);
+    if (doc.inv.status === 'draft') run("UPDATE invoices SET status = 'sent' WHERE id = ?", doc.inv.id);
+    flash(req, 'success', `Payment of ${inv.money(amount, doc.inv.currency_symbol)} recorded.`);
   }
-  const payment = {
-    paid_on: inv.isIsoDate(req.body.paid_on) ? req.body.paid_on : inv.today(),
-    amount,
-    method: inv.PAYMENT_METHODS.includes(req.body.method) ? req.body.method : inv.PAYMENT_METHODS[0],
-    reference: lib.clean(req.body.reference, 120),
-    recorded_by: req.user.id,
-  };
-  const { lastInsertRowid } = run('INSERT INTO invoice_payments (invoice_id, paid_on, amount, method, reference, recorded_by) VALUES (?, ?, ?, ?, ?, ?)',
-    doc.inv.id, payment.paid_on, payment.amount, payment.method, payment.reference, payment.recorded_by);
-  if (doc.inv.status === 'draft') run("UPDATE invoices SET status = 'sent' WHERE id = ?", doc.inv.id);
-  let message = `Payment of ${inv.money(amount, doc.inv.currency_symbol)} recorded.`;
-  if (req.body.issue_receipt) {
-    const receiptId = inv.issueReceipt(doc, { ...payment, id: Number(lastInsertRowid) }, req.user.id);
-    const number = get('SELECT number FROM invoices WHERE id = ?', receiptId).number;
-    message += ` Receipt ${number} issued`;
-    if (req.body.email_receipt && await emailReceipt(receiptId)) message += mailer.enabled ? ` and emailed to ${doc.inv.client_email}` : ' (email is not configured yet, so share the receipt link instead)';
-    message += '.';
-  }
-  flash(req, 'success', message);
   res.redirect(`/admin/invoices/${doc.inv.id}`);
-});
-
-router.post('/:id/payments/:pid/receipt', (req, res, next) => {
-  const doc = find(req);
-  if (!doc) return next();
-  const payment = get('SELECT * FROM invoice_payments WHERE id = ? AND invoice_id = ?', req.params.pid, doc.inv.id);
-  if (!payment) return next();
-  const existing = payment.receipt_id && get('SELECT id FROM invoices WHERE id = ?', payment.receipt_id);
-  if (existing) return res.redirect(`/admin/invoices/${existing.id}`);
-  const id = inv.issueReceipt(doc, payment, req.user.id);
-  flash(req, 'success', 'Receipt issued.');
-  res.redirect(`/admin/invoices/${id}`);
 });
 
 router.post('/:id/payments/:pid/delete', (req, res, next) => {
   const doc = find(req);
   if (!doc) return next();
-  const payment = get('SELECT receipt_id FROM invoice_payments WHERE id = ? AND invoice_id = ?', req.params.pid, doc.inv.id);
-  transaction(() => {
-    run('DELETE FROM invoice_payments WHERE id = ? AND invoice_id = ?', req.params.pid, doc.inv.id);
-    // A receipt must never outlive the money it acknowledges.
-    if (payment?.receipt_id) run("UPDATE invoices SET status = 'cancelled', updated_at = datetime('now') WHERE id = ? AND type = 'receipt'", payment.receipt_id);
-  });
-  flash(req, 'success', payment?.receipt_id ? 'Payment removed and its receipt voided.' : 'Payment removed.');
+  run('DELETE FROM invoice_payments WHERE id = ? AND invoice_id = ?', req.params.pid, doc.inv.id);
+  flash(req, 'success', 'Payment removed.');
   res.redirect(`/admin/invoices/${doc.inv.id}`);
 });
 
@@ -446,18 +377,31 @@ router.post('/:id/convert', (req, res, next) => {
   res.redirect(`/admin/invoices/${id}/edit`);
 });
 
+router.post('/:id/receipt', (req, res, next) => {
+  const doc = find(req);
+  if (!doc) return next();
+  if (!doc.payments.length) {
+    flash(req, 'error', 'Record a payment before issuing a receipt.');
+    return res.redirect(`/admin/invoices/${doc.inv.id}`);
+  }
+  const fresh = inv.draft('receipt', { source: doc });
+  fresh.inv.status = 'paid';
+  fresh.inv.terms = '';
+  const id = inv.create(fresh.inv, fresh.items, {
+    createdBy: req.user.id,
+    sourceId: doc.inv.id,
+    payments: doc.payments.map((p) => ({ paid_on: p.paid_on, amount: p.amount, method: p.method, reference: p.reference, recorded_by: p.recorded_by })),
+  });
+  flash(req, 'success', 'Receipt issued.');
+  res.redirect(`/admin/invoices/${id}`);
+});
+
 router.post('/:id/duplicate', (req, res, next) => {
   const doc = find(req);
   if (!doc) return next();
-  if (linkedReceipt(doc)) return res.redirect(`/admin/invoices/${doc.inv.id}`);
   const fresh = inv.draft(doc.inv.type, { source: doc });
   fresh.inv.reference = '';
-  // A copied standalone receipt starts as a fresh payment received today for the same amount.
-  const payments = doc.inv.type === 'receipt'
-    ? [{ paid_on: inv.today(), amount: doc.t.payable, method: doc.payments[0]?.method || inv.PAYMENT_METHODS[0], reference: '' }]
-    : [];
-  if (doc.inv.type === 'receipt') Object.assign(fresh.inv, { status: 'paid', issue_date: inv.today() });
-  const id = inv.create(fresh.inv, fresh.items, { createdBy: req.user.id, payments });
+  const id = inv.create(fresh.inv, fresh.items, { createdBy: req.user.id });
   flash(req, 'success', 'Duplicated. Review and save the copy.');
   res.redirect(`/admin/invoices/${id}/edit`);
 });
@@ -465,10 +409,7 @@ router.post('/:id/duplicate', (req, res, next) => {
 router.post('/:id/delete', requireAdmin, (req, res, next) => {
   const doc = find(req);
   if (!doc) return next();
-  transaction(() => {
-    run('UPDATE invoice_payments SET receipt_id = NULL WHERE receipt_id = ?', doc.inv.id);
-    run('DELETE FROM invoices WHERE id = ?', doc.inv.id);
-  });
+  run('DELETE FROM invoices WHERE id = ?', doc.inv.id);
   flash(req, 'success', `${doc.label} ${doc.inv.number} deleted.`);
   res.redirect('/admin/invoices');
 });

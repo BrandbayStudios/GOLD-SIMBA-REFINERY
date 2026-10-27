@@ -90,15 +90,6 @@
         <% } %>
         <p class="paper-small">Please use <strong><%= d.number %></strong> as your payment reference.</p>
       <% } %>
-      <% if (d.type === 'receipt' && doc.receipt && doc.receipt.invoice) { const ri = doc.receipt.invoice; %>
-        <h3>Applied to <%= ri.label.toLowerCase() %> <%= ri.number %></h3>
-        <table class="sums">
-          <tr><th><%= ri.label %> total</th><td><%= m(ri.total) %></td></tr>
-          <tr><th>This payment</th><td><%= m(doc.receipt.amount) %></td></tr>
-          <tr><th>Paid to date</th><td><%= m(ri.paidToDate) %></td></tr>
-          <tr class="total"><th>Balance remaining</th><td><%= m(ri.balance) %></td></tr>
-        </table>
-      <% } %>
     </div>
     <table class="sums">
       <tr><th>Subtotal</th><td><%= m(t.subtotal) %></td></tr>
@@ -113,9 +104,7 @@
         <tr class="sums-split"><th>Deposit <%= d.deposit_percent %>%</th><td><%= m(t.deposit) %></td></tr>
         <tr class="sums-split"><th>Balance on completion</th><td><%= m(t.payable - t.deposit) %></td></tr>
       <% } %>
-      <% if (d.type === 'receipt') { %>
-        <tr class="total"><th>Amount received</th><td><%= m(t.paid) %></td></tr>
-      <% } else if (t.paid && d.type !== 'quotation') { %>
+      <% if (t.paid && d.type !== 'quotation') { %>
         <tr><th>Paid</th><td>-<%= m(t.paid) %></td></tr>
         <tr class="total"><th>Balance due</th><td><%= m(Math.max(0, t.balance)) %></td></tr>
       <% } %>
@@ -127,7 +116,7 @@
 
   <% if (doc.payments.length && d.type !== 'quotation') { %>
     <section class="paper-notes">
-      <h3><%= d.type === 'receipt' ? 'Payment details' : 'Payments received' %></h3>
+      <h3>Payments received</h3>
       <table class="lines compact"><tbody>
         <% for (const p of doc.payments) { %><tr><td><%= lib.formatDate(p.paid_on) %></td><td><%= p.method %></td><td><%= p.reference || '' %></td><td class="num"><%= m(p.amount) %></td></tr><% } %>
       </tbody></table>
