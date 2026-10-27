@@ -5,6 +5,7 @@ const lib = require('../lib');
 const mailer = require('../mailer');
 const config = require('../config');
 const invoicing = require('../invoicing');
+const seo = require('../seo');
 const path = require('node:path');
 const { flash, documentUpload, verifyCsrf, discardUpload } = require('../middleware');
 
@@ -25,6 +26,7 @@ const formLimiter = rateLimit({
 const services = () => all('SELECT * FROM service_categories WHERE published = 1 ORDER BY sort_order, id');
 const testimonials = () => all('SELECT * FROM testimonials WHERE published = 1 ORDER BY sort_order, id');
 const faqs = () => all('SELECT * FROM faqs WHERE published = 1 ORDER BY sort_order, id');
+const faqPageSchema = () => seo.faqPage(faqs());
 const album = (name, featuredOnly = false) =>
   all(`SELECT * FROM gallery_items WHERE published = 1 AND album = ? ${featuredOnly ? 'AND featured = 1' : ''} ORDER BY sort_order, id`, name);
 
@@ -40,6 +42,7 @@ function back(req, fallback = '/') {
 
 router.get('/', (req, res) => {
   res.render('home', {
+    description: 'Branding, logo design, websites, digital marketing, printing and business registration from BrandBay Innovation Studios in Lusaka, Zambia.',
     services: services(),
     logos: album('logos', true),
     projects: all('SELECT * FROM projects WHERE published = 1 AND featured = 1 ORDER BY sort_order, id LIMIT 4'),
@@ -54,8 +57,9 @@ router.get('/', (req, res) => {
 
 router.get('/about', (req, res) => {
   res.render('about', {
-    title: 'About',
-    description: 'BrandBay Innovation Studios merges branding and technology to craft bespoke solutions that elevate brands.',
+    title: 'About Us — Creative & Tech Studio in Lusaka',
+    description: 'Meet BrandBay Innovation Studios, a registered Zambian branding and technology studio on Cairo Road, Lusaka, helping entrepreneurs and companies build brands that stand out.',
+    schema: [seo.breadcrumbs([['About', '/about']])],
     testimonials: testimonials(),
     certificates: album('compliance'),
   });
@@ -63,8 +67,9 @@ router.get('/about', (req, res) => {
 
 router.get('/services', (req, res) => {
   res.render('services', {
-    title: 'Services',
-    description: 'Branding, digital marketing, websites and apps, event branding, business registration and printing in Zambia.',
+    title: 'Branding, Design, Web & Marketing Services in Zambia',
+    description: 'Logo design and brand identity, social media and SEO, website and app design, event branding, PACRA/ZRA/ZPPA business registration and printing — all from one studio in Lusaka, Zambia.',
+    schema: [seo.breadcrumbs([['Services', '/services']])],
     services: services(),
   });
 });
@@ -73,8 +78,9 @@ router.get('/services/:slug', (req, res, next) => {
   const service = get('SELECT * FROM service_categories WHERE slug = ? AND published = 1', req.params.slug);
   if (!service) return next();
   res.render('service', {
-    title: service.name,
-    description: service.tagline,
+    title: `${service.name} in Lusaka, Zambia`,
+    description: `${service.name} in Lusaka, Zambia by BrandBay Innovation Studios: ${lib.lines(service.items).slice(0, 4).join(', ')} and more.`,
+    schema: [seo.service(service), seo.breadcrumbs([['Services', '/services'], [service.name, `/services/${service.slug}`]])],
     service,
     others: services().filter((s) => s.id !== service.id),
     projects: all('SELECT * FROM projects WHERE published = 1 ORDER BY featured DESC, sort_order LIMIT 3'),
@@ -85,8 +91,9 @@ router.get('/projects', (req, res) => {
   const projects = all('SELECT * FROM projects WHERE published = 1 ORDER BY sort_order, id');
   const categories = [...new Set(projects.map((p) => p.category).filter(Boolean))];
   res.render('projects', {
-    title: 'Projects',
-    description: 'Recent branding, graphic design and digital marketing work by BrandBay Innovation Studios.',
+    title: 'Portfolio — Branding & Design Projects in Zambia',
+    description: 'Recent brand identity, logo, social media and advertising design projects by BrandBay Innovation Studios for businesses in Lusaka and across Zambia.',
+    schema: [seo.breadcrumbs([['Projects', '/projects']])],
     projects,
     categories,
   });
@@ -96,8 +103,10 @@ router.get('/projects/:slug', (req, res, next) => {
   const project = get('SELECT * FROM projects WHERE slug = ? AND published = 1', req.params.slug);
   if (!project) return next();
   res.render('project', {
-    title: project.title,
+    title: `${project.title}${project.category ? ` — ${project.category}` : ''} Project`,
     description: project.summary,
+    ogImage: project.image,
+    schema: [seo.project(project), seo.breadcrumbs([['Projects', '/projects'], [project.title, `/projects/${project.slug}`]])],
     project,
     related: all('SELECT * FROM projects WHERE published = 1 AND id != ? ORDER BY (category = ?) DESC, sort_order LIMIT 3', project.id, project.category || ''),
   });
@@ -105,8 +114,9 @@ router.get('/projects/:slug', (req, res, next) => {
 
 router.get('/gallery', (req, res) => {
   res.render('gallery', {
-    title: 'Gallery',
-    description: 'Our logofolio and poster designs.',
+    title: 'Logo & Poster Design Portfolio',
+    description: 'Browse logos and posters designed by BrandBay Innovation Studios for Zambian businesses — restaurants, fashion, finance, education, beauty and more.',
+    schema: [seo.breadcrumbs([['Gallery', '/gallery']])],
     logos: album('logos'),
     posters: album('posters'),
   });
@@ -114,7 +124,8 @@ router.get('/gallery', (req, res) => {
 
 router.get('/blog', (req, res) => {
   res.render('blog', {
-    title: 'Insights',
+    title: 'Insights — Branding & Marketing Tips',
+    description: 'Practical branding, design and digital marketing advice for Zambian businesses from BrandBay Innovation Studios.',
     posts: all('SELECT * FROM posts WHERE published = 1 ORDER BY published_at DESC, id DESC'),
   });
 });
@@ -122,13 +133,17 @@ router.get('/blog', (req, res) => {
 router.get('/blog/:slug', (req, res, next) => {
   const post = get('SELECT * FROM posts WHERE slug = ? AND published = 1', req.params.slug);
   if (!post) return next();
-  res.render('post', { title: post.title, description: post.excerpt, post });
+  res.render('post', {
+    title: post.title, description: post.excerpt, post, ogType: 'article', ogImage: post.image,
+    schema: [seo.article(post), seo.breadcrumbs([['Insights', '/blog'], [post.title, `/blog/${post.slug}`]])],
+  });
 });
 
 router.get('/contact', (req, res) => {
   res.render('contact', {
-    title: 'Contact',
-    description: 'Get in touch with BrandBay Innovation Studios for services, partnerships, fees and any other inquiries.',
+    title: 'Contact Us — Branding Agency in Lusaka',
+    description: 'Call, WhatsApp or message BrandBay Innovation Studios in Lusaka and Mpongwe, Zambia for branding, design, web, marketing and printing quotes. Answers to common questions on timelines and payment.',
+    schema: [faqPageSchema(), seo.breadcrumbs([['Contact', '/contact']])],
     faqs: faqs(),
     form: {},
   });
@@ -173,8 +188,8 @@ router.get('/apply', (req, res) => {
   const all_ = services();
   const preset = all_.find((s) => s.slug === req.query.service);
   res.render('apply', {
-    title: 'Apply for a Service',
-    description: 'Tell us about your project and get a tailored quote from BrandBay Innovation Studios.',
+    title: 'Get a Quote — Apply for a Service',
+    description: 'Tell us about your branding, design, website, marketing or printing project and get a tailored quote from BrandBay Innovation Studios in Lusaka.',
     services: all_,
     form: {
       service: preset ? preset.name : lib.clean(req.query.service, 120),
@@ -235,7 +250,7 @@ router.post('/apply', formLimiter, documentUpload.single('attachment'), verifyCs
 router.get('/apply/thank-you', (req, res) => {
   const reference = req.session.lastRequest;
   if (!reference) return res.redirect('/apply');
-  res.render('thank-you', { title: 'Request received', reference });
+  res.render('thank-you', { title: 'Request received', reference, noindex: true });
 });
 
 // Shareable, unguessable link to a document, for clients without an account.
@@ -248,24 +263,47 @@ router.get('/invoice/:token', (req, res, next) => {
 });
 
 router.get('/terms', (req, res) => {
-  res.render('terms', { title: "Terms & Conditions" });
+  res.render('terms', { title: 'Terms & Conditions', description: 'Payment terms, timelines, deliverables and change policy for BrandBay Innovation Studios services.' });
 });
 
 router.get('/robots.txt', (req, res) => {
-  res.type('text/plain').send(`User-agent: *\nDisallow: /admin\nDisallow: /account\nSitemap: ${config.baseUrl}/sitemap.xml\n`);
+  const privatePaths = ['/admin', '/account', '/cart', '/checkout', '/invoice/', '/login', '/register', '/forgot-password', '/reset-password', '/apply/thank-you'];
+  res.type('text/plain').send(`User-agent: *\n${privatePaths.map((p) => `Disallow: ${p}`).join('\n')}\nAllow: /\n\nSitemap: ${config.baseUrl}/sitemap.xml\n`);
 });
 
 router.get('/sitemap.xml', (req, res) => {
-  const urls = ['/', '/about', '/services', '/projects', '/gallery', '/store', '/contact', '/apply', '/terms'];
-  for (const s of services()) urls.push(`/services/${s.slug}`);
-  for (const p of all('SELECT slug FROM projects WHERE published = 1')) urls.push(`/projects/${p.slug}`);
-  for (const p of all('SELECT slug FROM posts WHERE published = 1')) urls.push(`/blog/${p.slug}`);
-  for (const p of all('SELECT slug FROM products WHERE published = 1')) urls.push(`/store/${p.slug}`);
-  res.type('application/xml').send(
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-      .map((u) => `  <url><loc>${config.baseUrl}${u}</loc></url>`)
-      .join('\n')}\n</urlset>\n`,
-  );
+  const xml = (v) => String(v ?? '').replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
+  const day = (v) => (v ? String(v).slice(0, 10) : null);
+  const entries = [
+    { loc: '/', priority: '1.0', images: album('logos', true).map((g) => [g.image, `${g.title} logo design`]) },
+    { loc: '/services', priority: '0.9' },
+    { loc: '/projects', priority: '0.8' },
+    { loc: '/gallery', priority: '0.8', images: [...album('logos'), ...album('posters')].map((g) => [g.image, g.title]) },
+    { loc: '/about', priority: '0.7', images: album('compliance').map((g) => [g.image, g.title]) },
+    { loc: '/contact', priority: '0.7' },
+    { loc: '/apply', priority: '0.7' },
+    { loc: '/store', priority: '0.6' },
+    { loc: '/terms', priority: '0.3' },
+  ];
+  for (const s of services()) entries.push({ loc: `/services/${s.slug}`, priority: '0.9' });
+  for (const p of all('SELECT slug, title, image, image_2, created_at FROM projects WHERE published = 1')) {
+    entries.push({ loc: `/projects/${p.slug}`, priority: '0.6', lastmod: day(p.created_at), images: [p.image, p.image_2].filter(Boolean).map((i) => [i, p.title]) });
+  }
+  const posts = all('SELECT slug, title, image, published_at FROM posts WHERE published = 1');
+  if (posts.length) entries.push({ loc: '/blog', priority: '0.6', lastmod: day(posts.map((p) => p.published_at).sort().pop()) });
+  for (const p of posts) entries.push({ loc: `/blog/${p.slug}`, priority: '0.6', lastmod: day(p.published_at), images: p.image ? [[p.image, p.title]] : [] });
+  for (const p of all('SELECT slug, name, image, created_at FROM products WHERE published = 1')) {
+    entries.push({ loc: `/store/${p.slug}`, priority: '0.5', images: p.image ? [[p.image, p.name]] : [] });
+  }
+  const body = entries.map((e) => [
+    '  <url>',
+    `    <loc>${xml(config.baseUrl + e.loc)}</loc>`,
+    e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
+    `    <priority>${e.priority}</priority>`,
+    ...(e.images || []).map(([src, title]) => `    <image:image><image:loc>${xml(seo.abs(src))}</image:loc><image:title>${xml(title)}</image:title></image:image>`),
+    '  </url>',
+  ].filter(Boolean).join('\n')).join('\n');
+  res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${body}\n</urlset>\n`);
 });
 
 router.get('/healthz', (req, res) => res.json({ ok: true }));

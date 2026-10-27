@@ -2,9 +2,12 @@ const path = require('node:path');
 const express = require('express');
 const session = require('express-session');
 const helmet = require('helmet');
+const compression = require('compression');
 const config = require('./config');
 const SqliteStore = require('./session-store');
 const lib = require('./lib');
+const seo = require('./seo');
+const { all } = require('./db');
 const { csrf, verifyCsrfUnlessMultipart, loadUser } = require('./middleware');
 
 const app = express();
@@ -32,6 +35,14 @@ app.use(
   }),
 );
 
+// One canonical host: www.<domain> permanently redirects to <domain> so search engines see one site.
+const canonicalHost = new URL(config.baseUrl).host;
+app.use((req, res, next) => {
+  if (config.isProd && req.get('host') === `www.${canonicalHost}`) return res.redirect(301, config.baseUrl + req.originalUrl);
+  next();
+});
+
+app.use(compression());
 app.use(express.static(path.join(config.root, 'public'), { maxAge: config.isProd ? '7d' : 0 }));
 app.use('/uploads', express.static(config.uploadDir, { maxAge: config.isProd ? '30d' : 0 }));
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
@@ -60,6 +71,8 @@ app.use((req, res, next) => {
   res.locals.path = req.path;
   res.locals.cartCount = (req.session.cart || []).reduce((n, i) => n + i.qty, 0);
   res.locals.lib = lib;
+  res.locals.seo = seo;
+  res.locals.orgServices = all('SELECT name, slug, items FROM service_categories WHERE published = 1 ORDER BY sort_order, id');
   res.locals.config = config;
   res.locals.title = null;
   res.locals.description = null;
@@ -73,7 +86,7 @@ app.use(require('./routes/shop'));
 app.use('/admin', require('./routes/admin'));
 
 app.use((req, res) => {
-  res.status(404).render('error', { title: 'Page not found', status: 404, message: 'The page you are looking for does not exist or has moved.' });
+  res.status(404).render('error', { noindex: true, title: 'Page not found', status: 404, message: 'The page you are looking for does not exist or has moved.' });
 });
 
 app.use((err, req, res, next) => {
@@ -88,7 +101,7 @@ app.use((err, req, res, next) => {
     message = 'Something went wrong on our side. Please try again shortly.';
   }
   if (res.headersSent) return next(err);
-  res.status(status).render('error', { title: status === 403 ? 'Not allowed' : 'Error', status, message });
+  res.status(status).render('error', { noindex: true, title: status === 403 ? 'Not allowed' : 'Error', status, message });
 });
 
 module.exports = app;

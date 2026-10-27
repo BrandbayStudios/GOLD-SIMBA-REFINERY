@@ -10,6 +10,10 @@ const invoicing = require('../invoicing');
 
 const router = express.Router();
 router.use(requireAuth);
+router.use((req, res, next) => {
+  res.locals.noindex = true;
+  next();
+});
 
 function ownRequest(req) {
   return get('SELECT * FROM service_requests WHERE id = ? AND user_id = ?', req.params.id, req.user.id);

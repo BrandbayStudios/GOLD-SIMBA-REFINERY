@@ -323,6 +323,8 @@ const SETTING_FIELDS = [
   { name: 'facebook_url', label: 'Facebook URL' },
   { name: 'instagram_url', label: 'Instagram URL' },
   { name: 'linkedin_url', label: 'LinkedIn URL' },
+  { name: 'google_site_verification', label: 'Google Search Console verification code (content of the meta tag)' },
+  { name: 'bing_site_verification', label: 'Bing Webmaster Tools verification code' },
   { name: 'payment_instructions', label: 'Payment instructions (shown after checkout)', type: 'textarea' },
   { name: 'terms', label: "Terms & Conditions (blank line between paragraphs; short lines become headings)", type: 'textarea', rows: 16 },
 ];
@@ -335,6 +337,8 @@ router.post('/settings', requireAdmin, (req, res) => {
   for (const f of SETTING_FIELDS) {
     let value = lib.clean(req.body[f.name], 20000);
     if (f.name.endsWith('_url') && value && !/^https?:\/\//i.test(value)) value = `https://${value}`;
+    // Accept either the bare code or the whole <meta ... content="..."> tag pasted from Google or Bing.
+    if (f.name.endsWith('_verification')) value = (value.match(/content=["']([^"']+)["']/) || [null, value])[1].replace(/[^\w-]/g, '');
     lib.setSetting(f.name, value);
   }
   flash(req, 'success', 'Settings saved.');

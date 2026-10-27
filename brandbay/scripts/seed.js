@@ -25,6 +25,22 @@ const SETTINGS = {
     'Payment structure\n\nServices are billed on a 70% upfront deposit and 30% upon completion. Printing jobs may require full or higher upfront payment depending on production requirements. Custom quotes are provided based on project scope and complexity.\n\nTimelines\n\nGraphic design projects: 3–7 working days. Branding projects: 5–14 working days. Website development: 1–4 weeks. Printing turnaround varies based on quantity and specifications. Timelines start once the deposit and all required content have been received.\n\nDeliverables and source files\n\nUpon full payment, clients receive final deliverables in appropriate formats. Editable/source files (e.g. AI, PSD, Canva) can be provided upon request, depending on the project agreement.\n\nChanges after completion\n\nPost-delivery changes are treated as a new request or billed separately, depending on the scope. This ensures a structured workflow and protects project timelines.',
 };
 
+// Introductions for each service page (unique, location-specific copy for search engines and visitors).
+const SERVICE_INTROS = {
+  'graphic-design-brand-identity':
+    'Your brand identity is the first thing customers judge. BrandBay Innovation Studios designs logos and complete brand identities for startups, SMEs, churches, schools and corporates in Lusaka and across Zambia — from naming and strategy to colour palettes, typography and brand guidelines your team can actually use.\n\nEvery identity starts with your market and your audience, so the result looks professional on a shop sign in Lusaka, a social media profile and a tender document alike.',
+  'digital-advertising-marketing':
+    'We help Zambian businesses turn online visibility into enquiries and sales. Our team plans and runs social media marketing on Facebook, Instagram, TikTok and LinkedIn, manages paid advertising campaigns, writes content, sets up email marketing and improves search engine optimisation (SEO) so customers in Lusaka and beyond can find you on Google.\n\nCampaigns are measured on reach, leads and revenue — not just likes.',
+  'technological-solutions':
+    'Modern businesses need modern systems. BrandBay designs and builds websites, web apps and e-commerce stores for Zambian businesses, sets up EPOS (point-of-sale) systems for shops and restaurants, and supplies IT hardware and support.\n\nWhether you need a simple company website, an online store that takes Mobile Money, or advice on the right digital tools for your business, we align the technology with your goals and budget.',
+  'service-event-branding':
+    'Professional presentation builds trust. We design company profiles, corporate documents, presentations, event posters and flyers, pull-up banners and motion graphics for businesses, NGOs, churches and events in Lusaka and the Copperbelt.\n\nFrom a launch event to a tender submission, every touchpoint is designed to look consistent and on-brand.',
+  'compliance-business-registration':
+    'Strong businesses are built on strong foundations. BrandBay helps entrepreneurs formalise their businesses in Zambia: company and business name registration with PACRA, supplier registration with ZPPA for government tenders, ZRA tax registration (TPIN), and professional business plans and proposals.\n\nWe handle the paperwork so you can focus on running your business — and we can design your brand at the same time.',
+  'printing-artistry':
+    'Quality printing in Lusaka, designed and produced in one place. We print business cards, flyers and posters, pull-up banners, brochures and company profiles, stickers and labels, branded stationery and event materials.\n\nSend your own artwork or let our designers create it, and we will advise on paper, finishes and quantities so your print looks as good as it does on screen.',
+};
+
 const SERVICES = [
   {
     slug: 'graphic-design-brand-identity',
@@ -211,8 +227,8 @@ function seed() {
     if (empty('service_categories')) {
       SERVICES.forEach((s, i) =>
         run(
-          'INSERT INTO service_categories (slug, name, tagline, items, closing, icon, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)',
-          s.slug, s.name, s.tagline, s.items.join('\n'), s.closing, s.icon, i,
+          'INSERT INTO service_categories (slug, name, tagline, intro, items, closing, icon, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          s.slug, s.name, s.tagline, SERVICE_INTROS[s.slug] || null, s.items.join('\n'), s.closing, s.icon, i,
         ));
     }
 
@@ -265,7 +281,14 @@ function seed() {
   invoicing.ensureDefaults();
 }
 
-module.exports = { seed };
+// Fills in service introductions on databases created before they existed; never overwrites edited text.
+function backfillContent() {
+  for (const [slug, intro] of Object.entries(SERVICE_INTROS)) {
+    run("UPDATE service_categories SET intro = ? WHERE slug = ? AND (intro IS NULL OR intro = '')", intro, slug);
+  }
+}
+
+module.exports = { seed, backfillContent };
 
 if (require.main === module) {
   seed();

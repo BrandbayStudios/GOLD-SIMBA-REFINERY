@@ -1,7 +1,11 @@
 <%
   const siteName = settings.site_name || 'BrandBay Innovation Studios';
-  const pageTitle = title ? `${title} | ${siteName}` : `${siteName} — ${settings.tagline || 'Brand | Build | Boost'}`;
-  const pageDescription = description || settings.hero_text || '';
+  // Short brand suffix keeps titles near the ~60 characters search results show.
+  const pageTitle = locals.fullTitle || (title ? `${title} | BrandBay` : 'Branding & Web Design Agency in Lusaka, Zambia | BrandBay');
+  const fullDescription = (description || settings.hero_text || '').replace(/\s+/g, ' ').trim();
+  const pageDescription = fullDescription.length <= 160 ? fullDescription : `${fullDescription.slice(0, 157).replace(/[\s,;:.]+\S*$/, '')}…`;
+  const canonical = config.baseUrl + (path === '/' ? '/' : path.replace(/\/$/, ''));
+  const shareImage = locals.ogImage ? seo.abs(locals.ogImage) : `${config.baseUrl}/brand/og-image.jpg`;
   const nav = [
     ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'], ['/projects', 'Projects'],
     ['/gallery', 'Gallery'], ['/store', 'Store'], ['/contact', 'Contact'],
@@ -14,13 +18,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= pageTitle %></title>
   <meta name="description" content="<%= pageDescription %>">
+  <meta name="robots" content="<%= locals.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1' %>">
+  <% if (!locals.noindex) { %><link rel="canonical" href="<%= canonical %>"><% } %>
+  <meta property="og:site_name" content="<%= siteName %>">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:type" content="<%= locals.ogType || 'website' %>">
   <meta property="og:title" content="<%= pageTitle %>">
   <meta property="og:description" content="<%= pageDescription %>">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="<%= config.baseUrl %>/brand/og-image.jpg">
+  <meta property="og:url" content="<%= canonical %>">
+  <meta property="og:image" content="<%= shareImage %>">
+  <meta property="og:image:alt" content="<%= locals.ogImage ? pageTitle : siteName + ' logo' %>">
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:url" content="<%= config.baseUrl + path %>">
-  <link rel="canonical" href="<%= config.baseUrl + path %>">
+  <meta name="twitter:title" content="<%= pageTitle %>">
+  <meta name="twitter:description" content="<%= pageDescription %>">
+  <meta name="twitter:image" content="<%= shareImage %>">
+  <meta name="geo.region" content="ZM-09">
+  <meta name="geo.placename" content="Lusaka">
+  <% if (settings.google_site_verification) { %><meta name="google-site-verification" content="<%= settings.google_site_verification %>"><% } %>
+  <% if (settings.bing_site_verification) { %><meta name="msvalidate.01" content="<%= settings.bing_site_verification %>"><% } %>
   <meta name="theme-color" content="#0b0f14">
   <%- include('icons') %>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,6 +43,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="/css/app.css">
   <% if (locals.extraCss) { %><link rel="stylesheet" href="<%= extraCss %>"><% } %>
+  <% if (!locals.noindex) { %><script type="application/ld+json"><%- seo.graph([seo.organization(settings, orgServices), seo.website(settings), ...(locals.schema || [])]) %></script><% } %>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>

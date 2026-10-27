@@ -46,7 +46,7 @@ function signIn(req, user, done) {
 
 router.get('/login', (req, res) => {
   if (req.user) return res.redirect(home(req.user));
-  res.render('auth/login', { title: 'Sign in', next: safeNext(req.query.next, ''), form: {} });
+  res.render('auth/login', { noindex: true, title: 'Sign in', next: safeNext(req.query.next, ''), form: {} });
 });
 
 router.post('/login', authLimiter, (req, res, next) => {
@@ -54,7 +54,7 @@ router.post('/login', authLimiter, (req, res, next) => {
   const user = get('SELECT * FROM users WHERE email = ?', email);
   const ok = user && bcrypt.compareSync(String(req.body.password || ''), user.password_hash);
   if (!ok) {
-    return res.status(401).render('auth/login', {
+    return res.status(401).render('auth/login', { noindex: true,
       title: 'Sign in', next: safeNext(req.body.next, ''), form: { email }, errors: ['Incorrect email or password.'],
     });
   }
@@ -70,7 +70,7 @@ router.post('/login', authLimiter, (req, res, next) => {
 
 router.get('/register', (req, res) => {
   if (req.user) return res.redirect(home(req.user));
-  res.render('auth/register', { title: 'Create account', form: {}, next: safeNext(req.query.next, '') });
+  res.render('auth/register', { noindex: true, title: 'Create account', form: {}, next: safeNext(req.query.next, '') });
 });
 
 router.post('/register', authLimiter, (req, res, next) => {
@@ -90,7 +90,7 @@ router.post('/register', authLimiter, (req, res, next) => {
     errors.push('An account with that email already exists. Try signing in instead.');
   }
   if (errors.length) {
-    return res.status(422).render('auth/register', { title: 'Create account', form, errors, next: safeNext(req.body.next, '') });
+    return res.status(422).render('auth/register', { noindex: true, title: 'Create account', form, errors, next: safeNext(req.body.next, '') });
   }
   const { lastInsertRowid } = run(
     'INSERT INTO users (name, email, phone, company, password_hash) VALUES (?, ?, ?, ?, ?)',
@@ -116,7 +116,7 @@ router.post('/logout', (req, res, next) => {
 });
 
 router.get('/forgot-password', (req, res) => {
-  res.render('auth/forgot', { title: 'Reset password' });
+  res.render('auth/forgot', { noindex: true, title: 'Reset password' });
 });
 
 router.post('/forgot-password', authLimiter, async (req, res) => {
@@ -147,7 +147,7 @@ router.get('/reset-password/:token', (req, res) => {
     flash(req, 'error', 'That reset link is invalid or has expired.');
     return res.redirect('/forgot-password');
   }
-  res.render('auth/reset', { title: 'Choose a new password', token: req.params.token });
+  res.render('auth/reset', { noindex: true, title: 'Choose a new password', token: req.params.token });
 });
 
 router.post('/reset-password/:token', authLimiter, (req, res) => {
@@ -158,7 +158,7 @@ router.post('/reset-password/:token', authLimiter, (req, res) => {
   }
   const password = String(req.body.password || '');
   if (password.length < 8 || password !== req.body.password_confirm) {
-    return res.status(422).render('auth/reset', {
+    return res.status(422).render('auth/reset', { noindex: true,
       title: 'Choose a new password', token: req.params.token,
       errors: ['Passwords must match and be at least 8 characters.'],
     });

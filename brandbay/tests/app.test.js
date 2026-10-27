@@ -252,3 +252,40 @@ test('password reset works once and expires the token', async () => {
   assert.equal((await b.get(`/reset-password/${token}`)).status, 302);
   assert.equal((await browser().login('jane@test.local', 'newpassword1')).status, 302);
 });
+
+test('SEO: titles, canonical, robots, structured data, sitemap', async () => {
+  const b = browser();
+  const ld = (html) => JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+
+  const home = await b.get('/');
+  assert.match(home.text, /<title>Branding &amp; Web Design Agency in Lusaka, Zambia \| BrandBay<\/title>/);
+  assert.match(home.text, /<link rel="canonical" href="http:\/\/[^"]+\/">/);
+  assert.match(home.text, /<meta name="robots" content="index, follow/);
+  const homeGraph = ld(home.text)['@graph'];
+  const org = homeGraph.find((n) => n['@type'] === 'ProfessionalService');
+  assert.equal(org.address.addressLocality, 'Lusaka');
+  assert.equal(org.hasOfferCatalog.itemListElement.length, 6);
+
+  const service = await b.get('/services/graphic-design-brand-identity');
+  assert.match(service.text, /<title>Graphic Design &amp; Brand Identity in Lusaka, Zambia \| BrandBay<\/title>/);
+  assert.match(service.text, /designs logos and complete brand identities/);
+  const types = ld(service.text)['@graph'].map((n) => n['@type']);
+  assert.ok(types.includes('Service') && types.includes('BreadcrumbList'));
+
+  const contact = await b.get('/contact');
+  assert.ok(ld(contact.text)['@graph'].some((n) => n['@type'] === 'FAQPage'));
+
+  const login = await b.get('/login');
+  assert.match(login.text, /<meta name="robots" content="noindex, nofollow">/);
+  assert.doesNotMatch(login.text, /rel="canonical"/);
+  assert.match((await b.get('/no-such-page')).text, /noindex/);
+
+  const robots = await b.get('/robots.txt');
+  assert.match(robots.text, /Disallow: \/admin/);
+  assert.match(robots.text, /Sitemap: http/);
+
+  const sitemap = await b.get('/sitemap.xml');
+  assert.match(sitemap.text, /<loc>http[^<]+\/services\/printing-artistry<\/loc>/);
+  assert.match(sitemap.text, /<image:loc>http[^<]+\/media\/logos\/[^<]+\.webp<\/image:loc>/);
+  assert.doesNotMatch(sitemap.text, /\/admin|\/login/);
+});

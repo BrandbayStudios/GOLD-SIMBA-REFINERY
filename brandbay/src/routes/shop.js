@@ -3,6 +3,7 @@ const { all, get, run, transaction } = require('../db');
 const lib = require('../lib');
 const mailer = require('../mailer');
 const config = require('../config');
+const seo = require('../seo');
 const { flash } = require('../middleware');
 
 const router = express.Router();
@@ -33,8 +34,9 @@ router.get('/store', (req, res) => {
     : all('SELECT * FROM products WHERE published = 1 ORDER BY sort_order, id');
   const categories = all("SELECT DISTINCT category FROM products WHERE published = 1 AND category IS NOT NULL AND category != '' ORDER BY category").map((r) => r.category);
   res.render('store/index', {
-    title: 'Store',
-    description: 'Order printing and design packages from BrandBay Innovation Studios.',
+    title: 'Printing & Design Store in Lusaka',
+    description: 'Order business cards, flyers, posters, pull-up banners, brochures, stickers and logo design packages online from BrandBay Innovation Studios, Lusaka. Pay by Mobile Money or bank transfer.',
+    schema: [seo.breadcrumbs([['Store', '/store']])],
     products,
     categories,
     category,
@@ -45,15 +47,17 @@ router.get('/store/:slug', (req, res, next) => {
   const product = get('SELECT * FROM products WHERE slug = ? AND published = 1', req.params.slug);
   if (!product) return next();
   res.render('store/product', {
-    title: product.name,
+    title: `${product.name}${product.category === 'Printing' ? ' Printing' : ''} in Lusaka`,
     description: product.description,
+    ogImage: product.image,
+    schema: [seo.product(product), seo.breadcrumbs([['Store', '/store'], [product.name, `/store/${product.slug}`]])],
     product,
     related: all('SELECT * FROM products WHERE published = 1 AND id != ? ORDER BY (category = ?) DESC, sort_order LIMIT 3', product.id, product.category || ''),
   });
 });
 
 router.get('/cart', (req, res) => {
-  res.render('store/cart', { title: 'Your cart', ...cartDetails(req) });
+  res.render('store/cart', { title: 'Your cart', noindex: true, ...cartDetails(req) });
 });
 
 router.post('/cart/add', (req, res) => {
@@ -91,6 +95,7 @@ router.get('/checkout', (req, res) => {
   if (!cart.lines.length) return res.redirect('/cart');
   res.render('store/checkout', {
     title: 'Checkout',
+    noindex: true,
     ...cart,
     form: { name: req.user?.name, email: req.user?.email, phone: req.user?.phone, delivery_method: 'collect', payment_method: 'mobile_money' },
   });
@@ -117,7 +122,7 @@ router.post('/checkout', async (req, res) => {
   for (const l of cart.lines) {
     if (l.product.stock !== null && l.qty > l.product.stock) errors.push(`Only ${l.product.stock} × ${l.product.name} left in stock.`);
   }
-  if (errors.length) return res.status(422).render('store/checkout', { title: 'Checkout', ...cart, form, errors });
+  if (errors.length) return res.status(422).render('store/checkout', { title: 'Checkout', noindex: true, ...cart, form, errors });
 
   const userId = req.user?.id ?? get('SELECT id FROM users WHERE email = ?', form.email)?.id ?? null;
   const order = transaction(() => {
@@ -154,7 +159,7 @@ router.get('/checkout/complete', (req, res) => {
   const order = req.session.lastOrder && get('SELECT * FROM orders WHERE id = ?', req.session.lastOrder);
   if (!order) return res.redirect('/store');
   const items = all('SELECT * FROM order_items WHERE order_id = ?', order.id);
-  res.render('store/complete', { title: 'Order received', order, items });
+  res.render('store/complete', { title: 'Order received', noindex: true, order, items });
 });
 
 module.exports = router;
