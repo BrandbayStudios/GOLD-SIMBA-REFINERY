@@ -121,5 +121,13 @@
     }
   });
 
+  // Product quote links preselect the product
+  document.querySelectorAll('.product-link').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var sel = document.getElementById('interest');
+      if (sel) sel.value = a.dataset.interest;
+    });
+  });
+
   document.getElementById('year').textContent = new Date().getFullYear();
 })();
