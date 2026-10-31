@@ -134,8 +134,10 @@
     font-family:'Fraunces',serif;
     font-size:17px;
     letter-spacing:.06em;
-    color:var(--bone);
     line-height:1.15;
+    background-image:var(--shine);
+    background-size:220% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .brand-name b{
     display:block;
@@ -774,7 +776,7 @@ body[data-print-target="assay"] #admin-app .assay-print{
 #track-app .wrap{max-width:620px;margin:0 auto;padding:60px 24px 90px;}
 #track-app .brand{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:38px;}
 #track-app .brand-mark{width:38px;height:38px;flex:none;object-fit:contain;}
-#track-app .brand-name{font-family:'Fraunces',serif;font-size:17px;color:var(--bone);letter-spacing:.01em;}
+#track-app .brand-name{font-family:'Fraunces',serif;font-size:17px;color:var(--gold-2);letter-spacing:.01em;}
 #track-app .brand-name b{display:block;font-size:13px;color:var(--gold-2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
 #track-app .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:38px;}
 #track-app .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:10px;}
