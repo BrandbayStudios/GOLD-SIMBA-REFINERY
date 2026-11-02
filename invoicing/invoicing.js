@@ -1,4 +1,4 @@
-/* Gold SIMBA Refinery — Invoicing (quotations, invoices, receipts, clients)
+/* Alfaris Gold Refinery — Invoicing (quotations, invoices, receipts, clients)
  * Self-contained: data lives in localStorage under STORE_KEY. Use Settings →
  * Backup to export/import JSON. All persistence goes through load()/save(),
  * so swapping to a server API later only touches those two functions. */
@@ -27,11 +27,11 @@
   function defaults() {
     return {
       settings: {
-        company: 'Gold SIMBA Refinery',
+        company: 'Alfaris Gold Refinery',
         tagline: 'Mineral Refining & Laboratory Testing — Zambia',
         address: 'Zambia',
         phone: '+260 571 007 701',
-        email: 'info@goldsimbarefinery.com',
+        email: '',
         website: 'alfarisgoldrefinery.com',
         tpin: '',
         logo: '',
@@ -43,7 +43,7 @@
         quotePrefix: 'QUO-',
         invoicePrefix: 'INV-',
         receiptPrefix: 'RCT-',
-        bank: 'Bank: \nAccount name: Gold SIMBA Refinery\nAccount no: \nBranch / Swift: \nMobile Money: ',
+        bank: 'Bank: \nAccount name: Alfaris Gold Refinery\nAccount no: \nBranch / Swift: \nMobile Money: ',
         terms: 'Payment due by the date shown. Samples and refined material are released only after full payment. Prices are subject to prevailing market rates for precious metals.',
         footer: 'Thank you for your business.',
         services: DEFAULT_SERVICES.map(function (s) { return { name: s[0], unit: s[1], price: 0 }; })
@@ -65,6 +65,12 @@
         d.settings = Object.assign(base.settings, d.settings || {});
         d.counters = Object.assign(base.counters, d.counters || {});
         ['clients', 'docs', 'receipts'].forEach(function (k) { if (!Array.isArray(d[k])) d[k] = []; });
+        // one-time rename for browsers that saved the earlier placeholder brand
+        var st = d.settings;
+        ['company', 'bank', 'footer', 'terms'].forEach(function (k) {
+          if (typeof st[k] === 'string') st[k] = st[k].replace(/Gold SIMBA Refinery/g, 'Alfaris Gold Refinery');
+        });
+        if (/goldsimba/i.test(st.email || '')) st.email = '';
         return d;
       }
     } catch (e) { console.error(e); }
@@ -175,7 +181,7 @@
   var view = $('#view');
   function setTitle(t, actions) {
     $('#pageTitle').textContent = t;
-    document.title = t + ' — Gold SIMBA Invoicing';
+    document.title = t + ' — Alfaris Invoicing';
     $('#topActions').innerHTML = actions || '';
   }
   function go(h) { location.hash = h; }
@@ -626,7 +632,7 @@
       (!isQ && db.settings.bank.trim() ? '<div><h4>Payment details</h4><div>' + esc(db.settings.bank) + '</div></div>' : '') +
       (d.terms ? '<div><h4>Terms & conditions</h4><div>' + esc(d.terms) + '</div></div>' : '') +
       '</div>' +
-      (isQ ? '<div class="p-sign"><div>Authorised by (Gold SIMBA Refinery)</div><div>Accepted by client — signature & date</div></div>' : '') +
+      (isQ ? '<div class="p-sign"><div>Authorised by (' + esc(db.settings.company) + ')</div><div>Accepted by client — signature & date</div></div>' : '') +
       paperFoot() + '</div>' +
       (payments.length ? '<div class="section" style="max-width:820px;margin:28px auto 0"><h3>Payments on this invoice</h3>' + receiptTable(payments) + '</div>' : '');
     bindRows(); bindPrint();
@@ -829,7 +835,7 @@
       Object.assign(db.settings, data); save(); toast('Settings saved'); route();
     });
     $('#exp').addEventListener('click', function () {
-      download(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }), 'gold-simba-invoicing-backup-' + today() + '.json');
+      download(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }), 'alfaris-invoicing-backup-' + today() + '.json');
     });
     $('#imp').addEventListener('change', function (e) {
       var file = e.target.files[0]; if (!file) return;
@@ -936,7 +942,7 @@
     document.body.classList.add('locked');
     $('#lp').value = '';
     var err = $('#loginErr'); err.hidden = !msg; err.textContent = msg || '';
-    document.title = 'Staff sign-in — Gold SIMBA Invoicing';
+    document.title = 'Staff sign-in — Alfaris Invoicing';
     setTimeout(function () { ($('#lu').value ? $('#lp') : $('#lu')).focus(); }, 0);
   }
   function unlock(user) {

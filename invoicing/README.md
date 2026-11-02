@@ -1,4 +1,4 @@
-# Gold SIMBA Refinery — Invoicing
+# Alfaris Gold Refinery — Invoicing
 
 Staff tool for **quotations, invoices, receipts and client records**, styled to match the main site.
 
