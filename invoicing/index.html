@@ -10,7 +10,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="invoicing.css">
 </head>
-<body>
+<body class="locked">
+  <div class="login" id="login">
+    <form class="login-card" id="loginForm" autocomplete="on">
+      <div class="brand-name" style="font-size:18px">GOLD<b style="font-size:22px">SIMBA REFINERY</b></div>
+      <div class="brand-sub">Staff sign-in · Invoicing</div>
+      <div class="field" style="margin-top:26px"><label for="lu">Username</label><input id="lu" name="username" autocomplete="username" required autofocus></div>
+      <div class="field"><label for="lp">Password</label><input id="lp" name="password" type="password" autocomplete="current-password" required></div>
+      <div class="login-err" id="loginErr" role="alert" hidden></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:6px">Sign in</button>
+      <p class="login-note">Authorised staff only. You are signed out after 30 minutes without activity.</p>
+    </form>
+  </div>
   <div class="app">
     <aside class="side" id="side">
       <div class="brand">
@@ -25,7 +36,11 @@
         <a href="#/clients" data-nav="clients">Clients</a>
         <a href="#/settings" data-nav="settings">Settings</a>
       </nav>
-      <div class="side-foot">Data is saved in this browser. Back up regularly from Settings.</div>
+      <div class="side-foot">
+        <div>Signed in as <b id="whoami" style="color:var(--bone)"></b></div>
+        <button class="btn btn-sm" id="logoutBtn" style="margin:8px 0 14px">Sign out</button>
+        <div>Data is saved in this browser. Back up regularly from Settings.</div>
+      </div>
     </aside>
     <div class="main">
       <header class="top">

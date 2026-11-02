@@ -17,6 +17,13 @@ Upload the `invoicing/` folder to the website (e.g. `alfarisgoldrefinery.com/inv
 Records are saved in the **browser's local storage on the device you use**. They are not shared between computers.
 - Use **Settings → Download backup** regularly. Use **Restore** to move the data to another device.
 - Clearing browser data erases the records unless you have a backup.
-- The page has no login of its own. Use it only on a staff computer, or put the folder behind password protection on the host. The page is marked `noindex`.
+- The page is marked `noindex`.
+
+## Staff login
+- Staff must sign in before anything is shown. The default account is `ADMIN`; the password is given to staff separately. The username is not case-sensitive, but the password is.
+- Sessions end when the browser is closed or after 30 minutes without activity. Five wrong attempts lock the form for 1 minute.
+- **Change the password** under Settings → Change password. The change applies to that browser, and backups downloaded afterwards carry it to other computers.
+- The code stores only a salted SHA-256 hash of the password, never the password itself.
+- **Limitation:** this login runs in the browser. It stops casual access on a shared computer, but it is not server-grade security. Someone with technical skill and the device can still read the browser's stored data. For stronger protection, also password-protect the `/invoicing/` folder on the web host (e.g. hPanel → Password Protect Directories), or move the data to the site's server.
 
 All reading and writing goes through `load()` / `save()` in `invoicing.js`. To make the records shared and multi-user later, connect those two functions to the site's existing `/api` backend.

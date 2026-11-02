@@ -16,6 +16,12 @@ button,input,select,textarea{font:inherit}
 .mono{font-family:'IBM Plex Mono',monospace}
 
 .app{display:flex;min-height:100vh}
+body.locked .app{display:none}
+body:not(.locked) .login{display:none}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:radial-gradient(ellipse 700px 460px at 80% 10%,rgba(138,100,21,.25),transparent),var(--ink)}
+.login-card{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:32px 28px}
+.login-err{color:var(--bad);font-size:13px;margin-bottom:10px}
+.login-note{font-size:12px;color:var(--smoke);margin:16px 0 0;text-align:center}
 .side{width:230px;flex:none;background:var(--panel);border-right:1px solid var(--line-soft);padding:24px 18px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
 .brand-name{font-family:'Fraunces',serif;letter-spacing:.06em;font-size:15px;background:var(--shine);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.15}
 .brand-name b{display:block;font-size:17px}

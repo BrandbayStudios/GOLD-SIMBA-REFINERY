@@ -181,6 +181,7 @@
   function go(h) { location.hash = h; }
 
   function route() {
+    if (document.body.classList.contains('locked')) return;
     var parts = location.hash.replace(/^#\/?/, '').split('/');
     var page = parts[0] || 'dashboard', id = parts[1];
     $$('.side nav a').forEach(function (a) {
@@ -838,7 +839,9 @@
           var d = JSON.parse(rd.result);
           if (!d || !Array.isArray(d.docs) || !Array.isArray(d.clients)) throw new Error('Not a valid backup file');
           if (!confirm('Replace ALL current data with this backup (' + d.clients.length + ' clients, ' + d.docs.length + ' documents)?')) return;
-          localStorage.setItem(STORE_KEY, JSON.stringify(d)); db = load(); save(); toast('Backup restored'); route();
+          localStorage.setItem(STORE_KEY, JSON.stringify(d)); db = load(); save();
+          if (db.auth) localStorage.setItem('gsr_invoicing_auth', JSON.stringify(db.auth));
+          toast('Backup restored'); route();
         } catch (err) { alert('Could not restore: ' + err.message); }
       };
       rd.readAsText(file);
@@ -876,5 +879,132 @@
     document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
 
-  route();
+  // ---------- staff login ----------
+  // Only a salted SHA-256 hash of the password is kept here, never the password.
+  // A password changed in Settings is saved (as a hash) under AUTH_KEY in this browser.
+  var AUTH_KEY = 'gsr_invoicing_auth';
+  var SESSION_KEY = 'gsr_invoicing_session';
+  var IDLE_MS = 30 * 60 * 1000;
+  var DEFAULT_USERS = { admin: '447bae246126e09e905683cd86f74580bee49e1840f49f5c2d70b1d8e8aa7a10' };
+
+  function sha256(str) {
+    var K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+    var bytes = Array.prototype.slice.call(new TextEncoder().encode(str));
+    var bitLen = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    for (var s = 56; s >= 0; s -= 8) bytes.push(s >= 32 ? Math.floor(bitLen / Math.pow(2, s)) & 0xff : (bitLen >>> s) & 0xff);
+    var H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19], W = new Array(64);
+    function rot(x, n) { return (x >>> n) | (x << (32 - n)); }
+    for (var i = 0; i < bytes.length; i += 64) {
+      for (var t = 0; t < 64; t++) {
+        if (t < 16) W[t] = (bytes[i + t * 4] << 24) | (bytes[i + t * 4 + 1] << 16) | (bytes[i + t * 4 + 2] << 8) | bytes[i + t * 4 + 3];
+        else {
+          var s0 = rot(W[t - 15], 7) ^ rot(W[t - 15], 18) ^ (W[t - 15] >>> 3), s1 = rot(W[t - 2], 17) ^ rot(W[t - 2], 19) ^ (W[t - 2] >>> 10);
+          W[t] = (W[t - 16] + s0 + W[t - 7] + s1) | 0;
+        }
+      }
+      var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+      for (t = 0; t < 64; t++) {
+        var T1 = (h + (rot(e, 6) ^ rot(e, 11) ^ rot(e, 25)) + ((e & f) ^ (~e & g)) + K[t] + W[t]) | 0;
+        var T2 = ((rot(a, 2) ^ rot(a, 13) ^ rot(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        h = g; g = f; f = e; e = (d + T1) | 0; d = c; c = b; b = a; a = (T1 + T2) | 0;
+      }
+      H = [H[0] + a, H[1] + b, H[2] + c, H[3] + d, H[4] + e, H[5] + f, H[6] + g, H[7] + h].map(function (x) { return x | 0; });
+    }
+    return H.map(function (x) { return ('00000000' + (x >>> 0).toString(16)).slice(-8); }).join('');
+  }
+  function hashPw(user, pw) { return sha256('gsr-invoicing|' + user.toLowerCase() + '|' + pw); }
+  function users() {
+    try { return Object.assign({}, DEFAULT_USERS, JSON.parse(localStorage.getItem(AUTH_KEY) || '{}')); }
+    catch (e) { return Object.assign({}, DEFAULT_USERS); }
+  }
+  function getSession() {
+    try {
+      var s = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+      if (s && s.user && Date.now() - s.last < IDLE_MS && users()[s.user]) return s;
+    } catch (e) {}
+    return null;
+  }
+  function touch() {
+    var s = getSession();
+    if (s) { s.last = Date.now(); try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {} }
+  }
+  function lock(msg) {
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+    view.innerHTML = ''; closeModal();
+    document.body.classList.add('locked');
+    $('#lp').value = '';
+    var err = $('#loginErr'); err.hidden = !msg; err.textContent = msg || '';
+    document.title = 'Staff sign-in — Gold SIMBA Invoicing';
+    setTimeout(function () { ($('#lu').value ? $('#lp') : $('#lu')).focus(); }, 0);
+  }
+  function unlock(user) {
+    document.body.classList.remove('locked');
+    $('#whoami').textContent = user.toUpperCase();
+    route();
+  }
+  var fails = 0, lockedUntil = 0;
+  $('#loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var err = $('#loginErr');
+    if (Date.now() < lockedUntil) {
+      err.textContent = 'Too many attempts. Try again in ' + Math.ceil((lockedUntil - Date.now()) / 1000) + ' seconds.'; err.hidden = false; return;
+    }
+    var u = $('#lu').value.trim().toLowerCase(), p = $('#lp').value;
+    var stored = users()[u];
+    if (stored && stored === hashPw(u, p)) {
+      fails = 0;
+      try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user: u, last: Date.now() })); } catch (x) {}
+      err.hidden = true; $('#lp').value = '';
+      unlock(u);
+    } else {
+      fails++;
+      if (fails >= 5) { lockedUntil = Date.now() + 60000; fails = 0; }
+      err.textContent = 'Incorrect username or password.'; err.hidden = false;
+      $('#lp').value = ''; $('#lp').focus();
+    }
+  });
+  $('#logoutBtn').addEventListener('click', function () { lock(''); });
+  ['click', 'keydown', 'input'].forEach(function (ev) { document.addEventListener(ev, touch, true); });
+  setInterval(function () {
+    if (!document.body.classList.contains('locked') && !getSession()) lock('You were signed out after 30 minutes of inactivity.');
+  }, 30000);
+
+  // change-password form, rendered at the end of Settings
+  var baseSettings = showSettings;
+  showSettings = function () {
+    baseSettings();
+    var s = getSession();
+    view.insertAdjacentHTML('beforeend',
+      '<div class="section card"><h3>Change password</h3>' +
+      '<p style="margin-top:0;font-size:13px">Signed in as <b>' + esc(s ? s.user.toUpperCase() : '') + '</b>. The new password applies to this browser; it is also kept inside backups you download from now on.</p>' +
+      '<form id="pwf"><div class="grid">' +
+      '<div class="field"><label>Current password</label><input type="password" name="cur" autocomplete="current-password" required></div>' +
+      '<div class="field"><label>New password</label><input type="password" name="nw" autocomplete="new-password" minlength="8" required></div>' +
+      '<div class="field"><label>Confirm new password</label><input type="password" name="cf" autocomplete="new-password" minlength="8" required></div>' +
+      '</div><button class="btn btn-gold">Update password</button></form></div>');
+    $('#pwf').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = e.target, sess = getSession();
+      if (!sess) return lock('Please sign in again.');
+      if (users()[sess.user] !== hashPw(sess.user, f.cur.value)) { alert('Current password is incorrect.'); return; }
+      if (f.nw.value.length < 8) { alert('Use at least 8 characters.'); return; }
+      if (f.nw.value !== f.cf.value) { alert('New passwords do not match.'); return; }
+      var custom = {};
+      try { custom = JSON.parse(localStorage.getItem(AUTH_KEY) || '{}'); } catch (x) {}
+      custom[sess.user] = hashPw(sess.user, f.nw.value);
+      try { localStorage.setItem(AUTH_KEY, JSON.stringify(custom)); } catch (x) { alert('Could not save the new password.'); return; }
+      db.auth = custom; save();
+      f.reset(); toast('Password updated');
+    });
+  };
+
+  // a backup restored onto another computer brings its changed password with it
+  if (db.auth && !localStorage.getItem(AUTH_KEY)) {
+    try { localStorage.setItem(AUTH_KEY, JSON.stringify(db.auth)); } catch (e) {}
+  }
+
+  var sess = getSession();
+  if (sess) unlock(sess.user); else lock('');
 })();
