@@ -1,4 +1,4 @@
-/* Alfaris Gold Refinery — Invoicing (quotations, invoices, receipts, clients)
+/* Al Faris Gold Leaching & Refining Ltd — Invoicing (quotations, invoices, receipts, clients)
  * Self-contained: data lives in localStorage under STORE_KEY. Use Settings →
  * Backup to export/import JSON. All persistence goes through load()/save(),
  * so swapping to a server API later only touches those two functions. */
@@ -8,30 +8,27 @@
   var STORE_KEY = 'gsr_invoicing_v1';
 
   var DEFAULT_SERVICES = [
-    ['Gold Refining', 'g'],
-    ['Mineral Assaying & Testing', 'sample'],
-    ['Gold Purity & Fineness Testing', 'sample'],
-    ['Precious & Base Metal Analysis', 'sample'],
-    ['Mineral Sample Preparation', 'sample'],
-    ['Independent Laboratory Verification', 'sample'],
-    ['Refinery & Laboratory Consultation', 'hour'],
-    ['Mineral Valuation Support', 'service'],
-    ['Quality Control & Compliance Testing', 'sample'],
-    ['Buying on Behalf of Client (agency fee)', 'service'],
-    ['Gold Biometric Security / Vault Custody', 'day'],
-    ['Client Consultation', 'hour']
+    ['Gold Testing & Assaying', 'sample'],
+    ['SRF Testing', 'sample'],
+    ['Smelting & Density', 'sample'],
+    ['Refining & Smelting', 'g'],
+    ['Safekeeping (secure vault)', 'day'],
+    ['Gold Purchasing', 'g'],
+    ['Consulting', 'hour']
   ];
+  // the placeholder list used before the Al Faris rebrand, replaced if never edited
+  var OLD_SERVICE_NAMES = ['Gold Refining', 'Mineral Assaying & Testing', 'Gold Purity & Fineness Testing', 'Precious & Base Metal Analysis', 'Mineral Sample Preparation', 'Independent Laboratory Verification', 'Refinery & Laboratory Consultation', 'Mineral Valuation Support', 'Quality Control & Compliance Testing', 'Buying on Behalf of Client (agency fee)', 'Gold Biometric Security / Vault Custody', 'Client Consultation'];
   var UNITS = ['g', 'kg', 'oz', 'pcs', 'sample', 'service', 'hour', 'day', 'lot'];
   var METHODS = ['Cash', 'Bank Transfer', 'Mobile Money', 'Cheque', 'Card', 'Other'];
 
   function defaults() {
     return {
       settings: {
-        company: 'Alfaris Gold Refinery',
-        tagline: 'Mineral Refining & Laboratory Testing — Zambia',
-        address: 'Zambia',
-        phone: '+260 571 007 701',
-        email: '',
+        company: 'Al Faris Gold Leaching & Refining Ltd',
+        tagline: "Zambia's Premier Gold Refinery",
+        address: 'Mass Media News Street, Plot 17009/4\nLusaka, Zambia',
+        phone: '+260 962 801 660',
+        email: 'info@alfariszm.com',
         website: 'alfarisgoldrefinery.com',
         tpin: '',
         logo: '',
@@ -43,9 +40,10 @@
         quotePrefix: 'QUO-',
         invoicePrefix: 'INV-',
         receiptPrefix: 'RCT-',
-        bank: 'Bank: \nAccount name: Alfaris Gold Refinery\nAccount no: \nBranch / Swift: \nMobile Money: ',
-        terms: 'Payment due by the date shown. Samples and refined material are released only after full payment. Prices are subject to prevailing market rates for precious metals.',
-        footer: 'Thank you for your business.',
+        bank: 'Bank: \nAccount name: Al Faris Gold Leaching & Refining Ltd\nAccount no: \nBranch / Swift: \nMobile Money: ',
+        terms: 'Payment due by the date shown. Samples and refined gold are released only after full payment. Prices are subject to prevailing market rates for precious metals. Office hours: Mon–Fri 08:00–17:00.',
+        footer: 'Thank you for your business — Purity, Security and Excellence in Every Ounce.',
+        brandVersion: 2,
         services: DEFAULT_SERVICES.map(function (s) { return { name: s[0], unit: s[1], price: 0 }; })
       },
       clients: [],
@@ -62,15 +60,27 @@
       var raw = localStorage.getItem(STORE_KEY);
       if (raw) {
         var d = JSON.parse(raw), base = defaults();
+        var savedBrandV = (d.settings || {}).brandVersion || 0;
         d.settings = Object.assign(base.settings, d.settings || {});
         d.counters = Object.assign(base.counters, d.counters || {});
         ['clients', 'docs', 'receipts'].forEach(function (k) { if (!Array.isArray(d[k])) d[k] = []; });
         // one-time rename for browsers that saved the earlier placeholder brand
-        var st = d.settings;
+        var st = d.settings, nd = defaults().settings;
+        if (savedBrandV < 2) {
         ['company', 'bank', 'footer', 'terms'].forEach(function (k) {
-          if (typeof st[k] === 'string') st[k] = st[k].replace(/Gold SIMBA Refinery/g, 'Alfaris Gold Refinery');
+          if (typeof st[k] === 'string') st[k] = st[k].replace(/Gold SIMBA Refinery|Alfaris Gold Refinery/g, nd.company);
         });
-        if (/goldsimba/i.test(st.email || '')) st.email = '';
+        var oldVals = {
+          tagline: ['Mineral Refining & Laboratory Testing — Zambia'], address: ['Zambia', 'Lusaka, Zambia', ''],
+          phone: ['+260 571 007 701', ''], email: ['info@goldsimbarefinery.com', ''],
+          footer: ['Thank you for your business.']
+        };
+        Object.keys(oldVals).forEach(function (k) { if (oldVals[k].indexOf(st[k] || '') >= 0) st[k] = nd[k]; });
+        if (/^Payment due by the date shown\. Samples and refined material/.test(st.terms || '')) st.terms = nd.terms;
+        if (Array.isArray(st.services) && st.services.length === OLD_SERVICE_NAMES.length &&
+            st.services.every(function (x, i) { return x.name === OLD_SERVICE_NAMES[i] && !Number(x.price); })) st.services = nd.services;
+        st.brandVersion = 2;
+        }
         return d;
       }
     } catch (e) { console.error(e); }
@@ -81,6 +91,7 @@
     catch (e) { alert('Could not save — browser storage may be full or blocked. Export a backup now.'); }
   }
   db = load();
+  try { if (localStorage.getItem(STORE_KEY)) save(); } catch (e) {} // persist any one-time settings update
 
   // ---------- helpers ----------
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -181,7 +192,7 @@
   var view = $('#view');
   function setTitle(t, actions) {
     $('#pageTitle').textContent = t;
-    document.title = t + ' — Alfaris Invoicing';
+    document.title = t + ' — Al Faris Gold Invoicing';
     $('#topActions').innerHTML = actions || '';
   }
   function go(h) { location.hash = h; }
@@ -685,9 +696,13 @@
   function paperHead(title, number) {
     var s = db.settings;
     var lines = [s.tagline, s.address, [s.phone, s.email].filter(Boolean).join(' · '), s.website, s.tpin ? 'TPIN: ' + s.tpin : ''].filter(Boolean).join('\n');
-    return '<div class="p-head"><div class="p-brand">' + (s.logo ? '<img src="' + esc(s.logo) + '" alt="">' : '') +
+    return '<div class="p-head"><div class="p-brand">' + (s.logo ? '<img src="' + esc(s.logo) + '" alt="">' : '<span class="af-badge">' + esc(initials(s.company)) + '</span>') +
       '<div><div class="p-co">' + esc(s.company) + '</div><div class="p-co-sub">' + esc(lines) + '</div></div></div>' +
       '<div class="p-title"><h2>' + esc(title) + '</h2><div class="mono">' + esc(number) + '</div></div></div>';
+  }
+  function initials(name) {
+    var w = String(name || '').replace(/[^A-Za-z\s]/g, ' ').split(/\s+/).filter(Boolean);
+    return ((w[0] || '').charAt(0) + (w[1] || '').charAt(0)).toUpperCase() || 'AF';
   }
   function clientBlock(c) {
     return '<div style="font-weight:600">' + esc(c.name || '—') + '</div>' +
@@ -763,7 +778,7 @@
       (r.reference ? '<tr><td>Transaction ref.</td><td>' + esc(r.reference) + '</td></tr>' : '') +
       (inv ? '<tr><td>For invoice</td><td>' + esc(inv.number) + '</td></tr>' : '') +
       '</table></div></div>' +
-      '<div class="p-amount-box"><div class="lbl" style="font:500 10.5px IBM Plex Mono,monospace;letter-spacing:.14em;text-transform:uppercase;color:#8a8073">Amount received</div>' +
+      '<div class="p-amount-box"><div class="lbl">Amount received</div>' +
       '<div class="big">' + money(r.amount, r.currency) + '</div><div style="font-style:italic">' + esc(toWords(r.amount, r.currency)) + '</div></div>' +
       (inv ? '<div class="p-tot" style="margin-left:0;width:340px"><div class="row"><span>Invoice total</span><span>' + money(c.total, inv.currency) + '</span></div>' +
         '<div class="row"><span>Total paid to date</span><span>' + money(c.paid, inv.currency) + '</span></div>' +
@@ -835,7 +850,7 @@
       Object.assign(db.settings, data); save(); toast('Settings saved'); route();
     });
     $('#exp').addEventListener('click', function () {
-      download(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }), 'alfaris-invoicing-backup-' + today() + '.json');
+      download(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }), 'alfaris-gold-invoicing-backup-' + today() + '.json');
     });
     $('#imp').addEventListener('change', function (e) {
       var file = e.target.files[0]; if (!file) return;
@@ -942,7 +957,7 @@
     document.body.classList.add('locked');
     $('#lp').value = '';
     var err = $('#loginErr'); err.hidden = !msg; err.textContent = msg || '';
-    document.title = 'Staff sign-in — Alfaris Invoicing';
+    document.title = 'Staff sign-in — Al Faris Gold Invoicing';
     setTimeout(function () { ($('#lu').value ? $('#lp') : $('#lu')).focus(); }, 0);
   }
   function unlock(user) {

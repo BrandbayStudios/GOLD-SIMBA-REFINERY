@@ -1,4 +1,4 @@
-# Alfaris Gold Refinery — Invoicing
+# Al Faris Gold Leaching & Refining Ltd — Invoicing
 
 Staff tool for **quotations, invoices, receipts and client records**, styled to match the main site.
 
