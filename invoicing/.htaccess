@@ -1,0 +1,9 @@
+# Al Faris Gold — Invoicing
+# Never serve Git metadata (this folder is deployed as a Git clone).
+RedirectMatch 404 /\.git
+# No directory listings.
+Options -Indexes
+# Keep the tool out of search engines.
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
