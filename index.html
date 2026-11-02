@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Al Faris Gold — Invoicing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="invoicing.css">
+</head>
+<body class="locked">
+  <div class="login" id="login">
+    <form class="login-card" id="loginForm" autocomplete="on">
+      <div class="brand-row"><span class="af-badge">AF</span><div><div class="brand-name">AL FARIS GOLD</div><div class="brand-sub">Leaching &amp; Refining Ltd</div></div></div>
+      <h2 style="font-size:20px;margin-top:22px">Staff sign-in</h2>
+      <div style="font-size:13px;color:var(--smoke)">Invoicing, quotations &amp; receipts</div>
+      <div class="field" style="margin-top:20px"><label for="lu">Username</label><input id="lu" name="username" autocomplete="username" required autofocus></div>
+      <div class="field"><label for="lp">Password</label><input id="lp" name="password" type="password" autocomplete="current-password" required></div>
+      <div class="login-err" id="loginErr" role="alert" hidden></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:6px">Sign in</button>
+      <p class="login-note">Authorised staff only. You are signed out after 30 minutes without activity.</p>
+    </form>
+  </div>
+  <div class="app">
+    <aside class="side" id="side">
+      <div class="brand">
+        <div class="brand-row"><span class="af-badge">AF</span><div><div class="brand-name">AL FARIS GOLD</div><div class="brand-sub">Leaching &amp; Refining Ltd</div></div></div>
+        <span class="brand-tag">Invoicing</span>
+      </div>
+      <nav>
+        <a href="#/dashboard" data-nav="dashboard">Dashboard</a>
+        <a href="#/quotes" data-nav="quotes">Quotations</a>
+        <a href="#/invoices" data-nav="invoices">Invoices</a>
+        <a href="#/receipts" data-nav="receipts">Receipts</a>
+        <a href="#/clients" data-nav="clients">Clients</a>
+        <a href="#/settings" data-nav="settings">Settings</a>
+      </nav>
+      <div class="side-foot">
+        <div>Signed in as <b id="whoami" style="color:var(--bone)"></b></div>
+        <button class="btn btn-sm" id="logoutBtn" style="margin:8px 0 14px">Sign out</button>
+        <div>Data is saved in this browser. Back up regularly from Settings.</div>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="top">
+        <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="top-actions" id="topActions"></div>
+      </header>
+      <main id="view" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head"><h2 id="modalTitle"></h2><button class="x" data-close aria-label="Close">×</button></div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="invoicing.js"></script>
+</body>
+</html>
