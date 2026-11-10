@@ -1,0 +1,63 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Release signing details live in keystore.properties next to this project (never committed).
+def keystorePropsFile = rootProject.file('keystore.properties')
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+
+def siteHost = 'events.tiltsolutions.tech'
+def launchUrl = "https://${siteHost}/?source=app"
+
+android {
+    namespace 'tech.tiltsolutions.eventhub'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'tech.tiltsolutions.eventhub'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+
+        manifestPlaceholders = [
+            siteHost : siteHost,
+            launchUrl: launchUrl,
+        ]
+        resValue 'string', 'asset_statements',
+            "[{\"relation\":[\"delegate_permission/common.handle_all_urls\"],\"target\":{\"namespace\":\"web\",\"site\":\"https://${siteHost}\"}}]"
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropsFile.exists()) {
+                storeFile rootProject.file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+}

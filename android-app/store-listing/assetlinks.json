@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "tech.tiltsolutions.eventhub",
+      "sha256_cert_fingerprints": [
+        "E1:05:1A:2D:1D:9E:A5:43:79:36:E5:7C:13:77:23:8B:4C:74:ED:D3:F0:B4:A5:53:F7:76:D0:F5:1D:BA:46:5E"
+      ]
+    }
+  }
+]
