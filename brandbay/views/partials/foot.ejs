@@ -1,35 +1,92 @@
 </main>
+<%
+  const phoneHref = (settings.phone || '').replace(/\s/g, '');
+  const waHref = settings.whatsapp ? `https://wa.me/${settings.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hi BrandBay, I would like to start a project.')}` : '';
+%>
 <footer class="site-footer bg-section">
+  <div class="gold-band footer-band" aria-hidden="true">
+    <div class="gold-band-track">
+      <% for (const pass of [0, 1]) { for (const s of orgServices) { for (const item of lib.lines(s.items).slice(0, 2)) { %>
+        <span><%= item %></span><span class="dot">✦</span>
+      <% } } } %>
+    </div>
+  </div>
   <div class="bg-media" aria-hidden="true"><img src="/media/bg/bg-footer-keyboard.webp" alt="" loading="lazy" data-parallax></div>
   <div class="bg-overlay overlay-55" aria-hidden="true"></div>
+
+  <div class="container">
+    <section class="footer-cta" data-reveal="fade-up" aria-labelledby="footer-cta-title">
+      <span class="footer-cta-glow" aria-hidden="true"></span>
+      <div class="footer-cta-copy">
+        <span class="footer-eyebrow"><span class="pulse-dot" aria-hidden="true"></span> Now taking new projects</span>
+        <h2 id="footer-cta-title">Ready to <em>Brand</em>, <em>Build</em> &amp; <em>Boost</em> your business?</h2>
+        <p>Tell us what you need and get a tailored quote — logos, websites, campaigns, printing and business registration, all under one roof.</p>
+      </div>
+      <div class="footer-cta-actions">
+        <a class="btn btn-gold btn-lg btn-shine" href="/apply">Start your project <%- include('icon', { name: 'arrow' }) %></a>
+        <% if (waHref) { %><a class="btn btn-ghost btn-lg cta-whatsapp" href="<%= waHref %>" target="_blank" rel="noopener"><%- include('icon', { name: 'whatsapp' }) %> Chat on WhatsApp</a><% } %>
+        <% if (settings.phone) { %><a class="footer-call" href="tel:<%= phoneHref %>"><%- include('icon', { name: 'phone' }) %> Or call <strong><%= settings.phone %></strong></a><% } %>
+      </div>
+    </section>
+
+    <div class="footer-actions" data-reveal-group>
+      <a class="footer-action" href="/apply" data-reveal="fade-up">
+        <span class="footer-action-icon"><%- include('icon', { name: 'pen' }) %></span>
+        <span><strong>Request a quote</strong><small>Pick a service, share your brief</small></span>
+        <span class="footer-action-arrow"><%- include('icon', { name: 'arrow' }) %></span>
+      </a>
+      <a class="footer-action" href="/store" data-reveal="fade-up">
+        <span class="footer-action-icon"><%- include('icon', { name: 'bag' }) %></span>
+        <span><strong>Shop print &amp; merch</strong><small>Cards, banners, branded items</small></span>
+        <span class="footer-action-arrow"><%- include('icon', { name: 'arrow' }) %></span>
+      </a>
+      <a class="footer-action" href="/account" data-reveal="fade-up">
+        <span class="footer-action-icon"><%- include('icon', { name: 'user' }) %></span>
+        <span><strong>Track your project</strong><small>Sign in to your client portal</small></span>
+        <span class="footer-action-arrow"><%- include('icon', { name: 'arrow' }) %></span>
+      </a>
+      <a class="footer-action" href="/projects" data-reveal="fade-up">
+        <span class="footer-action-icon"><%- include('icon', { name: 'star' }) %></span>
+        <span><strong>See our work</strong><small>Brands, profiles &amp; campaigns</small></span>
+        <span class="footer-action-arrow"><%- include('icon', { name: 'arrow' }) %></span>
+      </a>
+    </div>
+  </div>
+
   <div class="container footer-grid" data-reveal-group>
     <div class="footer-brand" data-reveal="fade-up">
       <a class="brand brand-footer" href="/"><img src="/brand/logo-stacked-gold.png" alt="<%= settings.site_name %>" width="954" height="565" loading="lazy"></a>
-    </div>
-    <div data-reveal="fade-up">
-      <h3>Address</h3>
-      <p><%= settings.address_1 %><br><%= settings.address_2 %></p>
-    </div>
-    <div data-reveal="fade-up">
-      <h3>Contacts</h3>
-      <p>
-        <a href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%= settings.phone %></a><br>
-        <a href="mailto:<%= settings.email %>"><%= settings.email %></a>
-      </p>
-    </div>
-    <div data-reveal="fade-up">
-      <h3>Subscribe to our newsletter</h3>
-      <form class="subscribe" method="post" action="/subscribe">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <label class="sr-only" for="subscribe-email">Email address</label>
-        <input id="subscribe-email" type="email" name="email" placeholder="Email address" required autocomplete="email">
-        <button class="btn btn-gold btn-shine" type="submit">Submit</button>
-      </form>
+      <% if (settings.tagline) { %><p class="footer-tagline"><%= settings.tagline %></p><% } %>
       <div class="socials">
         <% for (const [key, label] of [['facebook_url', 'Facebook'], ['instagram_url', 'Instagram'], ['tiktok_url', 'TikTok'], ['linkedin_url', 'LinkedIn']]) { if (settings[key]) { %>
           <a href="<%= settings[key] %>" target="_blank" rel="noopener" aria-label="<%= label %>"><%- include('icon', { name: label.toLowerCase() }) %></a>
         <% } } %>
       </div>
+    </div>
+    <div data-reveal="fade-up">
+      <h3>Services</h3>
+      <ul class="footer-list">
+        <% for (const s of orgServices) { %><li><a href="/services/<%= s.slug %>"><%= s.name %></a></li><% } %>
+      </ul>
+    </div>
+    <div data-reveal="fade-up">
+      <h3>Visit &amp; contact</h3>
+      <ul class="footer-list footer-contact">
+        <li><%- include('icon', { name: 'pin' }) %><span><%= settings.address_1 %><br><%= settings.address_2 %></span></li>
+        <% if (settings.phone) { %><li><%- include('icon', { name: 'phone' }) %><a href="tel:<%= phoneHref %>"><%= settings.phone %></a></li><% } %>
+        <% if (settings.email) { %><li><%- include('icon', { name: 'mail' }) %><a href="mailto:<%= settings.email %>"><%= settings.email %></a></li><% } %>
+      </ul>
+      <a class="link-arrow" href="/contact">Send us a message <%- include('icon', { name: 'arrow' }) %></a>
+    </div>
+    <div data-reveal="fade-up">
+      <h3>Get design tips &amp; offers</h3>
+      <p class="footer-note">Join our newsletter for branding tips, new services and exclusive deals.</p>
+      <form class="subscribe" method="post" action="/subscribe">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label class="sr-only" for="subscribe-email">Email address</label>
+        <input id="subscribe-email" type="email" name="email" placeholder="Email address" required autocomplete="email">
+        <button class="btn btn-gold btn-shine" type="submit">Subscribe</button>
+      </form>
     </div>
   </div>
   <div class="container footer-links">
@@ -37,6 +94,7 @@
   </div>
   <div class="container footer-base">
     <p>© <%= new Date().getFullYear() %> BrandBay Innovation Studios. All Rights Reserved.</p>
+    <a class="footer-top" href="#">Back to top ↑</a>
   </div>
 </footer>
 <% if (settings.whatsapp) { %>
