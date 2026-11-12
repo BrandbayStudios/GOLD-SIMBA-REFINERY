@@ -17,6 +17,17 @@
         </button>
       <% } %>
     </div>
+    <% const pages = lib.lines(project.gallery); %>
+    <% if (pages.length) { %>
+      <h2 class="project-pages-title">Inside the <%= project.category === 'Company Profile' ? 'profile' : 'project' %></h2>
+      <div class="project-pages" data-lightbox-group data-reveal-group>
+        <% pages.forEach((img, i) => { %>
+          <button class="project-page" type="button" data-lightbox="<%= img %>" data-caption="<%= project.title %> — page <%= i + 1 %>" data-reveal="fade-up">
+            <img src="<%= img %>" alt="<%= project.title %>, page <%= i + 1 %>" loading="lazy">
+          </button>
+        <% }) %>
+      </div>
+    <% } %>
     <% if (project.body) { %>
       <div class="prose">
         <% for (const p of lib.paragraphs(project.body)) { %><p><%= p %></p><% } %>

@@ -314,6 +314,10 @@ CREATE INDEX IF NOT EXISTS idx_messages_request ON request_messages(request_id);
 
 db.exec(SCHEMA);
 
+// Columns added after the first release.
+const columns = (table) => db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
+if (!columns('projects').includes('gallery')) db.exec('ALTER TABLE projects ADD COLUMN gallery TEXT');
+
 function all(sql, ...params) {
   return db.prepare(sql).all(...params);
 }

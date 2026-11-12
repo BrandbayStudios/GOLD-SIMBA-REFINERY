@@ -175,6 +175,50 @@ const PROJECTS = [
   },
 ];
 
+// Company profiles: cover mockups plus the design pages (certificates and personal contact details are left out).
+const profilePages = (slug, n) => Array.from({ length: n }, (_, i) => `/media/projects/${slug}/${String(i + 1).padStart(2, '0')}.webp`).join('\n');
+const PROFILES = [
+  {
+    title: 'Kenjess General Dealers', client: 'Kenjess General Dealers Ltd', category: 'Company Profile', image: 'kenjess-profile', image_2: 'kenjess-profile-2',
+    summary: 'A bold blue-and-gold company profile for a Zambian general supply company, covering its story, vision, mission and core values.',
+  },
+  {
+    title: 'Elgad Security', client: 'Elgad Security Consultancy and Investigations Limited', category: 'Company Profile', image: 'elgad-security-profile', image_2: 'elgad-security-profile-2',
+    summary: 'A striking red-and-black profile for a security and investigations firm, presenting its mission, vision and core values with authority.',
+  },
+  {
+    title: 'Ixicol Business Solutions', client: 'Ixicol Business Solutions', category: 'Company Profile', image: 'ixicol-profile',
+    summary: 'A sleek monochrome business profile for a multi-industry enterprise spanning logistics, supply, construction, customs clearing and finance.',
+    gallery: profilePages('ixicol-profile', 8),
+  },
+  {
+    title: 'Maukat Developers & Engineering', client: 'Maukat Developers & Engineering Ltd', category: 'Company Profile', image: 'maukat-developers-profile',
+    summary: 'A clean, structured profile for a construction and building-supply company: executive summary, core competencies, services, strategy and project work.',
+    gallery: profilePages('maukat-developers-profile', 9),
+  },
+  {
+    title: 'Al Faris Gold Refining', client: 'Alfaris Gold Leaching & Refining Limited', category: 'Company Profile', image: 'alfaris-gold-profile',
+    summary: 'A premium black-and-orange profile for a gold refining company, built around its services, values and social impact.',
+    gallery: profilePages('alfaris-gold-profile', 8),
+  },
+  {
+    title: 'Off-Grid Solar Solutions', client: 'Off-Grid Solar Solutions Limited', category: 'Company Profile', image: 'offgrid-solar-profile',
+    summary: 'A fresh green-and-orange profile for a renewable energy contractor, covering its vision, core values, services, target markets and compliance.',
+    gallery: profilePages('offgrid-solar-profile', 9),
+  },
+];
+
+function insertProfiles() {
+  PROFILES.forEach((p, i) => {
+    if (get('SELECT id FROM projects WHERE slug = ?', p.image)) return;
+    run(
+      'INSERT INTO projects (slug, title, client, category, summary, image, image_2, gallery, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      p.image, p.title, p.client, p.category, p.summary, `/media/projects/${p.image}.webp`,
+      p.image_2 ? `/media/projects/${p.image_2}.webp` : null, p.gallery || null, i - PROFILES.length,
+    );
+  });
+}
+
 const TESTIMONIALS = [
   {
     name: 'Eugine Mavunga',
@@ -259,6 +303,7 @@ function seed() {
           p.image, p.title, p.category, p.summary, `/media/projects/${p.image}.webp`,
           p.image_2 ? `/media/projects/${p.image_2}.webp` : null, p.featured || 0, i,
         ));
+      insertProfiles();
     }
 
     if (empty('testimonials')) {
@@ -293,6 +338,10 @@ function seed() {
 function backfillContent() {
   for (const [slug, intro] of Object.entries(SERVICE_INTROS)) {
     run("UPDATE service_categories SET intro = ? WHERE slug = ? AND (intro IS NULL OR intro = '')", intro, slug);
+  }
+  // One-time: add the company profile projects to databases created before them.
+  if (!getSettings().content_profiles_v1) {
+    transaction(() => { insertProfiles(); setSetting('content_profiles_v1', '1'); });
   }
   // One-time: bring the gallery in line with the original site (all designs, original order).
   if (getSettings().content_gallery_v2) return;
