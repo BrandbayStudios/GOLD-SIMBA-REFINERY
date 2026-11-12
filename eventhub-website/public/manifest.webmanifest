@@ -1,0 +1,22 @@
+{
+  "name": "EventHub Zambia",
+  "short_name": "EventHub",
+  "description": "Find trusted venues, decorators, photographers, caterers and more across Zambia.",
+  "id": "/",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050505",
+  "theme_color": "#003d38",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Find vendors", "url": "/#vendors" },
+    { "name": "My dashboard", "url": "/dashboard" }
+  ]
+}
