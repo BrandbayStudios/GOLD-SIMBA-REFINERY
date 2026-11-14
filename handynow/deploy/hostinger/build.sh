@@ -24,6 +24,8 @@ cp -r public/build "$STAGE/public/"   # include freshly built assets
 echo "→ Installing production PHP dependencies"
 (cd "$STAGE" && COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --no-progress --quiet --no-scripts)
 (cd "$STAGE" && php artisan package:discover --ansi >/dev/null)
+# Composer may install from git clones – strip VCS metadata and package test suites to keep the upload small.
+find "$STAGE/vendor" -type d \( -name .git -o -name tests -o -name Tests -o -name docs \) -prune -exec rm -rf {} + 2>/dev/null || true
 rm -f "$STAGE"/bootstrap/cache/{config,routes-v7,events}.php
 
 cp deploy/hostinger/root.htaccess "$STAGE/.htaccess"
