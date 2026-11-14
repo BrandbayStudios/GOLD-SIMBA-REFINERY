@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Hostinger / CDN in front of the app: trust forwarded proto so HTTPS URLs are generated.
+        $middleware->trustProxies(at: '*');
         $middleware->alias(['role' => EnsureRole::class]);
         $middleware->web(append: [EnsureAccountActive::class]);
         $middleware->api(append: [EnsureAccountActive::class]);

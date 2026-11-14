@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Secret that unlocks the one-time web installer at /install?token=... (remove after installing).
+    'install_token' => env('INSTALL_TOKEN', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

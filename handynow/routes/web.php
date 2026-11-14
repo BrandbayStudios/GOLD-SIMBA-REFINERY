@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Customer;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Provider;
@@ -11,6 +12,10 @@ use App\Http\Controllers\RequestMessageController;
 use App\Http\Controllers\ServiceDirectoryController;
 use App\Http\Controllers\TrackingController;
 use Illuminate\Support\Facades\Route;
+
+// ---------- One-time installer (only active while INSTALL_TOKEN is set and not yet installed) ----------
+Route::get('/install', [InstallController::class, 'show'])->middleware('throttle:10,1');
+Route::post('/install', [InstallController::class, 'run'])->middleware('throttle:3,1');
 
 // ---------- Public site ----------
 Route::get('/', [PageController::class, 'home'])->name('home');
