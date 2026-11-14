@@ -20,7 +20,7 @@ class AuthController extends Controller
             'login' => 'required|string|max:120',
             'password' => 'required|string',
         ]);
-        $field = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $field = str_contains($data['login'], '@') ? 'email' : 'phone';
         $value = $field === 'phone' ? $this->findPhone($data['login']) : mb_strtolower($data['login']);
 
         if (! $value || ! Auth::attempt([$field => $value, 'password' => $data['password']], $request->boolean('remember'))) {

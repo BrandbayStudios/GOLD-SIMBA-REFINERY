@@ -34,7 +34,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $data = $request->validate(['login' => 'required|string', 'password' => 'required|string', 'device_name' => 'nullable|string|max:100']);
-        $user = filter_var($data['login'], FILTER_VALIDATE_EMAIL)
+        $user = str_contains($data['login'], '@')
             ? User::where('email', mb_strtolower($data['login']))->first()
             : User::where('phone', zm_phone($data['login']))->first();
         if (! $user || ! Hash::check($data['password'], $user->password)) {
