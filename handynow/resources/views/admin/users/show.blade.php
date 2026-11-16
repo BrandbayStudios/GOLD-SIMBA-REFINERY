@@ -12,7 +12,8 @@
                 <div><dt>Address</dt><dd class="mt-1 font-semibold">{{ $user->address ?? '—' }}</dd></div>
             </dl>
             @if($user->id !== auth()->id())
-                <form method="POST" action="{{ route('admin.users.status', $user) }}" class="mt-5">@csrf<button class="btn w-full {{ $user->status === 'active' ? 'btn-danger' : 'btn-success' }}" onclick="return confirm('Are you sure?')">{{ $user->status === 'active' ? 'Suspend account' : 'Reactivate account' }}</button></form>
+                <form method="POST" action="{{ route('admin.users.reset-password', $user) }}" class="mt-5" onsubmit="return confirm('Issue a temporary password? Their current password stops working.')">@csrf<button class="btn btn-outline w-full">Reset password</button></form>
+                <form method="POST" action="{{ route('admin.users.status', $user) }}" class="mt-3">@csrf<button class="btn w-full {{ $user->status === 'active' ? 'btn-danger' : 'btn-success' }}" onclick="return confirm('Are you sure?')">{{ $user->status === 'active' ? 'Suspend account' : 'Reactivate account' }}</button></form>
             @endif
         </div>
     </div>

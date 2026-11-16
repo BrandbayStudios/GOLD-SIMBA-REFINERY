@@ -16,7 +16,7 @@
                 <td>{{ $u->isProvider() ? $u->provider_jobs_count : $u->customer_requests_count }}</td>
                 <td class="text-xs">{{ $u->created_at->format('d M Y') }}</td>
                 <td><x-status-badge :status="$u->status" :label="ucfirst($u->status)" /></td>
-                <td>@if($u->id !== auth()->id())<form method="POST" action="{{ route('admin.users.status', $u) }}">@csrf<button class="btn btn-sm {{ $u->status === 'active' ? 'btn-outline text-red-600' : 'btn-success' }}" onclick="return confirm('Change account status for {{ addslashes($u->name) }}?')">{{ $u->status === 'active' ? 'Suspend' : 'Reactivate' }}</button></form>@endif</td>
+                <td class="whitespace-nowrap">@if($u->id !== auth()->id())<form method="POST" action="{{ route('admin.users.reset-password', $u) }}" class="mb-1 inline" onsubmit="return confirm('Issue a temporary password for {{ addslashes($u->name) }}? Their current password stops working.')">@csrf<button class="btn btn-sm btn-outline">Reset password</button></form> <form method="POST" action="{{ route('admin.users.status', $u) }}" class="inline">@csrf<button class="btn btn-sm {{ $u->status === 'active' ? 'btn-outline text-red-600' : 'btn-success' }}" onclick="return confirm('Change account status for {{ addslashes($u->name) }}?')">{{ $u->status === 'active' ? 'Suspend' : 'Reactivate' }}</button></form>@endif</td>
             </tr>
         @empty
             <tr><td colspan="7" class="py-8 text-center text-navy-500">No users.</td></tr>

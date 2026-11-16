@@ -31,9 +31,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_demo' => 'boolean',
+            'must_change_password' => 'boolean',
             'latitude' => 'float',
             'longitude' => 'float',
         ];
+    }
+
+    /** The user chose a new password themselves. */
+    public function changePassword(string $new): void
+    {
+        $this->forceFill(['password' => $new, 'must_change_password' => false])->save();
     }
 
     public function isAdmin(): bool

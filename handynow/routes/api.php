@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [Api\AuthController::class, 'register'])->middleware('throttle:6,1');
     Route::post('/auth/login', [Api\AuthController::class, 'login'])->middleware('throttle:6,1');
+    Route::post('/auth/forgot-password', [Api\AuthController::class, 'forgotPassword'])->middleware('throttle:5,60');
+    Route::post('/auth/reset-password', [Api\AuthController::class, 'resetPassword'])->middleware('throttle:10,15');
     Route::get('/categories', [Api\CatalogController::class, 'categories']);
 
     Route::middleware('auth:sanctum')->group(function () {

@@ -16,8 +16,8 @@ use App\Services\Sms\SmsDriver;
 use App\Services\Sms\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class SettingsController extends Controller
@@ -150,7 +150,8 @@ class SettingsController extends Controller
             'current_password' => 'required|current_password',
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ]);
-        $request->user()->update(['password' => Hash::make($data['password'])]);
+        $request->user()->changePassword($data['password']);
+        Auth::logoutOtherDevices($data['password']);
 
         return back()->with('success', 'Your password has been changed.');
     }

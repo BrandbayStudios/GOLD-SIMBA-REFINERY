@@ -99,6 +99,7 @@
         <div class="card card-pad">
             <h2 class="font-display text-lg font-bold">Account</h2>
             <p class="mt-1 text-sm">Status: <x-status-badge :status="$provider->status" :label="ucfirst($provider->status)" /></p>
+            <form method="POST" action="{{ route('admin.users.reset-password', $provider) }}" class="mt-3" onsubmit="return confirm('Issue a temporary password? Their current password stops working.')">@csrf<button class="btn btn-outline w-full">Reset password</button></form>
             <form method="POST" action="{{ route('admin.users.status', $provider) }}" class="mt-3">@csrf<button class="btn w-full {{ $provider->status === 'active' ? 'btn-danger' : 'btn-success' }}" onclick="return confirm('Are you sure?')">{{ $provider->status === 'active' ? 'Suspend account' : 'Reactivate account' }}</button></form>
         </div>
     </aside>
