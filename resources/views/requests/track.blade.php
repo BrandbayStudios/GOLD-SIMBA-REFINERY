@@ -3,13 +3,15 @@
 @php
     $r = $guest
         ? ['accept' => fn ($q) => route('track.quotes.accept', [$sr->reference, $q]), 'reject' => fn ($q) => route('track.quotes.reject', [$sr->reference, $q]),
+           'fee' => route('track.fee', $sr->reference), 'approveV' => fn ($v) => route('track.variations.approve', [$sr->reference, $v]), 'declineV' => fn ($v) => route('track.variations.decline', [$sr->reference, $v]),
            'cancel' => route('track.cancel', $sr->reference), 'pay' => route('track.pay', $sr->reference), 'review' => route('track.review', $sr->reference), 'live' => route('track.live', $sr->reference)]
         : ['accept' => fn ($q) => route('customer.quotes.accept', [$sr, $q]), 'reject' => fn ($q) => route('customer.quotes.reject', [$sr, $q]),
+           'fee' => route('customer.requests.fee', $sr), 'approveV' => fn ($v) => route('customer.variations.approve', [$sr, $v]), 'declineV' => fn ($v) => route('customer.variations.decline', [$sr, $v]),
            'cancel' => route('customer.requests.cancel', $sr), 'pay' => route('customer.requests.pay', $sr), 'review' => route('customer.requests.review', $sr), 'live' => route('track.live', $sr->reference)];
     $steps = ['Submitted', 'Searching', 'Assigned', 'Accepted', 'En route', 'Arrived', 'In progress', 'Completed'];
     $pendingQuotes = $sr->quotations->where('status', 'pending');
     $provider = $sr->provider;
-    $pendingPayment = $sr->payments->firstWhere('status', 'pending');
+    $pendingPayment = $sr->payments->where('kind', 'job')->firstWhere('status', 'pending');
 @endphp
 @section('content')
 <div class="{{ $guest ? 'container-x py-8' : '' }}">
@@ -27,7 +29,7 @@
                 <p class="text-sm text-navy-500">Ref <b>{{ $sr->reference }}</b> · {{ $sr->category->name }} · submitted {{ $sr->created_at->diffForHumans() }}</p>
             </div>
             @if($sr->agreed_amount)
-                <div class="text-right"><p class="text-xs font-semibold uppercase text-navy-300">Agreed price</p><p class="font-display text-2xl font-bold">{{ zmw($sr->agreed_amount) }}</p><x-status-badge :status="$sr->payment_status" :label="ucfirst($sr->payment_status)" /></div>
+                <div class="text-right"><p class="text-xs font-semibold uppercase text-navy-300">{{ $sr->isFixedPrice() ? 'Fixed price' : 'Agreed price' }}</p><p class="font-display text-2xl font-bold">{{ zmw($sr->agreed_amount) }}</p><x-status-badge :status="$sr->payment_status" :label="ucfirst($sr->payment_status)" /></div>
             @endif
         </div>
 
@@ -54,7 +56,7 @@
                 <div class="card card-pad">
                     <div class="flex items-center gap-3">
                         <span class="pulse-dot text-brand-500"></span>
-                        <h2 class="font-display text-lg font-bold">{{ $pendingQuotes->count() ? $pendingQuotes->count().' quotation(s) received' : 'Finding available providers near you…' }}</h2>
+                        <h2 class="font-display text-lg font-bold">{{ $sr->isFixedPrice() ? 'Finding a provider at the fixed price of '.zmw($sr->fixed_price, 0).'…' : ($pendingQuotes->count() ? $pendingQuotes->count().' quotation(s) received' : 'Finding available providers near you…') }}</h2>
                     </div>
                     <p class="mt-1 text-sm text-navy-500">This page updates automatically. Compare quotes and accept the one you prefer.</p>
                     <div class="mt-5 space-y-3">
@@ -91,6 +93,11 @@
                 </div>
             @endif
 
+            @if($sr->bookingFeePending() && ! $sr->isCancelled())
+                @include('requests.partials.booking-fee', ['statusUrl' => route('track.payment-status', $sr->reference)])
+            @endif
+            @include('requests.partials.variation-card')
+
             {{-- Assigned provider --}}
             @if($provider && ! $sr->isCancelled())
                 <div class="card card-pad">
@@ -102,10 +109,14 @@
                             @if($provider->providerProfile?->business_name)<p class="text-sm text-navy-500">{{ $provider->providerProfile->business_name }}</p>@endif
                             <p class="flex items-center gap-1 text-sm"><x-stars :rating="$provider->providerProfile?->rating_avg ?? 0" /> {{ number_format($provider->providerProfile?->rating_avg ?? 0, 1) }}</p>
                         </div>
+                        @unless($sr->contactUnlocked())
+                            <p class="flex items-center gap-2 rounded-xl bg-mist px-3 py-2 text-xs font-semibold text-navy-500"><x-icon name="shield" class="h-4 w-4" /> Contact details unlock when the booking fee is paid</p>
+                        @else
                         <div class="flex gap-2">
                             <a href="tel:+{{ zm_phone($provider->phone) }}" class="btn btn-navy"><x-icon name="phone" class="h-4 w-4" /> Call</a>
                             <a href="{{ whatsapp_link($provider->providerProfile?->whatsapp ?: $provider->phone, 'Hi '.$provider->name.', this is about HANDY NOW request '.$sr->reference) }}" target="_blank" rel="noopener" class="btn btn-whatsapp"><x-icon name="whatsapp" class="h-4 w-4" /> WhatsApp</a>
                         </div>
+                        @endunless
                     </div>
                 </div>
             @endif
@@ -126,7 +137,7 @@
             @endif
 
             {{-- Chat (logged-in customers) --}}
-            @if(! $guest && $provider && $sr->isActive())
+            @if(! $guest && $provider && $sr->isActive() && $sr->contactUnlocked())
                 @include('partials.chat', ['sr' => $sr])
             @endif
 
@@ -134,7 +145,7 @@
             @if($provider && $sr->agreed_amount && $sr->payment_status !== 'paid' && in_array($sr->status, ['arrived', 'in_progress', 'completed']))
                 @php
                     $onlineMethods = app(\App\Services\Payments\PaymentGatewayManager::class)->onlineMethods();
-                    $lastPayment = $sr->payments->first();
+                    $lastPayment = $sr->payments->where('kind', 'job')->first();
                     $waitingPrompt = $pendingPayment && $pendingPayment->isOnline();
                     $statusUrl = route('track.payment-status', $sr->reference);
                 @endphp

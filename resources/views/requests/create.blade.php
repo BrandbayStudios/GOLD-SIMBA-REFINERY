@@ -1,6 +1,8 @@
 @extends('layouts.app', ['title' => $emergency ? 'Emergency request' : 'Request a service'])
 @php
-    $catJson = $categories->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'icon' => $c->icon, 'services' => $c->activeServices->map(fn ($s) => ['id' => $s->id, 'name' => $s->name])])->values();
+    $catJson = $categories->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'icon' => $c->icon, 'services' => $c->activeServices->map(fn ($s) => ['id' => $s->id, 'name' => $s->name, 'mode' => $s->pricing_mode, 'fixed' => $s->isFixed() ? (float) $s->fixed_price : null,
+        'perKm' => (float) $s->price_per_km, 'includedKm' => (float) $s->included_km, 'needsDest' => (bool) $s->needs_destination,
+        'bookingFee' => $s->booking_fee !== null ? (float) $s->booking_fee : null])])->values();
     $u = auth()->user();
 @endphp
 @section('content')
@@ -15,7 +17,8 @@
 <section class="container-x py-8">
     @include('partials.flash')
     <form method="POST" action="{{ route('requests.store') }}" enctype="multipart/form-data" class="grid gap-6 lg:grid-cols-[1fr_380px]"
-          x-data="requestForm({ categories: @js($catJson), categoryId: @js(old('category_id', $selectedCategory?->id)), serviceId: @js(old('service_id', $selectedService?->id)), priority: @js(old('priority', $emergency ? 'emergency' : 'normal')) })">
+          @pin-changed="pin($event)"
+          x-data="requestForm({ globalFee: {{ (float) \App\Models\Setting::get('booking_fee', 0) }}, categories: @js($catJson), categoryId: @js(old('category_id', $selectedCategory?->id)), serviceId: @js(old('service_id', $selectedService?->id)), priority: @js(old('priority', $emergency ? 'emergency' : 'normal')) })">
         @csrf
         <div class="space-y-6">
             <div class="card card-pad">
@@ -40,6 +43,16 @@
                     </select>
                     @error('service_id')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
+                <div x-show="service && service.mode === 'fixed'" x-cloak class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                    <p class="font-bold">Fixed price – no quotes to compare</p>
+                    <template x-if="estimate">
+                        <p class="mt-1"><span class="font-display text-2xl font-bold" x-text="'K' + estimate.price.toLocaleString()"></span>
+                            <span x-show="estimate.km !== null"> · about <span x-text="estimate.km"></span> km by road</span>
+                            <span x-show="!estimate.complete"> (from – pin both locations for your exact price)</span></p>
+                    </template>
+                    <p class="mt-1">The price is agreed before anyone is sent. The first available provider accepts and is on the way. Extra costs found on site only count if you approve them in the app.</p>
+                </div>
+                <p x-show="bookingFee > 0" x-cloak class="mt-3 rounded-xl bg-mist p-3 text-sm text-navy-700">A booking fee of <b x-text="'K' + bookingFee.toLocaleString()"></b> is paid in the app once a provider is confirmed. It unlocks your provider's contact details. It is refunded if the provider cancels.</p>
                 <div class="mt-5">
                     <x-field name="description" type="textarea" label="Describe the problem" :required="true" :value="$prefillProblem" placeholder="e.g. My car won't start, the battery seems dead. I'm parked outside Manda Hill, silver Toyota Corolla." />
                 </div>
@@ -75,6 +88,17 @@
                     <x-field name="directions" label="Directions for the provider" placeholder="e.g. Opposite the filling station, black gate, call when you arrive" />
                 </div>
             </div>
+
+            <template x-if="service && service.needsDest">
+                <div class="card card-pad" x-data="locationPicker({ key: 'dest', addressField: '#f-dest_address' })">
+                    <h2 class="font-display text-lg font-bold">Where should it go?</h2>
+                    <p class="mt-1 text-sm text-navy-500">Tap the map to pin the drop-off point (for example the garage). We use it to work out your exact price.</p>
+                    <div x-ref="map" class="mt-4 h-64 overflow-hidden rounded-xl border border-navy-50"></div>
+                    <input type="hidden" name="dest_latitude" :value="lat ?? ''"><input type="hidden" name="dest_longitude" :value="lng ?? ''">
+                    @error('dest_latitude')<p class="field-error">{{ $message }}</p>@enderror
+                    <div class="mt-4"><x-field name="dest_address" label="Drop-off address or garage" :required="true" placeholder="e.g. Toyota Zambia, Great East Road" oninput="this.dataset.touched='1'" /></div>
+                </div>
+            </template>
         </div>
 
         <div class="space-y-6 lg:sticky lg:top-24 lg:h-fit">
@@ -95,7 +119,7 @@
                 <button class="btn btn-lg mt-6 w-full" :class="priority === 'emergency' ? 'btn-danger' : 'btn-primary'">
                     <x-icon name="siren" /> <span x-text="priority === 'emergency' ? 'Submit emergency request' : 'Submit request'"></span>
                 </button>
-                <p class="mt-3 text-center text-xs text-navy-300">By submitting you agree to our <a href="{{ route('terms') }}" class="underline">terms</a>. You won't be charged until you accept a quote.</p>
+                <p class="mt-3 text-center text-xs text-navy-300">By submitting you agree to our <a href="{{ route('terms') }}" class="underline">terms</a>. You pay the provider after the work is done. A booking fee may apply once a provider is confirmed.</p>
             </div>
             @guest
                 <p class="text-center text-sm text-navy-500">Have an account? <a href="{{ route('login') }}" class="font-semibold text-brand-600">Log in</a> to track all your requests.</p>

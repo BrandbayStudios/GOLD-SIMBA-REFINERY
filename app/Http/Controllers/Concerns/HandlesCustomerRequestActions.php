@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Models\Payment;
+use App\Models\PriceVariation;
 use App\Models\Quotation;
 use App\Models\ServiceRequest;
 use App\Services\RequestWorkflow;
@@ -33,7 +34,7 @@ trait HandlesCustomerRequestActions
     {
         abort_unless($sr->canBeCancelledByCustomer(), 422, 'This request can no longer be cancelled.');
         $data = $request->validate(['reason' => 'required|string|max:300']);
-        $wf->cancel($sr, $request->user(), 'Cancelled by customer: '.$data['reason']);
+        $wf->cancel($sr, $request->user(), 'Cancelled by customer: '.$data['reason'], true);
 
         return back()->with('success', 'Your request has been cancelled.');
     }
@@ -55,6 +56,32 @@ trait HandlesCustomerRequestActions
         return back()->with('success', $payment->isOnline()
             ? 'Payment prompt sent to '.$payment->payer_phone.'. Enter your '.$payment->methodLabel().' PIN on your phone to approve.'
             : 'Payment recorded. Your provider will confirm receipt.');
+    }
+
+    protected function doPayFee(ServiceRequest $sr, Request $request, RequestWorkflow $wf)
+    {
+        $data = $request->validate([
+            'method' => ['required', Rule::in(Payment::FEE_METHODS)],
+            'payer_phone' => 'nullable|required_if:method,mtn_momo,airtel_money,zamtel_kwacha|string|max:20',
+            'transaction_reference' => 'nullable|string|max:100',
+        ], ['payer_phone.required_if' => 'Enter your mobile money number.']);
+        $prefixes = Payment::NETWORK_PREFIXES[$data['method']] ?? null;
+        if ($prefixes && ! in_array(substr(zm_phone($data['payer_phone']), 3, 2), $prefixes, true)) {
+            throw ValidationException::withMessages(['payer_phone' => 'That number does not look like a '.Payment::METHODS[$data['method']].' number (expected 0'.implode('/0', $prefixes).'…).']);
+        }
+        $payment = $wf->recordBookingFee($sr, $data, $request->user());
+
+        return back()->with('success', $payment->isOnline()
+            ? 'Payment prompt sent to '.$payment->payer_phone.'. Enter your '.$payment->methodLabel().' PIN on your phone to approve.'
+            : 'Booking fee recorded. We will confirm it shortly and unlock your provider\'s details.');
+    }
+
+    protected function doDecideVariation(ServiceRequest $sr, PriceVariation $variation, bool $approve, Request $request, RequestWorkflow $wf)
+    {
+        abort_unless($variation->service_request_id === $sr->id, 404);
+        $wf->decideVariation($variation, $approve, $request->user());
+
+        return back()->with('success', $approve ? 'Extra cost approved. The price has been updated.' : 'Extra cost declined. The job continues at the agreed price.');
     }
 
     protected function doReview(ServiceRequest $sr, Request $request, RequestWorkflow $wf)

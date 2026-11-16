@@ -80,11 +80,20 @@ class CategoryController extends Controller
             'description' => 'nullable|string|max:1000',
             'callout_fee' => 'nullable|numeric|min:0|max:100000',
             'min_price' => 'nullable|numeric|min:0|max:1000000',
-            'max_price' => 'nullable|numeric|min:0|max:1000000|gte:min_price',
+            'max_price' => 'nullable|required_if:pricing_mode,capped|numeric|min:1|max:1000000|gte:min_price',
+            'pricing_mode' => ['required', Rule::in(['open', 'capped', 'fixed'])],
+            'fixed_price' => 'nullable|required_if:pricing_mode,fixed|numeric|min:1|max:1000000',
+            'price_per_km' => 'nullable|numeric|min:0|max:100000',
+            'included_km' => 'nullable|numeric|min:0|max:1000',
+            'booking_fee' => 'nullable|numeric|min:0|max:100000',
+        ], [
+            'max_price.required_if' => 'A price ceiling needs a maximum price.',
+            'fixed_price.required_if' => 'A fixed-price service needs its price.',
         ]);
         $data['callout_fee'] = $data['callout_fee'] ?? 0;
+        $data['included_km'] = $data['included_km'] ?? 0;
 
-        return $data + ['is_active' => $request->boolean('is_active')];
+        return $data + ['is_active' => $request->boolean('is_active'), 'needs_destination' => $data['pricing_mode'] === 'fixed' && $request->boolean('needs_destination')];
     }
 
     private function uniqueSlug(string $model, string $name): string

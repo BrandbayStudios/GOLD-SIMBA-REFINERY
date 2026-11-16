@@ -49,7 +49,7 @@ class RequestController extends Controller
     public function show(ServiceRequest $serviceRequest)
     {
         $sr = $serviceRequest->load(['category', 'service', 'customer', 'provider.providerProfile', 'quotations.provider', 'statusLogs.user',
-            'payments', 'review', 'matches.provider', 'messages.sender', 'complaints']);
+            'payments', 'review', 'matches.provider', 'messages.sender', 'complaints', 'variations']);
         $eligible = ProviderProfile::where('verification_status', 'approved')
             ->whereHas('user', fn ($q) => $q->where('status', 'active'))
             ->whereHas('categories', fn ($q) => $q->where('categories.id', $sr->category_id))
@@ -67,6 +67,20 @@ class RequestController extends Controller
         $wf->assignDirectly($serviceRequest, User::findOrFail($data['provider_id']), $request->user());
 
         return back()->with('success', 'Provider assigned and notified.');
+    }
+
+    public function waiveFee(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        $wf->waiveBookingFee($serviceRequest, $request->user());
+
+        return back()->with('success', 'Booking fee waived. Contact details are now unlocked.');
+    }
+
+    public function refundFee(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        $wf->markBookingFeeRefunded($serviceRequest, $request->user());
+
+        return back()->with('success', 'Booking fee marked as refunded.');
     }
 
     public function rematch(ServiceRequest $serviceRequest, RequestWorkflow $wf)
@@ -105,12 +119,17 @@ class RequestController extends Controller
         if ($s = $request->query('status')) {
             $q->where('status', $s);
         }
+        if ($k = $request->query('kind')) {
+            $q->where('kind', $k);
+        }
         if ($m = $request->query('method')) {
             $q->where('method', $m);
         }
         $payments = $q->paginate(25)->withQueryString();
-        $totals = Payment::where('status', 'confirmed')->selectRaw('COALESCE(SUM(amount),0) as gross, COALESCE(SUM(commission_amount),0) as commission')->first();
+        $totals = Payment::where('status', 'confirmed')->where('kind', 'job')->selectRaw('COALESCE(SUM(amount),0) as gross, COALESCE(SUM(commission_amount),0) as commission')->first();
 
-        return view('admin.payments', compact('payments', 'totals'));
+        $fees = (float) Payment::where('status', 'confirmed')->where('kind', 'booking_fee')->sum('amount');
+
+        return view('admin.payments', compact('payments', 'totals', 'fees'));
     }
 }

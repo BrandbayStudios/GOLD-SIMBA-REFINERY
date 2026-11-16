@@ -17,6 +17,9 @@ class Setting extends Model
 
     public const DEFAULTS = [
         'commission_rate' => '10',          // percent taken by the platform on completed jobs
+        'booking_fee' => '0',               // ZMW charged to the customer in the app once a provider is confirmed (0 = off)
+        'booking_fee_instructions' => '',   // where customers send the booking fee while mobile money prompts are not live
+        'variation_limit_percent' => '50',  // extra cost a provider may add on site, as % of the agreed price
         'min_payout' => '100',              // balance (ZMW) at which a provider is flagged as due a payout
         'commission_instructions' => '',    // where providers send commission they owe, shown on their earnings page
         'match_radius_km' => '30',          // default search radius for provider matching

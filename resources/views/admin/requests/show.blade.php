@@ -11,7 +11,7 @@
                 <div><dt class="text-xs font-bold uppercase text-navy-300">Customer</dt><dd>{{ $sr->contact_name }} · <a href="tel:+{{ zm_phone($sr->contact_phone) }}" class="text-brand-600">{{ $sr->contact_phone }}</a> {{ $sr->customer ? '(registered)' : '(guest)' }}</dd></div>
                 <div><dt class="text-xs font-bold uppercase text-navy-300">Location</dt><dd>{{ $sr->address }}@if($sr->directions)<br>{{ $sr->directions }}@endif</dd></div>
                 <div><dt class="text-xs font-bold uppercase text-navy-300">Provider</dt><dd>@if($sr->provider)<a href="{{ route('admin.providers.show', $sr->provider) }}" class="text-brand-600">{{ $sr->provider->name }}</a>@else — @endif</dd></div>
-                <div><dt class="text-xs font-bold uppercase text-navy-300">Amount / commission</dt><dd>{{ $sr->agreed_amount ? zmw($sr->agreed_amount) : '—' }} @if($sr->commission_amount) / {{ zmw($sr->commission_amount) }} ({{ (float) $sr->commission_rate }}%)@endif</dd></div>
+                <div><dt class="text-xs font-bold uppercase text-navy-300">{{ $sr->isFixedPrice() ? 'Fixed price' : 'Amount' }} / commission</dt><dd>{{ $sr->agreed_amount ? zmw($sr->agreed_amount) : '—' }} @if($sr->commission_amount) / {{ zmw($sr->commission_amount) }} ({{ (float) $sr->commission_rate }}%)@endif</dd></div>
             </dl>
             @if($sr->photos)<div class="mt-4 flex gap-2">@foreach($sr->photoUrls() as $ph)<a href="{{ $ph }}" target="_blank"><img src="{{ $ph }}" alt="" class="h-20 w-20 rounded-lg object-cover"></a>@endforeach</div>@endif
         </div>
@@ -28,7 +28,7 @@
             <h2 class="p-5 font-display text-lg font-bold">Payments</h2>
             <table class="table-x"><thead><tr><th>Method</th><th>Amount</th><th>Reference</th><th>Status</th><th></th></tr></thead><tbody>
                 @forelse($sr->payments as $p)
-                    <tr><td>{{ $p->methodLabel() }}</td><td>{{ zmw($p->amount) }}</td><td>{{ $p->transaction_reference ?? '—' }}</td><td><x-status-badge :status="$p->status" :label="ucfirst($p->status)" /></td>
+                    <tr><td>{{ $p->isBookingFee() ? 'Booking fee · ' : '' }}{{ $p->methodLabel() }}</td><td>{{ zmw($p->amount) }}</td><td>{{ $p->transaction_reference ?? '—' }}</td><td><x-status-badge :status="$p->status" :label="ucfirst($p->status)" /></td>
                         <td class="whitespace-nowrap">@if($p->status === 'pending')<form method="POST" action="{{ route('admin.payments.confirm', $p) }}" class="inline">@csrf<button class="btn btn-sm btn-success">Confirm</button></form> <form method="POST" action="{{ route('admin.payments.reject', $p) }}" class="inline">@csrf<button class="btn btn-sm btn-outline">Reject</button></form>@endif</td></tr>
                 @empty<tr><td colspan="5" class="text-center text-navy-500">No payments recorded.</td></tr>@endforelse
             </tbody></table>
@@ -40,6 +40,23 @@
         @endif
     </div>
     <aside class="space-y-6">
+        @if($sr->booking_fee_status !== 'none' || $sr->variations->isNotEmpty())
+            <div class="card card-pad">
+                <h2 class="font-display text-lg font-bold">Booking fee & extras</h2>
+                @if($sr->booking_fee_status !== 'none')
+                    <p class="mt-2 text-sm">Fee <b>{{ zmw($sr->booking_fee_amount) }}</b> – <x-status-badge :status="in_array($sr->booking_fee_status, ['paid', 'waived', 'refunded']) ? 'confirmed' : ($sr->booking_fee_status === 'refund_due' ? 'cancelled' : 'pending')" :label="str_replace('_', ' ', ucfirst($sr->booking_fee_status))" /></p>
+                    @if($sr->booking_fee_status === 'pending')
+                        <form method="POST" action="{{ route('admin.requests.waive-fee', $sr) }}" class="mt-3" onsubmit="return confirm('Waive the booking fee and unlock contact details?')">@csrf<button class="btn btn-outline btn-sm w-full">Waive fee & unlock details</button></form>
+                    @elseif($sr->booking_fee_status === 'refund_due')
+                        <p class="mt-2 rounded-xl bg-red-50 p-3 text-sm text-red-800">The request was cancelled after the fee was paid. Send {{ zmw($sr->booking_fee_amount) }} back to {{ $sr->contact_name }} ({{ $sr->contact_phone }}), then mark it refunded.</p>
+                        <form method="POST" action="{{ route('admin.requests.refund-fee', $sr) }}" class="mt-2">@csrf<button class="btn btn-danger btn-sm w-full">Mark as refunded</button></form>
+                    @endif
+                @endif
+                @foreach($sr->variations as $v)
+                    <p class="mt-3 flex items-center justify-between gap-2 text-sm"><span>+{{ zmw($v->amount) }} – {{ $v->reason }}</span><x-status-badge :status="$v->status === 'approved' ? 'confirmed' : ($v->status === 'declined' ? 'cancelled' : 'pending')" :label="ucfirst($v->status)" /></p>
+                @endforeach
+            </div>
+        @endif
         @if($sr->isOpen())
             <div class="card card-pad">
                 <h2 class="font-display text-lg font-bold">Dispatch</h2>

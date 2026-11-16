@@ -28,7 +28,7 @@ class SyncPayments extends Command
         Payment::where('status', 'pending')->whereIn('gateway', ['mtn_momo', 'airtel_money'])->where('created_at', '<', now()->subMinutes(30))
             ->get()->each(function (Payment $p) {
                 $p->update(['status' => 'failed', 'failure_reason' => 'Prompt expired']);
-                if ($p->serviceRequest->payment_status === 'pending') {
+                if ($p->kind === 'job' && $p->serviceRequest->payment_status === 'pending') {
                     $p->serviceRequest->update(['payment_status' => 'unpaid']);
                 }
             });

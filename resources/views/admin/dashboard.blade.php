@@ -10,7 +10,7 @@
     <x-stat label="Active requests" :value="$stats['active_requests']" icon="siren" tone="orange" :href="route('admin.requests.index', ['status' => 'active'])" :hint="$stats['active_emergencies'].' emergencies'" />
     <x-stat label="Pending verification" :value="$stats['pending_verification']" icon="shield" tone="red" :href="route('admin.providers.index', ['status' => 'pending'])" />
     <x-stat label="Revenue processed" :value="zmw($stats['revenue'], 0)" icon="wallet" tone="green" :href="route('admin.payments.index')" />
-    <x-stat label="Platform commission" :value="zmw($stats['commission'], 0)" icon="tag" tone="violet" :href="route('admin.reports')" />
+    <x-stat label="Platform commission" :value="zmw($stats['commission'], 0)" icon="tag" tone="violet" :href="route('admin.reports')" :hint="'+ '.zmw($stats['booking_fees'], 0).' booking fees'" />
     <x-stat label="Customers" :value="$stats['customers']" icon="users" :href="route('admin.users.index', ['role' => 'customer'])" />
     <x-stat label="Service providers" :value="$stats['providers']" icon="wrench" :href="route('admin.providers.index')" :hint="$stats['online_providers'].' online now'" />
     <x-stat label="Completed jobs" :value="$stats['completed']" icon="check-circle" tone="green" :href="route('admin.requests.index', ['status' => 'completed'])" />

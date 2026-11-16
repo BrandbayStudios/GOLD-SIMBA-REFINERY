@@ -26,7 +26,8 @@ class DashboardController extends Controller
             'active_emergencies' => ServiceRequest::activeJobs()->where('priority', 'emergency')->count(),
             'completed' => ServiceRequest::where('status', 'completed')->count(),
             'cancelled' => ServiceRequest::where('status', 'cancelled')->count(),
-            'revenue' => Payment::where('status', 'confirmed')->sum('amount'),
+            'revenue' => Payment::where('status', 'confirmed')->where('kind', 'job')->sum('amount'),
+            'booking_fees' => Payment::where('status', 'confirmed')->where('kind', 'booking_fee')->sum('amount'),
             'commission' => Payment::where('status', 'confirmed')->sum('commission_amount'),
             'pending_payments' => Payment::where('status', 'pending')->count(),
             'open_complaints' => Complaint::whereIn('status', ['open', 'investigating'])->count(),
@@ -54,9 +55,10 @@ class DashboardController extends Controller
             'cancelled' => (clone $requests)->where('status', 'cancelled')->count(),
             'emergency' => (clone $requests)->where('priority', 'emergency')->count(),
         ];
-        $payments = Payment::where('status', 'confirmed')->whereBetween('confirmed_at', [$from, $to]);
+        $payments = Payment::where('status', 'confirmed')->where('kind', 'job')->whereBetween('confirmed_at', [$from, $to]);
         $summary['revenue'] = (clone $payments)->sum('amount');
         $summary['commission'] = (clone $payments)->sum('commission_amount');
+        $summary['booking_fees'] = (float) Payment::where('status', 'confirmed')->where('kind', 'booking_fee')->whereBetween('confirmed_at', [$from, $to])->sum('amount');
         $summary['completion_rate'] = $summary['requests'] ? round($summary['completed'] / $summary['requests'] * 100, 1) : 0;
 
         $byCategory = Category::withCount(['requests as total' => fn ($q) => $q->whereBetween('created_at', [$from, $to]),
@@ -65,7 +67,7 @@ class DashboardController extends Controller
             ->withSum(['requests as commission' => fn ($q) => $q->whereBetween('created_at', [$from, $to])->where('payment_status', 'paid')], 'commission_amount')
             ->orderByDesc('total')->get();
 
-        $byMethod = Payment::where('status', 'confirmed')->whereBetween('confirmed_at', [$from, $to])
+        $byMethod = Payment::where('status', 'confirmed')->where('kind', 'job')->whereBetween('confirmed_at', [$from, $to])
             ->selectRaw('method, COUNT(*) as c, SUM(amount) as total')->groupBy('method')->get();
 
         $topProviders = User::where('role', 'provider')
@@ -109,7 +111,7 @@ class DashboardController extends Controller
         $start = $end->copy()->subDays($days - 1)->startOfDay();
         $requests = ServiceRequest::whereBetween('created_at', [$start, $end])->get(['created_at'])
             ->groupBy(fn ($r) => $r->created_at->format('Y-m-d'))->map->count();
-        $revenue = Payment::where('status', 'confirmed')->whereBetween('confirmed_at', [$start, $end])->get(['confirmed_at', 'amount'])
+        $revenue = Payment::where('status', 'confirmed')->where('kind', 'job')->whereBetween('confirmed_at', [$start, $end])->get(['confirmed_at', 'amount'])
             ->groupBy(fn ($p) => $p->confirmed_at->format('Y-m-d'))->map(fn ($g) => $g->sum('amount'));
 
         $out = [];

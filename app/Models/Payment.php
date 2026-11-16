@@ -15,8 +15,10 @@ class Payment extends Model
         'cash' => 'Cash',
     ];
 
+    protected $attributes = ['kind' => 'job'];
+
     protected $fillable = [
-        'service_request_id', 'customer_id', 'provider_id', 'amount', 'currency', 'method', 'payer_phone', 'transaction_reference',
+        'service_request_id', 'kind', 'customer_id', 'provider_id', 'amount', 'currency', 'method', 'payer_phone', 'transaction_reference',
         'gateway', 'gateway_reference', 'gateway_status', 'failure_reason', 'status', 'commission_rate', 'commission_amount', 'provider_amount', 'confirmed_by', 'confirmed_at', 'is_demo',
     ];
 
@@ -45,6 +47,14 @@ class Payment extends Model
 
     /** Mobile network prefixes (after 260 / 0) used to catch numbers entered under the wrong network. */
     public const NETWORK_PREFIXES = ['mtn_momo' => ['96', '76'], 'airtel_money' => ['97', '77'], 'zamtel_kwacha' => ['95', '75']];
+
+    /** Booking fees are paid to HANDY NOW, never in cash. */
+    public const FEE_METHODS = ['mtn_momo', 'airtel_money', 'zamtel_kwacha', 'bank_transfer'];
+
+    public function isBookingFee(): bool
+    {
+        return $this->kind === 'booking_fee';
+    }
 
     public function isOnline(): bool
     {

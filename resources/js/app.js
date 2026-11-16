@@ -70,6 +70,7 @@ Alpine.data('locationPicker', (cfg = {}) => ({
             this.marker.on('dragend', () => { const p = this.marker.getLatLng(); this.place(p.lat, p.lng, true); });
         }
         this.map.setView([lat, lng], Math.max(this.map.getZoom(), 15));
+        this.$dispatch('pin-changed', { key: cfg.key || 'pickup', lat, lng });
         if (reverse && cfg.addressField) this.reverse(lat, lng);
     },
     async locate() {
@@ -169,6 +170,7 @@ Alpine.data('notifBell', (cfg) => ({
 Alpine.data('jobChat', (cfg) => ({
     messages: [],
     body: '',
+    note: '',
     sending: false,
     init() { this.load(); setInterval(() => this.load(), 12000); },
     async load() {
@@ -177,7 +179,7 @@ Alpine.data('jobChat', (cfg) => ({
     async send() {
         if (!this.body.trim()) return;
         this.sending = true;
-        try { await postJson(cfg.url, { body: this.body }); this.body = ''; await this.load(); } finally { this.sending = false; }
+        try { const r = await postJson(cfg.url, { body: this.body }); this.body = ''; this.note = r.note || ''; await this.load(); } finally { this.sending = false; }
     },
 }));
 
@@ -223,7 +225,16 @@ Alpine.data('nearby', (cfg) => ({
 }));
 
 /** Service request form: dependent category → problem dropdown. */
+/** Straight-line km between two points, stretched to a typical road distance (matches the server's price). */
+function roadKm(a, b) {
+    const rad = (d) => (d * Math.PI) / 180;
+    const x = Math.sin(rad(b.lat - a.lat) / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lng - a.lng) / 2) ** 2;
+    return 6371 * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x)) * 1.3;
+}
+
 Alpine.data('requestForm', (cfg) => ({
+    globalFee: cfg.globalFee || 0,
+    pins: { pickup: null, dest: null },
     categories: cfg.categories,
     categoryId: cfg.categoryId ? String(cfg.categoryId) : '',
     serviceId: cfg.serviceId ? String(cfg.serviceId) : '',
@@ -233,6 +244,25 @@ Alpine.data('requestForm', (cfg) => ({
         const c = this.categories.find((x) => String(x.id) === this.categoryId);
         return c ? c.services : [];
     },
+    get service() {
+        return this.services.find((s) => String(s.id) === this.serviceId) || null;
+    },
+    get bookingFee() {
+        const s = this.service;
+        return s && s.bookingFee !== null ? s.bookingFee : this.globalFee;
+    },
+    /** Fixed-price estimate; towing-style services need both pins to add the per-km part. */
+    get estimate() {
+        const s = this.service;
+        if (!s || s.mode !== 'fixed') return null;
+        let price = s.fixed, km = null;
+        if (s.needsDest && this.pins.pickup && this.pins.dest) {
+            km = roadKm(this.pins.pickup, this.pins.dest);
+            if (s.perKm) price += Math.max(0, km - s.includedKm) * s.perKm;
+        }
+        return { price: Math.round(price), km: km === null ? null : Math.round(km * 10) / 10, complete: !s.needsDest || km !== null };
+    },
+    pin(e) { this.pins[e.detail.key] = { lat: e.detail.lat, lng: e.detail.lng }; },
     pickCategory(id) { this.categoryId = String(id); this.serviceId = ''; },
     preview(e) {
         this.previews = [...e.target.files].slice(0, 5).map((f) => URL.createObjectURL(f));

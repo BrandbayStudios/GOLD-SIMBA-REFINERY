@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Concerns\HandlesCustomerRequestActions;
 use App\Http\Controllers\Controller;
+use App\Models\PriceVariation;
 use App\Models\Quotation;
 use App\Models\ServiceRequest;
 use App\Services\RequestWorkflow;
@@ -48,6 +49,27 @@ class RequestController extends Controller
         $this->own($request, $serviceRequest);
 
         return $this->doRejectQuote($serviceRequest, $quotation, $wf);
+    }
+
+    public function payFee(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        $this->own($request, $serviceRequest);
+
+        return $this->doPayFee($serviceRequest, $request, $wf);
+    }
+
+    public function approveVariation(Request $request, ServiceRequest $serviceRequest, PriceVariation $variation, RequestWorkflow $wf)
+    {
+        $this->own($request, $serviceRequest);
+
+        return $this->doDecideVariation($serviceRequest, $variation, true, $request, $wf);
+    }
+
+    public function declineVariation(Request $request, ServiceRequest $serviceRequest, PriceVariation $variation, RequestWorkflow $wf)
+    {
+        $this->own($request, $serviceRequest);
+
+        return $this->doDecideVariation($serviceRequest, $variation, false, $request, $wf);
     }
 
     public function cancel(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)

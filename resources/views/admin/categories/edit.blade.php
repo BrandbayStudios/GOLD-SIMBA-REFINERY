@@ -18,36 +18,33 @@
             </div>
             <button class="btn btn-primary w-full">Save category</button>
         </form>
+    </div>
+    <div class="min-w-0 space-y-6">
+        <div class="card card-pad">
+            <h2 class="font-display text-lg font-bold">Services, pricing rules & booking fees</h2>
+            <p class="mt-1 text-sm text-navy-500"><b>Open</b> keeps provider quotes free. <b>Price ceiling</b> blocks quotes above a maximum. <b>Fixed price</b> shows one price, skips quotes and gives the job to the first provider who accepts. All prices are in ZMW.</p>
+            <div class="mt-4 space-y-4">
+                @foreach($category->services as $s)
+                    <details class="rounded-2xl border border-navy-50" @if($errors->any() && old('_service') == $s->id) open @endif>
+                        <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-2 p-4">
+                            <span class="font-bold">{{ $s->name }} @unless($s->is_active)<span class="badge badge-grey">Hidden</span>@endunless</span>
+                            <span class="badge {{ $s->pricing_mode === 'fixed' ? 'badge-green' : ($s->pricing_mode === 'capped' ? 'badge-amber' : 'badge-grey') }}">{{ $s->pricing_mode === 'fixed' ? 'Fixed '.zmw($s->fixed_price, 0) : ($s->pricing_mode === 'capped' ? 'Ceiling '.zmw($s->max_price, 0) : 'Open quotes') }}</span>
+                        </summary>
+                        <form method="POST" action="{{ route('admin.services.update', $s) }}" class="space-y-3 border-t border-navy-50 p-4">
+                            @csrf @method('PUT') <input type="hidden" name="_service" value="{{ $s->id }}">
+                            @include('admin.categories.service-fields', ['s' => $s])
+                            <button class="btn btn-sm btn-primary">Save "{{ $s->name }}"</button>
+                        </form>
+                    </details>
+                @endforeach
+            </div>
+        </div>
         <form method="POST" action="{{ route('admin.services.store', $category) }}" class="card card-pad space-y-3">
             @csrf
             <h2 class="font-display text-lg font-bold">Add a service</h2>
-            <x-field name="name" label="Service name" :required="true" />
-            <div class="grid grid-cols-3 gap-2">
-                <x-field name="callout_fee" type="number" step="0.01" label="Call-out K" />
-                <x-field name="min_price" type="number" step="0.01" label="Min K" />
-                <x-field name="max_price" type="number" step="0.01" label="Max K" />
-            </div>
-            <x-field name="description" type="textarea" label="Description" rows="2" />
-            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_active" value="1" checked class="accent-brand-500"> Active</label>
-            <button class="btn btn-navy w-full">Add service</button>
+            @include('admin.categories.service-fields', ['s' => null])
+            <button class="btn btn-navy">Add service</button>
         </form>
-    </div>
-    <div class="card card-pad">
-        <h2 class="font-display text-lg font-bold">Services & indicative pricing (ZMW)</h2>
-        <p class="mt-1 text-sm text-navy-500">Customers see “Starting at” the Min price. Max is for internal reference only. Call-out fees pre-fill provider quotes.</p>
-        <div class="mt-4 space-y-3">
-            @foreach($category->services as $s)
-                <form method="POST" action="{{ route('admin.services.update', $s) }}" class="grid items-end gap-2 rounded-xl border border-navy-50 p-3 sm:grid-cols-[1.5fr_repeat(3,1fr)_auto_auto]">
-                    @csrf @method('PUT')
-                    <div><label class="text-[11px] font-bold uppercase text-navy-300">Name</label><input name="name" value="{{ $s->name }}" class="input py-2" required><input type="hidden" name="description" value="{{ $s->description }}"></div>
-                    <div><label class="text-[11px] font-bold uppercase text-navy-300">Call-out</label><input name="callout_fee" type="number" step="0.01" value="{{ $s->callout_fee }}" class="input py-2"></div>
-                    <div><label class="text-[11px] font-bold uppercase text-navy-300">Min</label><input name="min_price" type="number" step="0.01" value="{{ $s->min_price }}" class="input py-2"></div>
-                    <div><label class="text-[11px] font-bold uppercase text-navy-300">Max</label><input name="max_price" type="number" step="0.01" value="{{ $s->max_price }}" class="input py-2"></div>
-                    <label class="flex items-center gap-1 pb-3 text-xs"><input type="checkbox" name="is_active" value="1" @checked($s->is_active) class="accent-brand-500"> Active</label>
-                    <button class="btn btn-sm btn-outline mb-1">Save</button>
-                </form>
-            @endforeach
-        </div>
     </div>
 </div>
 @endsection
