@@ -30,7 +30,7 @@
     </div>
     <div class="card card-pad">
         <h2 class="font-display text-lg font-bold">Services & indicative pricing (ZMW)</h2>
-        <p class="mt-1 text-sm text-navy-500">Shown to customers as guide prices and pre-filled as call-out fees on provider quotes.</p>
+        <p class="mt-1 text-sm text-navy-500">Customers see “Starting at” the Min price. Max is for internal reference only. Call-out fees pre-fill provider quotes.</p>
         <div class="mt-4 space-y-3">
             @foreach($category->services as $s)
                 <form method="POST" action="{{ route('admin.services.update', $s) }}" class="grid items-end gap-2 rounded-xl border border-navy-50 p-3 sm:grid-cols-[1.5fr_repeat(3,1fr)_auto_auto]">

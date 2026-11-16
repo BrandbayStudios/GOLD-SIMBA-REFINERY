@@ -11,6 +11,8 @@ use App\Models\SmsLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class SettingsController extends Controller
 {
@@ -39,6 +41,17 @@ class SettingsController extends Controller
         }
 
         return back()->with('success', 'Settings saved.');
+    }
+
+    public function password(Request $request)
+    {
+        $data = $request->validate([
+            'current_password' => 'required|current_password',
+            'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
+        ]);
+        $request->user()->update(['password' => Hash::make($data['password'])]);
+
+        return back()->with('success', 'Your password has been changed.');
     }
 
     /** Removes all records flagged as demonstration data, leaving live records untouched. */
