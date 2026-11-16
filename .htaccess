@@ -1,0 +1,21 @@
+# HANDY NOW on Hostinger: the whole Laravel app lives in public_html/,
+# but only the public/ folder is ever served. Every request is routed into public/,
+# so .env, vendor/, storage/ etc. can never be downloaded.
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Defence in depth: never serve dotfiles or config even if rewriting is disabled.
+<FilesMatch "^\.|^(composer\.(json|lock)|package(-lock)?\.json|artisan|phpunit\.xml|vite\.config\.js)$">
+    Require all denied
+</FilesMatch>

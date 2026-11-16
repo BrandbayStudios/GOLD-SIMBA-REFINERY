@@ -1,0 +1,31 @@
+name: Docs
+
+on:
+    schedule:
+        - cron: '0 0 * * *'
+    push:
+        branches: [main]
+    release:
+        # A bare `release:` fires once each for created, published and released,
+        # so every release started three builds at once (plus the push to main).
+        types: [published]
+
+# Every run force-pushes the built site to gh-pages, so never run two at once.
+concurrency:
+    group: docs-deploy
+    cancel-in-progress: false
+
+jobs:
+    github-pages:
+        name: Build
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7
+
+            - uses: ./.github/workflows/build-jekyll-site-action
+              with:
+                  jekyll_src: docs
+              env:
+                  JEKYLL_GITHUB_TOKEN: ${{ secrets.JEKYLL_PAT }}
+                  JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}

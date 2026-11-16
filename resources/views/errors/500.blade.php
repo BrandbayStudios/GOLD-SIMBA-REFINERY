@@ -1,0 +1,5 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Something went wrong · HANDY NOW</title>
+<style>body{margin:0;font-family:system-ui,sans-serif;background:#F4F6F8;color:#101D35;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:16px}.c{max-width:440px;text-align:center}.n{font-size:72px;font-weight:800;color:#FF8A24;margin:0}h1{margin:8px 0}p{color:#34466e;line-height:1.5}a{display:inline-block;margin:6px;padding:12px 20px;border-radius:12px;font-weight:700;text-decoration:none}.p{background:#FF8A24;color:#fff}.o{background:#fff;color:#101D35;border:1px solid #d6dcea}</style></head>
+<body><div class="c"><p class="n">500</p><h1>Something went wrong</h1><p>{{ $exception?->getMessage() && 500 == 403 ? $exception->getMessage() : 'If you need urgent help, you can still send an emergency request.' }}</p>
+<a class="p" href="/emergency">Emergency request</a><a class="o" href="/">Home</a></div></body></html>
