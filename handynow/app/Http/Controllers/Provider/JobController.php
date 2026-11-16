@@ -89,7 +89,7 @@ class JobController extends Controller
 
     public function confirmPayment(Request $request, Payment $payment, RequestWorkflow $wf)
     {
-        abort_unless($payment->provider_id === $request->user()->id, 403);
+        abort_unless($payment->provider_id === $request->user()->id && $payment->gateway === 'manual', 403);
         $wf->confirmPayment($payment, $request->user());
 
         return back()->with('success', 'Payment confirmed. Commission has been calculated.');

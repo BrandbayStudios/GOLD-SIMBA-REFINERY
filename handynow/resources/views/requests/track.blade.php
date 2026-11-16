@@ -132,25 +132,50 @@
 
             {{-- Payment --}}
             @if($provider && $sr->agreed_amount && $sr->payment_status !== 'paid' && in_array($sr->status, ['arrived', 'in_progress', 'completed']))
-                <div class="card card-pad">
+                @php
+                    $onlineMethods = app(\App\Services\Payments\PaymentGatewayManager::class)->onlineMethods();
+                    $lastPayment = $sr->payments->first();
+                    $waitingPrompt = $pendingPayment && $pendingPayment->isOnline();
+                    $statusUrl = route('track.payment-status', $sr->reference);
+                @endphp
+                <div class="card card-pad" x-data="{ retry: false }">
                     <h2 class="font-display text-lg font-bold">Payment</h2>
-                    @if($pendingPayment)
+
+                    @if($waitingPrompt)
+                        <div class="mt-3 rounded-xl bg-sky-50 p-4 text-sm text-sky-900"
+                             x-data="{ init() { const t = setInterval(async () => { try { const r = await fetch('{{ $statusUrl }}', { headers: { Accept: 'application/json' } }); const d = await r.json(); if (d.payment && d.payment.status !== 'pending') { clearInterval(t); location.reload(); } } catch (e) {} }, 5000); } }">
+                            <p class="flex items-center gap-2 font-bold"><span class="pulse-dot text-sky-600"></span> Check your phone</p>
+                            <p class="mt-1">We sent a {{ $pendingPayment->methodLabel() }} prompt for <b>{{ zmw($pendingPayment->amount) }}</b> to <b>{{ $pendingPayment->payer_phone }}</b>. Enter your PIN to approve. This page updates by itself.</p>
+                            <button type="button" @click="retry = !retry" class="mt-2 text-xs font-semibold text-sky-700 underline">Didn't get the prompt? Try again or use another method</button>
+                        </div>
+                    @elseif($pendingPayment)
                         <p class="mt-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">You recorded a {{ $pendingPayment->methodLabel() }} payment of <b>{{ zmw($pendingPayment->amount) }}</b>. Waiting for {{ $provider->name }} to confirm receipt.</p>
-                    @else
-                        <p class="mt-1 text-sm text-navy-500">Pay <b>{{ zmw($sr->agreed_amount) }}</b> to your provider using any method below, then record it here.</p>
-                        <form method="POST" action="{{ $r['pay'] }}" class="mt-4 grid gap-4 sm:grid-cols-2" x-data="{ method: '{{ old('method', 'mtn_momo') }}' }">
+                    @elseif($lastPayment && $lastPayment->status === 'failed' && $lastPayment->failure_reason)
+                        <p class="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-800">Your last {{ $lastPayment->methodLabel() }} payment didn't go through ({{ $lastPayment->failure_reason }}). Please try again.</p>
+                    @endif
+
+                    @if(! $pendingPayment || $waitingPrompt)
+                        <div @if($waitingPrompt) x-show="retry" x-cloak @endif>
+                        <p class="mt-3 text-sm text-navy-500">Pay <b>{{ zmw($sr->agreed_amount) }}</b> to your provider.</p>
+                        <form method="POST" action="{{ $r['pay'] }}" class="mt-4 grid gap-4 sm:grid-cols-2" x-data="{ method: '{{ old('method', 'mtn_momo') }}', online: @js($onlineMethods) }">
                             @csrf
                             <div class="sm:col-span-2 grid grid-cols-2 gap-2 sm:grid-cols-5">
                                 @foreach(\App\Models\Payment::METHODS as $k => $label)
                                     <label class="cursor-pointer rounded-xl border-2 p-3 text-center text-xs font-bold" :class="method === '{{ $k }}' ? 'border-brand-500 bg-brand-50' : 'border-navy-50'">
                                         <input type="radio" name="method" value="{{ $k }}" x-model="method" class="sr-only"> {{ $label }}
+                                        @if(in_array($k, $onlineMethods, true))<span class="mt-1 block text-[10px] font-semibold text-emerald-600">Pay in app</span>@endif
                                     </label>
                                 @endforeach
                             </div>
-                            <div x-show="['mtn_momo','airtel_money','zamtel_kwacha'].includes(method)"><x-field name="payer_phone" type="tel" label="Number you paid from" :value="$sr->contact_phone" /></div>
-                            <div x-show="method !== 'cash'"><x-field name="transaction_reference" label="Transaction ID / reference" placeholder="From your confirmation SMS" /></div>
-                            <div class="sm:col-span-2"><button class="btn btn-primary w-full sm:w-auto">Record payment of {{ zmw($sr->agreed_amount) }}</button></div>
+                            <div x-show="['mtn_momo','airtel_money','zamtel_kwacha'].includes(method)"><x-field name="payer_phone" type="tel" label="Mobile money number" :value="$sr->contact_phone" /></div>
+                            <div x-show="method !== 'cash' && !online.includes(method)"><x-field name="transaction_reference" label="Transaction ID / reference" placeholder="From your confirmation SMS" /></div>
+                            <p class="sm:col-span-2 text-xs text-navy-500" x-show="online.includes(method)">You'll get a PIN prompt on this number. The payment confirms automatically once you approve it.</p>
+                            <p class="sm:col-span-2 text-xs text-navy-500" x-show="!online.includes(method)">Pay your provider first, then record it here. They will confirm receipt.</p>
+                            <div class="sm:col-span-2">
+                                <button class="btn btn-primary w-full sm:w-auto"><span x-text="online.includes(method) ? 'Send payment prompt – {{ zmw($sr->agreed_amount) }}' : 'Record payment of {{ zmw($sr->agreed_amount) }}'"></span></button>
+                            </div>
                         </form>
+                        </div>
                     @endif
                 </div>
             @endif

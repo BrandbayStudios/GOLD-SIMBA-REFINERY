@@ -6,6 +6,7 @@ use App\Http\Controllers\Customer;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PaymentWebhookController;
 use App\Http\Controllers\Provider;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\RequestMessageController;
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 // ---------- One-time installer (only active while INSTALL_TOKEN is set and not yet installed) ----------
 Route::get('/install', [InstallController::class, 'show'])->middleware('throttle:10,1');
 Route::post('/install', [InstallController::class, 'run'])->middleware('throttle:3,1');
+
+// ---------- Mobile money operator callbacks (CSRF-exempt; results are re-verified with the operator API) ----------
+Route::post('/webhooks/payments/{gateway}', PaymentWebhookController::class)
+    ->whereIn('gateway', ['mtn_momo', 'airtel_money'])->name('webhooks.payments')->middleware('throttle:60,1');
 
 // ---------- Public site ----------
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -46,6 +51,7 @@ Route::post('/track/{reference}/quotes/{quotation}/accept', [TrackingController:
 Route::post('/track/{reference}/quotes/{quotation}/reject', [TrackingController::class, 'rejectQuote'])->name('track.quotes.reject');
 Route::post('/track/{reference}/cancel', [TrackingController::class, 'cancel'])->name('track.cancel');
 Route::post('/track/{reference}/pay', [TrackingController::class, 'pay'])->name('track.pay');
+Route::get('/track/{reference}/payment-status', [TrackingController::class, 'paymentStatus'])->name('track.payment-status')->middleware('throttle:60,1');
 Route::post('/track/{reference}/review', [TrackingController::class, 'review'])->name('track.review');
 
 // ---------- Auth ----------
@@ -148,6 +154,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/settings', [Admin\SettingsController::class, 'edit'])->name('settings');
     Route::put('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+    Route::put('/settings/gateways', [Admin\SettingsController::class, 'gateways'])->name('settings.gateways');
+    Route::post('/settings/migrate', [Admin\SettingsController::class, 'migrate'])->name('settings.migrate');
     Route::put('/settings/password', [Admin\SettingsController::class, 'password'])->name('settings.password');
     Route::post('/settings/purge-demo', [Admin\SettingsController::class, 'purgeDemo'])->name('settings.purge-demo');
     Route::get('/sms-log', [Admin\SettingsController::class, 'smsLog'])->name('sms-log');

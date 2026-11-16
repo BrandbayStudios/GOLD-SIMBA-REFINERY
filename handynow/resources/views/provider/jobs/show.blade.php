@@ -2,6 +2,8 @@
 @php
     $labels = ['accepted' => 'Confirm & accept job', 'en_route' => "I'm on my way", 'arrived' => "I've arrived", 'in_progress' => 'Start work', 'completed' => 'Mark job completed'];
     $pendingPayment = $sr->payments->firstWhere('status', 'pending');
+    $awaitingPrompt = $pendingPayment && $pendingPayment->isOnline();
+    if ($awaitingPrompt) { $pendingPayment = null; }
 @endphp
 @section('content')
 <div class="grid gap-6 xl:grid-cols-[1fr_380px]">
@@ -71,6 +73,8 @@
                         <form method="POST" action="{{ route('provider.payments.reject', $pendingPayment) }}">@csrf<button class="btn btn-outline w-full">Not received</button></form>
                     </div>
                 </div>
+            @elseif($awaitingPrompt)
+                <div class="card card-pad text-sm"><p class="font-bold text-sky-700">Waiting for the customer to approve the mobile money prompt…</p><p class="mt-1 text-navy-500">It confirms automatically. No action needed.</p></div>
             @elseif($sr->payment_status === 'paid')
                 <div class="card card-pad text-sm"><p class="font-bold text-emerald-700">✓ Paid</p><p class="mt-1">Commission: {{ zmw($sr->commission_amount) }} · You earn <b>{{ zmw($sr->provider_earnings) }}</b></p></div>
             @endif

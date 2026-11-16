@@ -17,12 +17,24 @@
             <h2 class="font-display text-lg font-bold">Integrations</h2>
             <dl class="mt-3 space-y-2">
                 <div class="flex justify-between"><dt>SMS gateway</dt><dd class="font-semibold">{{ config('services.sms.driver') === 'africastalking' ? "Africa's Talking (live)" : 'Log only (no SMS sent)' }}</dd></div>
-                <div class="flex justify-between"><dt>Payments</dt><dd class="font-semibold">Manual confirmation</dd></div>
+                <div class="flex justify-between"><dt>MTN MoMo</dt><dd class="font-semibold">{{ $gatewayStatus['mtn_momo'] ? 'In-app prompt (automatic)' : 'Manual confirmation' }}</dd></div>
+                <div class="flex justify-between"><dt>Airtel Money</dt><dd class="font-semibold">{{ $gatewayStatus['airtel_money'] ? 'In-app prompt (automatic)' : 'Manual confirmation' }}</dd></div>
+                <div class="flex justify-between"><dt>Zamtel / bank / cash</dt><dd class="font-semibold">Manual confirmation</dd></div>
                 <div class="flex justify-between"><dt>Maps</dt><dd class="font-semibold">OpenStreetMap / Leaflet</dd></div>
             </dl>
             <p class="mt-3 text-xs text-navy-500">Configure SMS in the server <code>.env</code> file (SMS_DRIVER, AFRICASTALKING_*). See README.</p>
             <a href="{{ route('admin.sms-log') }}" class="btn btn-sm btn-outline mt-3">View SMS log</a>
         </div>
+        <form method="POST" action="{{ route('admin.settings.migrate') }}" class="card card-pad space-y-2 text-sm">
+            @csrf
+            <h2 class="font-display text-lg font-bold">Database updates</h2>
+            @if($pendingMigrations)
+                <p class="text-amber-700">{{ $pendingMigrations }} update(s) waiting to be applied after the latest deployment.</p>
+                <button class="btn btn-navy w-full">Apply database updates</button>
+            @else
+                <p class="text-emerald-700">Database is up to date ✓</p>
+            @endif
+        </form>
         <form method="POST" action="{{ route('admin.settings.password') }}" class="card card-pad space-y-4">
             @csrf @method('PUT')
             <h2 class="font-display text-lg font-bold">My password</h2>
@@ -41,4 +53,35 @@
         </form>
     </div>
 </div>
+<form method="POST" action="{{ route('admin.settings.gateways') }}" class="card card-pad mt-6 max-w-5xl space-y-6">
+    @csrf @method('PUT')
+    <div>
+        <h2 class="font-display text-lg font-bold">Mobile money payments</h2>
+        <p class="mt-1 text-sm text-navy-500">When a network is switched on, customers paying with it get a PIN prompt on their phone and the payment confirms itself, with commission calculated automatically. Switched off, the customer records the payment and the provider confirms it. Zamtel Kwacha, bank and cash always use manual confirmation. Keys are stored encrypted. Leave a key field blank to keep the saved value.</p>
+    </div>
+    <div class="grid gap-6 lg:grid-cols-2">
+        <fieldset class="space-y-3 rounded-2xl border border-navy-50 p-4">
+            <legend class="flex items-center gap-2 px-1 font-bold">MTN MoMo <x-status-badge :status="$gatewayStatus['mtn_momo'] ? 'active' : 'pending'" :label="$gatewayStatus['mtn_momo'] ? 'Live in app' : 'Manual'" /></legend>
+            <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="mtn_enabled" value="1" class="accent-brand-500" @checked(filter_var($gateway['mtn_enabled'], FILTER_VALIDATE_BOOLEAN))> Enable automatic MTN MoMo payments</label>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="label" for="mtn_env">Environment</label><select id="mtn_env" name="mtn_environment" class="input"><option value="sandbox" @selected(($gateway['mtn_environment'] ?? 'sandbox') !== 'production')>Sandbox (testing)</option><option value="production" @selected($gateway['mtn_environment'] === 'production')>Production (live)</option></select></div>
+                <x-field name="mtn_currency" label="Currency" :value="$gateway['mtn_currency']" placeholder="EUR sandbox / ZMW live" />
+            </div>
+            <x-field name="mtn_target_environment" label="Target environment" :value="$gateway['mtn_target_environment']" placeholder="sandbox / mtnzambia" hint="Given by MTN when you go live. Leave blank for the default." />
+            <x-field name="mtn_subscription_key" type="password" label="Collections subscription key (Ocp-Apim)" :placeholder="$gateway['mtn_subscription_key'] ? '•••••••• saved' : ''" autocomplete="off" />
+            <x-field name="mtn_api_user" label="API user (UUID)" :value="$gateway['mtn_api_user']" autocomplete="off" />
+            <x-field name="mtn_api_key" type="password" label="API key" :placeholder="$gateway['mtn_api_key'] ? '•••••••• saved' : ''" autocomplete="off" />
+            <p class="text-xs text-navy-300">Callback URL to register with MTN: <code>{{ route('webhooks.payments', 'mtn_momo') }}</code></p>
+        </fieldset>
+        <fieldset class="space-y-3 rounded-2xl border border-navy-50 p-4">
+            <legend class="flex items-center gap-2 px-1 font-bold">Airtel Money <x-status-badge :status="$gatewayStatus['airtel_money'] ? 'active' : 'pending'" :label="$gatewayStatus['airtel_money'] ? 'Live in app' : 'Manual'" /></legend>
+            <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="airtel_enabled" value="1" class="accent-brand-500" @checked(filter_var($gateway['airtel_enabled'], FILTER_VALIDATE_BOOLEAN))> Enable automatic Airtel Money payments</label>
+            <div><label class="label" for="airtel_env">Environment</label><select id="airtel_env" name="airtel_environment" class="input"><option value="sandbox" @selected(($gateway['airtel_environment'] ?? 'sandbox') !== 'production')>Sandbox / UAT (testing)</option><option value="production" @selected($gateway['airtel_environment'] === 'production')>Production (live)</option></select></div>
+            <x-field name="airtel_client_id" label="Client ID" :value="$gateway['airtel_client_id']" autocomplete="off" />
+            <x-field name="airtel_client_secret" type="password" label="Client secret" :placeholder="$gateway['airtel_client_secret'] ? '•••••••• saved' : ''" autocomplete="off" />
+            <p class="text-xs text-navy-300">Callback URL to register with Airtel: <code>{{ route('webhooks.payments', 'airtel_money') }}</code></p>
+        </fieldset>
+    </div>
+    <button class="btn btn-primary">Save mobile money settings</button>
+</form>
 @endsection

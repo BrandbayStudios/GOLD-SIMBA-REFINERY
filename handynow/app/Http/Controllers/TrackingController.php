@@ -80,6 +80,26 @@ class TrackingController extends Controller
         ];
     }
 
+    /** Polled while a mobile money prompt is waiting for the payer's PIN. */
+    public function paymentStatus(Request $request, string $reference, RequestWorkflow $wf)
+    {
+        $sr = $this->resolve($request, $reference);
+        $payment = $sr->payments()->first();
+        if ($payment && $payment->status === 'pending' && $payment->isOnline()) {
+            try {
+                $wf->syncPayment($payment);
+            } catch (\Throwable) {
+                // operator unreachable – keep waiting
+            }
+            $payment->refresh();
+        }
+
+        return response()->json([
+            'payment_status' => $sr->fresh()->payment_status,
+            'payment' => $payment ? ['status' => $payment->status, 'method' => $payment->methodLabel(), 'reason' => $payment->failure_reason] : null,
+        ]);
+    }
+
     public function acceptQuote(Request $request, string $reference, Quotation $quotation, RequestWorkflow $wf)
     {
         return $this->doAcceptQuote($this->resolve($request, $reference), $quotation, $request, $wf);

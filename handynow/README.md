@@ -95,8 +95,14 @@ WhatsApp uses `wa.me` click-to-chat links, so no API key is needed. The WhatsApp
 ### Maps
 The app uses Leaflet with OpenStreetMap tiles and Nominatim reverse geocoding, so no API key or billing is needed. To switch to Google Maps, replace the map helpers in `resources/js/app.js`. The data model (lat/lng on requests and providers) stays the same. For high traffic, use a commercial tile provider in line with the OSM tile usage policy.
 
-### Mobile money
-Implement `App\Services\Payments\PaymentGateway::initiate()`, for example as an MTN MoMo Collections request-to-pay. Add a webhook route that calls `RequestWorkflow::confirmPayment()`, then bind your gateway in `AppServiceProvider`.
+### Mobile money (MTN MoMo & Airtel Money – built in)
+Enter the API keys in **Admin → Settings → Mobile money payments** (stored encrypted) and tick *Enable*.
+- **MTN MoMo:** Collections product at momodeveloper.mtn.com, giving a subscription key, API user and API key. Use the sandbox (currency EUR) for testing, then production (target environment `mtnzambia`, ZMW).
+- **Airtel Money:** Collections at developers.airtel.africa, giving a client ID and secret. Use UAT for testing, then production.
+- Register the callback URLs shown on the settings page with each operator.
+- Customers then get a PIN prompt on their phone, and the payment confirms automatically with commission. Every callback is re-verified with the operator's API before anything is marked paid. Unanswered prompts expire after 30 minutes (`php artisan payments:sync`, scheduled every minute).
+- Zamtel Kwacha has no public merchant API, so it stays on manual confirmation, as do bank transfer and cash.
+- After each deployment that adds database changes, click **Admin → Settings → Apply database updates**.
 
 ---
 

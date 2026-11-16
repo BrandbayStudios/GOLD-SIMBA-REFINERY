@@ -10,7 +10,9 @@ use App\Models\Review;
 use App\Models\ServiceRequest;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\Payments\GatewayException;
 use App\Services\Payments\PaymentGateway;
+use App\Services\Payments\PaymentGatewayManager;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -24,7 +26,7 @@ class RequestWorkflow
     public function __construct(
         private ProviderMatcher $matcher,
         private Notifier $notify,
-        private PaymentGateway $gateway,
+        private PaymentGatewayManager $gateways,
     ) {}
 
     /** @param UploadedFile[] $photos */
@@ -258,6 +260,16 @@ class RequestWorkflow
             throw ValidationException::withMessages(['method' => 'This job has already been paid.']);
         }
 
+        $gateway = $this->gateways->forMethod($data['method']);
+        if ($gateway->isOnline() && empty($data['payer_phone'])) {
+            throw ValidationException::withMessages(['payer_phone' => 'Enter the mobile money number that should receive the payment prompt.']);
+        }
+
+        // A new attempt replaces any earlier prompt that was never approved.
+        $request->payments()->where('status', 'pending')->get()->each(fn (Payment $old) => $old->update([
+            'status' => 'failed', 'failure_reason' => 'Superseded by a new payment attempt',
+        ]));
+
         $payment = Payment::create([
             'service_request_id' => $request->id,
             'customer_id' => $request->customer_id,
@@ -266,13 +278,25 @@ class RequestWorkflow
             'method' => $data['method'],
             'payer_phone' => $data['payer_phone'] ?? null,
             'transaction_reference' => $data['transaction_reference'] ?? null,
-            'gateway' => $this->gateway->name(),
+            'gateway' => $gateway->name(),
             'status' => 'pending',
         ]);
-        $payment = $this->gateway->initiate($payment);
+
+        if ($gateway->isOnline()) {
+            try {
+                $gateway->initiate($payment);
+            } catch (GatewayException $e) {
+                $payment->update(['status' => 'failed', 'failure_reason' => mb_substr($e->getMessage(), 0, 250)]);
+                throw ValidationException::withMessages(['method' => $e->getMessage()]);
+            }
+            $request->update(['payment_status' => 'pending']);
+            $this->log($request, 'payment_prompt_sent', $actor, $payment->methodLabel().' prompt for '.zmw($payment->amount).' sent to '.$payment->payer_phone);
+
+            return $payment->fresh();
+        }
+
         $request->update(['payment_status' => 'pending']);
         $this->log($request, 'payment_recorded', $actor, $payment->methodLabel().' payment of '.zmw($payment->amount).' recorded – awaiting confirmation');
-
         $this->notify->user($request->provider, 'Payment recorded – please confirm',
             'Customer recorded '.zmw($payment->amount)." via {$payment->methodLabel()} for {$request->reference}.",
             route('provider.jobs.show', $request), 'payment', true);
@@ -280,8 +304,41 @@ class RequestWorkflow
         return $payment;
     }
 
-    /** Confirms receipt and calculates the platform commission automatically. */
-    public function confirmPayment(Payment $payment, User $actor): void
+    /**
+     * Asks the mobile money operator for the result of a prompt and settles the payment.
+     * Used by the callback webhook, the customer's status polling and the payments:sync command.
+     */
+    public function syncPayment(Payment $payment): string
+    {
+        if ($payment->status !== 'pending' || ! $payment->isOnline()) {
+            return $payment->status;
+        }
+        $result = $this->gateways->byName($payment->gateway)->checkStatus($payment);
+
+        if ($result['status'] === PaymentGateway::SUCCESSFUL) {
+            if ($result['reason'] && ! $payment->transaction_reference) {
+                $payment->update(['transaction_reference' => $result['reason']]);
+            }
+            $this->confirmPayment($payment->fresh(), null);
+            $this->notify->user($payment->provider, 'Payment received',
+                zmw($payment->amount).' paid via '.$payment->methodLabel().' for '.$payment->serviceRequest->reference.'.',
+                route('provider.jobs.show', $payment->serviceRequest), 'payment', true);
+
+            return 'confirmed';
+        }
+        if ($result['status'] === PaymentGateway::FAILED) {
+            $payment->update(['status' => 'failed', 'failure_reason' => mb_substr((string) $result['reason'], 0, 250)]);
+            $payment->serviceRequest->update(['payment_status' => 'unpaid']);
+            $this->log($payment->serviceRequest, 'payment_failed', null, $payment->methodLabel().' payment not completed: '.$result['reason']);
+
+            return 'failed';
+        }
+
+        return 'pending';
+    }
+
+    /** Confirms receipt and calculates the platform commission automatically. $actor is null when the operator confirmed it. */
+    public function confirmPayment(Payment $payment, ?User $actor): void
     {
         if ($payment->status === 'confirmed') {
             return;
@@ -295,7 +352,7 @@ class RequestWorkflow
                 'commission_rate' => $rate,
                 'commission_amount' => $commission,
                 'provider_amount' => (float) $payment->amount - $commission,
-                'confirmed_by' => $actor->id,
+                'confirmed_by' => $actor?->id,
                 'confirmed_at' => now(),
             ]);
             $request = $payment->serviceRequest;
@@ -305,7 +362,8 @@ class RequestWorkflow
                 'commission_amount' => $commission,
                 'provider_earnings' => (float) $payment->amount - $commission,
             ]);
-            $this->log($request, 'payment_confirmed', $actor, zmw($payment->amount).' confirmed. Platform commission '.zmw($commission)." ({$rate}%)");
+            $by = $actor ? '' : ' automatically by '.$payment->methodLabel();
+            $this->log($request, 'payment_confirmed', $actor, zmw($payment->amount).' confirmed'.$by.'. Platform commission '.zmw($commission)." ({$rate}%)");
         });
 
         $this->customerUpdate($payment->serviceRequest, 'Payment of '.zmw($payment->amount).' for '.$payment->serviceRequest->reference.' confirmed. Thank you!');

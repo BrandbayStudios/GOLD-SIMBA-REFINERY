@@ -89,6 +89,14 @@ class PagesTest extends TestCase
         $this->assertTrue(Hash::check('Handy@2026', $admin->fresh()->password));
     }
 
+    public function test_admin_sees_database_is_up_to_date_and_can_apply_updates(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $this->actingAs($admin)->get('/admin/settings')->assertSee('Database is up to date');
+        $this->actingAs($admin)->post('/admin/settings/migrate')->assertSessionHasNoErrors();
+        $this->actingAs(User::where('role', 'customer')->first())->post('/admin/settings/migrate')->assertForbidden();
+    }
+
     public function test_admin_can_purge_demo_data_only(): void
     {
         $admin = User::factory()->admin()->create();

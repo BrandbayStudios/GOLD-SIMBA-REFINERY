@@ -8,6 +8,7 @@ use App\Models\ServiceRequest;
 use App\Services\RequestWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 /** Customer-side actions shared by the logged-in dashboard and the guest tracking page. */
 trait HandlesCustomerRequestActions
@@ -43,11 +44,17 @@ trait HandlesCustomerRequestActions
             'method' => ['required', Rule::in(array_keys(Payment::METHODS))],
             'payer_phone' => 'nullable|required_if:method,mtn_momo,airtel_money,zamtel_kwacha|string|max:20',
             'transaction_reference' => 'nullable|string|max:100',
-        ], ['payer_phone.required_if' => 'Enter the mobile money number you paid from.']);
+        ], ['payer_phone.required_if' => 'Enter your mobile money number.']);
+        $prefixes = Payment::NETWORK_PREFIXES[$data['method']] ?? null;
+        if ($prefixes && ! in_array(substr(zm_phone($data['payer_phone']), 3, 2), $prefixes, true)) {
+            throw ValidationException::withMessages(['payer_phone' => 'That number does not look like a '.Payment::METHODS[$data['method']].' number (expected 0'.implode('/0', $prefixes).'…).']);
+        }
         $data['amount'] = $sr->agreed_amount;
-        $wf->recordPayment($sr, $data, $request->user());
+        $payment = $wf->recordPayment($sr, $data, $request->user());
 
-        return back()->with('success', 'Payment recorded. Your provider will confirm receipt.');
+        return back()->with('success', $payment->isOnline()
+            ? 'Payment prompt sent to '.$payment->payer_phone.'. Enter your '.$payment->methodLabel().' PIN on your phone to approve.'
+            : 'Payment recorded. Your provider will confirm receipt.');
     }
 
     protected function doReview(ServiceRequest $sr, Request $request, RequestWorkflow $wf)
