@@ -9,12 +9,13 @@ use App\Models\Payment;
 use App\Models\ProviderProfile;
 use App\Models\ServiceRequest;
 use App\Models\User;
+use App\Services\Ledger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Ledger $ledger)
     {
         $stats = [
             'customers' => User::where('role', 'customer')->count(),
@@ -37,7 +38,9 @@ class DashboardController extends Controller
         $complaints = Complaint::whereIn('status', ['open', 'investigating'])->with('user')->latest()->take(5)->get();
         $trend = $this->dailyTrend(14);
 
-        return view('admin.dashboard', compact('stats', 'emergencies', 'pendingProviders', 'complaints', 'trend'));
+        $payouts = $ledger->summary();
+
+        return view('admin.dashboard', compact('stats', 'emergencies', 'pendingProviders', 'complaints', 'trend', 'payouts'));
     }
 
     public function reports(Request $request)

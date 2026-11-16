@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Complaint;
+use App\Models\LedgerEntry;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use Database\Seeders\CategorySeeder;
@@ -65,7 +66,7 @@ class PagesTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
         foreach (['/admin', '/admin/reports', '/admin/reports?from=2020-01-01&to=2030-01-01', '/admin/requests', '/admin/requests?status=active&priority=emergency',
-            '/admin/payments', '/admin/providers', '/admin/providers?status=pending', '/admin/users', '/admin/users?role=provider', '/admin/users/create',
+            '/admin/payments', '/admin/payouts', '/admin/payouts?show=owing', '/admin/providers', '/admin/providers?status=pending', '/admin/users', '/admin/users?role=provider', '/admin/users/create',
             '/admin/complaints', '/admin/categories', '/admin/categories/roadside-assistance/edit', '/admin/settings', '/admin/sms-log'] as $url) {
             $this->actingAs($admin)->get($url)->assertOk();
         }
@@ -104,7 +105,9 @@ class PagesTest extends TestCase
         $admin = User::factory()->admin()->create();
         $live = User::factory()->create();
         $this->actingAs($admin)->post('/admin/settings/purge-demo', ['confirm' => 'nope'])->assertSessionHasErrors('confirm');
+        $this->assertGreaterThan(0, LedgerEntry::count(), 'demo payments are on the ledger');
         $this->actingAs($admin)->post('/admin/settings/purge-demo', ['confirm' => 'DELETE DEMO DATA'])->assertSessionHasNoErrors();
+        $this->assertSame(0, LedgerEntry::count());
         $this->assertSame(0, User::where('is_demo', true)->count());
         $this->assertSame(0, ServiceRequest::where('is_demo', true)->count());
         $this->assertNotNull($live->fresh());

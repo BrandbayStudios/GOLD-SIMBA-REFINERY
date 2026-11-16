@@ -7,6 +7,7 @@
             ['admin.providers.index', 'Providers', 'shield', 'admin.providers.*'],
             ['admin.users.index', 'Users', 'users', 'admin.users.*'],
             ['admin.payments.index', 'Payments', 'wallet', 'admin.payments.*'],
+            ['admin.payouts.index', 'Payouts', 'download', 'admin.payouts.*'],
             ['admin.complaints.index', 'Complaints', 'flag', 'admin.complaints.*'],
             ['admin.categories.index', 'Services & pricing', 'tag', 'admin.categories.*'],
             ['admin.reports', 'Reports', 'chart', 'admin.reports*'],

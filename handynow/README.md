@@ -119,6 +119,9 @@ The web UI and the API both call `App\Services\RequestWorkflow`, so business rul
 - **Providers:** NRC number plus photos of the NRC front and back and a selfie holding it; PACRA certificate for businesses; a licence or certificate for each service that needs one (set per service in Admin → Services & pricing); and a payment method (MTN, Airtel, Zamtel or bank).
 - **Admin review:** each document is approved or rejected with a reason (the provider is told and re-uploads). A provider can only be approved once every required document is approved, any required licences are valid, and payment details are set. Expired licences stop job matching until renewed. All files sit on the private disk and are streamed only to the owner and admins.
 
+## Payouts ledger
+Every provider has one running balance. A confirmed payment is booked once: if the customer paid **through the app** (MTN / Airtel prompt) HANDY NOW owes the provider the amount less commission (+); if the customer paid the **provider directly**, the provider owes the commission (−). **Admin → Payouts** lists the balances: *Create payout* reserves an amount (never more than is owed), you send the money to the provider's chosen account, then *Mark paid* with the transaction reference (the provider gets an SMS). Cancelling a pending payout puts the money back. *Record commission received* settles what a provider owes, and *Adjustment* handles refunds and corrections. Providers see their balance, payout history and, if they owe commission, your instructions (set in Admin → Settings) on their Earnings page. Payouts are recorded here but sent manually; sending through the MTN / Airtel disbursement APIs is a possible next step.
+
 ## Security
 - Passwords are hashed with bcrypt. Login, registration and request forms are rate-limited.
 - Role middleware (`role:customer|provider|admin`) protects every dashboard and API group. Ownership is checked on every request, quote and payment.

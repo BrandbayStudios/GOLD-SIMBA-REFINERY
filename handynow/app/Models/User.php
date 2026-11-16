@@ -76,6 +76,16 @@ class User extends Authenticatable
         return $this->hasMany(Quotation::class, 'provider_id');
     }
 
+    public function ledgerEntries(): HasMany
+    {
+        return $this->hasMany(LedgerEntry::class, 'provider_id');
+    }
+
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class, 'provider_id');
+    }
+
     public function reviewsReceived(): HasMany
     {
         return $this->hasMany(Review::class, 'provider_id');
