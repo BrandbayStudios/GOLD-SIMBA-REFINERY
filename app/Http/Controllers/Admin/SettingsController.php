@@ -11,6 +11,9 @@ use App\Models\SmsLog;
 use App\Models\User;
 use App\Services\Payments\GatewaySettings;
 use App\Services\Payments\PaymentGatewayManager;
+use App\Services\Sms\AfricasTalkingSmsDriver;
+use App\Services\Sms\SmsDriver;
+use App\Services\Sms\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -24,13 +27,16 @@ class SettingsController extends Controller
         $gateway = collect(GatewaySettings::FIELDS)->mapWithKeys(fn ($f) => [$f => in_array($f, GatewaySettings::SECRET_FIELDS, true) ? $pg->has($f) : $pg->get($f)]);
         $gatewayStatus = $gateways->status();
         $pendingMigrations = $this->pendingMigrations();
+        $sms = collect(GatewaySettings::SMS_FIELDS)->mapWithKeys(fn ($f) => [$f => $f === 'at_api_key' ? $pg->has($f) : $pg->get($f)]);
+        $smsDriver = app(SmsDriver::class);
+        $smsBalance = $smsDriver instanceof AfricasTalkingSmsDriver ? $smsDriver->balance() : null;
         $settings = collect(Setting::DEFAULTS)->mapWithKeys(fn ($v, $k) => [$k => Setting::get($k)]);
         $demo = [
             'users' => User::where('is_demo', true)->count(),
             'requests' => ServiceRequest::where('is_demo', true)->count(),
         ];
 
-        return view('admin.settings', compact('settings', 'demo', 'gateway', 'gatewayStatus', 'pendingMigrations'));
+        return view('admin.settings', compact('settings', 'demo', 'gateway', 'gatewayStatus', 'pendingMigrations', 'sms', 'smsDriver', 'smsBalance'));
     }
 
     public function update(Request $request)
@@ -78,6 +84,44 @@ class SettingsController extends Controller
         cache()->forget('airtel_token_'.md5($pg->get('airtel_client_id').'https://openapi.airtel.africa'));
 
         return back()->with('success', 'Mobile money settings saved.');
+    }
+
+    /** Saves Africa's Talking credentials (API key stored encrypted; blank keeps the saved key). */
+    public function sms(Request $request, GatewaySettings $pg)
+    {
+        $data = $request->validate([
+            'at_username' => 'nullable|string|max:100',
+            'at_api_key' => 'nullable|string|max:200',
+            'at_sender_id' => ['nullable', 'string', 'max:11', 'regex:/^[A-Za-z0-9 ]*$/'],
+        ], ['at_sender_id.regex' => 'Sender ID: letters, numbers and spaces only (max 11).']);
+        $data += ['at_username' => null, 'at_api_key' => null, 'at_sender_id' => null];
+        if ($request->boolean('at_enabled') && ! $data['at_username']) {
+            return back()->withErrors(['at_username' => 'Enter your Africa\'s Talking username (use "sandbox" for testing).']);
+        }
+        $pg->put('at_enabled', $request->boolean('at_enabled') ? '1' : '0');
+        $pg->put('at_username', $data['at_username'] ? trim($data['at_username']) : null);
+        $pg->put('at_sender_id', $data['at_sender_id'] ? trim($data['at_sender_id']) : null);
+        if (! empty($data['at_api_key'])) {
+            $pg->put('at_api_key', trim($data['at_api_key']));
+        }
+        if ($request->boolean('at_enabled') && ! $pg->has('at_api_key')) {
+            return back()->withErrors(['at_api_key' => 'Enter your Africa\'s Talking API key.']);
+        }
+
+        return back()->with('success', 'SMS settings saved.');
+    }
+
+    public function smsTest(Request $request, SmsService $sms)
+    {
+        $data = $request->validate(['test_phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9 ()-]{9,20}$/']]);
+        $sms->send($data['test_phone'], 'Test message from your HANDY NOW admin panel. SMS is working.');
+        $log = SmsLog::latest('id')->first();
+
+        return back()->with('success', match ($log?->status) {
+            'sent' => 'Test SMS sent to '.$data['test_phone'].' ('.$log->response.').',
+            'logged' => 'SMS is not switched on – the message was only written to the SMS log.',
+            default => 'Sending failed: '.($log?->response ?? 'unknown error'),
+        });
     }
 
     /** Applies new database migrations after a deployment (for hosts without SSH). */

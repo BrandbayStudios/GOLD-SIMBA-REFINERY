@@ -79,15 +79,8 @@ Every demo record has `is_demo = true` and shows a purple **Demo** badge in all 
 
 ## Integrations
 
-### SMS (Zambia)
-`SMS_DRIVER=log` (the default) records every message in **Admin → SMS log** without sending it. To send real SMS through [Africa's Talking](https://africastalking.com) (supports MTN, Airtel and Zamtel Zambia):
-```
-SMS_DRIVER=africastalking
-AFRICASTALKING_USERNAME=your_username
-AFRICASTALKING_API_KEY=your_key
-AFRICASTALKING_SENDER_ID=HANDYNOW   # optional, must be registered
-```
-To use another gateway (e.g. Zamtel bulk SMS, Probase), implement `App\Services\Sms\SmsDriver` and bind it in `AppServiceProvider`.
+### SMS (Zambia) – Africa's Talking
+In **Admin → Settings → SMS – Africa's Talking**, tick *Send real SMS*, enter your username and API key (stored encrypted) and optionally an approved sender ID, then use **Send test SMS**. Use the username `sandbox` with your sandbox key to test in the Africa's Talking simulator. The settings page shows your balance, and **Admin → SMS log** records every message with its delivery status. `.env` values (`SMS_DRIVER=africastalking`, `AFRICASTALKING_*`) still work as a fallback. Another gateway can be added by implementing `App\Services\Sms\SmsDriver`.
 
 ### WhatsApp
 WhatsApp uses `wa.me` click-to-chat links, so no API key is needed. The WhatsApp Business Cloud API can be added later as another notification channel in `App\Services\Notifier`.
