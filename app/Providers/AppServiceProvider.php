@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Setting;
-use App\Services\Payments\ManualGateway;
-use App\Services\Payments\PaymentGateway;
 use App\Services\Sms\AfricasTalkingSmsDriver;
 use App\Services\Sms\LogSmsDriver;
 use App\Services\Sms\SmsDriver;
@@ -23,7 +21,6 @@ class AppServiceProvider extends ServiceProvider
             'africastalking' => new AfricasTalkingSmsDriver,
             default => new LogSmsDriver,
         });
-        $this->app->bind(PaymentGateway::class, ManualGateway::class);
     }
 
     public function boot(): void

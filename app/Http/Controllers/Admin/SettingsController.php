@@ -9,22 +9,28 @@ use App\Models\ServiceRequest;
 use App\Models\Setting;
 use App\Models\SmsLog;
 use App\Models\User;
+use App\Services\Payments\GatewaySettings;
+use App\Services\Payments\PaymentGatewayManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class SettingsController extends Controller
 {
-    public function edit()
+    public function edit(GatewaySettings $pg, PaymentGatewayManager $gateways)
     {
+        $gateway = collect(GatewaySettings::FIELDS)->mapWithKeys(fn ($f) => [$f => in_array($f, GatewaySettings::SECRET_FIELDS, true) ? $pg->has($f) : $pg->get($f)]);
+        $gatewayStatus = $gateways->status();
+        $pendingMigrations = $this->pendingMigrations();
         $settings = collect(Setting::DEFAULTS)->mapWithKeys(fn ($v, $k) => [$k => Setting::get($k)]);
         $demo = [
             'users' => User::where('is_demo', true)->count(),
             'requests' => ServiceRequest::where('is_demo', true)->count(),
         ];
 
-        return view('admin.settings', compact('settings', 'demo'));
+        return view('admin.settings', compact('settings', 'demo', 'gateway', 'gatewayStatus', 'pendingMigrations'));
     }
 
     public function update(Request $request)
@@ -41,6 +47,55 @@ class SettingsController extends Controller
         }
 
         return back()->with('success', 'Settings saved.');
+    }
+
+    /** Saves mobile money API credentials. Secret fields left blank keep their stored value. */
+    public function gateways(Request $request, GatewaySettings $pg)
+    {
+        $data = $request->validate([
+            'mtn_environment' => 'required|in:sandbox,production',
+            'mtn_target_environment' => 'nullable|string|max:40',
+            'mtn_currency' => 'nullable|string|size:3',
+            'mtn_api_user' => 'nullable|string|max:100',
+            'mtn_subscription_key' => 'nullable|string|max:200',
+            'mtn_api_key' => 'nullable|string|max:200',
+            'airtel_environment' => 'required|in:sandbox,production',
+            'airtel_client_id' => 'nullable|string|max:200',
+            'airtel_client_secret' => 'nullable|string|max:200',
+        ]);
+        $data['mtn_enabled'] = $request->boolean('mtn_enabled') ? '1' : '0';
+        $data['airtel_enabled'] = $request->boolean('airtel_enabled') ? '1' : '0';
+        foreach ($data as $field => $value) {
+            if (in_array($field, GatewaySettings::SECRET_FIELDS, true) && ($value === null || $value === '')) {
+                continue;
+            }
+            $pg->put($field, $value === null ? null : trim((string) $value));
+        }
+        // New credentials must not reuse a cached access token.
+        cache()->forget('mtn_momo_token_'.md5($pg->get('mtn_api_user').'https://sandbox.momodeveloper.mtn.com'));
+        cache()->forget('mtn_momo_token_'.md5($pg->get('mtn_api_user').'https://proxy.momoapi.mtn.com'));
+        cache()->forget('airtel_token_'.md5($pg->get('airtel_client_id').'https://openapiuat.airtel.africa'));
+        cache()->forget('airtel_token_'.md5($pg->get('airtel_client_id').'https://openapi.airtel.africa'));
+
+        return back()->with('success', 'Mobile money settings saved.');
+    }
+
+    /** Applies new database migrations after a deployment (for hosts without SSH). */
+    public function migrate()
+    {
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('optimize:clear');
+
+        return back()->with('success', 'Database updates applied.');
+    }
+
+    private function pendingMigrations(): int
+    {
+        $migrator = app('migrator');
+        $ran = $migrator->getRepository()->getRan();
+
+        return collect($migrator->getMigrationFiles($migrator->paths() + [database_path('migrations')]))
+            ->keys()->reject(fn ($m) => in_array($m, $ran, true))->count();
     }
 
     public function password(Request $request)

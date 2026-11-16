@@ -21,7 +21,7 @@ class DashboardController extends Controller
             ->orderByRaw("CASE priority WHEN 'emergency' THEN 0 WHEN 'urgent' THEN 1 ELSE 2 END")->latest()->take(10)->get();
         $activeJobs = $user->providerJobs()->activeJobs()->with('category')->latest()->get();
         $pendingQuotes = $user->quotations()->where('status', 'pending')->with('serviceRequest.category')->latest()->get();
-        $pendingPayments = Payment::where('provider_id', $user->id)->where('status', 'pending')->with('serviceRequest')->get();
+        $pendingPayments = Payment::where('provider_id', $user->id)->where('status', 'pending')->where('gateway', 'manual')->with('serviceRequest')->get();
 
         $stats = [
             'completed' => $user->providerJobs()->where('status', 'completed')->count(),

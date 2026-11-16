@@ -12,6 +12,16 @@ class ManualGateway implements PaymentGateway
         return $payment;
     }
 
+    public function checkStatus(Payment $payment): array
+    {
+        return ['status' => self::PENDING, 'reason' => null];
+    }
+
+    public function isOnline(): bool
+    {
+        return false;
+    }
+
     public function name(): string
     {
         return 'manual';
