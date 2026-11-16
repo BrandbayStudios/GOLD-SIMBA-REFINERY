@@ -134,6 +134,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/payments/{payment}/reject', [Admin\RequestController::class, 'rejectPayment'])->name('payments.reject');
     Route::get('/payments', [Admin\RequestController::class, 'payments'])->name('payments.index');
 
+    Route::get('/payouts', [Admin\PayoutController::class, 'index'])->name('payouts.index');
+    Route::get('/payouts/export', [Admin\PayoutController::class, 'export'])->name('payouts.export');
+    Route::get('/payouts/providers/{user}', [Admin\PayoutController::class, 'provider'])->name('payouts.provider');
+    Route::post('/payouts/providers/{user}/payout', [Admin\PayoutController::class, 'create'])->name('payouts.create');
+    Route::post('/payouts/providers/{user}/commission', [Admin\PayoutController::class, 'commission'])->name('payouts.commission');
+    Route::post('/payouts/providers/{user}/adjust', [Admin\PayoutController::class, 'adjust'])->name('payouts.adjust');
+    Route::post('/payouts/{payout}/paid', [Admin\PayoutController::class, 'markPaid'])->name('payouts.paid');
+    Route::post('/payouts/{payout}/cancel', [Admin\PayoutController::class, 'cancel'])->name('payouts.cancel');
+
     Route::get('/providers', [Admin\ProviderController::class, 'index'])->name('providers.index');
     Route::get('/providers/{user}', [Admin\ProviderController::class, 'show'])->name('providers.show');
     Route::post('/providers/{user}/verify', [Admin\ProviderController::class, 'verify'])->name('providers.verify');

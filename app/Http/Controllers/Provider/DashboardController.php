@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Provider;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\ServiceRequest;
+use App\Models\Setting;
+use App\Services\Ledger;
 use App\Services\RequestWorkflow;
 use Illuminate\Http\Request;
 
@@ -73,7 +75,11 @@ class DashboardController extends Controller
             ->first();
         $completedJobs = $user->providerJobs()->where('status', 'completed')->with('category')->latest('completed_at')->take(20)->get();
 
-        return view('provider.earnings', compact('payments', 'totals', 'completedJobs'));
+        $balance = app(Ledger::class)->balance($user);
+        $payouts = $user->payouts()->latest()->take(15)->get();
+        $instructions = Setting::get('commission_instructions');
+
+        return view('provider.earnings', compact('payments', 'totals', 'completedJobs', 'balance', 'payouts', 'instructions'));
     }
 
     public function reviews(Request $request)

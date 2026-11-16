@@ -11,6 +11,7 @@ use App\Models\RequestProviderMatch;
 use App\Models\Review;
 use App\Models\ServiceRequest;
 use App\Models\User;
+use App\Services\Ledger;
 use Illuminate\Database\Seeder;
 
 /**
@@ -158,13 +159,14 @@ class DemoSeeder extends Seeder
 
             if ($status === 'completed' && $paid) {
                 $commission = round($amount * 0.10, 2);
-                Payment::create([
+                $payment = Payment::create([
                     'service_request_id' => $sr->id, 'customer_id' => $customer->id, 'provider_id' => $provider->id, 'amount' => $amount,
                     'method' => ['mtn_momo', 'airtel_money', 'cash', 'zamtel_kwacha'][rand(0, 3)], 'payer_phone' => $customer->phone,
                     'transaction_reference' => 'DEMO'.rand(100000, 999999), 'status' => 'confirmed', 'commission_rate' => 10,
                     'commission_amount' => $commission, 'provider_amount' => $amount - $commission, 'confirmed_by' => $provider->id,
                     'confirmed_at' => $sr->completed_at, 'is_demo' => true,
                 ]);
+                app(Ledger::class)->recordPayment($payment);
                 $sr->update(['payment_status' => 'paid', 'commission_rate' => 10, 'commission_amount' => $commission, 'provider_earnings' => $amount - $commission]);
             }
             if ($status === 'completed' && $provider) {

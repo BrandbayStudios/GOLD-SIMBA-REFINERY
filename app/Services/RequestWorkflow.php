@@ -27,6 +27,7 @@ class RequestWorkflow
         private ProviderMatcher $matcher,
         private Notifier $notify,
         private PaymentGatewayManager $gateways,
+        private Ledger $ledger,
     ) {}
 
     /** @param UploadedFile[] $photos */
@@ -362,6 +363,7 @@ class RequestWorkflow
                 'commission_amount' => $commission,
                 'provider_earnings' => (float) $payment->amount - $commission,
             ]);
+            $this->ledger->recordPayment($payment->fresh());
             $by = $actor ? '' : ' automatically by '.$payment->methodLabel();
             $this->log($request, 'payment_confirmed', $actor, zmw($payment->amount).' confirmed'.$by.'. Platform commission '.zmw($commission)." ({$rate}%)");
         });

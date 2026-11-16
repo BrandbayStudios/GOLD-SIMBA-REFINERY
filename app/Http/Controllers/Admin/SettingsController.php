@@ -44,6 +44,8 @@ class SettingsController extends Controller
         $data = $request->validate([
             'commission_rate' => 'required|numeric|min:0|max:50',
             'match_radius_km' => 'required|integer|min:1|max:500',
+            'min_payout' => 'required|numeric|min:0|max:100000',
+            'commission_instructions' => 'nullable|string|max:300',
             'support_phone' => 'required|string|max:30',
             'support_whatsapp' => 'required|string|max:20',
             'support_email' => 'required|email|max:120',

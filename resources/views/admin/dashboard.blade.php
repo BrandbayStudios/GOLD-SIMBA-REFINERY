@@ -1,5 +1,11 @@
 @extends('layouts.dashboard', ['title' => 'Platform overview'])
 @section('content')
+@if($payouts['due_now_count'] || $payouts['pending_payouts'] > 0)
+    <a href="{{ route('admin.payouts.index') }}" class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm font-semibold text-brand-700"><x-icon name="wallet" class="h-5 w-5" />
+        @if($payouts['due_now_count']){{ zmw($payouts['due_now_amount'], 0) }} is due to {{ $payouts['due_now_count'] }} provider(s).@endif
+        @if($payouts['pending_payouts'] > 0){{ zmw($payouts['pending_payouts'], 0) }} in payouts waiting to be sent.@endif
+        <span class="ml-auto underline">Open payouts</span></a>
+@endif
 <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
     <x-stat label="Active requests" :value="$stats['active_requests']" icon="siren" tone="orange" :href="route('admin.requests.index', ['status' => 'active'])" :hint="$stats['active_emergencies'].' emergencies'" />
     <x-stat label="Pending verification" :value="$stats['pending_verification']" icon="shield" tone="red" :href="route('admin.providers.index', ['status' => 'pending'])" />

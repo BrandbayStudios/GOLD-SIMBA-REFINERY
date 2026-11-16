@@ -17,6 +17,8 @@ class Setting extends Model
 
     public const DEFAULTS = [
         'commission_rate' => '10',          // percent taken by the platform on completed jobs
+        'min_payout' => '100',              // balance (ZMW) at which a provider is flagged as due a payout
+        'commission_instructions' => '',    // where providers send commission they owe, shown on their earnings page
         'match_radius_km' => '30',          // default search radius for provider matching
         'support_phone' => '+260 970 000 000',
         'support_whatsapp' => '260970000000',

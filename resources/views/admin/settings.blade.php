@@ -5,6 +5,8 @@
         @csrf @method('PUT')
         <h2 class="font-display text-lg font-bold">Commission & matching</h2>
         <x-field name="commission_rate" type="number" step="0.1" label="Platform commission (%)" :value="$settings['commission_rate']" :required="true" hint="Applied automatically when a payment is confirmed." />
+        <x-field name="min_payout" type="number" step="1" label="Payout threshold (ZMW)" :value="$settings['min_payout']" :required="true" hint="Providers owed at least this much are flagged as due on the Payouts page." />
+        <x-field name="commission_instructions" type="textarea" rows="2" label="How providers pay you commission" :value="$settings['commission_instructions']" hint="Shown to providers who owe commission, e.g. 'Send to MTN MoMo 0972 015 689 (HANDY NOW) and quote your name.'" />
         <x-field name="match_radius_km" type="number" label="Maximum matching radius (km)" :value="$settings['match_radius_km']" :required="true" hint="Providers further than this (or their own radius) are not alerted." />
         <h2 class="pt-2 font-display text-lg font-bold">Support contacts</h2>
         <x-field name="support_phone" label="Support phone" :value="$settings['support_phone']" :required="true" />
