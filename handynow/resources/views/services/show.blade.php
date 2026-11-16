@@ -12,11 +12,11 @@
         <div class="card card-pad">
             <h2 class="font-display text-xl font-bold">How pricing works</h2>
             <dl class="mt-4 grid gap-4 sm:grid-cols-3">
-                <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Typical price</dt><dd class="mt-1 font-display text-lg font-bold">{{ $service->priceRange() }}</dd></div>
+                <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Price</dt><dd class="mt-1 font-display text-lg font-bold">{{ $service->priceRange() }}</dd></div>
                 <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Call-out fee from</dt><dd class="mt-1 font-display text-lg font-bold">{{ $service->callout_fee > 0 ? zmw($service->callout_fee, 0) : 'None' }}</dd></div>
                 <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Payment</dt><dd class="mt-1 text-sm font-bold">Mobile money, bank or cash</dd></div>
             </dl>
-            <p class="mt-4 text-sm text-navy-500">These are indicative ranges. Providers send you a firm quotation in ZMW after seeing your description and photos – nothing is charged until you accept a quote.</p>
+            <p class="mt-4 text-sm text-navy-500">Prices start from the amount shown. Providers send you a firm quotation in ZMW after seeing your description and photos – nothing is charged until you accept a quote.</p>
         </div>
         @if($related->isNotEmpty())
         <div>

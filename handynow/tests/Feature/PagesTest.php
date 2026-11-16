@@ -8,6 +8,7 @@ use App\Models\User;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /** Smoke test: every page renders for the right role with demo data loaded. */
@@ -74,6 +75,18 @@ class PagesTest extends TestCase
         $this->actingAs($admin)->get(route('admin.complaints.show', Complaint::first()))->assertOk();
         $this->actingAs($admin)->get(route('admin.providers.show', User::where('role', 'provider')->first()))->assertOk();
         $this->actingAs($admin)->get('/admin/reports/export')->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8');
+    }
+
+    public function test_prices_show_starting_at_and_admin_can_change_password(): void
+    {
+        $this->get('/services/roadside-assistance')->assertOk()->assertSee('Starting at K800')->assertDontSee('K3,500');
+
+        $admin = User::factory()->admin()->create(['password' => 'Password123']);
+        $this->actingAs($admin)->put('/admin/settings/password', ['current_password' => 'wrong', 'password' => 'Handy@2026', 'password_confirmation' => 'Handy@2026'])
+            ->assertSessionHasErrors('current_password');
+        $this->actingAs($admin)->put('/admin/settings/password', ['current_password' => 'Password123', 'password' => 'Handy@2026', 'password_confirmation' => 'Handy@2026'])
+            ->assertSessionHasNoErrors();
+        $this->assertTrue(Hash::check('Handy@2026', $admin->fresh()->password));
     }
 
     public function test_admin_can_purge_demo_data_only(): void

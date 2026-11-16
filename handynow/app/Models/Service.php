@@ -24,15 +24,9 @@ class Service extends Model
         return $this->belongsTo(Category::class);
     }
 
+    /** Public price label: only the starting price is shown, never an upper bound. */
     public function priceRange(): string
     {
-        if ($this->min_price && $this->max_price) {
-            return zmw($this->min_price, 0).' – '.zmw($this->max_price, 0);
-        }
-        if ($this->min_price) {
-            return 'From '.zmw($this->min_price, 0);
-        }
-
-        return 'Quoted on request';
+        return $this->min_price ? 'Starting at '.zmw($this->min_price, 0) : 'Quoted on request';
     }
 }

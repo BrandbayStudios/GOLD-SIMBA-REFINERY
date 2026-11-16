@@ -23,6 +23,15 @@
             <p class="mt-3 text-xs text-navy-500">Configure SMS in the server <code>.env</code> file (SMS_DRIVER, AFRICASTALKING_*). See README.</p>
             <a href="{{ route('admin.sms-log') }}" class="btn btn-sm btn-outline mt-3">View SMS log</a>
         </div>
+        <form method="POST" action="{{ route('admin.settings.password') }}" class="card card-pad space-y-4">
+            @csrf @method('PUT')
+            <h2 class="font-display text-lg font-bold">My password</h2>
+            <p class="text-sm text-navy-500">Signed in as {{ auth()->user()->email }}</p>
+            <x-field name="current_password" type="password" label="Current password" :required="true" autocomplete="current-password" />
+            <x-field name="password" type="password" label="New password" :required="true" autocomplete="new-password" hint="8+ characters with letters and numbers." />
+            <x-field name="password_confirmation" type="password" label="Confirm new password" :required="true" autocomplete="new-password" />
+            <button class="btn btn-navy w-full">Change password</button>
+        </form>
         <form method="POST" action="{{ route('admin.settings.purge-demo') }}" class="card card-pad space-y-3 border-violet-200">
             @csrf
             <h2 class="font-display text-lg font-bold">Demonstration data</h2>

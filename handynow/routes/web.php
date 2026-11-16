@@ -148,6 +148,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/settings', [Admin\SettingsController::class, 'edit'])->name('settings');
     Route::put('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+    Route::put('/settings/password', [Admin\SettingsController::class, 'password'])->name('settings.password');
     Route::post('/settings/purge-demo', [Admin\SettingsController::class, 'purgeDemo'])->name('settings.purge-demo');
     Route::get('/sms-log', [Admin\SettingsController::class, 'smsLog'])->name('sms-log');
 });
