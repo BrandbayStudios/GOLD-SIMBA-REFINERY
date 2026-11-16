@@ -32,25 +32,69 @@
     </div>
     <aside class="space-y-6">
         <div class="card card-pad">
-            <h2 class="font-display text-lg font-bold">Verification</h2>
-            <dl class="mt-3 space-y-2 text-sm">
-                <div class="flex justify-between"><dt>NRC number</dt><dd class="font-semibold">{{ $profile->nrc_number ?? '—' }}</dd></div>
-                <div class="flex justify-between"><dt>PACRA no.</dt><dd class="font-semibold">{{ $profile->business_reg_number ?? '—' }}</dd></div>
-            </dl>
-            <div class="mt-3 grid gap-2">
-                @if($profile->nrc_document)<a href="{{ route('admin.providers.document', [$provider, 'nrc_document']) }}" target="_blank" class="btn btn-outline btn-sm"><x-icon name="file" class="h-4 w-4" /> View NRC document</a>@else<p class="text-sm text-red-600">No NRC document uploaded{{ $provider->is_demo ? ' (demo account)' : '' }}.</p>@endif
-                @if($profile->business_document)<a href="{{ route('admin.providers.document', [$provider, 'business_document']) }}" target="_blank" class="btn btn-outline btn-sm"><x-icon name="file" class="h-4 w-4" /> View business certificate</a>@endif
-            </div>
+            <h2 class="font-display text-lg font-bold">Approval checklist</h2>
+            @if($missing)
+                <ul class="mt-3 space-y-1 text-sm">@foreach($missing as $m)<li class="flex gap-2 text-amber-800"><x-icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" /> {{ $m }}</li>@endforeach</ul>
+            @else
+                <p class="mt-3 flex items-center gap-2 text-sm font-semibold text-emerald-700"><x-icon name="check-circle" class="h-5 w-5" /> Every requirement is met.</p>
+            @endif
             @if($profile->verified_at)<p class="mt-3 text-xs text-navy-500">Approved {{ $profile->verified_at->format('d M Y') }}</p>@endif
-            <form method="POST" action="{{ route('admin.providers.verify', $provider) }}" class="mt-5 space-y-3" x-data="{ d: 'approved' }">
+            <form method="POST" action="{{ route('admin.providers.verify', $provider) }}" class="mt-4 space-y-3" x-data="{ d: 'approved' }">
                 @csrf
                 <div class="grid grid-cols-2 gap-2">
                     <label class="cursor-pointer rounded-xl border-2 p-2.5 text-center text-sm font-bold" :class="d === 'approved' ? 'border-emerald-500 bg-emerald-50' : 'border-navy-50'"><input type="radio" name="decision" value="approved" x-model="d" class="sr-only">Approve</label>
                     <label class="cursor-pointer rounded-xl border-2 p-2.5 text-center text-sm font-bold" :class="d === 'rejected' ? 'border-red-500 bg-red-50' : 'border-navy-50'"><input type="radio" name="decision" value="rejected" x-model="d" class="sr-only">Reject</label>
                 </div>
-                <textarea name="notes" rows="3" class="input" placeholder="Notes (required when rejecting – shown to the provider)">{{ old('notes', $profile->verification_notes) }}</textarea>
+                @error('decision')<p class="field-error">{{ $message }}</p>@enderror
+                <textarea name="notes" rows="2" class="input" placeholder="Notes (required when rejecting – shown to the provider)">{{ old('notes', $profile->verification_notes) }}</textarea>
+                @error('notes')<p class="field-error">{{ $message }}</p>@enderror
                 <button class="btn btn-navy w-full">Save decision</button>
             </form>
+        </div>
+        <div class="card card-pad">
+            <h2 class="font-display text-lg font-bold">Identity & payment</h2>
+            <dl class="mt-3 space-y-2 text-sm">
+                <div class="flex justify-between gap-3"><dt>NRC number</dt><dd class="font-semibold">{{ $profile->nrc_number ?? '—' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt>PACRA no.</dt><dd class="font-semibold">{{ $profile->business_reg_number ?? '—' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt>Paid via</dt><dd class="text-right font-semibold">{{ $profile->payoutLabel() }}</dd></div>
+                <div class="flex justify-between gap-3"><dt>Account name</dt><dd class="font-semibold">{{ $profile->payout_account_name ?? '—' }}</dd></div>
+                @if($profile->payout_method === 'bank_transfer')
+                    <div class="flex justify-between gap-3"><dt>Account no. / branch</dt><dd class="font-semibold">{{ $profile->bank_account_number }} · {{ $profile->bank_branch ?: '—' }}</dd></div>
+                @endif
+            </dl>
+        </div>
+        <div class="card card-pad">
+            <h2 class="font-display text-lg font-bold">Documents</h2>
+            <ul class="mt-3 divide-y divide-navy-50">
+                @forelse($profile->documents as $doc)
+                    <li class="py-3" x-data="{ reject: false }">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold">{{ $doc->label() }}</p>
+                                <p class="truncate text-xs text-navy-500">{{ $doc->original_name }}@if($doc->number) · No. {{ $doc->number }}@endif · {{ number_format($doc->size / 1024) }} KB</p>
+                                @if($doc->expires_at)<p class="text-xs {{ $doc->isExpired() ? 'font-bold text-red-600' : 'text-navy-500' }}">{{ $doc->isExpired() ? 'EXPIRED ' : 'Expires ' }}{{ $doc->expires_at->format('d M Y') }}</p>@endif
+                                @if($doc->review_note)<p class="mt-1 text-xs text-red-700">{{ $doc->review_note }}</p>@endif
+                            </div>
+                            <x-status-badge :status="$doc->status" :label="ucfirst($doc->status)" />
+                        </div>
+                        @if($doc->isImage())<a href="{{ route('admin.documents.view', $doc) }}" target="_blank"><img src="{{ route('admin.documents.view', $doc) }}" alt="{{ $doc->label() }}" class="mt-2 max-h-40 rounded-lg border border-navy-50 object-cover"></a>@endif
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <a href="{{ route('admin.documents.view', $doc) }}" target="_blank" class="btn btn-sm btn-outline"><x-icon name="file" class="h-4 w-4" /> Open</a>
+                            @if($doc->status !== 'approved')
+                                <form method="POST" action="{{ route('admin.documents.review', $doc) }}">@csrf <input type="hidden" name="decision" value="approved"><button class="btn btn-sm btn-success">Approve</button></form>
+                            @endif
+                            @if($doc->status !== 'rejected')<button type="button" @click="reject = !reject" class="btn btn-sm btn-outline text-red-600">Reject</button>@endif
+                        </div>
+                        <form x-show="reject" x-cloak method="POST" action="{{ route('admin.documents.review', $doc) }}" class="mt-2 flex gap-2">
+                            @csrf <input type="hidden" name="decision" value="rejected">
+                            <input name="note" class="input py-2" placeholder="Why? e.g. Photo is blurry" required>
+                            <button class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                    </li>
+                @empty
+                    <li class="py-3 text-sm text-red-600">No documents uploaded.</li>
+                @endforelse
+            </ul>
         </div>
         <div class="card card-pad">
             <h2 class="font-display text-lg font-bold">Account</h2>

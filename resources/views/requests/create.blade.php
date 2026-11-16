@@ -60,6 +60,9 @@
                 <h2 class="flex items-center gap-2 font-display text-lg font-bold"><span class="flex h-7 w-7 items-center justify-center rounded-full bg-navy-900 text-xs text-white">2</span> Where are you?</h2>
                 <div class="mt-4 flex flex-wrap items-center gap-2">
                     <button type="button" @click="locate" :disabled="busy" class="btn btn-navy"><x-icon name="crosshair" class="h-4 w-4" /> <span x-text="busy ? 'Finding you…' : 'Use my current location'"></span></button>
+                    @if($u?->hasPinnedAddress())
+                        <button type="button" class="btn btn-outline" @click="place({{ $u->latitude }}, {{ $u->longitude }}, false); const f = document.querySelector('#f-address'); f.value = @js($u->address); f.dataset.touched = '1'"><x-icon name="home" class="h-4 w-4" /> Use my saved address</button>
+                    @endif
                     <span class="text-sm text-navy-500">or tap the map to drop a pin</span>
                 </div>
                 <p x-show="error" x-text="error" x-cloak class="mt-2 text-sm font-medium text-red-600"></p>
@@ -68,7 +71,7 @@
                 <input type="hidden" name="latitude" :value="lat ?? ''">
                 <input type="hidden" name="longitude" :value="lng ?? ''">
                 <div class="mt-5 grid gap-4">
-                    <x-field name="address" label="Address or landmark" :required="true" :value="$prefillAddress ?? ($u?->address)" placeholder="e.g. Plot 12, Leopards Hill Road, Kabulonga, Lusaka" oninput="this.dataset.touched='1'" />
+                    <x-field name="address" label="Address or landmark" :required="true" :value="$prefillAddress" placeholder="e.g. Plot 12, Leopards Hill Road, Kabulonga, Lusaka" oninput="this.dataset.touched='1'" />
                     <x-field name="directions" label="Directions for the provider" placeholder="e.g. Opposite the filling station, black gate, call when you arrive" />
                 </div>
             </div>

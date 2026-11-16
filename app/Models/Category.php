@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['name', 'slug', 'icon', 'short_description', 'description', 'image', 'is_emergency', 'is_active', 'sort_order'];
+    protected $fillable = ['name', 'slug', 'icon', 'short_description', 'description', 'image', 'is_emergency', 'license_required', 'license_hint', 'is_active', 'sort_order'];
 
     protected function casts(): array
     {
-        return ['is_emergency' => 'boolean', 'is_active' => 'boolean'];
+        return ['is_emergency' => 'boolean', 'license_required' => 'boolean', 'is_active' => 'boolean'];
     }
 
     public function getRouteKeyName(): string

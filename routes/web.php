@@ -111,9 +111,12 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::get('/reviews', [Provider\DashboardController::class, 'reviews'])->name('reviews');
     Route::get('/profile', [Provider\ProfileController::class, 'edit'])->name('profile');
     Route::put('/profile', [Provider\ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/documents', [Provider\ProfileController::class, 'documents'])->name('profile.documents');
+    Route::put('/profile/identity', [Provider\ProfileController::class, 'identity'])->name('profile.identity');
+    Route::post('/documents', [Provider\ProfileController::class, 'storeDocument'])->name('documents.store');
+    Route::delete('/documents/{document}', [Provider\ProfileController::class, 'destroyDocument'])->name('documents.destroy');
+    Route::put('/payout', [Provider\ProfileController::class, 'payout'])->name('payout.update');
     Route::put('/profile/password', [Provider\ProfileController::class, 'password'])->name('profile.password');
-    Route::get('/documents/{type}', [Provider\ProfileController::class, 'viewDocument'])->name('documents.view');
+    Route::get('/documents/{document}', [Provider\ProfileController::class, 'viewDocument'])->name('documents.view');
 });
 
 // ---------- Administration ----------
@@ -134,10 +137,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/providers', [Admin\ProviderController::class, 'index'])->name('providers.index');
     Route::get('/providers/{user}', [Admin\ProviderController::class, 'show'])->name('providers.show');
     Route::post('/providers/{user}/verify', [Admin\ProviderController::class, 'verify'])->name('providers.verify');
-    Route::get('/providers/{user}/documents/{type}', [Admin\ProviderController::class, 'document'])->name('providers.document');
+    Route::get('/documents/{document}', [Admin\ProviderController::class, 'document'])->name('documents.view');
+    Route::post('/documents/{document}/review', [Admin\ProviderController::class, 'reviewDocument'])->name('documents.review');
 
     Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [Admin\UserController::class, 'create'])->name('users.create');
+    Route::get('/users/{user}', [Admin\UserController::class, 'show'])->name('users.show')->whereNumber('user');
     Route::post('/users', [Admin\UserController::class, 'store'])->name('users.store');
     Route::post('/users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.status');
 

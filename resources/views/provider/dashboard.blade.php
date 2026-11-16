@@ -8,6 +8,12 @@
     </div>
 @endif
 
+@php $expiring = $profile->documents->filter(fn ($d) => $d->status === 'approved' && ($d->isExpired() || $d->expiresSoon())); @endphp
+@foreach($expiring as $d)
+    <a href="{{ route('provider.profile') }}" class="mb-3 flex items-center gap-3 rounded-2xl border p-4 text-sm font-semibold {{ $d->isExpired() ? 'border-red-200 bg-red-50 text-red-900' : 'border-amber-200 bg-amber-50 text-amber-900' }}">
+        <x-icon name="alert" class="h-5 w-5 shrink-0" /> {{ $d->label() }} {{ $d->isExpired() ? 'has EXPIRED – you will not receive jobs until you upload a renewed one.' : 'expires on '.$d->expires_at->format('d M Y').'. Upload the renewed one before then.' }}
+    </a>
+@endforeach
 {{-- Availability --}}
 <div class="card card-pad flex flex-wrap items-center gap-4 {{ $profile->is_online ? 'ring-2 ring-emerald-400' : '' }}">
     <span class="flex h-12 w-12 items-center justify-center rounded-xl {{ $profile->is_online ? 'bg-emerald-50 text-emerald-600' : 'bg-mist text-navy-300' }}">

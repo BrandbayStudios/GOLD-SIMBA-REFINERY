@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\Http\Controllers\Concerns\ValidatesNrc;
+use App\Http\Controllers\Concerns\ValidatesPayout;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\ProviderDocument;
 use App\Models\User;
 use App\Services\Notifier;
+use App\Services\ProviderDocumentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -14,21 +18,26 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    use ValidatesNrc, ValidatesPayout;
+
     public function edit(Request $request)
     {
         $user = $request->user();
-        $profile = $user->providerProfile()->with('categories')->first();
+        $profile = $user->providerProfile()->with(['categories', 'documents.category'])->first();
 
-        return view('provider.profile', ['user' => $user, 'profile' => $profile, 'categories' => Category::active()->get()]);
+        return view('provider.profile', [
+            'user' => $user, 'profile' => $profile, 'categories' => Category::active()->get(),
+            'docTypes' => ProviderDocument::TYPES, 'missing' => $profile->missingRequirements(),
+        ]);
     }
 
     public function update(Request $request)
     {
         $user = $request->user();
-        $request->merge(['email' => mb_strtolower((string) $request->input('email'))]);
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email'))) ?: null]);
         $data = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => ['required', 'email', 'max:120', Rule::unique('users')->ignore($user->id)],
+            'email' => ['nullable', 'email', 'max:120', Rule::unique('users')->ignore($user->id)],
             'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9 ()-]{9,20}$/'],
             'whatsapp' => ['nullable', 'string', 'max:20', 'regex:/^\+?[0-9 ()-]{9,20}$/'],
             'business_name' => 'nullable|string|max:150',
@@ -65,41 +74,84 @@ class ProfileController extends Controller
         ]);
         $profile->categories()->sync($data['categories']);
 
-        return back()->with('success', 'Profile updated.');
+        return back()->with('success', 'Profile updated. If you added a service that needs a licence, upload it under Documents below.');
     }
 
-    public function documents(Request $request, Notifier $notify)
+    /** NRC number and PACRA number (the files are uploaded separately). */
+    public function identity(Request $request, Notifier $notify)
     {
-        $data = $request->validate([
-            'nrc_number' => ['required', 'string', 'max:30', 'regex:/^\d{6}\/\d{2}\/\d$/'],
-            'business_reg_number' => 'nullable|string|max:50',
-            'nrc_document' => 'nullable|file|mimes:jpg,jpeg,png,webp,pdf|max:5120',
-            'business_document' => 'nullable|file|mimes:jpg,jpeg,png,webp,pdf|max:5120',
-        ], ['nrc_number.regex' => 'Enter your NRC number in the format 123456/78/1.']);
+        $data = $request->validate(['nrc_number' => $this->nrcRule(), 'business_reg_number' => 'nullable|string|max:50']);
+        $user = $request->user();
+        $nrc = $this->uniqueNrc($data['nrc_number'], $user->id);
+        $changed = $user->nrc_number !== $nrc;
+        $user->update(['nrc_number' => $nrc]);
+        $user->providerProfile->update(['nrc_number' => $nrc, 'business_reg_number' => $data['business_reg_number'] ?? null]);
+        if ($changed) {
+            $notify->admins('Provider changed NRC number', "{$user->name} updated their NRC number. Please re-check their documents.", route('admin.providers.show', $user), 'verification');
+        }
+
+        return back()->with('success', 'Identity details saved.');
+    }
+
+    /** Upload or replace a document. Replacing puts it back in the review queue. */
+    public function storeDocument(Request $request, Notifier $notify, ProviderDocumentService $docs)
+    {
         $profile = $request->user()->providerProfile;
-        $update = ['nrc_number' => $data['nrc_number'], 'business_reg_number' => $data['business_reg_number'] ?? null];
-        foreach (['nrc_document', 'business_document'] as $f) {
-            if ($request->hasFile($f)) {
-                $update[$f] = $request->file($f)->store('provider-documents', 'local');
-            }
+        $data = $request->validate([
+            'type' => ['required', Rule::in(array_keys(ProviderDocument::TYPES))],
+            'file' => 'required|'.ProviderDocumentService::FILE_RULE,
+            'category_id' => ['nullable', 'required_if:type,licence', Rule::in($profile->categories()->pluck('categories.id')->all())],
+            'title' => 'nullable|string|max:120',
+            'number' => 'nullable|string|max:60',
+            'expires_at' => 'nullable|date|after:today',
+        ], [
+            'category_id.required_if' => 'Choose which service this licence is for.',
+            'category_id.in' => 'Add that service to your profile first.',
+            'expires_at.after' => 'That document has already expired. Upload a valid one.',
+            'file.required' => 'Choose a photo or PDF to upload.',
+        ]);
+        if ($data['type'] === 'business_cert' && $profile->provider_type !== 'business') {
+            return back()->withErrors(['type' => 'Business documents are only for registered businesses.']);
         }
-        // Re-submitting documents after a rejection puts the account back in the review queue.
-        if ($profile->verification_status === 'rejected') {
-            $update['verification_status'] = 'pending';
-        }
-        $profile->update($update);
-        $notify->admins('Provider documents updated', $request->user()->name.' updated verification documents.', route('admin.providers.show', $request->user()), 'verification');
+        $doc = $docs->store($profile, $data['type'], $request->file('file'), [
+            'category_id' => $data['category_id'] ?? null, 'title' => $data['title'] ?? null,
+            'number' => $data['number'] ?? null, 'expires_at' => $data['expires_at'] ?? null,
+        ]);
+        $notify->admins('Provider uploaded a document', "{$request->user()->name}: {$doc->label()} is waiting for review.", route('admin.providers.show', $request->user()), 'verification');
 
-        return back()->with('success', 'Verification details updated.');
+        return back()->with('success', $doc->label().' uploaded. Our team will check it shortly.');
     }
 
-    public function viewDocument(Request $request, string $type)
+    public function destroyDocument(Request $request, ProviderDocument $document, ProviderDocumentService $docs)
     {
-        abort_unless(in_array($type, ['nrc_document', 'business_document'], true), 404);
-        $path = $request->user()->providerProfile->{$type};
-        abort_unless($path && Storage::disk('local')->exists($path), 404);
+        abort_unless($document->provider_profile_id === $request->user()->providerProfile->id, 404);
+        if (in_array($document->type, ProviderDocument::SINGLE, true) || ($document->type === 'licence' && $document->status === 'approved')) {
+            return back()->withErrors(['document' => 'This document is required. Upload a new one to replace it instead.']);
+        }
+        $docs->delete($document);
 
-        return Storage::disk('local')->response($path);
+        return back()->with('success', 'Document removed.');
+    }
+
+    public function viewDocument(Request $request, ProviderDocument $document)
+    {
+        abort_unless($document->provider_profile_id === $request->user()->providerProfile->id, 404);
+
+        return $this->streamDocument($document);
+    }
+
+    public function payout(Request $request, Notifier $notify)
+    {
+        $data = $request->validate($this->payoutRules(), $this->payoutMessages());
+        $profile = $request->user()->providerProfile;
+        $attrs = $this->payoutAttributes($data);
+        $changed = $profile->hasPayoutDetails() && $this->payoutChanged($profile, $attrs);
+        $profile->update($attrs);
+        if ($changed) {
+            $notify->admins('Provider changed payout details', "{$request->user()->name} changed how they get paid to {$profile->payoutLabel()}. Verify with them if unexpected.", route('admin.providers.show', $request->user()), 'verification');
+        }
+
+        return back()->with('success', 'Payment method saved.');
     }
 
     public function password(Request $request)
@@ -111,5 +163,13 @@ class ProfileController extends Controller
         $request->user()->update(['password' => Hash::make($data['password'])]);
 
         return back()->with('success', 'Password changed.');
+    }
+
+    /** Private files are streamed through the app, never linked directly. */
+    public static function streamDocument(ProviderDocument $document)
+    {
+        abort_unless(Storage::disk('local')->exists($document->path), 404);
+
+        return Storage::disk('local')->response($document->path, null, ['X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store']);
     }
 }

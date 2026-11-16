@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\ValidatesNrc;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,13 +13,19 @@ use Illuminate\Validation\ValidationException;
 /** Token authentication for the future Android / iOS apps (Laravel Sanctum). */
 class AuthController extends Controller
 {
+    use ValidatesNrc;
+
     public function register(Request $request)
     {
-        $request->merge(['email' => mb_strtolower((string) $request->input('email'))]);
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email'))) ?: null]);
         $data = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|max:120|unique:users,email',
+            'email' => 'nullable|email|max:120|unique:users,email',
             'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9 ()-]{9,20}$/'],
+            'nrc_number' => $this->nrcRule(),
+            'address' => 'required|string|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'password' => ['required', Password::min(8)->letters()->numbers()],
             'device_name' => 'nullable|string|max:100',
         ]);
@@ -26,7 +33,9 @@ class AuthController extends Controller
         if (User::where('phone', $phone)->exists()) {
             throw ValidationException::withMessages(['phone' => 'This phone number is already registered.']);
         }
-        $user = User::create(['name' => $data['name'], 'email' => $data['email'], 'phone' => $phone, 'password' => $data['password'], 'role' => 'customer']);
+        $nrc = $this->uniqueNrc($data['nrc_number']);
+        $user = User::create(['name' => $data['name'], 'email' => $data['email'] ?? null, 'phone' => $phone, 'nrc_number' => $nrc, 'address' => $data['address'],
+            'latitude' => $data['latitude'], 'longitude' => $data['longitude'], 'password' => $data['password'], 'role' => 'customer']);
 
         return response()->json(['token' => $user->createToken($data['device_name'] ?? 'mobile')->plainTextToken, 'user' => $this->user($user)], 201);
     }
@@ -64,7 +73,7 @@ class AuthController extends Controller
         $p = $u->providerProfile;
 
         return [
-            'id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'phone' => $u->phone, 'role' => $u->role, 'status' => $u->status,
+            'id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'phone' => $u->phone, 'address' => $u->address, 'latitude' => $u->latitude, 'longitude' => $u->longitude, 'role' => $u->role, 'status' => $u->status,
             'provider' => $p ? ['verification_status' => $p->verification_status, 'is_online' => $p->is_online, 'rating' => $p->rating_avg] : null,
         ];
     }

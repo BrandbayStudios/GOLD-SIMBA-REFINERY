@@ -12,6 +12,10 @@
             <x-field name="sort_order" type="number" label="Display order" :value="$category->sort_order" />
             <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_active" value="1" @checked($category->is_active) class="accent-brand-500"> Visible to customers</label>
             <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_emergency" value="1" @checked($category->is_emergency) class="accent-brand-500"> Emergency category</label>
+            <div class="rounded-xl bg-mist p-3">
+                <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="license_required" value="1" @checked($category->license_required) class="accent-brand-500"> Providers must upload a licence / certificate for this service</label>
+                <x-field name="license_hint" label="What to upload (shown to providers)" :value="$category->license_hint" />
+            </div>
             <button class="btn btn-primary w-full">Save category</button>
         </form>
         <form method="POST" action="{{ route('admin.services.store', $category) }}" class="card card-pad space-y-3">

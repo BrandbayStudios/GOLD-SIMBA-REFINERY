@@ -86,11 +86,25 @@ class CategorySeeder extends Seeder
             ]],
         ];
 
+        // Which services need a licence from providers (examples – admins can change them under Services & pricing).
+        $licences = [
+            'roadside-assistance' => [true, "Valid driver's licence (plus tow-truck or vehicle documents if you tow)."],
+            'electrical-services' => [true, "Electrical wireman's licence or trade test certificate (for example from the Energy Regulation Board or TEVETA)."],
+            'plumbing-services' => [true, 'Plumbing trade test certificate or qualification (for example TEVETA).'],
+            'gas-services' => [true, 'LPG handling or installation permit, or a gas safety training certificate.'],
+            'mechanical-services' => [true, 'Motor mechanic trade test certificate or qualification.'],
+            'carpentry' => [false, 'Carpentry trade certificate, if you have one.'],
+            'welding-metalwork' => [false, 'Welding or fabrication trade certificate, if you have one.'],
+            'additional-services' => [false, 'Any trade certificate or licence for your service (e.g. locksmith, refrigeration, pest control).'],
+        ];
+
         foreach ($catalogue as $i => [$name, $icon, $short, $image, $services]) {
-            $cat = Category::updateOrCreate(['slug' => Str::slug($name)], [
+            $slug = Str::slug($name);
+            $existing = Category::where('slug', $slug)->first();
+            $cat = Category::updateOrCreate(['slug' => $slug], [
                 'name' => $name, 'icon' => $icon, 'short_description' => $short, 'image' => $image,
                 'description' => $short, 'is_active' => true, 'is_emergency' => true, 'sort_order' => $i,
-            ]);
+            ] + ($existing ? [] : ['license_required' => $licences[$slug][0] ?? false, 'license_hint' => $licences[$slug][1] ?? null]));
             foreach ($services as [$sname, $callout, $min, $max, $desc]) {
                 $cat->services()->updateOrCreate(['slug' => Str::slug($sname)], [
                     'name' => $sname, 'description' => $desc, 'callout_fee' => $callout, 'min_price' => $min, 'max_price' => $max, 'is_active' => true,

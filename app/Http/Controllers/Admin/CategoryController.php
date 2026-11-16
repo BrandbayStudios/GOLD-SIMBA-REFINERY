@@ -67,9 +67,10 @@ class CategoryController extends Controller
             'short_description' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:2000',
             'sort_order' => 'nullable|integer|min:0|max:999',
+            'license_hint' => 'nullable|string|max:255',
         ]);
 
-        return $data + ['is_active' => $request->boolean('is_active'), 'is_emergency' => $request->boolean('is_emergency')];
+        return $data + ['is_active' => $request->boolean('is_active'), 'is_emergency' => $request->boolean('is_emergency'), 'license_required' => $request->boolean('license_required')];
     }
 
     private function serviceData(Request $request): array

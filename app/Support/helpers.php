@@ -46,3 +46,20 @@ if (! function_exists('status_badge_class')) {
         };
     }
 }
+
+if (! function_exists('normalize_nrc')) {
+    /** Zambian NRC as 123456/78/1. Accepts digits with or without slashes or spaces; returns null when it is not 9 digits. */
+    function normalize_nrc(?string $nrc): ?string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $nrc);
+
+        return strlen($digits) === 9 ? substr($digits, 0, 6).'/'.substr($digits, 6, 2).'/'.substr($digits, 8, 1) : null;
+    }
+}
+
+if (! function_exists('mask_nrc')) {
+    function mask_nrc(?string $nrc): string
+    {
+        return $nrc ? substr($nrc, 0, 3).'***/**/'.substr($nrc, -1) : '—';
+    }
+}
