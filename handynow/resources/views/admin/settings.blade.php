@@ -16,13 +16,13 @@
         <div class="card card-pad text-sm">
             <h2 class="font-display text-lg font-bold">Integrations</h2>
             <dl class="mt-3 space-y-2">
-                <div class="flex justify-between"><dt>SMS gateway</dt><dd class="font-semibold">{{ config('services.sms.driver') === 'africastalking' ? "Africa's Talking (live)" : 'Log only (no SMS sent)' }}</dd></div>
+                <div class="flex justify-between"><dt>SMS gateway</dt><dd class="font-semibold">{{ $smsDriver instanceof \App\Services\Sms\AfricasTalkingSmsDriver ? ($smsDriver->isSandbox() ? "Africa's Talking (sandbox)" : "Africa's Talking (live)") : 'Log only (no SMS sent)' }}</dd></div>
                 <div class="flex justify-between"><dt>MTN MoMo</dt><dd class="font-semibold">{{ $gatewayStatus['mtn_momo'] ? 'In-app prompt (automatic)' : 'Manual confirmation' }}</dd></div>
                 <div class="flex justify-between"><dt>Airtel Money</dt><dd class="font-semibold">{{ $gatewayStatus['airtel_money'] ? 'In-app prompt (automatic)' : 'Manual confirmation' }}</dd></div>
                 <div class="flex justify-between"><dt>Zamtel / bank / cash</dt><dd class="font-semibold">Manual confirmation</dd></div>
                 <div class="flex justify-between"><dt>Maps</dt><dd class="font-semibold">OpenStreetMap / Leaflet</dd></div>
             </dl>
-            <p class="mt-3 text-xs text-navy-500">Configure SMS in the server <code>.env</code> file (SMS_DRIVER, AFRICASTALKING_*). See README.</p>
+
             <a href="{{ route('admin.sms-log') }}" class="btn btn-sm btn-outline mt-3">View SMS log</a>
         </div>
         <form method="POST" action="{{ route('admin.settings.migrate') }}" class="card card-pad space-y-2 text-sm">
@@ -53,6 +53,32 @@
         </form>
     </div>
 </div>
+<form method="POST" action="{{ route('admin.settings.sms') }}" class="card card-pad mt-6 max-w-5xl space-y-5">
+    @csrf @method('PUT')
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h2 class="font-display text-lg font-bold">SMS – Africa's Talking</h2>
+            <p class="mt-1 max-w-2xl text-sm text-navy-500">Sends job alerts to providers and request updates to customers on MTN, Airtel and Zamtel. Use the username <b>sandbox</b> with your sandbox API key to test (messages appear in the Africa's Talking simulator), then your live app username and key.</p>
+        </div>
+        <div class="text-right text-sm">
+            <x-status-badge :status="$smsDriver instanceof \App\Services\Sms\AfricasTalkingSmsDriver ? 'active' : 'pending'" :label="$smsDriver instanceof \App\Services\Sms\AfricasTalkingSmsDriver ? ($smsDriver->isSandbox() ? 'Sandbox' : 'Live') : 'Off – log only'" />
+            @if($smsBalance)<p class="mt-1 font-semibold">Balance: {{ $smsBalance }}</p>@endif
+        </div>
+    </div>
+    <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="at_enabled" value="1" class="accent-brand-500" @checked(filter_var($sms['at_enabled'], FILTER_VALIDATE_BOOLEAN))> Send real SMS through Africa's Talking</label>
+    <div class="grid gap-4 sm:grid-cols-3">
+        <x-field name="at_username" label="Username" :value="$sms['at_username']" placeholder="sandbox" autocomplete="off" />
+        <x-field name="at_api_key" type="password" label="API key" :placeholder="$sms['at_api_key'] ? '•••••••• saved' : ''" autocomplete="off" />
+        <x-field name="at_sender_id" label="Sender ID (optional)" :value="$sms['at_sender_id']" placeholder="HANDYNOW" hint="Must be approved by Africa's Talking first. Leave blank to use their default." />
+    </div>
+    <button class="btn btn-primary">Save SMS settings</button>
+</form>
+<form method="POST" action="{{ route('admin.settings.sms-test') }}" class="card card-pad mt-4 flex max-w-5xl flex-wrap items-end gap-3">
+    @csrf
+    <div class="min-w-56 flex-1"><x-field name="test_phone" type="tel" label="Send a test SMS to" placeholder="097 123 4567" /></div>
+    <button class="btn btn-navy">Send test SMS</button>
+    <a href="{{ route('admin.sms-log') }}" class="btn btn-outline">View SMS log</a>
+</form>
 <form method="POST" action="{{ route('admin.settings.gateways') }}" class="card card-pad mt-6 max-w-5xl space-y-6">
     @csrf @method('PUT')
     <div>

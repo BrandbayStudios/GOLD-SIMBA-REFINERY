@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Setting;
+use App\Services\Payments\GatewaySettings;
 use App\Services\Sms\AfricasTalkingSmsDriver;
 use App\Services\Sms\LogSmsDriver;
 use App\Services\Sms\SmsDriver;
@@ -17,9 +18,18 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(SmsDriver::class, fn () => match (config('services.sms.driver')) {
-            'africastalking' => new AfricasTalkingSmsDriver,
-            default => new LogSmsDriver,
+        // SMS: Africa's Talking when switched on in Admin → Settings (or via .env), otherwise log only.
+        $this->app->bind(SmsDriver::class, function ($app) {
+            $fromSettings = AfricasTalkingSmsDriver::fromSettings($app->make(GatewaySettings::class));
+            if ($fromSettings) {
+                return $fromSettings;
+            }
+            $cfg = config('services.africastalking');
+            if (config('services.sms.driver') === 'africastalking' && ! empty($cfg['api_key'])) {
+                return new AfricasTalkingSmsDriver($cfg['username'], $cfg['api_key'], $cfg['sender_id'] ?: null);
+            }
+
+            return new LogSmsDriver;
         });
     }
 

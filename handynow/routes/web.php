@@ -155,6 +155,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings', [Admin\SettingsController::class, 'edit'])->name('settings');
     Route::put('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
     Route::put('/settings/gateways', [Admin\SettingsController::class, 'gateways'])->name('settings.gateways');
+    Route::put('/settings/sms', [Admin\SettingsController::class, 'sms'])->name('settings.sms');
+    Route::post('/settings/sms-test', [Admin\SettingsController::class, 'smsTest'])->name('settings.sms-test')->middleware('throttle:5,1');
     Route::post('/settings/migrate', [Admin\SettingsController::class, 'migrate'])->name('settings.migrate');
     Route::put('/settings/password', [Admin\SettingsController::class, 'password'])->name('settings.password');
     Route::post('/settings/purge-demo', [Admin\SettingsController::class, 'purgeDemo'])->name('settings.purge-demo');
