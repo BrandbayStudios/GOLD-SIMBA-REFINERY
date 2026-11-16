@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Concerns\ValidatesNrc;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\PasswordResetService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -56,6 +57,31 @@ class AuthController extends Controller
         return response()->json(['token' => $user->createToken($data['device_name'] ?? 'mobile')->plainTextToken, 'user' => $this->user($user)]);
     }
 
+    public function forgotPassword(Request $request, PasswordResetService $svc)
+    {
+        $data = $request->validate(['identifier' => 'required|string|max:120']);
+        if (! $svc->smsAvailable()) {
+            return response()->json(['message' => 'Password reset by SMS is not available yet. Please contact support.'], 503);
+        }
+        $svc->requestCode($data['identifier'], $request->ip());
+
+        return response()->json(['message' => 'If that account exists, we have sent a 6-digit code to its phone.']);
+    }
+
+    public function resetPassword(Request $request, PasswordResetService $svc)
+    {
+        $data = $request->validate([
+            'identifier' => 'required|string|max:120',
+            'code' => 'required|digits:6',
+            'password' => ['required', Password::min(8)->letters()->numbers()],
+        ]);
+        if (! $svc->reset($data['identifier'], $data['code'], $data['password'])) {
+            throw ValidationException::withMessages(['code' => 'That code is incorrect or has expired.']);
+        }
+
+        return response()->json(['message' => 'Password changed. Please log in again.']);
+    }
+
     public function me(Request $request)
     {
         return response()->json(['user' => $this->user($request->user())]);
@@ -73,7 +99,7 @@ class AuthController extends Controller
         $p = $u->providerProfile;
 
         return [
-            'id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'phone' => $u->phone, 'address' => $u->address, 'latitude' => $u->latitude, 'longitude' => $u->longitude, 'role' => $u->role, 'status' => $u->status,
+            'id' => $u->id, 'must_change_password' => $u->must_change_password, 'name' => $u->name, 'email' => $u->email, 'phone' => $u->phone, 'address' => $u->address, 'latitude' => $u->latitude, 'longitude' => $u->longitude, 'role' => $u->role, 'status' => $u->status,
             'provider' => $p ? ['verification_status' => $p->verification_status, 'is_online' => $p->is_online, 'rating' => $p->rating_avg] : null,
         ];
     }

@@ -122,6 +122,11 @@ The web UI and the API both call `App\Services\RequestWorkflow`, so business rul
 ## Payouts ledger
 Every provider has one running balance. A confirmed payment is booked once: if the customer paid **through the app** (MTN / Airtel prompt) HANDY NOW owes the provider the amount less commission (+); if the customer paid the **provider directly**, the provider owes the commission (−). **Admin → Payouts** lists the balances: *Create payout* reserves an amount (never more than is owed), you send the money to the provider's chosen account, then *Mark paid* with the transaction reference (the provider gets an SMS). Cancelling a pending payout puts the money back. *Record commission received* settles what a provider owes, and *Adjustment* handles refunds and corrections. Providers see their balance, payout history and, if they owe commission, your instructions (set in Admin → Settings) on their Earnings page. Payouts are recorded here but sent manually; sending through the MTN / Airtel disbursement APIs is a possible next step.
 
+## Forgotten passwords
+- **By SMS:** *Forgot password?* on the login page texts a 6-digit code to the phone on the account (phone or email accepted). The code is stored hashed, lasts 15 minutes, works once, allows 5 wrong tries, and is limited to 1 per minute and 3 per hour per account. The answer is identical whether or not the account exists, and the code is never written to the SMS log. A successful reset signs out every other browser and revokes mobile-app tokens, and a security text is sent. While SMS is not switched on in production, the page sends users to support instead.
+- **By an admin:** *Reset password* on Admin → Users (or a provider page) issues a one-time temporary password, shown once (optionally also texted). The user must choose their own password before using anything else.
+- **Mobile API:** `POST /api/v1/auth/forgot-password` and `/auth/reset-password`.
+
 ## Security
 - Passwords are hashed with bcrypt. Login, registration and request forms are rate-limited.
 - Role middleware (`role:customer|provider|admin`) protects every dashboard and API group. Ownership is checked on every request, quote and payment.

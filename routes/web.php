@@ -6,6 +6,7 @@ use App\Http\Controllers\Customer;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PaymentWebhookController;
 use App\Http\Controllers\Provider;
 use App\Http\Controllers\RequestController;
@@ -60,12 +61,18 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
+    Route::get('/forgot-password', [PasswordResetController::class, 'showForgot'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendCode'])->name('password.email')->middleware('throttle:5,60');
+    Route::get('/reset-password', [PasswordResetController::class, 'showReset'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update')->middleware('throttle:10,15');
     Route::get('/become-a-provider', [Provider\RegistrationController::class, 'create'])->name('provider.register');
     Route::post('/become-a-provider', [Provider\RegistrationController::class, 'store'])->middleware('throttle:6,1');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/password/change', [PasswordResetController::class, 'showChange'])->name('password.change');
+    Route::put('/password/change', [PasswordResetController::class, 'change'])->name('password.change.update');
     Route::get('/dashboard', fn () => redirect(auth()->user()->dashboardRoute()))->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
@@ -154,6 +161,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users/{user}', [Admin\UserController::class, 'show'])->name('users.show')->whereNumber('user');
     Route::post('/users', [Admin\UserController::class, 'store'])->name('users.store');
     Route::post('/users/{user}/status', [Admin\UserController::class, 'toggleStatus'])->name('users.status');
+    Route::post('/users/{user}/reset-password', [Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
 
     Route::get('/complaints', [Admin\ComplaintController::class, 'index'])->name('complaints.index');
     Route::get('/complaints/{complaint}', [Admin\ComplaintController::class, 'show'])->name('complaints.show');

@@ -8,7 +8,14 @@ class SmsService
 {
     public function __construct(private SmsDriver $driver) {}
 
-    public function send(?string $phone, string $message): void
+    /** True when messages really reach phones (a gateway is switched on), not just the log. */
+    public function isLive(): bool
+    {
+        return ! $this->driver instanceof LogSmsDriver;
+    }
+
+    /** $logAs replaces the text stored in the SMS log (used to keep one-time codes out of it). */
+    public function send(?string $phone, string $message, ?string $logAs = null): void
     {
         if (! $phone) {
             return;
@@ -19,7 +26,7 @@ class SmsService
 
         SmsLog::create([
             'to' => $to,
-            'message' => $message,
+            'message' => $logAs !== null ? mb_substr('HANDY NOW: '.$logAs, 0, 459) : $message,
             'driver' => $this->driver->name(),
             'status' => $result['status'],
             'response' => $result['response'],

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordResetCode;
 use App\Models\User;
+use App\Services\Notifier;
+use App\Services\PasswordResetService;
+use App\Services\Sms\SmsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -56,6 +61,25 @@ class UserController extends Controller
         User::create($data + ['role' => User::ROLE_ADMIN]);
 
         return redirect()->route('admin.users.index', ['role' => 'admin'])->with('success', 'Administrator account created.');
+    }
+
+    /** For someone locked out (and for when SMS codes are not switched on yet). Shown to the admin once. */
+    public function resetPassword(Request $request, User $user, Notifier $notify, SmsService $sms)
+    {
+        abort_if($user->id === $request->user()->id, 422, 'Change your own password under Settings.');
+        $temp = PasswordResetService::temporaryPassword();
+        $user->forceFill(['password' => $temp, 'must_change_password' => true, 'remember_token' => Str::random(60)])->save();
+        $user->tokens()->delete();
+        PasswordResetCode::where('user_id', $user->id)->delete();
+
+        $texted = false;
+        if ($request->boolean('send_sms') && $sms->isLive()) {
+            $sms->send($user->phone, "Your password was reset by support. Temporary password: {$temp} – log in and choose a new one.", 'Temporary password sent');
+            $texted = true;
+        }
+        $notify->user($user, 'Password reset by support', 'Your password was reset by HANDY NOW support. You will be asked to choose a new one when you log in.', null, 'warning');
+
+        return back()->with('temp_password', ['name' => $user->name, 'phone' => $user->phone, 'password' => $temp, 'texted' => $texted]);
     }
 
     public function toggleStatus(Request $request, User $user)

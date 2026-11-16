@@ -6,7 +6,7 @@ use App\Http\Controllers\Concerns\ValidatesNrc;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -54,7 +54,8 @@ class ProfileController extends Controller
             'current_password' => 'required|current_password',
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ]);
-        $request->user()->update(['password' => Hash::make($data['password'])]);
+        $request->user()->changePassword($data['password']);
+        Auth::logoutOtherDevices($data['password']);
 
         return back()->with('success', 'Password changed.');
     }

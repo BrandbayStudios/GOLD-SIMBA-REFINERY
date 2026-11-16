@@ -7,7 +7,10 @@
         @csrf
         <x-field name="login" label="Email or phone" :required="true" autocomplete="username" placeholder="you@example.com or 097…" autofocus />
         <x-field name="password" type="password" label="Password" :required="true" autocomplete="current-password" />
-        <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="remember" class="accent-brand-500"> Keep me logged in</label>
+        <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2"><input type="checkbox" name="remember" class="accent-brand-500"> Keep me logged in</label>
+            <a href="{{ route('password.request') }}" class="font-semibold text-brand-600">Forgot password?</a>
+        </div>
         <button class="btn btn-primary w-full">Log in</button>
     </form>
     <p class="mt-6 text-center text-sm text-navy-500">New here? <a href="{{ route('register') }}" class="font-semibold text-brand-600">Create a customer account</a> · <a href="{{ route('provider.register') }}" class="font-semibold text-brand-600">Join as a provider</a></p>

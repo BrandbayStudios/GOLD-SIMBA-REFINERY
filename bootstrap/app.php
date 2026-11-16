@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureAccountActive;
+use App\Http\Middleware\EnsurePasswordChanged;
 use App\Http\Middleware\EnsureRole;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
@@ -20,7 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
         $middleware->validateCsrfTokens(except: ['webhooks/*']);
         $middleware->alias(['role' => EnsureRole::class]);
-        $middleware->web(append: [EnsureAccountActive::class]);
+        // A changed password signs the account out of every other browser and phone.
+        $middleware->authenticateSessions();
+        $middleware->web(append: [EnsureAccountActive::class, EnsurePasswordChanged::class]);
         $middleware->api(append: [EnsureAccountActive::class]);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn (Request $r) => $r->user()?->dashboardRoute() ?? '/');
