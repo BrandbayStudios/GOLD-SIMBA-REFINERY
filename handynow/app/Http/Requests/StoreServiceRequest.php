@@ -35,6 +35,9 @@ class StoreServiceRequest extends FormRequest
             'description' => 'required|string|min:10|max:2000',
             'address' => 'required|string|max:255',
             'directions' => 'nullable|string|max:500',
+            'dest_address' => 'nullable|string|max:255',
+            'dest_latitude' => 'nullable|numeric|between:-90,90',
+            'dest_longitude' => 'nullable|numeric|between:-180,180',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'priority' => 'required|in:normal,urgent,emergency',
@@ -47,9 +50,20 @@ class StoreServiceRequest extends FormRequest
     {
         return [function (Validator $v) {
             if ($this->filled('service_id') && $this->filled('category_id')) {
-                $ok = Service::where('id', $this->input('service_id'))->where('category_id', $this->input('category_id'))->exists();
-                if (! $ok) {
+                $service = Service::where('id', $this->input('service_id'))->where('category_id', $this->input('category_id'))->first();
+                if (! $service) {
                     $v->errors()->add('service_id', 'Please choose a problem from the selected category.');
+                } elseif ($service->needs_destination) {
+                    // Priced by distance, so both ends of the trip must be pinned.
+                    if (! $this->filled('latitude') || ! $this->filled('longitude')) {
+                        $v->errors()->add('latitude', 'Pin your location on the map so we can price the trip.');
+                    }
+                    if (! $this->filled('dest_latitude') || ! $this->filled('dest_longitude')) {
+                        $v->errors()->add('dest_latitude', 'Pin the drop-off point on the map.');
+                    }
+                    if (! $this->filled('dest_address')) {
+                        $v->errors()->add('dest_address', 'Enter the drop-off address.');
+                    }
                 }
             }
         }];

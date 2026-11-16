@@ -52,6 +52,9 @@ Route::post('/track/{reference}/quotes/{quotation}/accept', [TrackingController:
 Route::post('/track/{reference}/quotes/{quotation}/reject', [TrackingController::class, 'rejectQuote'])->name('track.quotes.reject');
 Route::post('/track/{reference}/cancel', [TrackingController::class, 'cancel'])->name('track.cancel');
 Route::post('/track/{reference}/pay', [TrackingController::class, 'pay'])->name('track.pay');
+Route::post('/track/{reference}/fee', [TrackingController::class, 'payFee'])->name('track.fee');
+Route::post('/track/{reference}/variations/{variation}/approve', [TrackingController::class, 'approveVariation'])->name('track.variations.approve');
+Route::post('/track/{reference}/variations/{variation}/decline', [TrackingController::class, 'declineVariation'])->name('track.variations.decline');
 Route::get('/track/{reference}/payment-status', [TrackingController::class, 'paymentStatus'])->name('track.payment-status')->middleware('throttle:60,1');
 Route::post('/track/{reference}/review', [TrackingController::class, 'review'])->name('track.review');
 
@@ -91,6 +94,9 @@ Route::middleware(['auth', 'role:customer'])->prefix('account')->name('customer.
     Route::post('/requests/{serviceRequest}/quotes/{quotation}/accept', [Customer\RequestController::class, 'acceptQuote'])->name('quotes.accept');
     Route::post('/requests/{serviceRequest}/quotes/{quotation}/reject', [Customer\RequestController::class, 'rejectQuote'])->name('quotes.reject');
     Route::post('/requests/{serviceRequest}/pay', [Customer\RequestController::class, 'pay'])->name('requests.pay');
+    Route::post('/requests/{serviceRequest}/fee', [Customer\RequestController::class, 'payFee'])->name('requests.fee');
+    Route::post('/requests/{serviceRequest}/variations/{variation}/approve', [Customer\RequestController::class, 'approveVariation'])->name('variations.approve');
+    Route::post('/requests/{serviceRequest}/variations/{variation}/decline', [Customer\RequestController::class, 'declineVariation'])->name('variations.decline');
     Route::post('/requests/{serviceRequest}/review', [Customer\RequestController::class, 'review'])->name('requests.review');
     Route::get('/payments', [Customer\DashboardController::class, 'payments'])->name('payments');
     Route::get('/complaints', [Customer\ComplaintController::class, 'index'])->name('complaints.index');
@@ -110,6 +116,8 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::get('/jobs/{serviceRequest}', [Provider\JobController::class, 'show'])->name('jobs.show');
     Route::post('/jobs/{serviceRequest}/quote', [Provider\JobController::class, 'quote'])->name('jobs.quote');
     Route::post('/jobs/{serviceRequest}/decline', [Provider\JobController::class, 'decline'])->name('jobs.decline');
+    Route::post('/jobs/{serviceRequest}/accept', [Provider\JobController::class, 'accept'])->name('jobs.accept');
+    Route::post('/jobs/{serviceRequest}/variation', [Provider\JobController::class, 'variation'])->name('jobs.variation');
     Route::post('/jobs/{serviceRequest}/status', [Provider\JobController::class, 'status'])->name('jobs.status');
     Route::post('/jobs/{serviceRequest}/release', [Provider\JobController::class, 'release'])->name('jobs.release');
     Route::post('/payments/{payment}/confirm', [Provider\JobController::class, 'confirmPayment'])->name('payments.confirm');
@@ -137,6 +145,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/requests/{serviceRequest}/assign', [Admin\RequestController::class, 'assign'])->name('requests.assign');
     Route::post('/requests/{serviceRequest}/rematch', [Admin\RequestController::class, 'rematch'])->name('requests.rematch');
     Route::post('/requests/{serviceRequest}/cancel', [Admin\RequestController::class, 'cancel'])->name('requests.cancel');
+    Route::post('/requests/{serviceRequest}/waive-fee', [Admin\RequestController::class, 'waiveFee'])->name('requests.waive-fee');
+    Route::post('/requests/{serviceRequest}/refund-fee', [Admin\RequestController::class, 'refundFee'])->name('requests.refund-fee');
     Route::post('/payments/{payment}/confirm', [Admin\RequestController::class, 'confirmPayment'])->name('payments.confirm');
     Route::post('/payments/{payment}/reject', [Admin\RequestController::class, 'rejectPayment'])->name('payments.reject');
     Route::get('/payments', [Admin\RequestController::class, 'payments'])->name('payments.index');

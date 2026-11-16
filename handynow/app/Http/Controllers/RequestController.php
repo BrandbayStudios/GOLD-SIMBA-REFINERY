@@ -22,7 +22,7 @@ class RequestController extends Controller
 
     private function form(Request $request, bool $emergency)
     {
-        $categories = Category::active()->with('activeServices:id,category_id,name,slug')->get();
+        $categories = Category::active()->with('activeServices')->get();
         $selectedCategory = $categories->firstWhere('slug', $request->query('category'));
         $selectedService = $selectedCategory?->activeServices->firstWhere('slug', $request->query('service'));
 

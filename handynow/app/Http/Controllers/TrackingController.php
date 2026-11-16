@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\HandlesCustomerRequestActions;
+use App\Models\PriceVariation;
 use App\Models\Quotation;
 use App\Models\ServiceRequest;
 use App\Services\Geo;
@@ -60,7 +61,7 @@ class TrackingController extends Controller
         $lat = $p?->latitude();
         $lng = $p?->longitude();
         $km = Geo::distanceKm($sr->latitude, $sr->longitude, $lat, $lng);
-        $showProvider = $p && in_array($sr->status, [ServiceRequest::STATUS_ASSIGNED, ServiceRequest::STATUS_ACCEPTED,
+        $showProvider = $p && $sr->contactUnlocked() && in_array($sr->status, [ServiceRequest::STATUS_ASSIGNED, ServiceRequest::STATUS_ACCEPTED,
             ServiceRequest::STATUS_EN_ROUTE, ServiceRequest::STATUS_ARRIVED, ServiceRequest::STATUS_IN_PROGRESS], true);
 
         return [
@@ -108,6 +109,21 @@ class TrackingController extends Controller
     public function rejectQuote(Request $request, string $reference, Quotation $quotation, RequestWorkflow $wf)
     {
         return $this->doRejectQuote($this->resolve($request, $reference), $quotation, $wf);
+    }
+
+    public function payFee(Request $request, string $reference, RequestWorkflow $wf)
+    {
+        return $this->doPayFee($this->resolve($request, $reference), $request, $wf);
+    }
+
+    public function approveVariation(Request $request, string $reference, PriceVariation $variation, RequestWorkflow $wf)
+    {
+        return $this->doDecideVariation($this->resolve($request, $reference), $variation, true, $request, $wf);
+    }
+
+    public function declineVariation(Request $request, string $reference, PriceVariation $variation, RequestWorkflow $wf)
+    {
+        return $this->doDecideVariation($this->resolve($request, $reference), $variation, false, $request, $wf);
     }
 
     public function cancel(Request $request, string $reference, RequestWorkflow $wf)

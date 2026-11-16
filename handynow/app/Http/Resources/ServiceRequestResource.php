@@ -9,6 +9,11 @@ class ServiceRequestResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $user = $request->user();
+        $unlocked = $this->contactUnlocked();
+        $mine = $user && $user->isProvider() && $this->provider_id === $user->id;
+        $showContact = ! $user?->isProvider() || ($mine && $unlocked);
+
         return [
             'reference' => $this->reference,
             'status' => $this->status,
@@ -17,8 +22,16 @@ class ServiceRequestResource extends JsonResource
             'category' => ['id' => $this->category_id, 'name' => $this->category?->name],
             'service' => $this->service ? ['id' => $this->service_id, 'name' => $this->service->name] : null,
             'description' => $this->description,
-            'contact_name' => $this->contact_name,
-            'contact_phone' => $this->contact_phone,
+            'contact_name' => $showContact ? $this->contact_name : null,
+            'contact_phone' => $showContact ? $this->contact_phone : null,
+            'contact_unlocked' => $unlocked,
+            'pricing' => [
+                'fixed_price' => $this->fixed_price,
+                'route_km' => $this->route_km,
+                'destination' => $this->dest_address ? ['address' => $this->dest_address, 'latitude' => $this->dest_latitude, 'longitude' => $this->dest_longitude] : null,
+                'booking_fee' => ['amount' => $this->booking_fee_amount, 'status' => $this->booking_fee_status],
+            ],
+            'variations' => $this->whenLoaded('variations', fn () => $this->variations->map(fn ($v) => ['id' => $v->id, 'amount' => $v->amount, 'reason' => $v->reason, 'status' => $v->status])),
             'address' => $this->address,
             'directions' => $this->directions,
             'latitude' => $this->latitude,
@@ -30,7 +43,7 @@ class ServiceRequestResource extends JsonResource
             'provider' => $this->whenLoaded('provider', fn () => $this->provider ? [
                 'id' => $this->provider->id,
                 'name' => $this->provider->name,
-                'phone' => $this->provider->phone,
+                'phone' => $unlocked || $user?->isAdmin() ? $this->provider->phone : null,
                 'rating' => $this->provider->providerProfile?->rating_avg,
             ] : null),
             'quotations' => $this->whenLoaded('quotations', fn () => $this->quotations->map(fn ($q) => [

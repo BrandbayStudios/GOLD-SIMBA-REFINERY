@@ -16,7 +16,7 @@
             <tr>
                 <td>{{ $p->created_at->format('d M Y') }}</td>
                 <td><a href="{{ route('customer.requests.show', $p->serviceRequest) }}" class="font-semibold text-brand-600">{{ $p->serviceRequest->reference }}</a><br><span class="text-xs text-navy-300">{{ $p->serviceRequest->category->name }}</span></td>
-                <td>{{ $p->provider?->name }}</td>
+                <td>{{ $p->isBookingFee() ? 'HANDY NOW (booking fee)' : $p->provider?->name }}</td>
                 <td>{{ $p->methodLabel() }}@if($p->transaction_reference)<br><span class="text-xs text-navy-300">{{ $p->transaction_reference }}</span>@endif</td>
                 <td class="font-bold">{{ zmw($p->amount) }}</td>
                 <td><x-status-badge :status="$p->status" :label="ucfirst($p->status)" /> <x-demo-badge :show="$p->is_demo" /></td>

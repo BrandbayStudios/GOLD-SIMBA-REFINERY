@@ -29,6 +29,8 @@ Route::prefix('v1')->group(function () {
             Route::post('/{serviceRequest}/quotes/{quotation}/reject', [Api\CustomerRequestController::class, 'rejectQuote']);
             Route::post('/{serviceRequest}/cancel', [Api\CustomerRequestController::class, 'cancel']);
             Route::post('/{serviceRequest}/pay', [Api\CustomerRequestController::class, 'pay']);
+            Route::post('/{serviceRequest}/fee', [Api\CustomerRequestController::class, 'payFee']);
+            Route::post('/{serviceRequest}/variations/{variation}', [Api\CustomerRequestController::class, 'decideVariation']);
             Route::post('/{serviceRequest}/review', [Api\CustomerRequestController::class, 'review']);
         });
 
@@ -37,6 +39,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/jobs', [Api\ProviderJobController::class, 'mine']);
             Route::post('/jobs/{serviceRequest}/quote', [Api\ProviderJobController::class, 'quote']);
             Route::post('/jobs/{serviceRequest}/status', [Api\ProviderJobController::class, 'status']);
+            Route::post('/jobs/{serviceRequest}/accept', [Api\ProviderJobController::class, 'accept']);
+            Route::post('/jobs/{serviceRequest}/variation', [Api\ProviderJobController::class, 'variation']);
             Route::post('/availability', [Api\ProviderJobController::class, 'availability']);
             Route::post('/location', [Api\ProviderJobController::class, 'location']);
         });

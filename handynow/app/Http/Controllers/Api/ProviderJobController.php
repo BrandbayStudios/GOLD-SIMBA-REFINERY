@@ -39,6 +39,21 @@ class ProviderJobController extends Controller
         return response()->json(['data' => ['id' => $q->id, 'total' => $q->total(), 'status' => $q->status]], 201);
     }
 
+    public function accept(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        abort_unless($serviceRequest->matches()->where('provider_id', $request->user()->id)->exists(), 404);
+
+        return new ServiceRequestResource($wf->acceptFixed($serviceRequest, $request->user())->load(['category', 'statusLogs']));
+    }
+
+    public function variation(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        $data = $request->validate(['amount' => 'required|numeric|min:1|max:1000000', 'reason' => 'required|string|min:5|max:200']);
+        $v = $wf->requestVariation($serviceRequest, $request->user(), (float) $data['amount'], $data['reason']);
+
+        return response()->json(['data' => ['id' => $v->id, 'amount' => $v->amount, 'status' => $v->status]], 201);
+    }
+
     public function status(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
     {
         $data = $request->validate(['status' => ['required', Rule::in(array_keys(ServiceRequest::STATUSES))], 'note' => 'nullable|string|max:300']);

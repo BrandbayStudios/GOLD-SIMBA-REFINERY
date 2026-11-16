@@ -18,6 +18,7 @@ abstract class TestCase extends BaseTestCase
             $this->app['session.store']->forget('password_hash_web');
         }
 
-        return parent::actingAs($user, $guard);
+        // Earlier API calls in the same test leave the default guard on sanctum; the web app always uses 'web'.
+        return parent::actingAs($user, $guard ?? 'web');
     }
 }

@@ -5,6 +5,11 @@
         @csrf @method('PUT')
         <h2 class="font-display text-lg font-bold">Commission & matching</h2>
         <x-field name="commission_rate" type="number" step="0.1" label="Platform commission (%)" :value="$settings['commission_rate']" :required="true" hint="Applied automatically when a payment is confirmed." />
+        <h2 class="pt-2 font-display text-lg font-bold">Booking fee</h2>
+        <x-field name="booking_fee" type="number" step="1" label="Booking fee (ZMW)" :value="$settings['booking_fee']" :required="true" hint="Paid by the customer in the app once a provider is confirmed. It unlocks both sides' contact details. 0 turns it off. A service can override it." />
+        <x-field name="booking_fee_instructions" type="textarea" rows="2" label="How customers pay the fee (until MTN / Airtel prompts are live)" :value="$settings['booking_fee_instructions']" hint="e.g. 'Send the fee to MTN MoMo 0972 015 689 (HANDY NOW) and enter the transaction ID.'" />
+        <x-field name="variation_limit_percent" type="number" label="Extra costs on site: maximum % of the agreed price" :value="$settings['variation_limit_percent']" :required="true" hint="Providers can ask the customer to approve extras up to this much (and never above a service's price ceiling)." />
+        <h2 class="pt-2 font-display text-lg font-bold">Payouts & matching</h2>
         <x-field name="min_payout" type="number" step="1" label="Payout threshold (ZMW)" :value="$settings['min_payout']" :required="true" hint="Providers owed at least this much are flagged as due on the Payouts page." />
         <x-field name="commission_instructions" type="textarea" rows="2" label="How providers pay you commission" :value="$settings['commission_instructions']" hint="Shown to providers who owe commission, e.g. 'Send to MTN MoMo 0972 015 689 (HANDY NOW) and quote your name.'" />
         <x-field name="match_radius_km" type="number" label="Maximum matching radius (km)" :value="$settings['match_radius_km']" :required="true" hint="Providers further than this (or their own radius) are not alerted." />

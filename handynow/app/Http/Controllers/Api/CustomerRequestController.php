@@ -7,6 +7,7 @@ use App\Http\Controllers\TrackingController;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Resources\ServiceRequestResource;
 use App\Models\Payment;
+use App\Models\PriceVariation;
 use App\Models\Quotation;
 use App\Models\ServiceRequest;
 use App\Services\RequestWorkflow;
@@ -33,7 +34,7 @@ class CustomerRequestController extends Controller
     {
         $this->own($request, $serviceRequest);
 
-        return new ServiceRequestResource($serviceRequest->load(['category', 'service', 'provider.providerProfile', 'quotations.provider.providerProfile', 'statusLogs']));
+        return new ServiceRequestResource($serviceRequest->load(['category', 'service', 'provider.providerProfile', 'quotations.provider.providerProfile', 'statusLogs', 'variations']));
     }
 
     public function live(Request $request, ServiceRequest $serviceRequest)
@@ -65,7 +66,7 @@ class CustomerRequestController extends Controller
         $this->own($request, $serviceRequest);
         abort_unless($serviceRequest->canBeCancelledByCustomer(), 422, 'This request can no longer be cancelled.');
         $data = $request->validate(['reason' => 'required|string|max:300']);
-        $wf->cancel($serviceRequest, $request->user(), 'Cancelled by customer: '.$data['reason']);
+        $wf->cancel($serviceRequest, $request->user(), 'Cancelled by customer: '.$data['reason'], true);
 
         return response()->json(['ok' => true]);
     }
@@ -81,6 +82,29 @@ class CustomerRequestController extends Controller
         $payment = $wf->recordPayment($serviceRequest, $data + ['amount' => $serviceRequest->agreed_amount], $request->user());
 
         return response()->json(['data' => ['id' => $payment->id, 'status' => $payment->status, 'amount' => $payment->amount]], 201);
+    }
+
+    public function payFee(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        $this->own($request, $serviceRequest);
+        $data = $request->validate([
+            'method' => ['required', Rule::in(Payment::FEE_METHODS)],
+            'payer_phone' => 'nullable|string|max:20',
+            'transaction_reference' => 'nullable|string|max:100',
+        ]);
+        $payment = $wf->recordBookingFee($serviceRequest, $data, $request->user());
+
+        return response()->json(['data' => ['id' => $payment->id, 'status' => $payment->status, 'amount' => $payment->amount, 'prompt_sent' => $payment->isOnline()]], 201);
+    }
+
+    public function decideVariation(Request $request, ServiceRequest $serviceRequest, PriceVariation $variation, RequestWorkflow $wf)
+    {
+        $this->own($request, $serviceRequest);
+        abort_unless($variation->service_request_id === $serviceRequest->id, 404);
+        $data = $request->validate(['approve' => 'required|boolean']);
+        $wf->decideVariation($variation, (bool) $data['approve'], $request->user());
+
+        return response()->json(['ok' => true]);
     }
 
     public function review(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)

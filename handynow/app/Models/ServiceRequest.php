@@ -58,7 +58,7 @@ class ServiceRequest extends Model
 
     protected $fillable = [
         'reference', 'customer_id', 'provider_id', 'category_id', 'service_id', 'contact_name', 'contact_phone', 'description',
-        'address', 'directions', 'latitude', 'longitude', 'priority', 'status', 'photos', 'agreed_amount', 'commission_rate',
+        'address', 'directions', 'dest_address', 'dest_latitude', 'dest_longitude', 'route_km', 'fixed_price', 'booking_fee_amount', 'booking_fee_status', 'booking_fee_paid_at', 'latitude', 'longitude', 'priority', 'status', 'photos', 'agreed_amount', 'commission_rate',
         'commission_amount', 'provider_earnings', 'payment_status', 'cancel_reason', 'tracking_token', 'is_demo',
         'assigned_at', 'completed_at', 'cancelled_at',
     ];
@@ -70,6 +70,12 @@ class ServiceRequest extends Model
             'is_demo' => 'boolean',
             'latitude' => 'float',
             'longitude' => 'float',
+            'dest_latitude' => 'float',
+            'dest_longitude' => 'float',
+            'route_km' => 'float',
+            'fixed_price' => 'decimal:2',
+            'booking_fee_amount' => 'decimal:2',
+            'booking_fee_paid_at' => 'datetime',
             'agreed_amount' => 'decimal:2',
             'commission_amount' => 'decimal:2',
             'provider_earnings' => 'decimal:2',
@@ -145,6 +151,27 @@ class ServiceRequest extends Model
     public function complaints(): HasMany
     {
         return $this->hasMany(Complaint::class);
+    }
+
+    public function variations(): HasMany
+    {
+        return $this->hasMany(PriceVariation::class)->orderBy('id');
+    }
+
+    public function isFixedPrice(): bool
+    {
+        return $this->fixed_price !== null;
+    }
+
+    public function bookingFeePending(): bool
+    {
+        return $this->booking_fee_status === 'pending';
+    }
+
+    /** Provider and customer contact details are shared only once a provider is assigned and any booking fee is settled. */
+    public function contactUnlocked(): bool
+    {
+        return $this->provider_id !== null && $this->booking_fee_status !== 'pending';
     }
 
     public function statusLabel(): string

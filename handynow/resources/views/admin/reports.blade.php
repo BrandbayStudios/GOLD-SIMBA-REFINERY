@@ -12,7 +12,7 @@
     <x-stat label="Completion rate" :value="$summary['completion_rate'].'%'" icon="chart" />
     <x-stat label="Emergencies" :value="$summary['emergency']" icon="siren" tone="red" />
     <x-stat label="Revenue" :value="zmw($summary['revenue'], 0)" icon="wallet" tone="green" />
-    <x-stat label="Commission" :value="zmw($summary['commission'], 0)" icon="tag" tone="violet" />
+    <x-stat label="Commission" :value="zmw($summary['commission'], 0)" icon="tag" tone="violet" :hint="'+ '.zmw($summary['booking_fees'], 0).' booking fees'" />
 </div>
 <div class="mt-6 grid gap-6 xl:grid-cols-2">
     <div class="card card-pad"><h2 class="font-display text-lg font-bold">Requests per day</h2><div class="mt-6">@include('partials.bar-chart', ['data' => $trend, 'key' => 'requests', 'color' => 'bg-navy-900'])</div></div>

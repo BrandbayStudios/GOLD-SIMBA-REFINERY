@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\ServiceRequest;
 use App\Services\Geo;
+use App\Services\PricingService;
 use App\Services\RequestWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -34,13 +35,16 @@ class JobController extends Controller
     {
         $user = $request->user();
         $this->authorizeView($request, $serviceRequest);
-        $serviceRequest->load(['category', 'service', 'customer', 'statusLogs', 'payments', 'review']);
+        $serviceRequest->load(['category', 'service', 'customer', 'statusLogs', 'payments', 'review', 'variations']);
         $myQuote = $serviceRequest->quotations()->where('provider_id', $user->id)->first();
         $profile = $user->providerProfile;
         $distance = Geo::distanceKm($serviceRequest->latitude, $serviceRequest->longitude, $profile->latitude(), $profile->longitude());
         $isAssigned = $serviceRequest->provider_id === $user->id;
 
-        return view('provider.jobs.show', ['sr' => $serviceRequest, 'myQuote' => $myQuote, 'distance' => $distance, 'isAssigned' => $isAssigned]);
+        $pricing = app(PricingService::class);
+
+        return view('provider.jobs.show', ['sr' => $serviceRequest, 'myQuote' => $myQuote, 'distance' => $distance, 'isAssigned' => $isAssigned,
+            'ceiling' => $pricing->ceiling($serviceRequest->service)]);
     }
 
     public function quote(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
@@ -55,6 +59,25 @@ class JobController extends Controller
         $wf->submitQuote($serviceRequest, $request->user(), $data);
 
         return back()->with('success', 'Quotation sent to the customer.');
+    }
+
+    /** Fixed-price jobs: accept instead of quoting. */
+    public function accept(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        $this->authorizeView($request, $serviceRequest);
+        $wf->acceptFixed($serviceRequest, $request->user());
+
+        return redirect()->route('provider.jobs.show', $serviceRequest)->with('success', 'Job accepted at the fixed price of '.zmw($serviceRequest->fresh()->agreed_amount, 0).'.');
+    }
+
+    /** Extra cost found on site; the customer must approve it. */
+    public function variation(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
+    {
+        abort_unless($serviceRequest->provider_id === $request->user()->id, 403);
+        $data = $request->validate(['amount' => 'required|numeric|min:1|max:1000000', 'reason' => 'required|string|min:5|max:200']);
+        $wf->requestVariation($serviceRequest, $request->user(), (float) $data['amount'], $data['reason']);
+
+        return back()->with('success', 'Sent to the customer for approval. You will be alerted when they answer.');
     }
 
     public function decline(Request $request, ServiceRequest $serviceRequest, RequestWorkflow $wf)
@@ -89,7 +112,7 @@ class JobController extends Controller
 
     public function confirmPayment(Request $request, Payment $payment, RequestWorkflow $wf)
     {
-        abort_unless($payment->provider_id === $request->user()->id && $payment->gateway === 'manual', 403);
+        abort_unless($payment->provider_id === $request->user()->id && $payment->gateway === 'manual' && $payment->kind === 'job', 403);
         $wf->confirmPayment($payment, $request->user());
 
         return back()->with('success', 'Payment confirmed. Commission has been calculated.');

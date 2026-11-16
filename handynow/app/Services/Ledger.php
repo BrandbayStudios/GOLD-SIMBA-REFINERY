@@ -28,7 +28,7 @@ class Ledger
     /** Books a confirmed payment exactly once. */
     public function recordPayment(Payment $payment): ?LedgerEntry
     {
-        if ($payment->status !== 'confirmed' || ! $payment->provider_id) {
+        if (($payment->kind ?: 'job') !== 'job' || $payment->status !== 'confirmed' || ! $payment->provider_id) {
             return null;
         }
         $ref = $payment->serviceRequest->reference;

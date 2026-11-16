@@ -14,6 +14,9 @@
             <dl class="mt-4 grid gap-4 sm:grid-cols-3">
                 <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Price</dt><dd class="mt-1 font-display text-lg font-bold">{{ $service->priceRange() }}</dd></div>
                 <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Call-out fee from</dt><dd class="mt-1 font-display text-lg font-bold">{{ $service->callout_fee > 0 ? zmw($service->callout_fee, 0) : 'None' }}</dd></div>
+                @php $pricing = app(\App\Services\PricingService::class); $fee = $pricing->bookingFee($service); $ceiling = $pricing->ceiling($service); @endphp
+                @if($ceiling)<div class="rounded-xl bg-emerald-50 p-4"><dt class="text-xs font-semibold text-emerald-700">Price promise</dt><dd class="mt-1 text-sm font-bold">Never more than {{ zmw($ceiling, 0) }}</dd></div>@endif
+                @if($fee > 0)<div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Booking fee</dt><dd class="mt-1 font-display text-lg font-bold">{{ zmw($fee, 0) }}</dd></div>@endif
                 <div class="rounded-xl bg-mist p-4"><dt class="text-xs font-semibold text-navy-300">Payment</dt><dd class="mt-1 text-sm font-bold">Mobile money, bank or cash</dd></div>
             </dl>
             <p class="mt-4 text-sm text-navy-500">Prices start from the amount shown. Providers send you a firm quotation in ZMW after seeing your description and photos – nothing is charged until you accept a quote.</p>
