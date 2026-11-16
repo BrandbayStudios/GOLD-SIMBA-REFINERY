@@ -6,12 +6,13 @@
     <form method="GET" class="ml-auto flex gap-2"><input type="hidden" name="role" value="{{ $role }}"><select name="status" class="input w-auto"><option value="">Any status</option><option value="active" @selected(request('status') === 'active')>Active</option><option value="suspended" @selected(request('status') === 'suspended')>Suspended</option></select><input name="q" value="{{ request('q') }}" class="input" placeholder="Search"><button class="btn btn-navy">Go</button></form>
 </div>
 <div class="card mt-4 overflow-x-auto">
-    <table class="table-x"><thead><tr><th>Name</th><th>Contact</th><th>City</th><th>Requests / jobs</th><th>Joined</th><th>Status</th><th></th></tr></thead><tbody>
+    <table class="table-x"><thead><tr><th>Name</th><th>Contact</th><th>NRC</th><th>Address</th><th>Requests / jobs</th><th>Joined</th><th>Status</th><th></th></tr></thead><tbody>
         @forelse($users as $u)
             <tr>
-                <td class="font-semibold">@if($u->isProvider())<a href="{{ route('admin.providers.show', $u) }}" class="text-brand-600">{{ $u->name }}</a>@else{{ $u->name }}@endif <x-demo-badge :show="$u->is_demo" /></td>
-                <td class="text-xs">{{ $u->email }}<br>{{ $u->phone }}</td>
-                <td>{{ $u->city ?? '—' }}</td>
+                <td class="font-semibold">@if($u->isProvider())<a href="{{ route('admin.providers.show', $u) }}" class="text-brand-600">{{ $u->name }}</a>@elseif($u->isCustomer())<a href="{{ route('admin.users.show', $u) }}" class="text-brand-600">{{ $u->name }}</a>@else{{ $u->name }}@endif <x-demo-badge :show="$u->is_demo" /></td>
+                <td class="text-xs">{{ $u->email ?? 'no email' }}<br>{{ $u->phone }}</td>
+                <td class="text-xs">{{ mask_nrc($u->nrc_number) }}</td>
+                <td class="max-w-48 truncate text-xs">{{ $u->address ?? '—' }} @if($u->latitude)<span title="Pinned on map">📍</span>@endif</td>
                 <td>{{ $u->isProvider() ? $u->provider_jobs_count : $u->customer_requests_count }}</td>
                 <td class="text-xs">{{ $u->created_at->format('d M Y') }}</td>
                 <td><x-status-badge :status="$u->status" :label="ucfirst($u->status)" /></td>

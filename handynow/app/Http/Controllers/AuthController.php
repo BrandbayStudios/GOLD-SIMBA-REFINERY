@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ValidatesNrc;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,8 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    use ValidatesNrc;
+
     public function showLogin()
     {
         return view('auth.login');
@@ -41,27 +44,39 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
+    /** Simple client account: name, phone, NRC and an address pinned on the map. Email is optional. */
     public function register(Request $request)
     {
-        $request->merge(['email' => mb_strtolower((string) $request->input('email'))]);
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email'))) ?: null]);
         $data = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|max:120|unique:users,email',
             'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9 ()-]{9,20}$/'],
-            'city' => 'nullable|string|max:80',
+            'nrc_number' => $this->nrcRule(),
+            'address' => 'required|string|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'email' => 'nullable|email|max:120|unique:users,email',
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
             'terms' => 'accepted',
+        ], [
+            'latitude.required' => 'Tap the map to pin your address.',
+            'longitude.required' => 'Tap the map to pin your address.',
+            'terms.accepted' => 'Please accept the terms to continue.',
         ]);
         $phone = zm_phone($data['phone']);
         if (User::where('phone', $phone)->exists()) {
             return back()->withInput()->withErrors(['phone' => 'This phone number is already registered.']);
         }
+        $nrc = $this->uniqueNrc($data['nrc_number']);
 
         $user = User::create([
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'phone' => $phone,
-            'city' => $data['city'] ?? null,
+            'nrc_number' => $nrc,
+            'address' => $data['address'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
             'password' => $data['password'],
             'role' => User::ROLE_CUSTOMER,
         ]);

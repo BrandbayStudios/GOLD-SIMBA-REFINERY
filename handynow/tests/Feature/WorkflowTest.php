@@ -174,6 +174,29 @@ class WorkflowTest extends TestCase
         $this->actingAs($other)->get(route('customer.requests.show', $sr))->assertNotFound();
     }
 
+    public function test_client_account_needs_name_phone_nrc_and_a_pinned_address(): void
+    {
+        $base = ['name' => 'Mutale K', 'phone' => '0966000111', 'nrc_number' => '654321/10/1', 'address' => 'Plot 4, Roma', 'latitude' => -15.38, 'longitude' => 28.32,
+            'password' => 'secret123', 'password_confirmation' => 'secret123', 'terms' => 1];
+        $this->post('/register', array_diff_key($base, ['latitude' => 1, 'longitude' => 1]))->assertSessionHasErrors('latitude');
+        $this->post('/register', array_merge($base, ['nrc_number' => '1234']))->assertSessionHasErrors('nrc_number');
+        $this->post('/register', array_diff_key($base, ['nrc_number' => 1]))->assertSessionHasErrors('nrc_number');
+        $this->post('/register', $base)->assertSessionHasNoErrors()->assertRedirect(route('customer.dashboard'));
+        $u = User::where('phone', '260966000111')->first();
+        $this->assertNull($u->email);
+        $this->assertSame('654321/10/1', $u->nrc_number);
+        $this->assertTrue($u->hasPinnedAddress());
+
+        // Same NRC cannot open a second account; email stays optional but unique when given.
+        auth()->logout();
+        $this->post('/register', array_merge($base, ['phone' => '0966000222']))->assertSessionHasErrors('nrc_number');
+
+        // The saved address is offered (not forced) on the request form.
+        $this->actingAs($u)->get('/emergency')->assertOk()->assertSee('Use my saved address');
+        $this->actingAs($u)->put(route('customer.profile.update'), array_merge($base, ['name' => 'Mutale Kabwe']))->assertSessionHasNoErrors();
+        $this->assertSame('Mutale Kabwe', $u->fresh()->name);
+    }
+
     public function test_role_based_access_control(): void
     {
         $customer = User::factory()->create();
@@ -197,7 +220,7 @@ class WorkflowTest extends TestCase
     {
         $this->post('/register', [
             'name' => 'Chipo Banda', 'email' => 'Chipo@Example.com', 'phone' => '0977 000 111', 'password' => 'secret123',
-            'password_confirmation' => 'secret123', 'terms' => 1,
+            'password_confirmation' => 'secret123', 'terms' => 1, 'nrc_number' => '123456781', 'address' => 'Plot 9, Kabulonga', 'latitude' => -15.40, 'longitude' => 28.33,
         ])->assertRedirect(route('customer.dashboard'));
         $u = User::where('email', 'chipo@example.com')->first();
         $this->assertSame('260977000111', $u->phone);
@@ -217,27 +240,99 @@ class WorkflowTest extends TestCase
     public function test_provider_registration_and_admin_verification(): void
     {
         $admin = User::factory()->admin()->create();
+        $jpg = fn ($n) => UploadedFile::fake()->image($n.'.jpg');
         $this->post('/become-a-provider', [
-            'name' => 'Peter Mwanza', 'email' => 'peter@example.com', 'phone' => '0955111222', 'password' => 'secret123', 'password_confirmation' => 'secret123',
-            'provider_type' => 'individual', 'nrc_number' => '123456/78/1', 'nrc_document' => UploadedFile::fake()->create('nrc.pdf', 200, 'application/pdf'),
-            'categories' => [$this->roadside->id], 'city' => 'Lusaka', 'operating_areas' => 'Kabulonga, Woodlands', 'service_radius_km' => 20, 'terms' => 1,
-        ])->assertRedirect(route('provider.dashboard'));
-        $u = User::where('email', 'peter@example.com')->first();
+            'name' => 'Peter Mwanza', 'phone' => '0955111222', 'password' => 'secret123', 'password_confirmation' => 'secret123',
+            'provider_type' => 'individual', 'nrc_number' => '123456/78/1', 'nrc_front' => $jpg('f'), 'nrc_back' => $jpg('b'), 'selfie' => $jpg('s'),
+            'categories' => [$this->roadside->id], 'licences' => [$this->roadside->id => ['file' => UploadedFile::fake()->create('dl.pdf', 100, 'application/pdf'), 'number' => 'DL-1', 'expiry' => now()->addYear()->format('Y-m-d')]],
+            'city' => 'Lusaka', 'operating_areas' => 'Kabulonga, Woodlands', 'service_radius_km' => 20,
+            'payout_method' => 'mtn_momo', 'payout_phone' => '0965111222', 'payout_account_name' => 'Peter Mwanza', 'terms' => 1,
+        ])->assertSessionHasNoErrors()->assertRedirect(route('provider.dashboard'));
+        $u = User::where('phone', '260955111222')->first();
         $profile = $u->providerProfile;
+        $this->assertNull($u->email);
+        $this->assertSame('123456/78/1', $u->nrc_number);
         $this->assertSame('pending', $profile->verification_status);
         $this->assertSame(['Kabulonga', 'Woodlands'], $profile->operating_areas);
-        Storage::disk('local')->assertExists($profile->nrc_document);
+        $this->assertSame(['nrc_front', 'nrc_back', 'selfie', 'licence'], $profile->documents()->pluck('type')->all());
+        foreach ($profile->documents as $d) {
+            Storage::disk('local')->assertExists($d->path);
+        }
+        $this->assertSame('MTN Mobile Money – 260965111222', $profile->payoutLabel());
         $this->assertCount(1, $admin->notifications);
 
         // Cannot go online until verified.
         $this->actingAs($u)->post(route('provider.availability'), ['online' => 1])->assertSessionHasErrors('availability');
 
-        $this->actingAs($admin)->get(route('admin.providers.document', [$u, 'nrc_document']))->assertOk();
+        // Admin cannot approve until every document is checked.
+        $this->actingAs($admin)->post(route('admin.providers.verify', $u), ['decision' => 'approved'])->assertSessionHasErrors('decision');
+        $this->actingAs($admin)->get(route('admin.documents.view', $profile->documents->first()))->assertOk();
+        $this->actingAs($admin)->get(route('admin.providers.show', $u))->assertOk()->assertSee('Approval checklist');
+
+        // One document is rejected with a reason: the provider is told and can replace it.
+        $selfie = $profile->documents->firstWhere('type', 'selfie');
+        $this->actingAs($admin)->post(route('admin.documents.review', $selfie), ['decision' => 'rejected'])->assertSessionHasErrors('note');
+        $this->actingAs($admin)->post(route('admin.documents.review', $selfie), ['decision' => 'rejected', 'note' => 'Photo is blurry'])->assertSessionHasNoErrors();
+        $this->assertTrue($u->fresh()->notifications->contains(fn ($n) => str_contains($n->data['body'], 'Photo is blurry')));
+        $this->actingAs($u->fresh())->post(route('provider.documents.store'), ['type' => 'selfie', 'file' => $jpg('s2')])->assertSessionHasNoErrors();
+        $this->assertSame('pending', $selfie->fresh()->status);
+        $this->assertNull($selfie->fresh()->review_note);
+        $this->assertSame(1, $profile->documents()->where('type', 'selfie')->count(), 'replacement does not add a second selfie');
+
+        foreach ($profile->documents()->get() as $d) {
+            $this->actingAs($admin)->post(route('admin.documents.review', $d), ['decision' => 'approved'])->assertSessionHasNoErrors();
+        }
         $this->actingAs($admin)->post(route('admin.providers.verify', $u), ['decision' => 'rejected'])->assertSessionHasErrors('notes');
         $this->actingAs($admin)->post(route('admin.providers.verify', $u), ['decision' => 'approved'])->assertSessionHasNoErrors();
         $this->assertSame('approved', $profile->fresh()->verification_status);
         $this->actingAs($u->fresh())->post(route('provider.availability'), ['online' => 1])->assertSessionHasNoErrors();
         $this->assertTrue($profile->fresh()->is_online);
+
+        // Documents are private: another provider cannot open them.
+        $other = $this->provider();
+        $this->actingAs($other)->get(route('provider.documents.view', $selfie))->assertNotFound();
+        $this->actingAs($u->fresh())->get(route('provider.documents.view', $selfie))->assertOk();
+    }
+
+    public function test_provider_registration_is_refused_without_required_documents_or_licence(): void
+    {
+        $jpg = fn ($n) => UploadedFile::fake()->image($n.'.jpg');
+        $base = [
+            'name' => 'No Docs', 'phone' => '0955333444', 'password' => 'secret123', 'password_confirmation' => 'secret123', 'provider_type' => 'individual',
+            'nrc_number' => '123456/78/1', 'nrc_front' => $jpg('f'), 'nrc_back' => $jpg('b'), 'selfie' => $jpg('s'), 'categories' => [$this->roadside->id],
+            'city' => 'Lusaka', 'operating_areas' => 'Kabulonga', 'service_radius_km' => 20,
+            'payout_method' => 'bank_transfer', 'bank_name' => 'Zanaco', 'bank_account_number' => '0123456789', 'payout_account_name' => 'No Docs', 'terms' => 1,
+        ];
+        // Roadside needs a licence.
+        $this->post('/become-a-provider', $base)->assertSessionHasErrors("licences.{$this->roadside->id}.file");
+        // Missing selfie.
+        $this->post('/become-a-provider', array_diff_key($base, ['selfie' => 1]))->assertSessionHasErrors('selfie');
+        // Mobile number on the wrong network.
+        $this->post('/become-a-provider', array_merge($base, ['payout_method' => 'airtel_money', 'payout_phone' => '0965111222']))->assertSessionHasErrors('payout_phone');
+        // Bad NRC.
+        $this->post('/become-a-provider', array_merge($base, ['nrc_number' => '12345']))->assertSessionHasErrors('nrc_number');
+        $this->assertSame(0, User::where('role', 'provider')->count());
+
+        // Services without a licence rule need none.
+        $carpentry = Category::where('slug', 'carpentry')->first();
+        $this->post('/become-a-provider', array_merge($base, ['categories' => [$carpentry->id]]))->assertSessionHasNoErrors();
+        $this->assertSame(1, User::where('role', 'provider')->count());
+    }
+
+    public function test_provider_changing_payout_details_alerts_admins_and_expired_licence_blocks_matching(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $p = $this->provider(['payout_method' => 'mtn_momo', 'payout_phone' => '260965111222', 'payout_account_name' => 'Old Name']);
+        $this->actingAs($p)->put(route('provider.payout.update'), ['payout_method' => 'bank_transfer', 'bank_name' => 'Absa Bank', 'bank_account_number' => '99887766', 'payout_account_name' => 'New Name'])->assertSessionHasNoErrors();
+        $this->assertSame('Absa Bank •••• 7766', explode(' – ', $p->providerProfile->fresh()->payoutLabel())[1]);
+        $this->assertTrue($admin->fresh()->notifications->contains(fn ($n) => str_contains($n->data['title'], 'payout')));
+
+        // An approved licence that expires takes the provider out of matching.
+        $profile = $p->providerProfile;
+        $profile->documents()->create(['type' => 'licence', 'category_id' => $this->roadside->id, 'path' => 'x', 'status' => 'approved', 'expires_at' => now()->addDays(10)]);
+        $this->assertSame(1, ProviderProfile::available()->count());
+        $profile->documents()->update(['expires_at' => now()->subDay()]);
+        $this->assertSame(0, ProviderProfile::available()->count());
     }
 
     public function test_admin_can_assign_provider_directly(): void

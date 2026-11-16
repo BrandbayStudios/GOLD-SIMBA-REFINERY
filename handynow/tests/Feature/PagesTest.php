@@ -74,6 +74,8 @@ class PagesTest extends TestCase
         }
         $this->actingAs($admin)->get(route('admin.complaints.show', Complaint::first()))->assertOk();
         $this->actingAs($admin)->get(route('admin.providers.show', User::where('role', 'provider')->first()))->assertOk();
+        $this->actingAs($admin)->get(route('admin.users.show', User::where('role', 'customer')->first()))->assertOk()->assertSee('Plot 15, Kabulonga');
+        $this->actingAs($admin)->get('/admin/providers?review=1')->assertOk();
         $this->actingAs($admin)->get('/admin/reports/export')->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8');
     }
 

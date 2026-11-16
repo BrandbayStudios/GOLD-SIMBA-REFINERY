@@ -20,7 +20,7 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 'admin';
 
     protected $fillable = [
-        'name', 'email', 'phone', 'password', 'role', 'status', 'avatar', 'address', 'city', 'is_demo',
+        'name', 'email', 'phone', 'nrc_number', 'password', 'role', 'status', 'avatar', 'address', 'latitude', 'longitude', 'city', 'is_demo',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -31,6 +31,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_demo' => 'boolean',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 
@@ -77,6 +79,11 @@ class User extends Authenticatable
     public function reviewsReceived(): HasMany
     {
         return $this->hasMany(Review::class, 'provider_id');
+    }
+
+    public function hasPinnedAddress(): bool
+    {
+        return $this->address && $this->latitude !== null && $this->longitude !== null;
     }
 
     public function dashboardRoute(): string

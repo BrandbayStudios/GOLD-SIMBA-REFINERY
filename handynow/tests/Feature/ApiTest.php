@@ -27,7 +27,7 @@ class ApiTest extends TestCase
         $cat = Category::where('slug', 'plumbing-services')->first();
         $this->getJson('/api/v1/categories')->assertOk()->assertJsonPath('data.0.services.0.currency', 'ZMW');
 
-        $token = $this->postJson('/api/v1/auth/register', ['name' => 'Api User', 'email' => 'api@example.com', 'phone' => '0977123123', 'password' => 'secret123'])
+        $token = $this->postJson('/api/v1/auth/register', ['name' => 'Api User', 'email' => 'api@example.com', 'phone' => '0977123123', 'password' => 'secret123', 'nrc_number' => '111222/33/1', 'address' => 'Woodlands, Lusaka', 'latitude' => -15.42, 'longitude' => 28.31])
             ->assertCreated()->json('token');
         $this->as($token)->getJson('/api/v1/auth/me')->assertJsonPath('user.role', 'customer');
 

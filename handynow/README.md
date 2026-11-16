@@ -114,6 +114,11 @@ Token auth through Sanctum. Send `Authorization: Bearer {token}`.
 
 The web UI and the API both call `App\Services\RequestWorkflow`, so business rules, notifications and audit logs behave the same on every client.
 
+## Accounts and verification
+- **Clients:** name, phone, NRC number and an address pinned on the OpenStreetMap map (email optional). The saved address can be reused on a request with one tap; emergency requests still auto-detect the current location.
+- **Providers:** NRC number plus photos of the NRC front and back and a selfie holding it; PACRA certificate for businesses; a licence or certificate for each service that needs one (set per service in Admin → Services & pricing); and a payment method (MTN, Airtel, Zamtel or bank).
+- **Admin review:** each document is approved or rejected with a reason (the provider is told and re-uploads). A provider can only be approved once every required document is approved, any required licences are valid, and payment details are set. Expired licences stop job matching until renewed. All files sit on the private disk and are streamed only to the owner and admins.
+
 ## Security
 - Passwords are hashed with bcrypt. Login, registration and request forms are rate-limited.
 - Role middleware (`role:customer|provider|admin`) protects every dashboard and API group. Ownership is checked on every request, quote and payment.

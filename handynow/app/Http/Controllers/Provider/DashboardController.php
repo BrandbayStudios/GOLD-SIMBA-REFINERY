@@ -13,7 +13,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $profile = $user->providerProfile()->with('categories')->first();
+        $profile = $user->providerProfile()->with(['categories', 'documents'])->first();
 
         $newJobs = ServiceRequest::whereIn('status', ServiceRequest::OPEN_STATUSES)
             ->whereHas('matches', fn ($m) => $m->where('provider_id', $user->id)->where('status', 'notified'))

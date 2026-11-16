@@ -1,6 +1,9 @@
 @extends('layouts.dashboard', ['title' => 'Hello, '.explode(' ', auth()->user()->name)[0]])
 @section('header-actions')<a href="{{ route('requests.create') }}" class="btn btn-sm btn-primary hidden sm:inline-flex">New request</a>@endsection
 @section('content')
+@unless(auth()->user()->hasPinnedAddress() && auth()->user()->nrc_number)
+    <a href="{{ route('customer.profile') }}" class="mb-6 flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900"><x-icon name="map-pin" class="h-5 w-5" /> Complete your profile: add your NRC number and pin your address on the map. <span class="ml-auto underline">Complete now</span></a>
+@endunless
 <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
     <x-stat label="Active requests" :value="$stats['active']" icon="siren" tone="orange" :href="route('customer.requests.index', ['filter' => 'active'])" />
     <x-stat label="Completed" :value="$stats['completed']" icon="check-circle" tone="green" />

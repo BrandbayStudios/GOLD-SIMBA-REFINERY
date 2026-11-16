@@ -20,12 +20,19 @@ class UserController extends Controller
             $q->where('status', $s);
         }
         if ($term = trim((string) $request->query('q'))) {
-            $q->where(fn ($w) => $w->where('name', 'like', "%{$term}%")->orWhere('email', 'like', "%{$term}%")->orWhere('phone', 'like', "%{$term}%"));
+            $q->where(fn ($w) => $w->where('name', 'like', "%{$term}%")->orWhere('email', 'like', "%{$term}%")->orWhere('phone', 'like', "%{$term}%")->orWhere('nrc_number', 'like', "%{$term}%"));
         }
         $q->withCount(['customerRequests', 'providerJobs']);
         $users = $q->paginate(25)->withQueryString();
 
         return view('admin.users.index', compact('users', 'role'));
+    }
+
+    public function show(User $user)
+    {
+        $requests = $user->customerRequests()->with('category')->latest()->take(10)->get();
+
+        return view('admin.users.show', compact('user', 'requests'));
     }
 
     public function create()

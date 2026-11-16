@@ -54,8 +54,10 @@ class DemoSeeder extends Seeder
             $u = User::create([
                 'name' => $name, 'email' => 'provider'.($i + 1).'@demo.handynow.co.zm', 'phone' => '26097710'.str_pad((string) ($i + 1), 4, '0', STR_PAD_LEFT),
                 'password' => 'Password123', 'role' => 'provider', 'city' => 'Lusaka', 'is_demo' => true,
+                'nrc_number' => sprintf('%06d/%02d/1', 100000 + $i * 7919, 10 + $i),
             ]);
             $p = ProviderProfile::create([
+                'payout_method' => 'mtn_momo', 'payout_phone' => $u->phone, 'payout_account_name' => $name,
                 'user_id' => $u->id, 'business_name' => $biz, 'provider_type' => $biz ? 'business' : 'individual',
                 'nrc_number' => sprintf('%06d/%02d/1', 100000 + $i * 7919, 10 + $i), 'business_reg_number' => $biz ? 'PACRA-'.(120000 + $i) : null,
                 'bio' => "Experienced professional serving {$area} and surrounding areas for {$years} years. Fast, honest and fully equipped.",
@@ -70,7 +72,7 @@ class DemoSeeder extends Seeder
         // One provider still awaiting verification, to demonstrate the admin approval queue.
         $pending = User::create([
             'name' => 'Patrick Mumba', 'email' => 'pending@demo.handynow.co.zm', 'phone' => '260977109999', 'password' => 'Password123',
-            'role' => 'provider', 'city' => 'Lusaka', 'is_demo' => true,
+            'role' => 'provider', 'city' => 'Lusaka', 'is_demo' => true, 'nrc_number' => '334455/10/1',
         ]);
         ProviderProfile::create([
             'user_id' => $pending->id, 'provider_type' => 'individual', 'nrc_number' => '334455/10/1', 'operating_areas' => ['Roma', 'Lusaka'],
@@ -82,7 +84,8 @@ class DemoSeeder extends Seeder
             ['Thandiwe Mutale', 'customer@demo.handynow.co.zm', '260966200001'],
             ['Brian Chileshe', 'brian@demo.handynow.co.zm', '260966200002'],
             ['Ruth Ngoma', 'ruth@demo.handynow.co.zm', '260966200003'],
-        ])->map(fn ($c) => User::create(['name' => $c[0], 'email' => $c[1], 'phone' => $c[2], 'password' => 'Password123', 'role' => 'customer', 'city' => 'Lusaka', 'is_demo' => true]));
+        ])->map(fn ($c) => User::create(['name' => $c[0], 'email' => $c[1], 'phone' => $c[2], 'password' => 'Password123', 'role' => 'customer', 'city' => 'Lusaka', 'is_demo' => true,
+            'nrc_number' => sprintf('%06d/10/1', 200000 + (int) substr($c[2], -3)), 'address' => 'Plot 15, Kabulonga, Lusaka', 'latitude' => -15.4067, 'longitude' => 28.3340]));
 
         $scenarios = [
             // [customer idx, provider idx|null, category, service slug, place, priority, status, amount, paid, rating, days ago]
