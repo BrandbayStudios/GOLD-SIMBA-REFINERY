@@ -22,10 +22,10 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:'],
+        imgSrc: ["'self'", 'data:', 'https://tracker.metricool.com'],
         styleSrc: ["'self'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://tracker.metricool.com'],
         frameSrc: ['https://www.google.com'],
         formAction: ["'self'"],
         upgradeInsecureRequests: config.isProd ? [] : null,
