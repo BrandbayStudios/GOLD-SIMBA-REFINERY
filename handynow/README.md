@@ -55,7 +55,7 @@ Every demo record has `is_demo = true` and shows a purple **Demo** badge in all 
 
 **Priority 1 – complete**
 - Homepage with hero, search and location, emergency CTA, trust stats, categories, how-it-works, featured verified professionals (with live distance from you) and a full footer.
-- Service directory: 8 categories and 55 services, each with indicative ZMW price ranges and call-out fees.
+- Service directory: 14 categories and 90+ services, each with indicative ZMW price ranges and call-out fees.
 - Customer registration and login (email **or** phone), profile and password management.
 - Provider registration with NRC / PACRA details and document upload. Documents are stored on the **private** disk and only the provider and admins can view them.
 - Emergency request form: category → specific problem, description, up to 5 photos, GPS "use my location" or map pin, address and directions, priority. No account needed.

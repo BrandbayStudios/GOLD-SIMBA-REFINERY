@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-    public const ICONS = ['truck', 'bolt', 'droplet', 'flame', 'cog', 'hammer', 'spark', 'key', 'snowflake', 'paint', 'home', 'sparkles', 'bug', 'wrench', 'box', 'window'];
+    public const ICONS = ['truck', 'bolt', 'droplet', 'flame', 'cog', 'hammer', 'spark', 'key', 'snowflake', 'paint', 'home', 'sparkles', 'bug', 'wrench', 'box', 'window', 'leaf', 'paw', 'building'];
 
     public function index()
     {
