@@ -46,6 +46,9 @@ class CategorySeeder extends Seeder
                 ['Gas stove installation', 150, 250, 800, 'Safe installation and connection of gas stoves and hobs.'],
                 ['Gas leak inspection', 200, 250, 700, 'Urgent leak detection and repair. If you smell gas, leave the building first.'],
                 ['Gas appliance maintenance', 150, 250, 900, 'Servicing of gas heaters, geysers and cookers.'],
+                ['Gas refill (LPG)', 50, 100, 900, 'Refill of your own LPG cylinder at your home or business (gas charged at current price).'],
+                ['Gas installation (full system)', 200, 400, 6000, 'Piping, regulators and appliance connections for kitchens, restaurants and homes, with a safety test.'],
+                ['Gas cylinder and regulator supply', 50, 150, 1500, 'New cylinders, regulators and hoses supplied and fitted.'],
             ]],
             ['Mechanical Services', 'cog', 'Diagnostics, servicing, brakes and on-site breakdown repairs.', '/images/mechanical.webp', [
                 ['Vehicle diagnostics', 200, 250, 800, 'Computer diagnostics to pinpoint warning lights and faults.'],
