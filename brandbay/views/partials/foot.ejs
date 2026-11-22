@@ -35,9 +35,15 @@
         <span><strong>Request a quote</strong><small>Pick a service, share your brief</small></span>
         <span class="footer-action-arrow"><%- include('icon', { name: 'arrow' }) %></span>
       </a>
+      <% if (locals.storeOpen) { %>
       <a class="footer-action" href="/store" data-reveal="fade-up">
         <span class="footer-action-icon"><%- include('icon', { name: 'bag' }) %></span>
         <span><strong>Shop print &amp; merch</strong><small>Cards, banners, branded items</small></span>
+      <% } else { %>
+      <a class="footer-action" href="/services/printing-artistry" data-reveal="fade-up">
+        <span class="footer-action-icon"><%- include('icon', { name: 'printer' }) %></span>
+        <span><strong>Get printing done</strong><small>Cards, banners, branded items</small></span>
+      <% } %>
         <span class="footer-action-arrow"><%- include('icon', { name: 'arrow' }) %></span>
       </a>
       <a class="footer-action" href="/account" data-reveal="fade-up">
@@ -55,7 +61,7 @@
 
   <div class="container footer-grid" data-reveal-group>
     <div class="footer-brand" data-reveal="fade-up">
-      <a class="brand brand-footer" href="/"><img src="/brand/logo-stacked-gold.png" alt="<%= settings.site_name %>" width="954" height="565" loading="lazy"></a>
+      <a class="brand brand-footer" href="/"><img src="/brand/logo-stacked-gold-sm.png" alt="<%= settings.site_name %>" width="420" height="249" loading="lazy"></a>
       <% if (settings.tagline) { %><p class="footer-tagline"><%= settings.tagline %></p><% } %>
       <div class="socials">
         <% for (const [key, label] of [['facebook_url', 'Facebook'], ['instagram_url', 'Instagram'], ['tiktok_url', 'TikTok'], ['linkedin_url', 'LinkedIn']]) { if (settings[key]) { %>
@@ -82,7 +88,6 @@
       <h3>Get design tips &amp; offers</h3>
       <p class="footer-note">Join our newsletter for branding tips, new services and exclusive deals.</p>
       <form class="subscribe" method="post" action="/subscribe">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <label class="sr-only" for="subscribe-email">Email address</label>
         <input id="subscribe-email" type="email" name="email" placeholder="Email address" required autocomplete="email">
         <button class="btn btn-gold btn-shine" type="submit">Subscribe</button>
@@ -90,7 +95,7 @@
     </div>
   </div>
   <div class="container footer-links">
-    <a href="/about">About</a><a href="/services">Services</a><a href="/projects">Projects</a><a href="/gallery">Gallery</a><a href="/store">Store</a><a href="/contact">Contact</a><a href="/terms">Terms &amp; Conditions</a><a href="/blog">Insights</a>
+    <a href="/about">About</a><a href="/services">Services</a><a href="/projects">Projects</a><a href="/gallery">Gallery</a><% if (locals.storeOpen) { %><a href="/store">Store</a><% } %><a href="/contact">Contact</a><a href="/terms">Terms &amp; Conditions</a><% if (locals.blogOpen) { %><a href="/blog">Insights</a><% } %>
   </div>
   <div class="container footer-base">
     <p>© <%= new Date().getFullYear() %> BrandBay Innovation Studios. All Rights Reserved.</p>

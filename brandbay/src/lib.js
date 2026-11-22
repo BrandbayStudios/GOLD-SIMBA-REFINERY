@@ -96,6 +96,18 @@ function serviceImage(slug) {
   return serviceImageCache.get(slug);
 }
 
+// Smaller copy of a /media image for grids (made by scripts/make-thumbs.py); falls back to the original.
+const thumbCache = new Map();
+function thumb(src) {
+  if (!src || !String(src).startsWith('/media/')) return src;
+  if (!thumbCache.has(src)) {
+    const rel = String(src).slice('/media/'.length);
+    const file = path.join(config.root, 'public', 'media', 'thumbs', rel);
+    thumbCache.set(src, !rel.includes('..') && fs.existsSync(file) ? `/media/thumbs/${rel}` : src);
+  }
+  return thumbCache.get(src);
+}
+
 function getSettings() {
   const out = {};
   for (const row of all('SELECT key, value FROM settings')) out[row.key] = row.value;
@@ -124,5 +136,6 @@ module.exports = {
   clean,
   getSettings,
   serviceImage,
+  thumb,
   setSetting,
 };

@@ -16,7 +16,7 @@
     <div class="container mockup-grid" data-filter-target data-reveal-group>
       <% for (const p of projects) { %>
         <a class="mockup-card" href="/projects/<%= p.slug %>" data-category="<%= p.category || '' %>" data-reveal="zoom">
-          <img src="<%= p.image %>" alt="<%= p.title %>" loading="lazy">
+          <img src="<%= lib.thumb(p.image) %>" alt="<%= p.title %>" loading="lazy">
           <span class="mockup-info">
             <% if (p.category) { %><small><%= p.category %></small><% } %>
             <strong><%= p.title %></strong>

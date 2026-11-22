@@ -3,6 +3,7 @@
 const bcrypt = require('bcryptjs');
 const { get, run, transaction } = require('../src/db');
 const { setSetting, getSettings } = require('../src/lib');
+const POSTS = require('./posts');
 const invoicing = require('../src/invoicing');
 
 const SETTINGS = {
@@ -13,7 +14,7 @@ const SETTINGS = {
     'At BrandBay Innovation Studios, we merge strategy, design, and digital innovation to build brands that command attention, influence markets, and scale with precision.',
   phone: '+260972015689',
   whatsapp: '260972015689',
-  email: 'info@brandbaystudio.online',
+  email: 'info@brandbaystudios.online',
   address_1: 'Cairo Road, Lusaka, Zambia',
   address_2: 'Mpongwe, Copperbelt Zambia',
   facebook_url: '',
@@ -338,6 +339,19 @@ function seed() {
 function backfillContent() {
   for (const [slug, intro] of Object.entries(SERVICE_INTROS)) {
     run("UPDATE service_categories SET intro = ? WHERE slug = ? AND (intro IS NULL OR intro = '')", intro, slug);
+  }
+  // The first release listed the email on a domain that does not exist (brandbaystudio.online, no "s").
+  run("UPDATE settings SET value = 'info@brandbaystudios.online' WHERE key = 'email' AND value = 'info@brandbaystudio.online'");
+  // One-time: publish the first Insights articles.
+  if (!getSettings().content_posts_v1) {
+    transaction(() => {
+      POSTS.forEach((p, i) => {
+        if (get('SELECT id FROM posts WHERE slug = ?', p.slug)) return;
+        run("INSERT INTO posts (slug, title, excerpt, body, image, published, published_at) VALUES (?, ?, ?, ?, ?, 1, datetime('now', ?))",
+          p.slug, p.title, p.excerpt, p.body, p.image, `-${i} days`);
+      });
+      setSetting('content_posts_v1', '1');
+    });
   }
   // One-time: add the company profile projects to databases created before them.
   if (!getSettings().content_profiles_v1) {

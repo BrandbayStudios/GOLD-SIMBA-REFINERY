@@ -368,3 +368,10 @@ input, select, textarea { transition: border-color 0.3s, box-shadow 0.3s, backgr
 @media (max-width: 960px) { .footer-cta { grid-template-columns: 1fr; padding: 2.2rem; } .footer-actions { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .footer-cta { padding: 1.6rem; } .footer-actions { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .footer-cta-glow, .pulse-dot { animation: none; } }
+
+/* ---------- Audit fixes ---------- */
+/* Keep the cursor glow inside the hero so narrow phones never scroll sideways. */
+.hero-video { overflow: hidden; }
+html, body { overflow-x: clip; }
+/* Gold labels on white cards: darker gold for readable contrast (WCAG AA). */
+.project-body .eyebrow, .product-body .eyebrow { color: #7a5f00; }

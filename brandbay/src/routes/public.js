@@ -103,7 +103,8 @@ router.get('/projects/:slug', (req, res, next) => {
   const project = get('SELECT * FROM projects WHERE slug = ? AND published = 1', req.params.slug);
   if (!project) return next();
   res.render('project', {
-    title: `${project.title}${project.category ? ` — ${project.category}` : ''} Project`,
+    // Google shows about 60 characters; the layout adds " | BrandBay".
+    title: project.category && project.title.length + project.category.length <= 44 ? `${project.title} — ${project.category}` : project.title,
     description: project.summary,
     ogImage: project.image,
     schema: [seo.project(project), seo.breadcrumbs([['Projects', '/projects'], [project.title, `/projects/${project.slug}`]])],
@@ -282,7 +283,6 @@ router.get('/sitemap.xml', (req, res) => {
     { loc: '/about', priority: '0.7', images: album('compliance').map((g) => [g.image, g.title]) },
     { loc: '/contact', priority: '0.7' },
     { loc: '/apply', priority: '0.7' },
-    { loc: '/store', priority: '0.6' },
     { loc: '/terms', priority: '0.3' },
   ];
   for (const s of services()) entries.push({ loc: `/services/${s.slug}`, priority: '0.9' });
@@ -292,7 +292,9 @@ router.get('/sitemap.xml', (req, res) => {
   const posts = all('SELECT slug, title, image, published_at FROM posts WHERE published = 1');
   if (posts.length) entries.push({ loc: '/blog', priority: '0.6', lastmod: day(posts.map((p) => p.published_at).sort().pop()) });
   for (const p of posts) entries.push({ loc: `/blog/${p.slug}`, priority: '0.6', lastmod: day(p.published_at), images: p.image ? [[p.image, p.title]] : [] });
-  for (const p of all('SELECT slug, name, image, created_at FROM products WHERE published = 1')) {
+  const products = all('SELECT slug, name, image, created_at FROM products WHERE published = 1');
+  if (products.length) entries.push({ loc: '/store', priority: '0.6' });
+  for (const p of products) {
     entries.push({ loc: `/store/${p.slug}`, priority: '0.5', images: p.image ? [[p.image, p.name]] : [] });
   }
   const body = entries.map((e) => [

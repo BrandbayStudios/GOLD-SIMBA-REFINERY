@@ -12,7 +12,7 @@
     <p class="hero-text" data-reveal="fade-up"><%= settings.hero_text %></p>
     <div class="hero-buttons" data-reveal="fade-up">
       <a class="btn btn-white btn-lg btn-shine" href="/apply">Apply For Service</a>
-      <a class="btn btn-gold btn-lg btn-shine" href="/about">Learn more</a>
+      <a class="btn btn-gold btn-lg btn-shine" href="/about">Learn more<span class="sr-only"> about BrandBay</span></a>
     </div>
   </div>
   <a class="scroll-cue" href="#what-is" aria-label="Scroll down"><span></span></a>
@@ -62,13 +62,13 @@
   </div>
   <div class="logo-marquee" aria-hidden="true">
     <div class="logo-marquee-track">
-      <% for (const pass of [0, 1]) { for (const logo of logos.slice(0, 12)) { %><img src="<%= logo.image %>" alt="" loading="lazy"><% } } %>
+      <% for (const pass of [0, 1]) { for (const logo of logos.slice(0, 12)) { %><img src="<%= lib.thumb(logo.image) %>" alt="" loading="lazy"><% } } %>
     </div>
   </div>
   <div class="container logo-wall" data-reveal-group data-lightbox-group>
     <% for (const logo of logos) { %>
       <button class="logo-tile" type="button" data-reveal="zoom" data-lightbox="<%= logo.image %>" data-caption="<%= logo.title %>">
-        <img src="<%= logo.image %>" alt="<%= logo.title %> logo" loading="lazy">
+        <img src="<%= lib.thumb(logo.image) %>" alt="<%= logo.title %> logo" loading="lazy">
         <span><%= logo.title %></span>
       </button>
     <% } %>

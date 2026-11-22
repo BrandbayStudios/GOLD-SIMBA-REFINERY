@@ -10,7 +10,7 @@
     </ul>
     <% if (service.closing) { %><p class="service-tile-close"><%= service.closing %></p><% } %>
     <div class="service-tile-actions">
-      <a class="link-arrow" href="/services/<%= service.slug %>">Learn more <%- include('icon', { name: 'arrow' }) %></a>
+      <a class="link-arrow" href="/services/<%= service.slug %>">Learn more<span class="sr-only"> about <%= service.name %></span> <%- include('icon', { name: 'arrow' }) %></a>
       <a class="btn btn-gold btn-sm btn-shine" href="/apply?service=<%= service.slug %>">Apply</a>
     </div>
   </div>

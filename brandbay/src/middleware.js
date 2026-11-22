@@ -11,14 +11,23 @@ function flash(req, type, message) {
 }
 
 // CSRF: one random token per session, required on every state-changing request.
+// Created only when a page renders a form, so plain page views do not start a session.
 function csrf(req, res, next) {
-  if (!req.session.csrf) req.session.csrf = crypto.randomBytes(24).toString('hex');
-  res.locals.csrfToken = req.session.csrf;
+  // Templates print it as value="<%= csrfToken %>"; the token is made the first time it is printed.
+  const token = () => {
+    if (!req.session.csrf) req.session.csrf = crypto.randomBytes(24).toString('hex');
+    return req.session.csrf;
+  };
+  res.locals.csrfToken = { toString: token, toJSON: token };
   next();
 }
 
+// The footer newsletter form posts here from every page; it only stores an email address, so it
+// carries no token (which would start a session on every page view) and is rate limited instead.
+const CSRF_EXEMPT = new Set(['/subscribe']);
+
 function verifyCsrf(req, res, next) {
-  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method) || CSRF_EXEMPT.has(req.path)) return next();
   const token = req.body?._csrf || req.get('x-csrf-token');
   const expected = req.session.csrf;
   if (

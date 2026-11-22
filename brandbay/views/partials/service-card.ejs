@@ -7,7 +7,7 @@
   </ul>
   <% if (service.closing) { %><p class="service-closing"><%= service.closing %></p><% } %>
   <div class="service-actions">
-    <a class="btn btn-outline btn-sm" href="/services/<%= service.slug %>">Learn more</a>
+    <a class="btn btn-outline btn-sm" href="/services/<%= service.slug %>">Learn more<span class="sr-only"> about <%= service.name %></span></a>
     <a class="btn btn-gold btn-sm" href="/apply?service=<%= service.slug %>">Apply</a>
   </div>
 </article>

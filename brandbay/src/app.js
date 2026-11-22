@@ -7,7 +7,7 @@ const config = require('./config');
 const SqliteStore = require('./session-store');
 const lib = require('./lib');
 const seo = require('./seo');
-const { all } = require('./db');
+const { all, get } = require('./db');
 const { csrf, verifyCsrfUnlessMultipart, loadUser } = require('./middleware');
 
 const app = express();
@@ -66,12 +66,15 @@ app.use(loadUser);
 
 app.use((req, res, next) => {
   res.locals.flash = req.session.flash || [];
-  delete req.session.flash;
+  if (req.session.flash) delete req.session.flash;
   res.locals.settings = lib.getSettings();
   res.locals.path = req.path;
   res.locals.cartCount = (req.session.cart || []).reduce((n, i) => n + i.qty, 0);
   res.locals.lib = lib;
   res.locals.seo = seo;
+  // Store and Insights links show only once there is something to see.
+  res.locals.storeOpen = Boolean(get('SELECT 1 AS x FROM products WHERE published = 1 LIMIT 1'));
+  res.locals.blogOpen = Boolean(get('SELECT 1 AS x FROM posts WHERE published = 1 LIMIT 1'));
   res.locals.orgServices = all('SELECT name, slug, items FROM service_categories WHERE published = 1 ORDER BY sort_order, id');
   res.locals.config = config;
   res.locals.title = null;

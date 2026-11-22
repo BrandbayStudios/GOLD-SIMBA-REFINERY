@@ -8,7 +8,7 @@
   <div class="container logo-wall logo-wall-lg" data-reveal-group data-lightbox-group>
     <% for (const item of logos) { %>
       <button class="logo-tile" type="button" data-reveal="zoom" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
-        <img src="<%= item.image %>" alt="<%= item.title %> logo" loading="lazy">
+        <img src="<%= lib.thumb(item.image) %>" alt="<%= item.title %> logo" loading="lazy">
         <span><%= item.title %></span>
       </button>
     <% } %>
@@ -22,7 +22,7 @@
   <div class="container poster-masonry" data-reveal-group data-lightbox-group>
     <% for (const item of posters) { %>
       <button class="poster-tile" type="button" data-reveal="fade-up" data-lightbox="<%= item.image %>" data-caption="<%= item.title %>">
-        <img src="<%= item.image %>" alt="<%= item.title %> poster" loading="lazy">
+        <img src="<%= lib.thumb(item.image) %>" alt="<%= item.title %> poster" loading="lazy">
         <span><%= item.title %></span>
       </button>
     <% } %>
@@ -37,7 +37,7 @@
   </div>
   <div class="insta-marquee" aria-hidden="true">
     <div class="insta-track">
-      <% for (const pass of [0, 1]) { for (const item of posters.slice(0, 10)) { %><img src="<%= item.image %>" alt="" loading="lazy"><% } } %>
+      <% for (const pass of [0, 1]) { for (const item of posters.slice(0, 10)) { %><img src="<%= lib.thumb(item.image) %>" alt="" loading="lazy"><% } } %>
     </div>
   </div>
   <div class="center">

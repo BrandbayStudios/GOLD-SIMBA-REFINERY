@@ -3,7 +3,7 @@
   <%- include('bg', { video: locals.video, image: locals.image, overlay: locals.overlay }) %>
   <div class="container touch-split">
     <div data-reveal="slide-right">
-      <h2 class="section-title text-gold left">Get In Touch With Us</h2>
+      <% const gitTag = locals.headingTag === 'h1' ? 'h1' : 'h2'; %><<%= gitTag %> class="section-title text-gold left">Get In Touch With Us</<%= gitTag %>>
       <p class="lead-light">For more information on our services, partnerships, fees and any other inquiries</p>
       <div class="touch-lines">
         <a class="touch-line" href="tel:<%= (settings.phone || '').replace(/\s/g, '') %>"><%- include('icon', { name: 'phone' }) %><span><small>Contact</small><%= settings.phone %></span></a>

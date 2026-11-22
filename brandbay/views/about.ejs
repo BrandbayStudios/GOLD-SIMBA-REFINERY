@@ -65,7 +65,7 @@
   <div class="container cert-row" data-reveal-group data-lightbox-group>
     <% for (const c of certificates) { %>
       <button class="cert-card" type="button" data-reveal="flip" data-lightbox="<%= c.image %>" data-caption="<%= c.title %>">
-        <img src="<%= c.image %>" alt="<%= c.title %>" loading="lazy">
+        <img src="<%= lib.thumb(c.image) %>" alt="<%= c.title %>" loading="lazy">
         <span><%= c.title %></span>
       </button>
     <% } %>

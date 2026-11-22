@@ -289,3 +289,25 @@ test('SEO: titles, canonical, robots, structured data, sitemap', async () => {
   assert.match(sitemap.text, /<image:loc>http[^<]+\/media\/logos\/[^<]+\.webp<\/image:loc>/);
   assert.doesNotMatch(sitemap.text, /\/admin|\/login/);
 });
+
+test('plain page views start no session; the footer newsletter still works', async () => {
+  run('UPDATE products SET published = 0'); // an empty store hides its links
+  const page = await fetch(`${base}/about`);
+  assert.equal(page.status, 200);
+  assert.equal(page.headers.get('set-cookie'), null);
+  const html = await page.text();
+  assert.doesNotMatch(html, /href="\/store"/); // no published products yet
+  assert.match(html, /\/brand\/logo-horizontal-gold-sm\.png/);
+  const sub = await fetch(`${base}/subscribe`, {
+    method: 'POST', redirect: 'manual', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: 'email=newsletter%40test.local',
+  });
+  assert.equal(sub.status, 302);
+  assert.ok(get("SELECT id FROM subscribers WHERE email = 'newsletter@test.local'"));
+  // Forms that need protection still require a token.
+  const contact = await fetch(`${base}/contact`, {
+    method: 'POST', redirect: 'manual', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: 'name=A&email=a%40test.local&message=Hello',
+  });
+  assert.equal(contact.status, 403);
+});

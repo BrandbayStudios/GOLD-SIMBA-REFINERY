@@ -40,7 +40,7 @@
           address1: 'Cairo Road, Lusaka, Zambia',
           address2: 'Mpongwe, Copperbelt Zambia',
           phone: '+260972015689',
-          email: 'info@brandbaystudio.online',
+          email: 'info@brandbaystudios.online',
           website: 'brandbaystudios.online',
           tpin: '',
           logo: '',

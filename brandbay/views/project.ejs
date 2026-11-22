@@ -23,7 +23,7 @@
       <div class="project-pages" data-lightbox-group data-reveal-group>
         <% pages.forEach((img, i) => { %>
           <button class="project-page" type="button" data-lightbox="<%= img %>" data-caption="<%= project.title %> — page <%= i + 1 %>" data-reveal="fade-up">
-            <img src="<%= img %>" alt="<%= project.title %>, page <%= i + 1 %>" loading="lazy">
+            <img src="<%= lib.thumb(img) %>" alt="<%= project.title %>, page <%= i + 1 %>" loading="lazy">
           </button>
         <% }) %>
       </div>

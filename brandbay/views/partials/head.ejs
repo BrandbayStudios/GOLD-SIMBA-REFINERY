@@ -10,7 +10,7 @@
   const nav = [
     ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'],
     ['/projects', 'Projects', [['/projects', 'Recent projects'], ['/gallery', 'Gallery']]],
-    ['/contact', 'Contact'], ['/store', 'Store'],
+    ['/contact', 'Contact'], ...(locals.storeOpen ? [['/store', 'Store']] : []),
   ];
   const isActive = (href, sub) => href === '/' ? path === '/'
     : path === href || path.startsWith(href + '/') || (sub || []).some(([h]) => path === h || path.startsWith(h + '/'));
@@ -52,7 +52,7 @@
 <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
 <header class="site-header" data-header>
   <div class="container header-inner">
-    <a class="brand" href="/"><img src="/brand/logo-horizontal-gold.png" alt="<%= siteName %>" width="1231" height="223"></a>
+    <a class="brand" href="/"><img src="/brand/logo-horizontal-gold-sm.png" alt="<%= siteName %>" width="480" height="87"></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
       <span class="sr-only">Menu</span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
     </button>

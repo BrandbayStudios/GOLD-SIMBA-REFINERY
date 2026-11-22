@@ -28,7 +28,7 @@ module.exports = {
     secure: env.SMTP_SECURE === '1',
     user: env.SMTP_USER,
     pass: env.SMTP_PASS,
-    from: env.MAIL_FROM || 'BrandBay Innovation Studios <info@brandbaystudio.online>',
-    notify: env.NOTIFY_EMAIL || 'info@brandbaystudio.online',
+    from: env.MAIL_FROM || 'BrandBay Innovation Studios <info@brandbaystudios.online>',
+    notify: env.NOTIFY_EMAIL || 'info@brandbaystudios.online',
   },
 };
