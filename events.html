@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upcoming events — EventHub Zambia</title>
+<meta name="description" content="Wedding expos, vendor showcases and planning workshops across Zambia.">
+<meta name="theme-color" content="#063B2E">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Gloock&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+<section class="page-head">
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Events</div>
+    <h1>Upcoming events</h1>
+    <p>Expos, showcases and workshops where you can meet vendors in person, taste the food and see the décor before you book.</p>
+  </div>
+</section>
+<div class="band thin"></div>
+<section class="section tight">
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="row" role="group" aria-label="Filter by city" id="ev-filter"></div>
+      <a class="btn btn-ghost btn-sm" href="contact.html?topic=event"><i class="fa-solid fa-plus"></i> Submit your event</a>
+    </div>
+    <div class="ev-list" id="ev-list"></div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="rsvp-modal" role="dialog" aria-modal="true" aria-labelledby="rsvp-title">
+  <div class="modal-box">
+    <button class="modal-x" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <span class="tag" id="rsvp-kind"></span>
+    <h3 id="rsvp-title" style="margin-top:10px"></h3>
+    <p class="muted" id="rsvp-meta"></p>
+    <form id="rsvp-form" novalidate>
+      <div class="field"><label for="rs-name">Full name</label><input id="rs-name" required autocomplete="name"><span class="err">Enter your name.</span></div>
+      <div class="grid-2">
+        <div class="field"><label for="rs-phone">Phone</label><input id="rs-phone" type="tel" required autocomplete="tel"><span class="err">Enter a phone number.</span></div>
+        <div class="field"><label for="rs-qty">Tickets</label><select id="rs-qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+      </div>
+      <div class="field" id="rs-pay-field"><label for="rs-pay">Pay with</label><select id="rs-pay"><option>Airtel Money</option><option>MTN MoMo</option><option>Zamtel Kwacha</option><option>Pay at the door</option></select></div>
+      <div class="budget-row"><span>Total</span><b id="rs-total"></b></div>
+      <button class="btn btn-primary btn-block" type="submit" style="margin-top:16px" id="rs-submit"></button>
+    </form>
+  </div>
+</div>
+<div id="site-footer"></div>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+
+<script src="assets/js/events.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var D = EH_DATA, city = '', current;
+  var cities = ['All cities'].concat(D.EVENTS.map(function (e) { return e.city; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
+  var fb = document.getElementById('ev-filter');
+  fb.innerHTML = cities.map(function (c, i) { return '<button class="btn btn-sm ' + (i ? 'btn-ghost' : 'btn-primary') + '" data-city="' + (i ? c : '') + '">' + c + '</button>'; }).join('');
+  fb.onclick = function (e) {
+    var b = e.target.closest('[data-city]'); if (!b) return; city = b.dataset.city;
+    fb.querySelectorAll('button').forEach(function (x) { x.className = 'btn btn-sm ' + (x === b ? 'btn-primary' : 'btn-ghost'); x.setAttribute('aria-pressed', x === b); });
+    render();
+  };
+  function render() {
+    document.getElementById('ev-list').innerHTML = D.EVENTS.filter(function (e) { return !city || e.city === city; }).map(function (e) { return EH_eventRow(e).replace('<article class="ev"', '<article class="ev" id="' + e.id + '"'); }).join('');
+  }
+  render();
+  var qty = document.getElementById('rs-qty');
+  function total() { document.getElementById('rs-total').textContent = current.price ? EH.kwacha(current.price * qty.value) : 'Free'; }
+  qty.onchange = total;
+  function open(id) {
+    current = D.EVENTS.find(function (e) { return e.id === id; }); if (!current) return;
+    document.getElementById('rsvp-kind').textContent = current.kind;
+    document.getElementById('rsvp-title').textContent = current.title;
+    document.getElementById('rsvp-meta').textContent = new Date(current.date + 'T12:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + current.venue + ', ' + current.city;
+    document.getElementById('rs-pay-field').hidden = !current.price;
+    document.getElementById('rs-submit').textContent = current.price ? 'Pay and get tickets' : 'Reserve my spot';
+    total();
+    document.getElementById('rsvp-modal').classList.add('open');
+    document.getElementById('rs-name').focus();
+  }
+  document.getElementById('ev-list').addEventListener('click', function (e) { var b = e.target.closest('[data-rsvp]'); if (b) { e.preventDefault(); open(b.dataset.rsvp); } });
+  if (location.hash) open(location.hash.slice(1));
+  document.getElementById('rsvp-form').addEventListener('submit', function (e) {
+    e.preventDefault(); if (!EH.validate(e.target)) return;
+    document.getElementById('rsvp-modal').classList.remove('open');
+    EH.toast(current.price ? 'Payment prompt sent to your phone. Tickets arrive by SMS.' : 'Spot reserved. See you there!');
+    e.target.reset();
+  });
+});
+</script>
+</body>
+</html>

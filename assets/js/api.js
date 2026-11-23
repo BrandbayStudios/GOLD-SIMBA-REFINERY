@@ -6,7 +6,9 @@
    ========================================================================== */
 
 (function () {
-  var API_BASE = window.EH_API_BASE || 'http://localhost:8000/api/v1';
+  // Set window.EH_API_BASE (e.g. 'https://api.example.com/api/v1') before this
+  // script loads to switch the site from bundled demo data to the live API.
+  var API_BASE = window.EH_API_BASE || '';
   var API_ROOT = API_BASE.replace(/\/v1\/?$/, '');
 
   function getToken() { return localStorage.getItem('eh_token'); }
@@ -23,6 +25,7 @@
   function logout() { setToken(null); setUser(null); setVendorProfile(null); }
 
   function apiFetch(path, opts) {
+    if (!API_BASE) return Promise.reject(Object.assign(new Error('API not configured'), { offline: true }));
     opts = opts || {};
     var headers = Object.assign({ Accept: 'application/json' }, opts.headers || {});
     var body = opts.body;
@@ -49,6 +52,7 @@
 
   window.EH_API = {
     BASE: API_BASE,
+    enabled: !!API_BASE,
     getToken: getToken, setToken: setToken,
     getUser: getUser, setUser: setUser,
     getVendorProfile: getVendorProfile, setVendorProfile: setVendorProfile,

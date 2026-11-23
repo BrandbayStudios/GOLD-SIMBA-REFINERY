@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event planner — EventHub Zambia</title>
+<meta name="description" content="A free checklist and kwacha budget tracker for weddings, kitchen parties and corporate events.">
+<meta name="theme-color" content="#063B2E">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Gloock&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+<section class="page-head">
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Planner</div>
+    <h1>Your event planner</h1>
+    <p>Tick off tasks, track your budget in kwacha, and jump straight to vendors for each job. Everything saves on this device.</p>
+  </div>
+</section>
+<div class="band thin"></div>
+<section class="section tight">
+  <div class="wrap planner">
+    <div>
+      <div class="toolbar">
+        <div class="field" style="margin:0;flex:1;min-width:220px"><label for="plan-type">Event type</label>
+          <select id="plan-type"><option value="wedding">Wedding</option><option value="kitchen">Kitchen party</option><option value="corporate">Corporate event</option><option value="birthday">Birthday party</option></select></div>
+        <div class="field" style="margin:0;flex:1;min-width:180px"><label for="plan-date">Event date</label><input id="plan-date" type="date"></div>
+      </div>
+      <div class="card" style="margin-bottom:28px">
+        <div class="row" style="justify-content:space-between;margin-bottom:10px"><b id="prog-label">0 of 0 tasks done</b><span class="muted" id="countdown"></span></div>
+        <div class="progress" role="progressbar" aria-labelledby="prog-label" aria-valuemin="0" aria-valuemax="100"><span id="prog-bar" style="width:0"></span></div>
+      </div>
+      <div id="tasks"></div>
+      <form id="add-task" class="row" style="flex-wrap:nowrap">
+        <label class="sr-only" for="new-task">New task</label><input class="input" id="new-task" placeholder="Add your own task, e.g. “Book the church”">
+        <button class="btn btn-primary" type="submit">Add task</button>
+      </form>
+    </div>
+    <aside class="sticky">
+      <div class="card raised">
+        <h3>Budget</h3>
+        <div class="field"><label for="budget-total">Total budget (K)</label><input id="budget-total" type="number" min="0" step="500" inputmode="numeric"></div>
+        <div id="budget-lines"></div>
+        <div class="budget-row" style="border:0;margin-top:6px"><span>Planned so far</span><b id="budget-sum"></b></div>
+        <div class="budget-row" style="border:0"><span>Left to allocate</span><b id="budget-left"></b></div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <h3 style="font-size:1.2rem">Saved vendors</h3>
+        <div id="saved-mini" class="stack-8"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var TEMPLATES = {
+    wedding: [
+      ['A year or more before', [['Set your budget and guest list', ''], ['Book the venue', 'venues'], ['Hire a wedding planner', 'planners']]],
+      ['6 to 9 months before', [['Book photographer and videographer', 'photography'], ['Choose your caterer', 'catering'], ['Book MC and DJ', 'mcs-djs'], ['Order outfits and chitenge sets', 'tailors']]],
+      ['3 to 5 months before', [['Book décor and flowers', 'decor'], ['Order the cake', 'cakes'], ['Hire tents, chairs and tables', 'tents'], ['Book bridal car', 'cars']]],
+      ['Final month', [['Book makeup and hair', 'makeup'], ['Rehearse the entrance dance', 'choreographers'], ['Confirm every vendor by phone', ''], ['Share the run sheet with your MC', '']]]
+    ],
+    kitchen: [
+      ['2 to 3 months before', [['Choose the matron', 'matrons'], ['Book a venue or garden', 'venues'], ['Set the gift list', '']]],
+      ['1 month before', [['Book catering', 'catering'], ['Order the cake', 'cakes'], ['Book décor', 'decor'], ['Hire chairs and tables', 'chairs-tables']]],
+      ['Final week', [['Book makeup', 'makeup'], ['Confirm the programme with the matron', ''], ['Hire pots and chafing dishes', 'pots-chafing-dishes']]]
+    ],
+    corporate: [
+      ['3 months before', [['Agree budget and objectives', ''], ['Book the venue', 'venues'], ['Hire sound, screens and lighting', 'sound']]],
+      ['1 month before', [['Book catering', 'catering'], ['Book an MC', 'mcs-djs'], ['Book a photographer', 'photography']]],
+      ['Final week', [['Send the run sheet to all vendors', ''], ['Confirm guest numbers with the caterer', '']]]
+    ],
+    birthday: [
+      ['1 month before', [['Book the venue', 'venues'], ['Order the cake', 'cakes'], ['Book a DJ', 'mcs-djs']]],
+      ['Final week', [['Book décor', 'decor'], ['Book a photographer', 'photography'], ['Confirm the guest list', '']]]
+    ]
+  };
+  var BUDGET = { wedding: [['Venue', .22], ['Catering', .28], ['Photo & video', .12], ['Décor', .12], ['Attire & beauty', .1], ['Music & MC', .06], ['Cake', .04], ['Transport', .06]],
+    kitchen: [['Venue', .2], ['Catering', .4], ['Matron', .1], ['Décor', .15], ['Cake', .1], ['Other', .05]],
+    corporate: [['Venue', .3], ['Catering', .35], ['Sound & AV', .2], ['MC & photo', .15]],
+    birthday: [['Venue', .25], ['Food & drinks', .4], ['Cake', .1], ['Music', .15], ['Décor', .1]] };
+
+  function load() { try { return JSON.parse(localStorage.getItem('eh_planner') || 'null'); } catch (e) { return null; } }
+  function save() { try { localStorage.setItem('eh_planner', JSON.stringify(st)); } catch (e) {} }
+  function fresh(type) {
+    return { type: type, date: st && st.date || '', total: { wedding: 150000, kitchen: 30000, corporate: 80000, birthday: 15000 }[type],
+      groups: TEMPLATES[type].map(function (g) { return { name: g[0], tasks: g[1].map(function (t) { return { t: t[0], cat: t[1], done: false }; }) }; }),
+      lines: BUDGET[type].map(function (b) { return { n: b[0], p: b[1] }; }) };
+  }
+  var st = load() || fresh('wedding');
+  var typeSel = document.getElementById('plan-type'), dateIn = document.getElementById('plan-date'), totalIn = document.getElementById('budget-total');
+
+  function render() {
+    typeSel.value = st.type; dateIn.value = st.date; totalIn.value = st.total;
+    var all = 0, done = 0;
+    document.getElementById('tasks').innerHTML = st.groups.map(function (g, gi) {
+      var d = g.tasks.filter(function (t) { return t.done; }).length; all += g.tasks.length; done += d;
+      return '<div class="task-group"><h3>' + EH.esc(g.name) + ' <small>' + d + '/' + g.tasks.length + '</small></h3>' + g.tasks.map(function (t, ti) {
+        var id = 't' + gi + '-' + ti;
+        return '<div class="task' + (t.done ? ' done' : '') + '"><input type="checkbox" id="' + id + '" data-g="' + gi + '" data-t="' + ti + '"' + (t.done ? ' checked' : '') + '><label for="' + id + '" style="flex:1;cursor:pointer"><span>' + EH.esc(t.t) + '</span></label>' +
+          (t.cat ? '<a href="vendors.html?category=' + t.cat + '">Find vendors</a>' : '') + '</div>';
+      }).join('') + '</div>';
+    }).join('');
+    var pct = all ? Math.round(done / all * 100) : 0;
+    document.getElementById('prog-label').textContent = done + ' of ' + all + ' tasks done';
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.querySelector('[role=progressbar]').setAttribute('aria-valuenow', pct);
+    var cd = document.getElementById('countdown');
+    if (st.date) { var days = Math.ceil((new Date(st.date + 'T12:00') - new Date()) / 864e5); cd.textContent = days > 0 ? days + ' days to go' : days === 0 ? 'It’s today!' : 'Event has passed'; } else cd.textContent = 'Set a date to see the countdown';
+
+    var sum = 0;
+    document.getElementById('budget-lines').innerHTML = st.lines.map(function (l, i) {
+      var amt = Math.round(st.total * l.p / 100) * 100; sum += amt;
+      return '<div class="budget-row"><span>' + l.n + ' <span class="muted">(' + Math.round(l.p * 100) + '%)</span></span><b>' + EH.kwacha(amt) + '</b></div>';
+    }).join('');
+    document.getElementById('budget-sum').textContent = EH.kwacha(sum);
+    document.getElementById('budget-left').textContent = EH.kwacha(Math.max(0, st.total - sum));
+
+    var favs = EH.getFavs().map(EH_DATA.vendor).filter(Boolean);
+    document.getElementById('saved-mini').innerHTML = favs.length ? favs.map(function (v) {
+      return '<a class="cell-user" href="vendor-profile.html?v=' + v.id + '" style="color:var(--ink)"><img src="' + v.img.replace('w=900', 'w=120') + '" alt=""><span><b style="display:block;font-size:.93rem">' + EH.esc(v.name) + '</b><span class="muted" style="font-size:.82rem">' + EH_DATA.category(v.cat).name + '</span></span></a>';
+    }).join('') : '<p class="muted" style="margin:0">Tap the heart on any vendor to keep them here. <a href="vendors.html">Browse vendors</a></p>';
+    save();
+  }
+  document.getElementById('tasks').addEventListener('change', function (e) { var c = e.target; if (c.dataset.g == null) return; st.groups[c.dataset.g].tasks[c.dataset.t].done = c.checked; render(); if (c.checked) EH.toast('Nice — one less thing to do'); });
+  typeSel.onchange = function () { if (confirm('Switch to the ' + typeSel.options[typeSel.selectedIndex].text.toLowerCase() + ' checklist? Your ticked tasks will reset.')) { st = fresh(typeSel.value); render(); } else typeSel.value = st.type; };
+  dateIn.onchange = function () { st.date = dateIn.value; render(); };
+  totalIn.oninput = function () { st.total = Math.max(0, +totalIn.value || 0); render(); };
+  document.getElementById('add-task').onsubmit = function (e) {
+    e.preventDefault(); var i = document.getElementById('new-task'); if (!i.value.trim()) { i.focus(); return; }
+    var last = st.groups[st.groups.length - 1]; if (last.name !== 'My tasks') { st.groups.push({ name: 'My tasks', tasks: [] }); last = st.groups[st.groups.length - 1]; }
+    last.tasks.push({ t: i.value.trim(), cat: '', done: false }); i.value = ''; render(); EH.toast('Task added');
+  };
+  render();
+});
+</script>
+</body>
+</html>

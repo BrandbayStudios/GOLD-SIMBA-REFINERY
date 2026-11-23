@@ -2,407 +2,159 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel — EventHub Zambia</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — EventHub Zambia</title>
+<meta name="description" content="EventHub marketplace administration.">
+<meta name="theme-color" content="#063B2E">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Gloock&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-
-<header class="navbar">
-  <div class="container">
-    <a href="index.html" class="logo"><span class="logo-mark"><i class="fa-solid fa-champagne-glasses"></i></span>Event<span>Hub</span> <span style="font-size:.6rem;background:var(--dark);color:#fff;padding:3px 8px;border-radius:6px;margin-left:6px;vertical-align:middle;">ADMIN</span></a>
-    <nav><ul class="nav-links"><li><a href="index.html">View Site</a></li></ul></nav>
-    <div class="nav-actions">
-      <span style="font-size:.85rem;color:var(--gray);">Logged in as <strong style="color:var(--dark);">Admin</strong></span>
-      <a href="login.html" class="btn btn-outline-dark btn-sm">Log Out</a>
-      <button class="nav-toggle"><i class="fa-solid fa-bars"></i></button>
+<div id="site-header"></div>
+<div class="dash">
+  <aside class="dash-side">
+    <div class="who"><div class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7h7l-5.6 4.3L18.5 21 12 16.6 5.5 21l2.1-7.7L2 9h7z" fill="#D4AF5A"/></svg></div><div><b>EventHub Admin</b><span>Marketplace control</span></div></div>
+    <div role="tablist" data-tabs="ad" data-hash aria-orientation="vertical">
+      <button data-tab="a-overview"><i class="fa-solid fa-gauge"></i>Overview</button>
+      <button data-tab="a-approvals"><i class="fa-solid fa-user-check"></i>Approvals<span class="count" id="ap-count"></span></button>
+      <button data-tab="a-vendors"><i class="fa-solid fa-store"></i>Vendors</button>
+      <button data-tab="a-claims"><i class="fa-solid fa-flag"></i>Claims & reports</button>
+      <button data-tab="a-reviews"><i class="fa-solid fa-star-half-stroke"></i>Review moderation</button>
+      <button data-tab="a-categories"><i class="fa-solid fa-layer-group"></i>Categories</button>
+      <button data-tab="a-featured"><i class="fa-solid fa-bullhorn"></i>Featured & ads</button>
+      <button data-tab="a-events"><i class="fa-solid fa-calendar-day"></i>Events</button>
     </div>
-  </div>
-</header>
-
-<div class="dash-shell">
-  <aside class="dash-sidebar">
-    <div class="dash-profile">
-      <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200&auto=format&fit=crop" alt="Admin">
-      <div><strong>Platform Admin</strong><span>Super Administrator</span></div>
-    </div>
-    <ul class="dash-nav" data-tab-group="admin">
-      <li class="section-label">Overview</li>
-      <li class="active"><a href="javascript:void(0)" data-tab="a-overview"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
-      <li class="section-label">Marketplace</li>
-      <li><a href="javascript:void(0)" data-tab="a-approvals"><i class="fa-solid fa-clipboard-check"></i> Vendor Approvals <span class="badge" style="position:static;margin-left:auto;background:var(--gold);color:#000;">7</span></a></li>
-      <li><a href="javascript:void(0)" data-tab="a-vendors"><i class="fa-solid fa-store"></i> Vendors</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-customers"><i class="fa-solid fa-users"></i> Customers</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-categories"><i class="fa-solid fa-tags"></i> Categories</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-locations"><i class="fa-solid fa-location-dot"></i> Locations</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-claims"><i class="fa-solid fa-flag"></i> Business Claims</a></li>
-      <li class="section-label">Engagement</li>
-      <li><a href="javascript:void(0)" data-tab="a-enquiries"><i class="fa-solid fa-inbox"></i> Enquiries</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-reviews"><i class="fa-solid fa-star"></i> Reviews</a></li>
-      <li class="section-label">Growth</li>
-      <li><a href="javascript:void(0)" data-tab="a-featured"><i class="fa-solid fa-crown"></i> Featured Vendors</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-ads"><i class="fa-solid fa-bullhorn"></i> Advertisements</a></li>
-      <li><a href="javascript:void(0)" data-tab="a-reports"><i class="fa-solid fa-chart-line"></i> Reports & Analytics</a></li>
-    </ul>
   </aside>
-
   <main class="dash-main">
+    <div class="demo-note"><i class="fa-solid fa-circle-info"></i><span>Sample data. Connect the EventHub API to manage the live marketplace.</span></div>
 
-    <!-- OVERVIEW -->
-    <div id="a-overview" data-tab-panel-group="admin" class="tab-panel active">
-      <div class="dash-topbar"><div><h2 style="margin:0;">Platform Overview</h2><p style="margin:4px 0 0;">Snapshot of EventHub Zambia's marketplace activity.</p></div></div>
-      <div class="kpi-grid">
-        <div class="kpi-card"><i class="fa-solid fa-store"></i><strong id="kpi-vendors">1,214</strong><span>Total Vendors</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-users"></i><strong id="kpi-customers">9,860</strong><span>Customers</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-inbox"></i><strong id="kpi-enquiries">3,402</strong><span>Enquiries</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-calendar-check"></i><strong id="kpi-bookings">1,568</strong><span>Bookings</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-star"></i><strong id="kpi-reviews">6,204</strong><span>Reviews</span></div>
-        <div class="kpi-card"><i class="fa-solid fa-hourglass-half"></i><strong id="kpi-pending">7</strong><span>Pending Approvals</span></div>
+    <section id="a-overview" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><div><h2>Marketplace overview</h2><p class="muted" style="margin:4px 0 0">Last 30 days across all cities.</p></div><button class="btn btn-ghost" id="export"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button></div>
+      <div class="kpis">
+        <div class="kpi"><span>Active vendors</span><b>1,214</b><small>+64 this month</small></div>
+        <div class="kpi"><span>Registered planners</span><b>9,860</b><small>+812</small></div>
+        <div class="kpi"><span>Enquiries sent</span><b>3,402</b><small>+21%</small></div>
+        <div class="kpi"><span>Ad revenue</span><b>K48,600</b><small>+K6,300</small></div>
       </div>
+      <div class="split" style="gap:20px;grid-template-columns:1.4fr 1fr;align-items:stretch">
+        <div class="card"><h3 style="font-size:1.2rem">Enquiries per month</h3><div class="chart" id="a-chart"></div><div style="height:24px"></div></div>
+        <div class="card"><h3 style="font-size:1.2rem">Vendors by city</h3><div id="by-city"></div></div>
+      </div>
+    </section>
 
-      <div class="panel">
-        <div class="panel-head"><h4 style="margin:0;">Vendors by Category</h4></div>
-        <div class="rating-bar-row"><span style="width:170px;">Venues & Event Centres</span><div class="rating-bar"><span style="width:82%"></span></div><span>210</span></div>
-        <div class="rating-bar-row"><span style="width:170px;">Photo & Video</span><div class="rating-bar"><span style="width:71%"></span></div><span>184</span></div>
-        <div class="rating-bar-row"><span style="width:170px;">Caterers & Chefs</span><div class="rating-bar"><span style="width:68%"></span></div><span>176</span></div>
-        <div class="rating-bar-row"><span style="width:170px;">MCs & DJs</span><div class="rating-bar"><span style="width:65%"></span></div><span>168</span></div>
-        <div class="rating-bar-row"><span style="width:170px;">Makeup Artists</span><div class="rating-bar"><span style="width:55%"></span></div><span>143</span></div>
-      </div>
+    <section id="a-approvals" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>Waiting for approval</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Business</th><th>Category</th><th>City</th><th>Applied</th><th>Documents</th><th></th></tr></thead><tbody id="ap-rows"></tbody></table></div>
+    </section>
 
-      <div class="panel">
-        <div class="panel-head"><h4 style="margin:0;">Recent Vendor Applications</h4><a href="javascript:void(0)" class="jump-approvals" style="font-size:.85rem;color:var(--gold-dark);font-weight:600;">Review all</a></div>
-        <table class="data-table">
-          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Submitted</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=100&auto=format&fit=crop">Mama Beulah's Kitchen</td><td>Caterer</td><td>Lusaka</td><td>2 days ago</td><td><span class="status-pill pending">Pending</span></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents</td><td>Ndola</td><td>3 days ago</td><td><span class="status-pill pending">Pending</span></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=100&auto=format&fit=crop">Royal Ride Car Hire</td><td>Car Hire</td><td>Lusaka</td><td>5 days ago</td><td><span class="status-pill approved">Approved</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section id="a-vendors" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>All vendors</h2><div class="searchbox" style="max-width:320px"><i class="fa-solid fa-magnifying-glass"></i><label class="sr-only" for="a-q">Search vendors</label><input class="input" id="a-q" type="search" placeholder="Search vendors"></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Vendor</th><th>City</th><th>Rating</th><th>Status</th><th>Featured</th><th></th></tr></thead><tbody id="v-rows"></tbody></table></div>
+    </section>
 
-    <!-- APPROVALS -->
-    <div id="a-approvals" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Vendor Approvals</h2></div>
-      <div class="panel">
-        <p style="font-size:.85rem;">New vendor registrations must be reviewed and approved before they appear publicly on EventHub.</p>
-        <table class="data-table">
-          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody id="approvals-tbody">
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=100&auto=format&fit=crop">Mama Beulah's Kitchen</td><td>Caterer & Chef</td><td>Chelston, Lusaka</td><td>2 days ago</td><td><span class="status-pill pending">Pending</span></td>
-              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents, Chairs & Tables</td><td>Ndola Central</td><td>3 days ago</td><td><span class="status-pill pending">Pending</span></td>
-              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=100&auto=format&fit=crop">Bantu Beats Entertainment</td><td>MC & DJ</td><td>Kitwe</td><td>4 days ago</td><td><span class="status-pill pending">Pending</span></td>
-              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=100&auto=format&fit=crop">Glow Up Studio</td><td>Makeup Artist</td><td>Livingstone</td><td>6 days ago</td><td><span class="status-pill pending">Pending</span></td>
-              <td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button><button title="View"><i class="fa-solid fa-eye"></i></button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section id="a-claims" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>Claims & reports</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Type</th><th>Business</th><th>From</th><th>Details</th><th></th></tr></thead><tbody id="cl-rows">
+        <tr><td><span class="tag">Claim</span></td><td>Zambezi Sound & Light</td><td>m.zulu@zsl.co.zm</td><td>PACRA 120230045871</td><td class="row"><button class="btn btn-primary btn-sm" data-resolve="Claim approved">Approve</button><button class="btn btn-ghost btn-sm" data-resolve="Claim rejected">Reject</button></td></tr>
+        <tr><td><span class="tag red">Report</span></td><td>Sharp Cuts Studio</td><td>Planner #4412</td><td>Didn’t show up on the day</td><td class="row"><button class="btn btn-primary btn-sm" data-resolve="Vendor contacted">Contact vendor</button><button class="btn btn-ghost btn-sm" data-resolve="Report dismissed">Dismiss</button></td></tr>
+      </tbody></table></div>
+    </section>
 
-    <!-- VENDORS -->
-    <div id="a-vendors" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">All Vendors (1,214)</h2></div>
-      <div class="results-bar">
-        <input type="text" class="form-control" placeholder="Search vendors…" style="max-width:280px;">
-        <select style="border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--off-white);">
-          <option>All Categories</option><option>Venues</option><option>Catering</option><option>Photography</option>
-        </select>
-      </div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Business</th><th>Category</th><th>Location</th><th>Type</th><th>Rating</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop">Silverleaf Gardens</td><td>Venue</td><td>Lusaka</td><td>Verified</td><td>4.8 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1571266028243-e4c8f8b2f3a6?q=80&w=100&auto=format&fit=crop">DJ Mwansa Live</td><td>MC & DJ</td><td>Lusaka</td><td>Verified</td><td>4.9 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=100&auto=format&fit=crop">Golden Aisle Decor</td><td>Decorator</td><td>Lusaka</td><td>Verified</td><td>5.0 ★</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=100&auto=format&fit=crop">Copperbelt Tents & Chairs</td><td>Tents</td><td>Ndola</td><td>Discovered</td><td>4.4 ★</td><td><span class="status-pill pending">Pending</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-          </tbody>
-        </table>
-        <div class="pagination"><a href="#" class="active">1</a><a href="#">2</a><a href="#">3</a><a href="#">…</a><a href="#">122</a></div>
-      </div>
-    </div>
+    <section id="a-reviews" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>Reviews to check</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Vendor</th><th>Rating</th><th>Review</th><th>Flag</th><th></th></tr></thead><tbody>
+        <tr><td>DJ Mwansa Live</td><td>1★</td><td>“Worst DJ ever, call 0977…”</td><td><span class="tag red">Contains phone number</span></td><td class="row"><button class="btn btn-ghost btn-sm" data-resolve="Review removed">Remove</button><button class="btn btn-primary btn-sm" data-resolve="Review published">Publish</button></td></tr>
+        <tr><td>Golden Aisle Decor</td><td>5★</td><td>“Amazing amazing amazing”</td><td><span class="tag">Possible duplicate</span></td><td class="row"><button class="btn btn-ghost btn-sm" data-resolve="Review removed">Remove</button><button class="btn btn-primary btn-sm" data-resolve="Review published">Publish</button></td></tr>
+      </tbody></table></div>
+    </section>
 
-    <!-- CUSTOMERS -->
-    <div id="a-customers" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Customers (9,860)</h2></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Enquiries Sent</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop">Chileshe Banda</td><td>chileshe@example.com</td><td>Jan 2026</td><td>4</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop">Natasha Mumba</td><td>natasha@example.com</td><td>Feb 2026</td><td>2</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop">Mwansa Phiri</td><td>mwansa@example.com</td><td>Mar 2026</td><td>7</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-eye"></i></button><button data-row-action="delete"><i class="fa-solid fa-ban"></i></button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section id="a-categories" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>Categories</h2><button class="btn btn-primary" data-modal="#cat-modal"><i class="fa-solid fa-plus"></i> Add category</button></div>
+      <div class="cat-list" id="a-cats"></div>
+    </section>
 
-    <!-- CATEGORIES -->
-    <div id="a-categories" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Categories</h2><button class="btn btn-gold" data-modal-open="#add-category-modal"><i class="fa-solid fa-plus"></i> Add Category</button></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Category</th><th>Vendors</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr><td><i class="fa-solid fa-landmark text-gold"></i> Venues & Event Centres</td><td>210</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-microphone text-gold"></i> MCs & DJs</td><td>168</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-camera text-gold"></i> Photographers & Videographers</td><td>184</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-music text-gold"></i> Choreographers</td><td>52</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-car text-gold"></i> Car Hire & Car Decoration</td><td>97</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-palette text-gold"></i> Makeup Artists</td><td>143</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-scissors text-gold"></i> Barbers & Hairdressers</td><td>121</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-shirt text-gold"></i> Tailors & Fashion Designers</td><td>88</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-crown text-gold"></i> Matrons</td><td>34</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-utensils text-gold"></i> Caterers & Chefs</td><td>176</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-cake-candles text-gold"></i> Cakes</td><td>75</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-chair text-gold"></i> Chairs & Tables</td><td>64</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-campground text-gold"></i> Tents</td><td>38</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-fire-burner text-gold"></i> Pots & Chafing Dishes</td><td>29</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-volume-high text-gold"></i> Sound & Lighting</td><td>91</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-star text-gold"></i> Event Decorators</td><td>112</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-ring text-gold"></i> Wedding Planners</td><td>58</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-            <tr><td><i class="fa-solid fa-ellipsis text-gold"></i> Other Event Services</td><td>26</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button><i class="fa-solid fa-pen"></i></button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section id="a-featured" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>Featured vendors & ads</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Placement</th><th>Vendor</th><th>Runs until</th><th>Price</th><th>Clicks</th></tr></thead><tbody>
+        <tr><td>Home — Featured this month</td><td>Silverleaf Gardens</td><td>31 Dec 2026</td><td class="price">K450/mo</td><td>1,204</td></tr>
+        <tr><td>Home — Featured this month</td><td>Chanda Lens Studio</td><td>31 Dec 2026</td><td class="price">K450/mo</td><td>980</td></tr>
+        <tr><td>Top of Catering · Lusaka</td><td>Mama Beulah’s Kitchen</td><td>15 Jan 2027</td><td class="price">K300/mo</td><td>642</td></tr>
+        <tr><td>Banner — Vendors page</td><td>Bliss Weddings Zambia</td><td>28 Feb 2027</td><td class="price">K1,200/mo</td><td>2,311</td></tr>
+      </tbody></table></div>
+    </section>
 
-    <!-- LOCATIONS -->
-    <div id="a-locations" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Locations</h2><button class="btn btn-gold"><i class="fa-solid fa-plus"></i> Add Location</button></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>City</th><th>Vendors</th><th>Customers</th></tr></thead>
-          <tbody>
-            <tr><td>Lusaka</td><td>612</td><td>5,204</td></tr>
-            <tr><td>Ndola</td><td>184</td><td>1,340</td></tr>
-            <tr><td>Kitwe</td><td>163</td><td>1,180</td></tr>
-            <tr><td>Livingstone</td><td>98</td><td>702</td></tr>
-            <tr><td>Kabwe</td><td>74</td><td>510</td></tr>
-            <tr><td>Chingola</td><td>52</td><td>398</td></tr>
-            <tr><td>Solwezi</td><td>31</td><td>226</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- CLAIMS -->
-    <div id="a-claims" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Business Claims</h2></div>
-      <div class="panel">
-        <p style="font-size:.85rem;">Requests from business owners to claim an externally discovered listing (via Google Places) as their own verified profile.</p>
-        <table class="data-table">
-          <thead><tr><th>Business</th><th>Claimant</th><th>Evidence</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td>Mama Beulah's Kitchen</td><td>Beulah Tembo</td><td>Business registration doc</td><td>1 day ago</td><td><span class="status-pill pending">Pending</span></td><td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button></td></tr>
-            <tr><td>Copperbelt Tents & Chairs</td><td>Joseph Kunda</td><td>Utility bill + NRC</td><td>4 days ago</td><td><span class="status-pill pending">Pending</span></td><td class="table-actions"><button data-row-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button><button data-row-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ENQUIRIES -->
-    <div id="a-enquiries" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">All Enquiries (3,402)</h2></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Customer</th><th>Vendor</th><th>Date Sent</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Chileshe Banda</td><td>Silverleaf Gardens</td><td>14 Dec 2026</td><td><span class="status-pill new">New</span></td></tr>
-            <tr><td>Natasha Mumba</td><td>Silverleaf Gardens</td><td>02 Jan 2027</td><td><span class="status-pill pending">Responded</span></td></tr>
-            <tr><td>Given Zulu</td><td>Golden Aisle Decor</td><td>18 Sep 2026</td><td><span class="status-pill approved">Booked</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- BOOKINGS -->
-    <div id="a-bookings" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">All Bookings (1,568)</h2></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Customer</th><th>Vendor</th><th>Event Date</th><th>Amount</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Mwansa Phiri</td><td>Silverleaf Gardens</td><td>20 Nov 2026</td><td>K8,500</td><td><span class="status-pill approved">Confirmed</span></td></tr>
-            <tr><td>Bwalya Chilufya</td><td>Silverleaf Gardens</td><td>05 Oct 2026</td><td>K16,000</td><td><span class="status-pill approved">Confirmed</span></td></tr>
-            <tr><td>Given Zulu</td><td>Golden Aisle Decor</td><td>18 Sep 2026</td><td>K6,000</td><td><span class="status-pill pending">Awaiting Deposit</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- REVIEWS -->
-    <div id="a-reviews" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Reviews (6,204)</h2></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Customer</th><th>Vendor</th><th>Rating</th><th>Comment</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr><td>Chileshe Banda</td><td>Silverleaf Gardens</td><td>5.0 ★</td><td>Beautiful venue…</td><td><span class="status-pill approved">Published</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-            <tr><td>Natasha Mumba</td><td>Silverleaf Gardens</td><td>4.0 ★</td><td>Great space, parking…</td><td><span class="status-pill approved">Published</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-            <tr><td>Anonymous</td><td>DJ Mwansa Live</td><td>1.0 ★</td><td>Flagged as spam</td><td><span class="status-pill pending">Flagged</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- FEATURED -->
-    <div id="a-featured" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Featured Vendors</h2><button class="btn btn-gold"><i class="fa-solid fa-plus"></i> Feature a Vendor</button></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Vendor</th><th>Category</th><th>Featured Until</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1478146059778-26028b07395a?q=80&w=100&auto=format&fit=crop">Golden Aisle Decor</td><td>Decorator</td><td>31 Dec 2026</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-            <tr><td class="td-vendor"><img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=100&auto=format&fit=crop">Bliss Weddings Zambia</td><td>Wedding Planner</td><td>15 Jan 2027</td><td><span class="status-pill approved">Active</span></td><td class="table-actions"><button data-row-action="delete"><i class="fa-solid fa-trash"></i></button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ADS -->
-    <div id="a-ads" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Advertisements</h2><button class="btn btn-gold"><i class="fa-solid fa-plus"></i> New Ad Campaign</button></div>
-      <div class="panel">
-        <table class="data-table">
-          <thead><tr><th>Campaign</th><th>Placement</th><th>Clicks</th><th>Impressions</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>Silverleaf Gardens — Homepage Banner</td><td>Homepage Hero</td><td>2,140</td><td>48,200</td><td><span class="status-pill approved">Running</span></td></tr>
-            <tr><td>Bliss Weddings — Category Spotlight</td><td>Wedding Planners Page</td><td>860</td><td>12,400</td><td><span class="status-pill pending">Scheduled</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- REPORTS -->
-    <div id="a-reports" data-tab-panel-group="admin" class="tab-panel">
-      <div class="dash-topbar"><h2 style="margin:0;">Reports & Platform Analytics</h2><button class="btn btn-outline-dark"><i class="fa-solid fa-file-export"></i> Export CSV</button></div>
-      <div class="grid grid-2">
-        <div class="panel">
-          <h4>Monthly New Vendors</h4>
-          <div class="rating-bar-row"><span>Apr</span><div class="rating-bar"><span style="width:40%"></span></div><span>62</span></div>
-          <div class="rating-bar-row"><span>May</span><div class="rating-bar"><span style="width:55%"></span></div><span>84</span></div>
-          <div class="rating-bar-row"><span>Jun</span><div class="rating-bar"><span style="width:48%"></span></div><span>71</span></div>
-          <div class="rating-bar-row"><span>Jul</span><div class="rating-bar"><span style="width:70%"></span></div><span>105</span></div>
-          <div class="rating-bar-row"><span>Aug</span><div class="rating-bar"><span style="width:88%"></span></div><span>132</span></div>
-        </div>
-        <div class="panel">
-          <h4>Enquiries → Bookings Conversion</h4>
-          <div class="rating-big" style="font-size:2.4rem;">46%</div>
-          <p style="font-size:.85rem;">Of the 3,402 enquiries sent this year, 1,568 converted into confirmed bookings.</p>
-          <div class="progress-track"><span style="width:46%"></span></div>
-        </div>
-      </div>
-      <div class="panel">
-        <h4>Top Performing Categories (by bookings)</h4>
-        <table class="data-table">
-          <thead><tr><th>Category</th><th>Bookings</th><th>Avg. Rating</th></tr></thead>
-          <tbody>
-            <tr><td>Venues & Event Centres</td><td>412</td><td>4.7 ★</td></tr>
-            <tr><td>Caterers & Chefs</td><td>388</td><td>4.6 ★</td></tr>
-            <tr><td>MCs & DJs</td><td>301</td><td>4.8 ★</td></tr>
-            <tr><td>Event Decorators</td><td>264</td><td>4.9 ★</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
+    <section id="a-events" class="dash-panel" data-panel-of="ad">
+      <div class="dash-top"><h2>Listed events</h2><a class="btn btn-ghost" href="events.html" target="_blank">View events page</a></div>
+      <div class="table-wrap"><table><thead><tr><th>Event</th><th>Date</th><th>City</th><th>Entry</th><th>RSVPs</th></tr></thead><tbody id="ev-rows"></tbody></table></div>
+    </section>
   </main>
 </div>
 
-<div class="modal-overlay" id="add-category-modal">
+<div class="modal" id="cat-modal" role="dialog" aria-modal="true" aria-labelledby="cm-title">
   <div class="modal-box">
-    <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-    <h3>Add Category</h3>
-    <form data-fake-submit data-success-message="Category added!">
-      <div class="form-group"><label>Category Name</label><input type="text" class="form-control" required></div>
-      <div class="form-group"><label>Icon (Font Awesome class)</label><input type="text" class="form-control" placeholder="fa-solid fa-star"></div>
-      <button type="submit" class="btn btn-gold btn-block">Save Category</button>
+    <button class="modal-x" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <h3 id="cm-title">Add a category</h3>
+    <form id="cat-form" novalidate>
+      <div class="field"><label for="cm-name">Category name</label><input id="cm-name" required placeholder="e.g. Ushers & Hostesses"><span class="err">Name the category.</span></div>
+      <button class="btn btn-primary btn-block" type="submit">Add category</button>
     </form>
   </div>
 </div>
-
+<div class="toast" role="status" aria-live="polite"><i class="fa-solid fa-circle-check"></i><span></span></div>
 <script src="assets/js/api.js"></script>
+<script src="assets/js/data.js"></script>
 <script src="assets/js/main.js"></script>
+
 <script>
-  document.querySelectorAll('.jump-approvals').forEach(function (el) {
-    el.addEventListener('click', function () {
-      document.querySelector('.dash-nav [data-tab="a-approvals"]').click();
-    });
-  });
+document.addEventListener('DOMContentLoaded', function () {
+  var D = EH_DATA;
+  var months = [['Jun', 1820], ['Jul', 1950], ['Aug', 2210], ['Sep', 2480], ['Oct', 2760], ['Nov', 3402]];
+  document.getElementById('a-chart').innerHTML = months.map(function (m, i) { return '<div class="' + (i === months.length - 1 ? 'hi' : '') + '" style="height:' + (m[1] / 3402 * 100) + '%" title="' + m[1] + ' enquiries"><span>' + m[0] + '</span></div>'; }).join('');
+  document.getElementById('by-city').innerHTML = [['Lusaka', 612], ['Kitwe', 168], ['Ndola', 155], ['Livingstone', 98], ['Kabwe', 64], ['Others', 117]].map(function (c) { return '<div class="budget-row"><span>' + c[0] + '</span><b>' + c[1] + '</b></div>'; }).join('');
 
-  // This page is browsable as a demo without logging in. If an admin *is*
-  // logged in (via login.html), swap the KPI cards and approvals queue for
-  // live API data instead of the bundled sample rows.
-  var isAdmin = EH_API.isLoggedIn() && EH_API.getUser() && EH_API.getUser().role === 'admin';
-
-  if (isAdmin) {
-    EH_API.adminStats().then(function (s) {
-      setText('kpi-vendors', s.total_vendors.toLocaleString());
-      setText('kpi-customers', s.total_customers.toLocaleString());
-      setText('kpi-enquiries', s.total_enquiries.toLocaleString());
-      setText('kpi-bookings', s.total_bookings.toLocaleString());
-      setText('kpi-reviews', s.total_reviews.toLocaleString());
-      setText('kpi-pending', s.pending_approvals.toLocaleString());
-      var badge = document.querySelector('.dash-nav [data-tab="a-approvals"] .badge');
-      if (badge) badge.textContent = s.pending_approvals;
-    }).catch(function () {});
-
-    loadApprovals();
-  } else {
-    var banner = document.createElement('div');
-    banner.className = 'panel';
-    banner.style.cssText = 'background:#fdf2d8;border-color:#f0d998;margin-bottom:20px;';
-    banner.innerHTML = '<strong>Demo mode.</strong> Showing sample data — <a href="login.html" style="color:var(--gold-dark);font-weight:700;">log in as admin@eventhub.zm</a> to manage live vendors, approvals and reports.';
-    var main = document.querySelector('.dash-main');
-    main.insertBefore(banner, main.firstChild.nextSibling);
+  var pending = [['Lusaka Ushers Co.', 'other', 'Lusaka', '2 days ago'], ['Kafue Gorge Events Venue', 'venues', 'Kabwe', '3 days ago'], ['Mpundu Photography', 'photography', 'Ndola', '4 days ago']];
+  function renderAp() {
+    document.getElementById('ap-rows').innerHTML = pending.map(function (p, i) { return '<tr><td><b>' + p[0] + '</b></td><td>' + D.category(p[1]).name + '</td><td>' + p[2] + '</td><td>' + p[3] + '</td><td><span class="tag em">PACRA + ID</span></td><td class="row"><button class="btn btn-primary btn-sm" data-ap="' + i + '" data-ok="1">Approve</button><button class="btn btn-ghost btn-sm" data-ap="' + i + '">Reject</button></td></tr>'; }).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">All caught up — no applications waiting.</td></tr>';
+    var c = document.getElementById('ap-count'); c.textContent = pending.length; c.hidden = !pending.length;
   }
+  document.getElementById('ap-rows').onclick = function (e) { var b = e.target.closest('[data-ap]'); if (!b) return; var p = pending.splice(+b.dataset.ap, 1)[0]; renderAp(); EH.toast(p[0] + (b.dataset.ok ? ' approved and now live' : ' rejected — applicant notified')); };
+  renderAp();
 
-  function setText(id, text) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = text;
+  var status = {};
+  function renderV() {
+    var q = document.getElementById('a-q').value.toLowerCase();
+    document.getElementById('v-rows').innerHTML = D.VENDORS.filter(function (v) { return v.name.toLowerCase().indexOf(q) > -1; }).map(function (v) {
+      var s = status[v.id] || (v.verified ? 'Active' : 'Unverified');
+      return '<tr><td><div class="cell-user"><img src="' + v.img.replace('w=900', 'w=100') + '" alt=""><span><b>' + EH.esc(v.name) + '</b><br><span class="muted" style="font-size:.82rem">' + D.category(v.cat).name + '</span></span></div></td><td>' + v.city + '</td><td><span class="rating"><i class="fa-solid fa-star"></i>' + v.rating.toFixed(1) + '</span></td><td><span class="tag ' + (s === 'Active' ? 'em' : s === 'Suspended' ? 'red' : '') + '">' + s + '</span></td><td>' + (v.featured ? '<i class="fa-solid fa-star" style="color:var(--gold-500)" aria-label="Featured"></i>' : '—') + '</td><td><button class="btn btn-ghost btn-sm" data-sus="' + v.id + '">' + (s === 'Suspended' ? 'Reinstate' : 'Suspend') + '</button></td></tr>';
+    }).join('');
   }
+  document.getElementById('a-q').oninput = renderV;
+  document.getElementById('v-rows').onclick = function (e) {
+    var b = e.target.closest('[data-sus]'); if (!b) return; var v = D.vendor(b.dataset.sus);
+    if (status[v.id] === 'Suspended') { delete status[v.id]; EH.toast(v.name + ' reinstated'); }
+    else if (confirm('Suspend ' + v.name + '? Their profile will be hidden from search until reinstated.')) { status[v.id] = 'Suspended'; EH.toast(v.name + ' suspended'); }
+    renderV();
+  };
+  renderV();
 
-  function loadApprovals() {
-    EH_API.adminVendors({ status: 'pending', per_page: 20 }).then(function (res) {
-      var tbody = document.getElementById('approvals-tbody');
-      if (!res.data.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:30px;">No pending applications right now.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = res.data.map(function (v) {
-        return '<tr data-vendor-id="' + v.id + '"><td class="td-vendor"><img src="' + (v.cover_path || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=100&auto=format&fit=crop') + '">' + v.business_name + '</td>' +
-          '<td>' + (v.category ? v.category.name : '—') + '</td><td>' + [v.area, v.city].filter(Boolean).join(', ') + '</td>' +
-          '<td>' + new Date(v.created_at).toLocaleDateString() + '</td><td><span class="status-pill pending">Pending</span></td>' +
-          '<td class="table-actions"><button data-live-action="approve" title="Approve"><i class="fa-solid fa-check"></i></button>' +
-          '<button data-live-action="reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>' +
-          '<a href="vendor-profile.html?slug=' + v.slug + '" target="_blank" title="View"><button type="button"><i class="fa-solid fa-eye"></i></button></a></td></tr>';
-      }).join('');
+  document.querySelector('.dash-main').addEventListener('click', function (e) { var b = e.target.closest('[data-resolve]'); if (b) { var tr = b.closest('tr'); tr.remove(); EH.toast(b.dataset.resolve); } });
 
-      tbody.querySelectorAll('[data-live-action]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var row = btn.closest('tr');
-          var id = row.getAttribute('data-vendor-id');
-          var status = btn.getAttribute('data-live-action') === 'approve' ? 'approved' : 'rejected';
-          EH_API.adminUpdateVendorStatus(id, status).then(function (res) {
-            EH_toast(res.data.business_name + ' ' + status + '.', status === 'approved' ? 'fa-circle-check' : 'fa-ban');
-            row.style.opacity = '0';
-            setTimeout(function () { row.remove(); }, 250);
-          }).catch(function (err) {
-            EH_toast(err.message || 'Action failed.', 'fa-triangle-exclamation');
-          });
-        });
-      });
-    }).catch(function () {});
-  }
+  var cats = D.CATEGORIES.slice();
+  function renderC() { document.getElementById('a-cats').innerHTML = cats.map(function (c) { return '<div class="cat"><span class="ic"><i class="fa-solid ' + (c.icon || 'fa-tag') + '"></i></span><span><b>' + EH.esc(c.name) + '</b><span>' + (c.count || 0) + ' vendors</span></span></div>'; }).join(''); }
+  document.getElementById('cat-form').onsubmit = function (e) { e.preventDefault(); if (!EH.validate(e.target)) return; cats.push({ name: e.target['cm-name'].value, icon: 'fa-tag', count: 0 }); renderC(); e.target.reset(); document.getElementById('cat-modal').classList.remove('open'); EH.toast('Category added'); };
+  renderC();
+
+  document.getElementById('ev-rows').innerHTML = D.EVENTS.map(function (e, i) { return '<tr><td><b>' + EH.esc(e.title) + '</b></td><td>' + new Date(e.date + 'T12:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + '</td><td>' + e.city + '</td><td>' + (e.price ? EH.kwacha(e.price) : 'Free') + '</td><td>' + [412, 96, 58, 140, 77][i] + '</td></tr>'; }).join('');
+
+  document.getElementById('export').onclick = function () {
+    var rows = [['Vendor', 'Category', 'City', 'Rating', 'Reviews', 'From (K)']].concat(D.VENDORS.map(function (v) { return [v.name, D.category(v.cat).name, v.city, v.rating, v.count, v.price]; }));
+    var csv = rows.map(function (r) { return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'eventhub-vendors.csv'; a.click();
+  };
+});
 </script>
 </body>
 </html>
