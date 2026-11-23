@@ -1,0 +1,79 @@
+<%- include('partials/head') %>
+<%
+  const groups = {};
+  for (const item of items) (groups[item.category] = groups[item.category] || []).push(item);
+  const icons = { Branding: 'pen', 'Social media': 'megaphone', Website: 'code', 'Print design': 'printer' };
+%>
+<section class="bg-section section-pad page-top quote-page">
+  <%- include('partials/bg', { image: 'bg-laptop-desk', overlay: 82, eager: true }) %>
+  <div class="container center narrow-text">
+    <h1 class="page-title" data-split>Instant quote estimator</h1>
+    <p class="lead-light" data-reveal="fade-up">Tick what you need and see a starting estimate straight away. Send it to us and we’ll confirm your final quote.</p>
+  </div>
+
+  <form class="container quote-layout" method="post" action="/quote" data-quote>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+
+    <div class="quote-main">
+      <%- include('partials/errors') %>
+      <% let step = 0; for (const [group, list] of Object.entries(groups)) { %>
+        <fieldset class="quote-group" data-reveal="fade-up">
+          <legend><span class="quote-group-icon" aria-hidden="true"><%- include('partials/icon', { name: icons[group] || 'star' }) %></span><%= group %></legend>
+          <div class="quote-items">
+            <% for (const item of list) { const on = picked[item.id] !== undefined; %>
+              <label class="quote-item<%= on ? ' is-on' : '' %>" data-item data-price="<%= item.price %>" data-name="<%= item.name %>">
+                <input type="checkbox" name="item_<%= item.id %>" value="1"<%= on ? ' checked' : '' %>>
+                <span class="quote-check" aria-hidden="true"><%- include('partials/icon', { name: 'check' }) %></span>
+                <span class="quote-item-text">
+                  <strong><%= item.name %></strong>
+                  <% if (item.description) { %><small><%= item.description %></small><% } %>
+                </span>
+                <span class="quote-item-price">from <%= lib.moneyShort(item.price) %><% if (item.unit) { %><small><%= item.unit %></small><% } %></span>
+                <% if (item.has_qty) { %>
+                  <span class="quote-qty">
+                    <span class="sr-only">Quantity for <%= item.name %></span>
+                    <input type="number" name="qty_<%= item.id %>" min="1" max="50" value="<%= picked[item.id] || 1 %>" aria-label="Quantity for <%= item.name %>" data-qty>
+                  </span>
+                <% } %>
+              </label>
+            <% } %>
+          </div>
+        </fieldset>
+      <% } %>
+
+      <fieldset class="quote-group quote-details" data-reveal="fade-up">
+        <legend><span class="quote-group-icon" aria-hidden="true"><%- include('partials/icon', { name: 'user' }) %></span>Your details</legend>
+        <div class="form-row">
+          <label>Full name*<input name="name" required autocomplete="name" value="<%= form.name || '' %>"></label>
+          <label>Email*<input type="email" name="email" required autocomplete="email" value="<%= form.email || '' %>"></label>
+        </div>
+        <div class="form-row">
+          <label>Phone / WhatsApp<input type="tel" name="phone" autocomplete="tel" value="<%= form.phone || '' %>"></label>
+          <label>Business / organisation<input name="company" autocomplete="organization" value="<%= form.company || '' %>"></label>
+        </div>
+        <label>When do you need it?
+          <select name="timeline">
+            <option value="">Choose a timeline</option>
+            <% for (const t of lib.TIMELINES) { %><option<%= form.timeline === t ? ' selected' : '' %>><%= t %></option><% } %>
+          </select>
+        </label>
+        <label>Anything else we should know? <span class="muted">(optional)</span><textarea name="notes" rows="3" placeholder="Your business, style ideas, quantities, deadlines…"><%= form.notes || '' %></textarea></label>
+      </fieldset>
+    </div>
+
+    <aside class="quote-summary" aria-live="polite">
+      <div class="quote-summary-card">
+        <span class="quote-summary-label">Your estimate</span>
+        <p class="quote-total"><small>from</small> <strong data-total>K0</strong></p>
+        <ul class="quote-lines" data-lines><li class="muted" data-empty>Tick the services you need.</li></ul>
+        <p class="quote-hint" data-package-hint hidden></p>
+        <button class="btn btn-gold btn-block btn-shine" type="submit">Send my estimate</button>
+        <p class="quote-fine">A starting estimate, not a final price. We confirm your quote after reviewing your request. 70% deposit, 30% on completion. Printing is quoted separately.</p>
+      </div>
+    </aside>
+  </form>
+  <script type="application/json" id="quote-packages"><%- JSON.stringify(packages.map((p) => ({ name: p.name, price: p.price, slug: p.slug }))).replace(/</g, '\\u003c') %></script>
+</section>
+<script src="<%= lib.asset('/js/quote.js') %>" defer></script>
+<%- include('partials/foot') %>

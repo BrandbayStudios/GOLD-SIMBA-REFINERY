@@ -37,6 +37,38 @@ const PACKAGES = [
   },
 ];
 
+// Items for the instant quote estimator (/quote); starting prices edited in Admin → Quote estimator.
+const ESTIMATE_ITEMS = [
+  ['Branding', 'Logo design', 1000, '', 0, 'Original logo with revisions'],
+  ['Branding', 'Logo guidelines & mockups', 300, '', 0, 'How to use your logo, shown on real items'],
+  ['Branding', 'Business description writing', 300, '', 0, 'Your story, written professionally'],
+  ['Branding', 'Business card design', 200, '', 0, ''],
+  ['Branding', 'Letterhead design', 200, '', 0, ''],
+  ['Branding', 'Email header / signature design', 150, '', 0, ''],
+  ['Branding', 'Company profile design (10–12 pages)', 1000, '', 0, 'For tenders, investors and clients'],
+  ['Branding', 'Full brand guidelines', 800, '', 0, 'Colours, fonts and rules for your brand'],
+  ['Social media', 'Social media post templates (set of 5)', 500, 'per set', 1, 'Editable, on-brand templates'],
+  ['Social media', 'Social media page setup', 300, '', 0, 'Profile, cover and bio for your pages'],
+  ['Social media', 'Social media management', 1500, 'per month', 1, 'Content planning and posting'],
+  ['Website', 'Business website (up to 5 pages)', 4500, '', 0, 'Mobile friendly, with contact form and WhatsApp button'],
+  ['Website', 'Extra website page', 400, 'per page', 1, ''],
+  ['Website', 'Online store (e-commerce)', 8000, '', 0, 'Sell products online'],
+  ['Website', 'Google Business Profile setup', 300, '', 0, 'Show up on Google Maps'],
+  ['Print design', 'Flyer or poster design', 300, 'per design', 1, 'Design only; printing quoted separately'],
+  ['Print design', 'Pull-up banner design', 350, 'per design', 1, ''],
+  ['Print design', 'Brochure design', 600, '', 0, ''],
+  ['Print design', 'Event branding kit', 1200, '', 0, 'Backdrop, banners and social graphics'],
+];
+
+function insertEstimateItems() {
+  ESTIMATE_ITEMS.forEach(([category, name, price, unit, hasQty, description], i) => {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (get('SELECT id FROM estimate_items WHERE slug = ?', slug)) return;
+    run('INSERT INTO estimate_items (slug, name, category, description, price, unit, has_qty, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      slug, name, category, description || null, price, unit || null, hasQty, i);
+  });
+}
+
 function insertPackages() {
   PACKAGES.forEach((p, i) => {
     const slug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -349,6 +381,7 @@ function seed() {
     }
 
     if (empty('packages')) insertPackages();
+    if (empty('estimate_items')) insertEstimateItems();
 
     if (empty('testimonials')) {
       TESTIMONIALS.forEach((t, i) =>
@@ -388,6 +421,10 @@ function backfillContent() {
   // One-time: add the packages to databases created before them.
   if (!getSettings().content_packages_v1) {
     transaction(() => { insertPackages(); setSetting('content_packages_v1', '1'); });
+  }
+  // One-time: add the quote estimator items to databases created before them.
+  if (!getSettings().content_estimator_v1) {
+    transaction(() => { insertEstimateItems(); setSetting('content_estimator_v1', '1'); });
   }
   // One-time: package contents revised by the studio (Nov 2026).
   if (!getSettings().content_packages_v2) {

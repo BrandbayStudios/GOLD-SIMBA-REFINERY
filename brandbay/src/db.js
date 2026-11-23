@@ -90,6 +90,19 @@ CREATE TABLE IF NOT EXISTS faqs (
   published INTEGER NOT NULL DEFAULT 1
 );
 
+CREATE TABLE IF NOT EXISTS estimate_items (
+  id INTEGER PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  description TEXT,
+  price REAL NOT NULL DEFAULT 0,
+  unit TEXT,
+  has_qty INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  published INTEGER NOT NULL DEFAULT 1
+);
+
 CREATE TABLE IF NOT EXISTS packages (
   id INTEGER PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,
@@ -333,6 +346,7 @@ db.exec(SCHEMA);
 // Columns added after the first release.
 const columns = (table) => db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
 if (!columns('projects').includes('gallery')) db.exec('ALTER TABLE projects ADD COLUMN gallery TEXT');
+if (!columns('service_requests').includes('estimate_amount')) db.exec('ALTER TABLE service_requests ADD COLUMN estimate_amount REAL');
 
 function all(sql, ...params) {
   return db.prepare(sql).all(...params);

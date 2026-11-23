@@ -321,3 +321,36 @@ test('packages page lists the starting prices and links into the quote form', as
   assert.match(apply, /<option value="Package — Business Launch \(from K4,500\)" selected>/);
   assert.match(await (await fetch(`${base}/sitemap.xml`)).text(), /\/packages</);
 });
+
+test('instant quote estimator prices the selection on the server and saves a lead', async () => {
+  const visitor = browser();
+  const page = await visitor.get('/quote');
+  assert.equal(page.status, 200);
+  assert.match(page.text, /Logo design/);
+  const logo = get("SELECT * FROM estimate_items WHERE slug = 'logo-design'");
+  const flyer = get("SELECT * FROM estimate_items WHERE slug = 'flyer-or-poster-design'");
+
+  const empty = await visitor.post('/quote', { name: 'Chipo', email: 'chipo@test.local' });
+  assert.equal(empty.status, 422);
+  assert.match(empty.text, /Tick at least one service/);
+
+  const sent = await visitor.post('/quote', {
+    name: 'Chipo Mwale', email: 'chipo@test.local', phone: '0977000000', timeline: 'Within 2 weeks',
+    [`item_${logo.id}`]: '1', [`item_${flyer.id}`]: '1', [`qty_${flyer.id}`]: '3',
+    notes: 'Fashion boutique', price: '1', // a tampered price field is ignored
+  });
+  assert.equal(sent.status, 302);
+  assert.equal(sent.location, '/apply/thank-you');
+  const lead = get("SELECT * FROM service_requests WHERE email = 'chipo@test.local'");
+  assert.equal(lead.estimate_amount, logo.price + flyer.price * 3);
+  assert.match(lead.service, /Instant estimate — 2 services/);
+  assert.match(lead.description, /Flyer or poster design × 3/);
+  assert.match(lead.description, /Fashion boutique/);
+  const thanks = await visitor.get('/apply/thank-you');
+  assert.match(thanks.text, new RegExp(`from K${(logo.price + flyer.price * 3).toLocaleString('en-US')}`));
+
+  const admin = browser();
+  await admin.login('admin@test.local', 'admin-password');
+  const view = await admin.get(`/admin/requests/${lead.id}`);
+  assert.match(view.text, /Instant estimate/);
+});

@@ -217,6 +217,91 @@ router.get('/apply', (req, res) => {
   });
 });
 
+// Saves a service request (from /apply or /quote), emails the studio and the client, and returns its reference.
+function createRequest(req, form, attachment = null) {
+  const userId = req.user?.id ?? get('SELECT id FROM users WHERE email = ?', form.email)?.id ?? null;
+  const request = transaction(() => {
+    const { lastInsertRowid: id } = run(
+      `INSERT INTO service_requests (user_id, name, email, phone, company, service, budget, timeline, description, attachment, estimate_amount)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      userId, form.name, form.email, form.phone, form.company, form.service, form.budget, form.timeline,
+      form.description, attachment, form.estimate ?? null,
+    );
+    const reference = lib.makeReference('BB', id);
+    run('UPDATE service_requests SET reference = ? WHERE id = ?', reference, id);
+    return { id, reference };
+  });
+
+  mailer.notifyStudio(`New service request ${request.reference}: ${form.service}`,
+    `${form.name} <${form.email}> ${form.phone}\nCompany: ${form.company}\nService: ${form.service}\nBudget: ${form.budget}\nTimeline: ${form.timeline}\n\n${form.description}\n\n${config.baseUrl}/admin/requests/${request.id}`);
+  mailer.send({
+    to: form.email,
+    subject: `We received your request (${request.reference})`,
+    text: `Hi ${form.name},\n\nThank you for applying for ${form.service} with BrandBay Innovation Studios. Your reference is ${request.reference}.${form.estimate ? `\n\nYour instant estimate: from ${lib.moneyShort(form.estimate)}. We will confirm your final quote after reviewing your request.` : ''}\n\nOur team will review your request and get back to you with a quote. You can follow progress by creating an account with this email address at ${config.baseUrl}/register.\n\nBrandBay Innovation Studios`,
+  });
+
+  req.session.lastRequest = request.reference;
+  req.session.lastEstimate = form.estimate ?? null;
+  return request;
+}
+
+const estimateItems = () => all('SELECT * FROM estimate_items WHERE published = 1 ORDER BY sort_order, id');
+
+// Reads ticked items and quantities from the form and prices them from the database (never from the browser).
+function readEstimate(body) {
+  const lines = [];
+  for (const item of estimateItems()) {
+    if (!body[`item_${item.id}`]) continue;
+    const qty = item.has_qty ? Math.min(50, Math.max(1, parseInt(body[`qty_${item.id}`], 10) || 1)) : 1;
+    lines.push({ item, qty, amount: item.price * qty });
+  }
+  return { lines, total: lines.reduce((sum, l) => sum + l.amount, 0) };
+}
+
+router.get('/quote', (req, res) => {
+  res.render('quote', {
+    title: 'Instant Quote Estimator — Branding, Web & Design Prices',
+    description: 'Tick the branding, website, social media and print design services you need and see an instant price estimate from BrandBay Innovation Studios in Lusaka, Zambia.',
+    schema: [seo.breadcrumbs([['Instant quote', '/quote']])],
+    items: estimateItems(),
+    packages: packages(),
+    form: { name: req.user?.name, email: req.user?.email, phone: req.user?.phone, company: req.user?.company },
+    picked: {},
+  });
+});
+
+router.post('/quote', formLimiter, (req, res) => {
+  if (req.body.website) return res.redirect('/');
+  const form = {
+    name: lib.clean(req.body.name, 120),
+    email: lib.clean(req.body.email, 200),
+    phone: lib.clean(req.body.phone, 40),
+    company: lib.clean(req.body.company, 160),
+    timeline: lib.clean(req.body.timeline, 60),
+    notes: lib.clean(req.body.notes, 4000),
+  };
+  const { lines, total } = readEstimate(req.body);
+  const errors = [];
+  if (!lines.length) errors.push('Tick at least one service to get an estimate.');
+  if (!form.name) errors.push('Please enter your full name.');
+  if (!lib.isEmail(form.email)) errors.push('Please enter a valid email address.');
+  if (errors.length) {
+    const picked = Object.fromEntries(lines.map((l) => [l.item.id, l.qty]));
+    return res.status(422).render('quote', {
+      title: 'Instant Quote Estimator', items: estimateItems(), packages: packages(), form, picked, errors,
+    });
+  }
+  const list = lines.map((l) => `• ${l.item.name}${l.qty > 1 ? ` × ${l.qty}` : ''} — ${lib.moneyShort(l.amount)}`).join('\n');
+  createRequest(req, {
+    ...form,
+    service: `Instant estimate — ${lines.length} service${lines.length === 1 ? '' : 's'}`,
+    budget: `Estimate from ${lib.moneyShort(total)}`,
+    description: `Services selected in the instant quote estimator:\n${list}\n\nEstimated total: from ${lib.moneyShort(total)}${form.notes ? `\n\nNotes from the client:\n${form.notes}` : ''}`,
+    estimate: total,
+  });
+  res.redirect('/apply/thank-you');
+});
+
 router.post('/apply', formLimiter, documentUpload.single('attachment'), verifyCsrf, async (req, res) => {
   const form = {
     name: lib.clean(req.body.name, 120),
@@ -241,35 +326,14 @@ router.post('/apply', formLimiter, documentUpload.single('attachment'), verifyCs
     return res.status(422).render('apply', { title: 'Apply for a Service', services: services(), packageOptions: packages().map(packageService), form, errors });
   }
 
-  const userId = req.user?.id ?? get('SELECT id FROM users WHERE email = ?', form.email)?.id ?? null;
-  const request = transaction(() => {
-    const { lastInsertRowid: id } = run(
-      `INSERT INTO service_requests (user_id, name, email, phone, company, service, budget, timeline, description, attachment)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      userId, form.name, form.email, form.phone, form.company, form.service, form.budget, form.timeline,
-      form.description, req.file ? path.basename(req.file.path) : null,
-    );
-    const reference = lib.makeReference('BB', id);
-    run('UPDATE service_requests SET reference = ? WHERE id = ?', reference, id);
-    return { id, reference };
-  });
-
-  mailer.notifyStudio(`New service request ${request.reference}: ${form.service}`,
-    `${form.name} <${form.email}> ${form.phone}\nCompany: ${form.company}\nService: ${form.service}\nBudget: ${form.budget}\nTimeline: ${form.timeline}\n\n${form.description}\n\n${config.baseUrl}/admin/requests/${request.id}`);
-  mailer.send({
-    to: form.email,
-    subject: `We received your request (${request.reference})`,
-    text: `Hi ${form.name},\n\nThank you for applying for ${form.service} with BrandBay Innovation Studios. Your reference is ${request.reference}.\n\nOur team will review your request and get back to you with a quote. You can follow progress by creating an account with this email address at ${config.baseUrl}/register.\n\nBrandBay Innovation Studios`,
-  });
-
-  req.session.lastRequest = request.reference;
+  createRequest(req, form, req.file ? path.basename(req.file.path) : null);
   res.redirect('/apply/thank-you');
 });
 
 router.get('/apply/thank-you', (req, res) => {
   const reference = req.session.lastRequest;
   if (!reference) return res.redirect('/apply');
-  res.render('thank-you', { title: 'Request received', reference, noindex: true });
+  res.render('thank-you', { title: 'Request received', reference, estimate: req.session.lastEstimate, noindex: true });
 });
 
 // Shareable, unguessable link to a document, for clients without an account.
@@ -297,6 +361,7 @@ router.get('/sitemap.xml', (req, res) => {
     { loc: '/', priority: '1.0', images: album('logos', true).map((g) => [g.image, `${g.title} logo design`]) },
     { loc: '/services', priority: '0.9' },
     { loc: '/packages', priority: '0.9' },
+    { loc: '/quote', priority: '0.8' },
     { loc: '/projects', priority: '0.8' },
     { loc: '/gallery', priority: '0.8', images: [...album('logos'), ...album('posters')].map((g) => [g.image, g.title]) },
     { loc: '/about', priority: '0.7', images: album('compliance').map((g) => [g.image, g.title]) },

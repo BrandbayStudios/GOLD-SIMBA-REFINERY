@@ -63,7 +63,7 @@
   <div class="container package-grid compact" data-reveal-group>
     <% for (const pkg of packages) { %><%- include('partials/package-card', { pkg, compact: true }) %><% } %>
   </div>
-  <p class="center" data-reveal="fade-up"><a class="link-arrow" href="/packages">Compare what’s included <%- include('partials/icon', { name: 'arrow' }) %></a></p>
+  <p class="center package-links" data-reveal="fade-up"><a class="link-arrow" href="/packages">Compare what’s included <%- include('partials/icon', { name: 'arrow' }) %></a><a class="btn btn-gold btn-shine" href="/quote">Get an instant estimate</a></p>
 </section>
 <% } %>
 
