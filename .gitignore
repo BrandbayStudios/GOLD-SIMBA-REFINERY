@@ -10,3 +10,9 @@
 .swarm/*.db
 .swarm/*.ruvector
 .claude/settings.json.bak*
+
+# Ruflo per-session runtime state
+.claude-flow/mods/session.json
+.claude-flow/policy/state.json
+.claude-flow/protector-mod/alerts.jsonl
+.claude-flow/protector-mod/status.json
