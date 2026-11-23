@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Event planner — EventHub Zambia</title>
+<title>Event planner | EventHub Zambia</title>
 <meta name="description" content="A free checklist and kwacha budget tracker for weddings, kitchen parties and corporate events.">
 <meta name="theme-color" content="#063B2E">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -19,7 +19,7 @@
   <div class="wrap">
     <div class="crumbs"><a href="index.html">Home</a> / Planner</div>
     <h1>Your event planner</h1>
-    <p>Tick off tasks, track your budget in kwacha, and jump straight to vendors for each job. Everything saves on this device.</p>
+    <p>A checklist and a budget in kwacha. It saves on this phone or computer, so you can come back to it.</p>
   </div>
 </section>
 <div class="band thin"></div>
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join('') : '<p class="muted" style="margin:0">Tap the heart on any vendor to keep them here. <a href="vendors.html">Browse vendors</a></p>';
     save();
   }
-  document.getElementById('tasks').addEventListener('change', function (e) { var c = e.target; if (c.dataset.g == null) return; st.groups[c.dataset.g].tasks[c.dataset.t].done = c.checked; render(); if (c.checked) EH.toast('Nice — one less thing to do'); });
+  document.getElementById('tasks').addEventListener('change', function (e) { var c = e.target; if (c.dataset.g == null) return; st.groups[c.dataset.g].tasks[c.dataset.t].done = c.checked; render(); if (c.checked) EH.toast('Marked as done'); });
   typeSel.onchange = function () { if (confirm('Switch to the ' + typeSel.options[typeSel.selectedIndex].text.toLowerCase() + ' checklist? Your ticked tasks will reset.')) { st = fresh(typeSel.value); render(); } else typeSel.value = st.type; };
   dateIn.onchange = function () { st.date = dateIn.value; render(); };
   totalIn.oninput = function () { st.total = Math.max(0, +totalIn.value || 0); render(); };

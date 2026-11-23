@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EventHub Zambia — Find trusted event vendors</title>
+<title>EventHub Zambia: wedding and event vendors</title>
 <meta name="description" content="Find, compare and book trusted event vendors across Zambia: venues, MCs and DJs, photographers, caterers, decorators, cakes and more.">
 <meta name="theme-color" content="#063B2E">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -18,8 +18,8 @@
 <main>
 <section class="hero">
   <div class="wrap">
-    <h1>Every vendor your celebration needs, in one place.</h1>
-    <p class="lead">Compare 1,200 verified venues, caterers, photographers, DJs and decorators across Zambia — then call, WhatsApp or request a quote in a tap.</p>
+    <h1>Find wedding and event vendors in Zambia</h1>
+    <p class="lead">Venues, caterers, photographers, DJs and decorators in Lusaka, the Copperbelt and Livingstone. Check their prices and reviews, then call or WhatsApp them yourself. No booking fees.</p>
 
     <form class="madlib" id="madlib" action="vendors.html">
       <p class="madlib-sentence">
@@ -31,36 +31,20 @@
         <span class="slot"><label class="sr-only" for="ml-cat">Vendor type</label><select id="ml-cat" name="category"><option value="">all kinds of vendors</option></select></span>.
       </p>
       <div class="madlib-actions">
-        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Show matching vendors</button>
-        <button class="btn btn-ghost" type="button" id="near-me"><i class="fa-solid fa-location-crosshairs"></i> Use my location</button>
-        <span class="hint" id="near-hint">Change any underlined word to refine your search.</span>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Show vendors</button>
+        <button class="btn btn-ghost" type="button" id="near-me"><i class="fa-solid fa-location-crosshairs"></i> Near me</button>
+        <span class="hint" id="near-hint"></span>
       </div>
     </form>
-
-    <div class="hero-facts">
-      <div><b>1,214</b>verified vendors</div>
-      <div><b>18</b>service categories</div>
-      <div><b>8 cities</b>from Lusaka to Livingstone</div>
-      <div><b>4.8 ★</b>average vendor rating</div>
-    </div>
   </div>
   <div class="band"></div>
 </section>
 
-<div class="wrap">
-  <div class="trust">
-    <div><i class="fa-solid fa-shield-halved"></i><div><b>Checked before listing</b><span>Our team verifies every business licence and portfolio.</span></div></div>
-    <div><i class="fa-solid fa-star"></i><div><b>Reviews from real clients</b><span>Only customers who booked can leave a rating.</span></div></div>
-    <div><i class="fa-brands fa-whatsapp"></i><div><b>Talk to vendors directly</b><span>Call or WhatsApp — no middleman, no booking fee.</span></div></div>
-    <div><i class="fa-solid fa-list-check"></i><div><b>Free planning tools</b><span>Checklist, budget tracker and saved shortlists.</span></div></div>
-  </div>
-</div>
-
 <section class="section">
   <div class="wrap">
     <div class="head">
-      <div><h2>Browse by category</h2><p>Eighteen categories covering everything from the venue to the chafing dishes.</p></div>
-      <a class="btn btn-ghost" href="vendors.html">See all vendors</a>
+      <h2>Browse by category</h2>
+      <a href="vendors.html">All vendors</a>
     </div>
     <div class="cat-list" id="cat-list"></div>
   </div>
@@ -69,68 +53,51 @@
 <section class="section bg-mint">
   <div class="wrap">
     <div class="head">
-      <div><h2>Featured this month</h2><p>Top-rated vendors hand-picked by the EventHub team for the December wedding season.</p></div>
-      <a class="btn btn-primary" href="vendors.html?sort=rating">Browse top rated</a>
+      <div><h2>Popular this December</h2><p>Wedding season is busy. These vendors are getting the most enquiries right now, so ask early.</p></div>
+      <a href="vendors.html?sort=rating">See top rated</a>
     </div>
     <div class="v-grid" data-vendor-grid="featured" data-limit="8"></div>
   </div>
 </section>
 
-<section class="section" id="how-it-works">
-  <div class="wrap">
-    <div class="head"><div><h2>How EventHub works</h2><p>From first idea to final dance, in three steps.</p></div></div>
-    <div class="steps">
-      <div class="step"><h3>Search and shortlist</h3><p>Filter by category, city, price and rating. Tap the heart on any vendor to save them to your shortlist.</p></div>
-      <div class="step"><h3>Compare and ask</h3><p>Look through portfolios, packages and reviews. Request a quote, call, or message on WhatsApp straight from the profile.</p></div>
-      <div class="step"><h3>Book and celebrate</h3><p>Confirm with your chosen vendors, track every task in your planner, and leave a review after the big day.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="section deep">
-  <div class="wrap split">
-    <div class="split-img"><img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1100&auto=format&fit=crop" alt="Couple at an outdoor wedding reception with string lights" loading="lazy"></div>
-    <div>
-      <h2>Your whole event, planned on one page</h2>
-      <p>The EventHub planner turns a big day into a list you can finish. It comes pre-filled for weddings, kitchen parties and corporate events.</p>
-      <ul class="checks">
-        <li><i class="fa-solid fa-check"></i>A month-by-month checklist with a vendor link for every task</li>
-        <li><i class="fa-solid fa-check"></i>A budget tracker in kwacha that splits your spend by category</li>
-        <li><i class="fa-solid fa-check"></i>Your saved vendors, ready to compare side by side</li>
-      </ul>
-      <a class="btn btn-gold" href="planner.html" style="margin-top:12px">Open the planner</a>
-    </div>
-  </div>
-</section>
-
 <section class="section">
-  <div class="wrap">
-    <div class="head">
-      <div><h2>Upcoming events</h2><p>Expos, showcases and workshops for couples, planners and event businesses.</p></div>
-      <a class="btn btn-ghost" href="events.html">All events</a>
+  <div class="wrap split">
+    <div>
+      <h2>Latest reviews</h2>
+      <p>Written by people who booked through EventHub.</p>
+      <div id="latest-reviews"></div>
+      <a href="vendors.html?sort=reviews">Most reviewed vendors</a>
     </div>
-    <div class="ev-list" id="home-events"></div>
+    <div>
+      <div class="split-img"><img src="https://images.unsplash.com/photo-1525258946800-98cfd641d0de?q=80&w=1100&auto=format&fit=crop" alt="Bridal bouquet of peach roses" loading="lazy"></div>
+      <p class="planner-note"><b>Planning a wedding or kitchen party?</b> Our free <a href="planner.html">planner</a> gives you a checklist and a budget in kwacha, with links to vendors for each job.</p>
+    </div>
   </div>
 </section>
 
 <section class="section bg-paper">
   <div class="wrap">
-    <div class="head"><div><h2>What clients say</h2></div></div>
-    <div class="quotes">
-      <figure class="quote"><blockquote>“We booked our venue, photographer and caterer in one weekend. Seeing reviews from other Lusaka couples made the decision easy.”</blockquote><cite>Mutale & Joseph<span>Wedding, Kabulonga</span></cite></figure>
-      <figure class="quote"><blockquote>“I found a matron and a cake maker for my sister’s kitchen party the same afternoon — both answered on WhatsApp within minutes.”</blockquote><cite>Chipo Banda<span>Kitchen party, Ndola</span></cite></figure>
-      <figure class="quote"><blockquote>“Since listing on EventHub, half of our December bookings come through the site. The enquiry inbox keeps everything in one place.”</blockquote><cite>Golden Aisle Decor<span>Vendor since 2025</span></cite></figure>
+    <div class="head">
+      <div><h2>Coming up</h2><p>Wedding expos, vendor showcases and workshops.</p></div>
+      <a href="events.html">All events</a>
     </div>
+    <div class="ev-list" id="home-events"></div>
   </div>
 </section>
 
-<section class="section tight">
-  <div class="wrap">
-    <div class="cta">
-      <div><h2>Run an event business?</h2><p>List for free and reach thousands of people planning weddings, parties and corporate events every month.</p></div>
-      <div class="cta-actions"><a class="btn btn-gold" href="vendor-register.html">List your business</a><a class="btn btn-ghost-light" href="contact.html">Talk to our team</a></div>
-      <div class="band thin"></div>
+<section class="section vendors-pitch">
+  <div class="wrap split" style="align-items:start">
+    <div>
+      <h2>Run an event business?</h2>
+      <p>Listing is free. We check your PACRA registration and a few photos of your work, then your profile goes live, usually within two working days.</p>
+      <a class="btn btn-primary" href="vendor-register.html">List your business</a>
     </div>
+    <dl class="facts">
+      <div><dt>Listing</dt><dd>Free</dd></div>
+      <div><dt>Commission on bookings</dt><dd>None</dd></div>
+      <div><dt>Featured spot in your city</dt><dd>From K300 a month</dd></div>
+      <div><dt>Questions?</dt><dd><a href="https://wa.me/260971234567">WhatsApp us</a></dd></div>
+    </dl>
   </div>
 </section>
 </main>
@@ -169,10 +136,10 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('near-me').addEventListener('click', function () {
     var hint = document.getElementById('near-hint');
     if (!navigator.geolocation) { hint.textContent = 'Your browser can’t share location. Pick a city instead.'; return; }
-    hint.textContent = 'Finding vendors near you…';
+    hint.textContent = 'Getting your location…';
     navigator.geolocation.getCurrentPosition(function () {
       location.href = 'vendors.html?sort=distance' + (cat.value ? '&category=' + cat.value : '');
-    }, function () { hint.textContent = 'Location is blocked. Pick a city from the sentence instead.'; }, { timeout: 8000 });
+    }, function () { hint.textContent = 'Location is turned off. Pick a city instead.'; }, { timeout: 8000 });
   });
 
   document.getElementById('cat-list').innerHTML = D.CATEGORIES.map(function (c) {
@@ -180,6 +147,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }).join('');
 
   document.getElementById('home-events').innerHTML = D.EVENTS.slice(0, 3).map(EH_eventRow).join('');
+  var dates = ['3 days ago', 'last week', 'last week', '2 weeks ago', '3 weeks ago'];
+  var revs = [];
+  D.VENDORS.forEach(function (v) { v.reviews.slice(0, 1).forEach(function (r) { revs.push([v, r]); }); });
+  document.getElementById('latest-reviews').innerHTML = revs.slice(0, 4).map(function (x, i) {
+    var v = x[0], r = x[1];
+    return '<div class="review"><div class="row" style="justify-content:space-between"><span><b>' + EH.esc(r[0]) + '</b> <span class="muted">on <a href="vendor-profile.html?v=' + v.id + '">' + EH.esc(v.name) + '</a></span></span><span class="rating"><i class="fa-solid fa-star"></i>' + r[1] + '</span></div><p style="margin:6px 0 0">' + EH.esc(r[2]) + '</p><span class="muted" style="font-size:.82rem">' + dates[i] + '</span></div>';
+  }).join('');
   EH.refreshFavs();
 });
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Upcoming events — EventHub Zambia</title>
+<title>Upcoming events | EventHub Zambia</title>
 <meta name="description" content="Wedding expos, vendor showcases and planning workshops across Zambia.">
 <meta name="theme-color" content="#063B2E">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -19,7 +19,7 @@
   <div class="wrap">
     <div class="crumbs"><a href="index.html">Home</a> / Events</div>
     <h1>Upcoming events</h1>
-    <p>Expos, showcases and workshops where you can meet vendors in person, taste the food and see the décor before you book.</p>
+    <p>Wedding expos, vendor showcases and workshops. A good way to meet vendors and taste the food before you book.</p>
   </div>
 </section>
 <div class="band thin"></div>
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('rsvp-form').addEventListener('submit', function (e) {
     e.preventDefault(); if (!EH.validate(e.target)) return;
     document.getElementById('rsvp-modal').classList.remove('open');
-    EH.toast(current.price ? 'Payment prompt sent to your phone. Tickets arrive by SMS.' : 'Spot reserved. See you there!');
+    EH.toast(current.price ? 'Payment prompt sent to your phone. Tickets arrive by SMS.' : 'Spot reserved. We’ve sent the details by SMS.');
     e.target.reset();
   });
 });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vendor profile — EventHub Zambia</title>
+<title>Vendor profile | EventHub Zambia</title>
 <meta name="theme-color" content="#063B2E">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
   var cat = D.category(v.cat);
-  document.title = v.name + ' — ' + cat.name + ' in ' + v.city + ' | EventHub Zambia';
+  document.title = v.name + ' | ' + cat.name + ' in ' + v.city + ' | EventHub Zambia';
   var tel = v.phone.replace(/[^\d+]/g, ''), wa = 'https://wa.me/' + tel.replace('+', '') + '?text=' + encodeURIComponent('Hi ' + v.name + ', I found you on EventHub and would like a quote.');
   var stars = function (n) { var s = ''; for (var i = 1; i <= 5; i++) s += '<i class="fa-' + (i <= n ? 'solid' : 'regular') + ' fa-star" style="color:var(--gold-500)"></i>'; return s; };
   var g = v.gallery.slice(0, 5), gi = 0; while (g.length < 5) g.push(v.gallery[gi++ % v.gallery.length]);
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<div class="row"><button class="btn btn-ghost fav-btn-inline" id="save-btn"></button><button class="btn btn-ghost btn-icon" id="share-btn" aria-label="Share this vendor"><i class="fa-solid fa-share-nodes"></i></button></div></div>' +
       '<div class="tabs" role="tablist" data-tabs="vp"><button data-tab="t-about">About</button><button data-tab="t-pkgs">Packages & prices</button><button data-tab="t-reviews">Reviews (' + v.reviews.length + ')</button></div>' +
       '<div id="t-about" data-panel-of="vp" class="dash-panel"><p class="lead">' + E(v.about) + '</p>' +
-        '<ul class="checks"><li><i class="fa-solid fa-location-dot"></i>Based in ' + E(v.area) + ', ' + v.city + ' — travels nationwide on request</li><li><i class="fa-solid fa-clock"></i>Usually replies within 2 hours</li><li><i class="fa-solid fa-money-bill-wave"></i>Accepts mobile money (Airtel, MTN, Zamtel), bank transfer and cash</li></ul>' +
+        '<ul class="checks"><li><i class="fa-solid fa-location-dot"></i>Based in ' + E(v.area) + ', ' + v.city + ' and travels nationwide on request</li><li><i class="fa-solid fa-clock"></i>Usually replies within 2 hours</li><li><i class="fa-solid fa-money-bill-wave"></i>Accepts mobile money (Airtel, MTN, Zamtel), bank transfer and cash</li></ul>' +
         '<p class="muted" style="margin-top:24px">Is this your business? <a href="#" data-modal="#claim-modal">Claim this profile</a></p></div>' +
       '<div id="t-pkgs" data-panel-of="vp" class="dash-panel">' + v.packages.map(function (p) {
         return '<div class="pkg"><div><b>' + E(p[0]) + '</b><p class="muted" style="margin:4px 0 0">' + E(p[2]) + '</p></div><div style="text-align:right"><div class="price">' + K(p[1]) + '</div><button class="btn btn-ghost btn-sm" style="margin-top:8px" data-pick="' + E(p[0]) + '">Ask about this</button></div></div>';
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try { var l = local(); l.unshift(r); localStorage.setItem('eh_reviews_' + v.id, JSON.stringify(l)); } catch (x) {}
     EH_API.submitReview(v.id, { rating: r[1], comment: r[2] }).catch(function () {});
     renderReviews(); f.reset(); document.getElementById('review-modal').classList.remove('open');
-    EH.toast('Review posted. Thank you!');
+    EH.toast('Review posted');
   });
 
   // Tabs were rendered after main.js ran, so wire them here

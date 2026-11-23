@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vendor dashboard — EventHub Zambia</title>
+<title>Vendor dashboard | EventHub Zambia</title>
 <meta name="description" content="Manage your EventHub business profile, enquiries, bookings and packages.">
 <meta name="theme-color" content="#063B2E">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -62,7 +62,7 @@
     </section>
 
     <section id="calendar" class="dash-panel" data-panel-of="vd">
-      <div class="dash-top"><h2>Availability — December 2026</h2><p class="muted" style="margin:0">Tap a date to switch it between free, on hold and booked.</p></div>
+      <div class="dash-top"><h2>Availability, December 2026</h2><p class="muted" style="margin:0">Tap a date to switch it between free, on hold and booked.</p></div>
       <div class="card" style="max-width:560px"><div class="cal" id="cal"></div>
         <div class="legend"><span><i style="background:#fff;border:1px solid var(--line)"></i>Free</span><span><i style="background:var(--gold-50);border:1px solid var(--gold-400)"></i>On hold</span><span><i style="background:var(--em-600)"></i>Booked</span></div></div>
     </section>
@@ -116,7 +116,7 @@
     <h3 id="reply-title">Reply</h3>
     <p class="muted" id="reply-msg"></p>
     <form id="reply-form" novalidate>
-      <div class="field"><label for="rp-text">Your reply</label><textarea id="rp-text" required>Hello! Thank you for your enquiry. The date is available — would you like to come and view the venue this week?</textarea><span class="err">Write a reply.</span></div>
+      <div class="field"><label for="rp-text">Your reply</label><textarea id="rp-text" required>Hello, thank you for your enquiry. The date is available. Would you like to come and view the venue this week?</textarea><span class="err">Write a reply.</span></div>
       <div class="row"><button class="btn btn-primary" type="submit">Send reply</button><a class="btn btn-wa" id="reply-wa" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Reply on WhatsApp</a></div>
     </form>
   </div>
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
     { n: 'Kelvin Phiri', d: '2027-01-09', g: 150, m: 'Looking for the all-inclusive package for a company party.', s: 'New', p: '+260966000222' },
     { n: 'Bwalya & Mike', d: '2026-12-19', g: 180, m: 'Can we bring our own caterer?', s: 'Replied', p: '+260977000333' },
     { n: 'Grace Tembo', d: '2027-03-21', g: 300, m: 'Kitchen party, need chairs for 300 and a tent.', s: 'New', p: '+260955000444' },
-    { n: 'Chanda Family', d: '2026-12-27', g: 200, m: 'Confirmed — deposit sent via Airtel Money.', s: 'Booked', p: '+260968000555' }
+    { n: 'Chanda Family', d: '2026-12-27', g: 200, m: 'Confirmed. Deposit sent via Airtel Money.', s: 'Booked', p: '+260968000555' }
   ];
   try { JSON.parse(localStorage.getItem('eh_enquiries') || '[]').forEach(function (q) { enq.unshift({ n: q.name, d: q.event_date, g: q.guests || '—', m: q.message || '(no message)', s: 'New', p: q.phone }); }); } catch (e) {}
   var cur;
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('pf-in').onchange = function () { [].forEach.call(this.files, function (f) { var i = document.createElement('img'); i.src = URL.createObjectURL(f); i.alt = f.name; pf.prepend(i); }); EH.toast(this.files.length + ' photo(s) uploaded'); };
 
   document.getElementById('rv-list').innerHTML = v.reviews.concat([['Lweendo C.', 5, 'Beautiful venue and very responsive manager.'], ['Joseph B.', 4, 'Good value for the space. Toilets could be better signposted.']]).map(function (r) {
-    return '<div class="review"><div class="row" style="justify-content:space-between"><b>' + EH.esc(r[0]) + '</b><span class="rating"><i class="fa-solid fa-star"></i>' + r[1] + '.0</span></div><p style="margin:8px 0 10px">' + EH.esc(r[2]) + '</p><button class="btn btn-ghost btn-sm" onclick="EH.toast(\'Thanks — your public reply is posted\')">Reply publicly</button></div>';
+    return '<div class="review"><div class="row" style="justify-content:space-between"><b>' + EH.esc(r[0]) + '</b><span class="rating"><i class="fa-solid fa-star"></i>' + r[1] + '.0</span></div><p style="margin:8px 0 10px">' + EH.esc(r[2]) + '</p><button class="btn btn-ghost btn-sm" onclick="EH.toast(\'Reply posted\')">Reply publicly</button></div>';
   }).join('');
   document.getElementById('p-city').innerHTML = D.CITIES.map(function (c) { return '<option>' + c + '</option>'; }).join('');
 });

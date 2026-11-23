@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin — EventHub Zambia</title>
+<title>Admin | EventHub Zambia</title>
 <meta name="description" content="EventHub marketplace administration.">
 <meta name="theme-color" content="#063B2E">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -79,10 +79,10 @@
     <section id="a-featured" class="dash-panel" data-panel-of="ad">
       <div class="dash-top"><h2>Featured vendors & ads</h2></div>
       <div class="table-wrap"><table><thead><tr><th>Placement</th><th>Vendor</th><th>Runs until</th><th>Price</th><th>Clicks</th></tr></thead><tbody>
-        <tr><td>Home — Featured this month</td><td>Silverleaf Gardens</td><td>31 Dec 2026</td><td class="price">K450/mo</td><td>1,204</td></tr>
-        <tr><td>Home — Featured this month</td><td>Chanda Lens Studio</td><td>31 Dec 2026</td><td class="price">K450/mo</td><td>980</td></tr>
+        <tr><td>Home page, popular this month</td><td>Silverleaf Gardens</td><td>31 Dec 2026</td><td class="price">K450/mo</td><td>1,204</td></tr>
+        <tr><td>Home page, popular this month</td><td>Chanda Lens Studio</td><td>31 Dec 2026</td><td class="price">K450/mo</td><td>980</td></tr>
         <tr><td>Top of Catering · Lusaka</td><td>Mama Beulah’s Kitchen</td><td>15 Jan 2027</td><td class="price">K300/mo</td><td>642</td></tr>
-        <tr><td>Banner — Vendors page</td><td>Bliss Weddings Zambia</td><td>28 Feb 2027</td><td class="price">K1,200/mo</td><td>2,311</td></tr>
+        <tr><td>Banner on vendors page</td><td>Bliss Weddings Zambia</td><td>28 Feb 2027</td><td class="price">K1,200/mo</td><td>2,311</td></tr>
       </tbody></table></div>
     </section>
 
@@ -117,10 +117,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var pending = [['Lusaka Ushers Co.', 'other', 'Lusaka', '2 days ago'], ['Kafue Gorge Events Venue', 'venues', 'Kabwe', '3 days ago'], ['Mpundu Photography', 'photography', 'Ndola', '4 days ago']];
   function renderAp() {
-    document.getElementById('ap-rows').innerHTML = pending.map(function (p, i) { return '<tr><td><b>' + p[0] + '</b></td><td>' + D.category(p[1]).name + '</td><td>' + p[2] + '</td><td>' + p[3] + '</td><td><span class="tag em">PACRA + ID</span></td><td class="row"><button class="btn btn-primary btn-sm" data-ap="' + i + '" data-ok="1">Approve</button><button class="btn btn-ghost btn-sm" data-ap="' + i + '">Reject</button></td></tr>'; }).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">All caught up — no applications waiting.</td></tr>';
+    document.getElementById('ap-rows').innerHTML = pending.map(function (p, i) { return '<tr><td><b>' + p[0] + '</b></td><td>' + D.category(p[1]).name + '</td><td>' + p[2] + '</td><td>' + p[3] + '</td><td><span class="tag em">PACRA + ID</span></td><td class="row"><button class="btn btn-primary btn-sm" data-ap="' + i + '" data-ok="1">Approve</button><button class="btn btn-ghost btn-sm" data-ap="' + i + '">Reject</button></td></tr>'; }).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">No applications waiting.</td></tr>';
     var c = document.getElementById('ap-count'); c.textContent = pending.length; c.hidden = !pending.length;
   }
-  document.getElementById('ap-rows').onclick = function (e) { var b = e.target.closest('[data-ap]'); if (!b) return; var p = pending.splice(+b.dataset.ap, 1)[0]; renderAp(); EH.toast(p[0] + (b.dataset.ok ? ' approved and now live' : ' rejected — applicant notified')); };
+  document.getElementById('ap-rows').onclick = function (e) { var b = e.target.closest('[data-ap]'); if (!b) return; var p = pending.splice(+b.dataset.ap, 1)[0]; renderAp(); EH.toast(p[0] + (b.dataset.ok ? ' approved and now live' : ' rejected. We emailed the applicant.')); };
   renderAp();
 
   var status = {};
