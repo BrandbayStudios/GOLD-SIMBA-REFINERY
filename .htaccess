@@ -9,3 +9,9 @@ Options -Indexes
   ExpiresByType application/javascript "access plus 7 days"
   ExpiresByType image/svg+xml "access plus 30 days"
 </IfModule>
+
+# The repo also holds the Laravel API source and CI config — never serve them
+RedirectMatch 404 ^/(backend|\.github|\.git|\.hostinger)(/|$)
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|\.env.*|.*\.md)$">
+  Require all denied
+</FilesMatch>
