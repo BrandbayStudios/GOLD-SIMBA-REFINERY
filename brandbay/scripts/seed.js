@@ -4,6 +4,47 @@ const bcrypt = require('bcryptjs');
 const { get, run, transaction } = require('../src/db');
 const { setSetting, getSettings } = require('../src/lib');
 const POSTS = require('./posts');
+
+// Starting-price packages shown on /packages; edited later in Admin → Packages.
+const PACKAGES = [
+  {
+    name: 'Logo Design', label: 'Starter', price: 1500,
+    tagline: 'A professional logo to launch your brand.',
+    best_for: 'New businesses, start-ups and side hustles',
+    features: ['3 original logo concepts', '2 rounds of revisions', 'Full-colour and black & white versions', 'Print and web files (PNG, JPG, PDF, SVG)', 'Social media profile picture'],
+    timeline: '3–5 working days',
+  },
+  {
+    name: 'Brand Identity', label: 'Essentials', price: 2500,
+    tagline: 'Look consistent everywhere you show up.',
+    best_for: 'Small businesses ready to look established',
+    features: ['Everything in Logo Design', 'Colour palette and font selection', 'Business card design', 'Letterhead and email signature', 'Social media profile and cover designs', 'One-page brand guide (PDF)'],
+    timeline: '5–7 working days',
+  },
+  {
+    name: 'Business Launch', label: 'Growth', price: 4500, highlighted: 1,
+    tagline: 'Everything you need to launch and market your business.',
+    best_for: 'Businesses launching, rebranding or bidding for contracts',
+    features: ['Everything in Brand Identity', 'Company profile design (up to 8 pages)', 'Flyer or poster design', 'Pull-up banner design', '5 branded social media post templates', 'Full brand guidelines (PDF)'],
+    timeline: '7–14 working days',
+  },
+  {
+    name: 'Brand + Website', label: 'Premium', price: 7500,
+    tagline: 'Your brand identity plus a professional website.',
+    best_for: 'Businesses that want to win customers online',
+    features: ['Everything in Brand Identity', 'Website of up to 5 pages, built for mobile', 'Contact / quote form and WhatsApp chat button', 'Google Maps location and basic SEO setup', 'Google Business Profile setup', '1 month of website support'],
+    timeline: '2–4 weeks',
+  },
+];
+
+function insertPackages() {
+  PACKAGES.forEach((p, i) => {
+    const slug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (get('SELECT id FROM packages WHERE slug = ?', slug)) return;
+    run('INSERT INTO packages (slug, name, label, price, tagline, best_for, features, timeline, highlighted, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      slug, p.name, p.label, p.price, p.tagline, p.best_for, p.features.join('\n'), p.timeline, p.highlighted || 0, i);
+  });
+}
 const invoicing = require('../src/invoicing');
 
 const SETTINGS = {
@@ -307,6 +348,8 @@ function seed() {
       insertProfiles();
     }
 
+    if (empty('packages')) insertPackages();
+
     if (empty('testimonials')) {
       TESTIMONIALS.forEach((t, i) =>
         run('INSERT INTO testimonials (name, quote, rating, sort_order) VALUES (?, ?, 5, ?)', t.name, t.quote, i));
@@ -342,6 +385,10 @@ function backfillContent() {
   }
   // The first release listed the email on a domain that does not exist (brandbaystudio.online, no "s").
   run("UPDATE settings SET value = 'info@brandbaystudios.online' WHERE key = 'email' AND value = 'info@brandbaystudio.online'");
+  // One-time: add the packages to databases created before them.
+  if (!getSettings().content_packages_v1) {
+    transaction(() => { insertPackages(); setSetting('content_packages_v1', '1'); });
+  }
   // One-time: publish the first Insights articles.
   if (!getSettings().content_posts_v1) {
     transaction(() => {

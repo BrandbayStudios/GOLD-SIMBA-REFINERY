@@ -311,3 +311,13 @@ test('plain page views start no session; the footer newsletter still works', asy
   });
   assert.equal(contact.status, 403);
 });
+
+test('packages page lists the starting prices and links into the quote form', async () => {
+  const html = await (await fetch(`${base}/packages`)).text();
+  for (const price of ['K1,500', 'K2,500', 'K4,500', 'K7,500']) assert.ok(html.includes(price), price);
+  assert.match(html, /Most popular/);
+  assert.match(html, /"@type":"OfferCatalog"/);
+  const apply = await (await fetch(`${base}/apply?package=business-launch`)).text();
+  assert.match(apply, /<option value="Package — Business Launch \(from K4,500\)" selected>/);
+  assert.match(await (await fetch(`${base}/sitemap.xml`)).text(), /\/packages</);
+});

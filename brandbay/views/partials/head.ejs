@@ -8,7 +8,7 @@
   const shareImage = locals.ogImage ? seo.abs(locals.ogImage) : `${config.baseUrl}/brand/og-image.jpg`;
   // Same menu as the original site: Projects opens a sub-menu with Gallery.
   const nav = [
-    ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'],
+    ['/', 'Home'], ['/about', 'About'], ['/services', 'Services'], ['/packages', 'Packages'],
     ['/projects', 'Projects', [['/projects', 'Recent projects'], ['/gallery', 'Gallery']]],
     ['/contact', 'Contact'], ...(locals.storeOpen ? [['/store', 'Store']] : []),
   ];

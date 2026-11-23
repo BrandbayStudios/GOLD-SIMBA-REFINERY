@@ -44,6 +44,7 @@ router.get('/', (req, res) => {
   res.render('home', {
     description: 'Branding, logo design, websites, digital marketing, printing and business registration from BrandBay Innovation Studios in Lusaka, Zambia.',
     services: services(),
+    packages: packages(),
     logos: album('logos', true),
     projects: all('SELECT * FROM projects WHERE published = 1 AND featured = 1 ORDER BY sort_order, id LIMIT 4'),
     testimonials: testimonials(),
@@ -62,6 +63,19 @@ router.get('/about', (req, res) => {
     schema: [seo.breadcrumbs([['About', '/about']])],
     testimonials: testimonials(),
     certificates: album('compliance'),
+  });
+});
+
+const packages = () => all('SELECT * FROM packages WHERE published = 1 ORDER BY sort_order, price, id');
+const packageService = (p) => `Package — ${p.name} (from ${lib.moneyShort(p.price)})`;
+
+router.get('/packages', (req, res) => {
+  const list = packages();
+  res.render('packages', {
+    title: 'Branding & Website Packages and Prices',
+    description: `Branding, logo and website packages from ${list.length ? lib.moneyShort(list[0].price) : 'K1,500'} at BrandBay Innovation Studios in Lusaka, Zambia. See what is included and get started.`,
+    schema: [seo.packages(list), seo.breadcrumbs([['Packages', '/packages']])],
+    packages: list,
   });
 });
 
@@ -188,12 +202,16 @@ router.post('/subscribe', formLimiter, (req, res) => {
 router.get('/apply', (req, res) => {
   const all_ = services();
   const preset = all_.find((s) => s.slug === req.query.service);
+  const list = packages();
+  const pkg = list.find((p) => p.slug === req.query.package);
   res.render('apply', {
     title: 'Get a Quote — Apply for a Service',
     description: 'Tell us about your branding, design, website, marketing or printing project and get a tailored quote from BrandBay Innovation Studios in Lusaka.',
     services: all_,
+    packageOptions: list.map(packageService),
     form: {
-      service: preset ? preset.name : lib.clean(req.query.service, 120),
+      service: pkg ? packageService(pkg) : preset ? preset.name : lib.clean(req.query.service, 120),
+      budget: pkg ? lib.BUDGETS.find((b) => (pkg.price <= 5000 ? b.startsWith('K1,000') : b.startsWith('K5,000'))) : undefined,
       name: req.user?.name, email: req.user?.email, phone: req.user?.phone, company: req.user?.company,
     },
   });
@@ -220,7 +238,7 @@ router.post('/apply', formLimiter, documentUpload.single('attachment'), verifyCs
   if (!form.service) errors.push('Please choose the service you are applying for.');
   if (errors.length) {
     discardUpload(req.file);
-    return res.status(422).render('apply', { title: 'Apply for a Service', services: services(), form, errors });
+    return res.status(422).render('apply', { title: 'Apply for a Service', services: services(), packageOptions: packages().map(packageService), form, errors });
   }
 
   const userId = req.user?.id ?? get('SELECT id FROM users WHERE email = ?', form.email)?.id ?? null;
@@ -278,6 +296,7 @@ router.get('/sitemap.xml', (req, res) => {
   const entries = [
     { loc: '/', priority: '1.0', images: album('logos', true).map((g) => [g.image, `${g.title} logo design`]) },
     { loc: '/services', priority: '0.9' },
+    { loc: '/packages', priority: '0.9' },
     { loc: '/projects', priority: '0.8' },
     { loc: '/gallery', priority: '0.8', images: [...album('logos'), ...album('posters')].map((g) => [g.image, g.title]) },
     { loc: '/about', priority: '0.7', images: album('compliance').map((g) => [g.image, g.title]) },

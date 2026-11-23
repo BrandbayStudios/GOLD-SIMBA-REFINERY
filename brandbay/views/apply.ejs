@@ -28,6 +28,11 @@
         <label>Service applied for*
           <select name="service" required>
             <option value="">Choose a service</option>
+            <% if ((locals.packageOptions || []).length) { %>
+              <optgroup label="Packages">
+                <% for (const v of packageOptions) { %><option value="<%= v %>"<%= form.service === v ? ' selected' : '' %>><%= v.replace(/^Package — /, '') %></option><% } %>
+              </optgroup>
+            <% } %>
             <% for (const s of services) { %>
               <optgroup label="<%= s.name %>">
                 <option<%= form.service === s.name ? ' selected' : '' %>><%= s.name %></option>

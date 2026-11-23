@@ -375,3 +375,34 @@ input, select, textarea { transition: border-color 0.3s, box-shadow 0.3s, backgr
 html, body { overflow-x: clip; }
 /* Gold labels on white cards: darker gold for readable contrast (WCAG AA). */
 .project-body .eyebrow, .product-body .eyebrow { color: #7a5f00; }
+
+/* ---------- Packages ---------- */
+.package-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-top: 2.5rem; align-items: stretch; }
+.package-card { position: relative; display: flex; flex-direction: column; gap: 1.1rem; padding: 1.8rem 1.5rem; border-radius: 20px; background: rgba(10, 13, 18, 0.78); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); color: #fff; transition: transform 0.45s var(--ease-spring), border-color 0.3s, box-shadow 0.45s; }
+.package-card:hover { transform: translateY(-8px); border-color: var(--gold); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45); }
+.package-card.is-featured { border-color: var(--gold); background: linear-gradient(160deg, rgba(227, 180, 0, 0.16), rgba(10, 13, 18, 0.9) 45%); box-shadow: 0 0 0 1px var(--gold), 0 24px 60px rgba(227, 180, 0, 0.15); }
+.package-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 0.3rem 0.9rem; border-radius: 999px; background: var(--gold); color: var(--ink); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+.package-label { display: block; color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.package-name { margin: 0.35rem 0 0.6rem; font-size: 1.35rem; color: #fff; }
+.package-price { margin: 0; color: #fff; }
+.package-price small { color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin-right: 0.2rem; }
+.package-price strong { font-size: 2.2rem; letter-spacing: -0.02em; }
+.package-tagline { margin: 0.5rem 0 0; color: rgba(255, 255, 255, 0.72); font-size: 0.92rem; }
+.package-features { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; flex: 1; }
+.package-features li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.92rem; color: rgba(255, 255, 255, 0.86); }
+.package-features svg { flex: none; width: 17px; height: 17px; margin-top: 0.15rem; color: var(--gold); }
+.package-meta { margin: 0; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.12); display: grid; gap: 0.5rem; font-size: 0.85rem; }
+.package-meta div { display: grid; gap: 0.1rem; }
+.package-meta dt { color: var(--gold); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.package-meta dd { margin: 0; color: rgba(255, 255, 255, 0.78); }
+.package-card .btn-block { margin-top: auto; justify-content: center; }
+.package-grid.compact .package-card { gap: 1.3rem; }
+.package-grid.compact + p { margin-top: 2rem; }
+.package-notes { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-top: 3rem; align-items: center; }
+.package-notes ul { margin: 0; padding-left: 1.1rem; color: rgba(255, 255, 255, 0.72); display: grid; gap: 0.5rem; font-size: 0.92rem; }
+.package-custom { padding: 1.8rem; border-radius: 20px; border: 1px dashed rgba(227, 180, 0, 0.55); background: rgba(10, 13, 18, 0.6); }
+.package-custom h2 { margin: 0 0 0.5rem; font-size: 1.4rem; color: #fff; }
+.package-custom p { color: rgba(255, 255, 255, 0.72); margin: 0 0 1.2rem; }
+.package-custom .btn { margin: 0.25rem 0.5rem 0.25rem 0; }
+@media (max-width: 1100px) { .package-grid { grid-template-columns: repeat(2, 1fr); row-gap: 2rem; } }
+@media (max-width: 640px) { .package-grid { grid-template-columns: 1fr; } .package-notes { grid-template-columns: 1fr; } }

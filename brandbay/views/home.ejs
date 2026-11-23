@@ -54,6 +54,19 @@
   </div>
 </section>
 
+<% if (packages.length) { %>
+<section class="section-pad section-ink" id="packages">
+  <div class="container center narrow-text">
+    <h2 class="section-title" data-reveal="fade-up">Packages from <span class="text-gold"><%= lib.moneyShort(packages[0].price) %></span></h2>
+    <p class="lead-light" data-reveal="fade-up">Clear starting prices for logos, brand identities, launch kits and websites.</p>
+  </div>
+  <div class="container package-grid compact" data-reveal-group>
+    <% for (const pkg of packages) { %><%- include('partials/package-card', { pkg, compact: true }) %><% } %>
+  </div>
+  <p class="center" data-reveal="fade-up"><a class="link-arrow" href="/packages">Compare what’s included <%- include('partials/icon', { name: 'arrow' }) %></a></p>
+</section>
+<% } %>
+
 <% if (logos.length) { %>
 <section class="section-pad section-ink" id="work">
   <div class="container center narrow-text">

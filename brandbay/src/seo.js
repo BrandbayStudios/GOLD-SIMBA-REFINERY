@@ -85,6 +85,22 @@ function service(s) {
   };
 }
 
+// Starting-price packages as an offer catalogue.
+function packages(list) {
+  return {
+    '@type': 'OfferCatalog',
+    name: 'BrandBay design and branding packages',
+    url: abs('/packages'),
+    itemListElement: list.map((p) => ({
+      '@type': 'Offer',
+      name: p.name,
+      description: p.tagline || undefined,
+      priceSpecification: { '@type': 'PriceSpecification', minPrice: p.price, priceCurrency: 'ZMW' },
+      itemOffered: { '@type': 'Service', name: p.name, provider: { '@id': `${config.baseUrl}/#organization` } },
+    })),
+  };
+}
+
 function faqPage(faqs) {
   return {
     '@type': 'FAQPage',
@@ -145,4 +161,4 @@ function graph(nodes) {
   return clean.replace(/</g, '\\u003c');
 }
 
-module.exports = { abs, organization, website, breadcrumbs, service, faqPage, project, article, product, graph };
+module.exports = { abs, organization, website, breadcrumbs, service, packages, faqPage, project, article, product, graph };

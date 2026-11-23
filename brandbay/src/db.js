@@ -90,6 +90,22 @@ CREATE TABLE IF NOT EXISTS faqs (
   published INTEGER NOT NULL DEFAULT 1
 );
 
+CREATE TABLE IF NOT EXISTS packages (
+  id INTEGER PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  label TEXT,
+  price REAL NOT NULL DEFAULT 0,
+  tagline TEXT,
+  best_for TEXT,
+  features TEXT,
+  timeline TEXT,
+  highlighted INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  published INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,

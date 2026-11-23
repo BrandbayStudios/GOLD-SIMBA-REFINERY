@@ -58,6 +58,9 @@ function money(value) {
   return `${config.currency}${n.toLocaleString('en-ZM', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+// Whole amounts without the decimals, e.g. K1,500 for headline prices.
+const moneyShort = (value) => money(value).replace(/\.00$/, '');
+
 function makeReference(prefix, id) {
   return `${prefix}-${new Date().getFullYear()}-${String(id).padStart(4, '0')}`;
 }
@@ -128,6 +131,7 @@ module.exports = {
   slugify,
   uniqueSlug,
   money,
+  moneyShort,
   makeReference,
   formatDate,
   paragraphs,

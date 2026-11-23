@@ -1,0 +1,31 @@
+<%- include('partials/head') %>
+
+<section class="bg-section section-pad page-top">
+  <%- include('partials/bg', { image: 'bg-services', overlay: 78, eager: true }) %>
+  <div class="container center narrow-text">
+    <h1 class="page-title" data-split>Packages &amp; pricing</h1>
+    <p class="lead-light" data-reveal="fade-up">Clear starting prices for the work most businesses need. Pick a package, tell us about your business, and we’ll confirm your quote.</p>
+  </div>
+  <% if (packages.length) { %>
+    <div class="container package-grid" data-reveal-group>
+      <% for (const pkg of packages) { %><%- include('partials/package-card', { pkg, headingTag: 'h2' }) %><% } %>
+    </div>
+  <% } else { %>
+    <p class="center lead-light">Our packages are being updated. <a href="/apply">Request a quote</a> and we’ll get back to you.</p>
+  <% } %>
+  <div class="container package-notes" data-reveal="fade-up">
+    <ul>
+      <li>Prices are starting prices in Zambian Kwacha. Your final quote depends on the scope of your project.</li>
+      <li>We work on a 70% deposit and 30% on completion. Printing is quoted separately.</li>
+      <li>Website packages exclude domain and hosting, which we can arrange for you.</li>
+    </ul>
+    <div class="package-custom">
+      <h2>Need something different?</h2>
+      <p>Mix services or ask for a custom bundle — social media management, event branding, business registration and more.</p>
+      <a class="btn btn-gold btn-shine" href="/apply">Request a custom quote</a>
+      <% if (settings.whatsapp) { %><a class="btn btn-ghost" href="https://wa.me/<%= settings.whatsapp.replace(/\D/g, '') %>?text=<%= encodeURIComponent('Hi BrandBay, I have a question about your packages.') %>" target="_blank" rel="noopener">Ask on WhatsApp</a><% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>
