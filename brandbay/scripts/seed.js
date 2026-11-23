@@ -41,21 +41,22 @@ const PACKAGES = [
 const ESTIMATE_ITEMS = [
   ['Branding', 'Logo design', 1000, '', 0, 'Original logo with revisions'],
   ['Branding', 'Logo guidelines & mockups', 300, '', 0, 'How to use your logo, shown on real items'],
-  ['Branding', 'Business description writing', 300, '', 0, 'Your story, written professionally'],
+  ['Branding', 'Business description writing', 500, '', 0, 'Your story, written professionally'],
   ['Branding', 'Business card design', 200, '', 0, ''],
-  ['Branding', 'Letterhead design', 200, '', 0, ''],
-  ['Branding', 'Email header / signature design', 150, '', 0, ''],
+  ['Branding', 'Letterhead design', 400, '', 0, ''],
+  ['Branding', 'Email header / signature design', 300, '', 0, ''],
   ['Branding', 'Company profile design (10–12 pages)', 1000, '', 0, 'For tenders, investors and clients'],
-  ['Branding', 'Full brand guidelines', 800, '', 0, 'Colours, fonts and rules for your brand'],
+  ['Branding', 'Full brand guidelines', 1000, '', 0, 'Colours, fonts and rules for your brand'],
   ['Social media', 'Social media post templates (set of 5)', 500, 'per set', 1, 'Editable, on-brand templates'],
-  ['Social media', 'Social media page setup', 300, '', 0, 'Profile, cover and bio for your pages'],
-  ['Social media', 'Social media management', 1500, 'per month', 1, 'Content planning and posting'],
+  ['Social media', 'Social media page setup', 500, '', 0, 'Profile, cover and bio for your pages'],
+  ['Social media', 'Social media management (15 posts)', 2000, 'per month', 1, '15 designed posts, planned and published'],
+  ['Social media', 'Social media & SEO page growth', 3500, 'per month', 1, 'Grow your followers and search visibility'],
   ['Website', 'Business website (up to 5 pages)', 4500, '', 0, 'Mobile friendly, with contact form and WhatsApp button'],
   ['Website', 'Extra website page', 400, 'per page', 1, ''],
   ['Website', 'Online store (e-commerce)', 8000, '', 0, 'Sell products online'],
-  ['Website', 'Google Business Profile setup', 300, '', 0, 'Show up on Google Maps'],
+  ['Website', 'Google Business Profile setup', 650, '', 0, 'Show up on Google Search and Maps'],
   ['Print design', 'Flyer or poster design', 300, 'per design', 1, 'Design only; printing quoted separately'],
-  ['Print design', 'Pull-up banner design', 350, 'per design', 1, ''],
+  ['Print design', 'Pull-up banner design', 400, 'per design', 1, ''],
   ['Print design', 'Brochure design', 600, '', 0, ''],
   ['Print design', 'Event branding kit', 1200, '', 0, 'Backdrop, banners and social graphics'],
 ];
@@ -425,6 +426,25 @@ function backfillContent() {
   // One-time: add the quote estimator items to databases created before them.
   if (!getSettings().content_estimator_v1) {
     transaction(() => { insertEstimateItems(); setSetting('content_estimator_v1', '1'); });
+  }
+  // One-time: estimator prices set by the studio (Nov 2026). Existing rows are matched by their original slug.
+  if (!getSettings().content_estimator_v2) {
+    transaction(() => {
+      const prices = {
+        'business-description-writing': [500], 'email-header-signature-design': [300], 'letterhead-design': [400],
+        'full-brand-guidelines': [1000], 'social-media-page-setup': [500], 'google-business-profile-setup': [650, 'Show up on Google Search and Maps'],
+        'pull-up-banner-design': [400], 'social-media-management': [2000, '15 designed posts, planned and published', 'Social media management (15 posts)'],
+      };
+      for (const [slug, [price, description, name]] of Object.entries(prices)) {
+        run('UPDATE estimate_items SET price = ?, description = COALESCE(?, description), name = COALESCE(?, name) WHERE slug = ?', price, description || null, name || null, slug);
+      }
+      const after = get("SELECT sort_order FROM estimate_items WHERE slug IN ('social-media-management', 'social-media-management-15-posts')");
+      if (!get("SELECT id FROM estimate_items WHERE slug = 'social-media-seo-page-growth'")) {
+        run("INSERT INTO estimate_items (slug, name, category, description, price, unit, has_qty, sort_order) VALUES ('social-media-seo-page-growth', 'Social media & SEO page growth', 'Social media', 'Grow your followers and search visibility', 3500, 'per month', 1, ?)",
+          after ? after.sort_order : 99);
+      }
+      setSetting('content_estimator_v2', '1');
+    });
   }
   // One-time: package contents revised by the studio (Nov 2026).
   if (!getSettings().content_packages_v2) {
