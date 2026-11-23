@@ -1,4 +1,3 @@
-ErrorDocument 404 /404.html
 Options -Indexes
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
@@ -11,7 +10,7 @@ Options -Indexes
 </IfModule>
 
 # The repo also holds the Laravel API source and CI config — never serve them
-RedirectMatch 404 ^/(backend|\.github|\.git|\.hostinger)(/|$)
-<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|\.env.*|.*\.md)$">
+RedirectMatch 404 /(backend|\.github|\.git|\.hostinger)(/|$)
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|\.env.*|.*\.md|\.gitignore|\.gitattributes)$">
   Require all denied
 </FilesMatch>
