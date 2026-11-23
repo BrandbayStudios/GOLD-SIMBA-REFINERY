@@ -99,6 +99,18 @@ function serviceImage(slug) {
   return serviceImageCache.get(slug);
 }
 
+// CSS/JS URL with a content hash, so browsers that cache static files fetch a new copy after each deploy.
+const assetCache = new Map();
+function asset(url) {
+  if (!assetCache.has(url)) {
+    const file = path.join(config.root, 'public', url.replace(/^\//, ''));
+    let version = '';
+    try { version = crypto.createHash('sha1').update(fs.readFileSync(file)).digest('hex').slice(0, 10); } catch { /* missing file: plain URL */ }
+    assetCache.set(url, version ? `${url}?v=${version}` : url);
+  }
+  return assetCache.get(url);
+}
+
 // Smaller copy of a /media image for grids (made by scripts/make-thumbs.py); falls back to the original.
 const thumbCache = new Map();
 function thumb(src) {
@@ -141,5 +153,6 @@ module.exports = {
   getSettings,
   serviceImage,
   thumb,
+  asset,
   setSetting,
 };

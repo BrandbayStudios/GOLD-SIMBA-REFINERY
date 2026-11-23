@@ -41,8 +41,8 @@
   <% if (settings.bing_site_verification) { %><meta name="msvalidate.01" content="<%= settings.bing_site_verification %>"><% } %>
   <meta name="theme-color" content="#0b0f14">
   <%- include('icons') %>
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="<%= lib.asset('/css/app.css') %>">
+  <link rel="stylesheet" href="<%= lib.asset('/css/site.css') %>">
   <% if (path === '/') { %><link rel="preload" as="image" href="/media/video/hero.jpg"><% } %>
   <% if (locals.extraCss) { %><link rel="stylesheet" href="<%= extraCss %>"><% } %>
   <% if (!locals.noindex) { %><script type="application/ld+json"><%- seo.graph([seo.organization(settings, orgServices), seo.website(settings), ...(locals.schema || [])]) %></script><% } %>
