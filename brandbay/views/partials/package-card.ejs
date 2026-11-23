@@ -1,19 +1,23 @@
-<article class="package-card<%= pkg.highlighted ? ' is-featured' : '' %>" data-reveal="fade-up">
-  <% if (pkg.highlighted) { %><span class="package-badge">Most popular</span><% } %>
-  <header>
+<% const icons = { starter: 'pen', essentials: 'star', growth: 'spark', premium: 'code' }; const icon = icons[String(pkg.label || '').toLowerCase()] || 'star'; %>
+<article class="package-card<%= pkg.highlighted ? ' is-featured' : '' %><%= locals.compact ? ' is-compact' : '' %> tilt" data-reveal="fade-up">
+  <header class="package-head">
+    <% if (pkg.highlighted) { %><span class="package-badge">Most popular</span><% } %>
+    <span class="package-icon" aria-hidden="true"><%- include('icon', { name: icon }) %></span>
     <% if (pkg.label) { %><span class="package-label"><%= pkg.label %></span><% } %>
     <<%= locals.headingTag || 'h3' %> class="package-name"><%= pkg.name %></<%= locals.headingTag || 'h3' %>>
     <p class="package-price"><small>from</small> <strong><%= lib.moneyShort(pkg.price) %></strong></p>
-    <% if (pkg.tagline) { %><p class="package-tagline"><%= pkg.tagline %></p><% } %>
   </header>
-  <% if (!locals.compact) { %>
-    <ul class="package-features">
-      <% for (const f of lib.lines(pkg.features)) { %><li><%- include('icon', { name: 'check' }) %><span><%= f %></span></li><% } %>
-    </ul>
-    <dl class="package-meta">
-      <% if (pkg.timeline) { %><div><dt>Delivery</dt><dd><%= pkg.timeline %></dd></div><% } %>
-      <% if (pkg.best_for) { %><div><dt>Best for</dt><dd><%= pkg.best_for %></dd></div><% } %>
-    </dl>
-  <% } %>
-  <a class="btn <%= pkg.highlighted ? 'btn-gold btn-shine' : 'btn-ghost' %> btn-block" href="/apply?package=<%= pkg.slug %>">Get started<span class="sr-only"> with <%= pkg.name %></span></a>
+  <div class="package-body">
+    <% if (pkg.tagline) { %><p class="package-tagline"><%= pkg.tagline %></p><% } %>
+    <% if (!locals.compact) { %>
+      <ul class="package-features">
+        <% for (const f of lib.lines(pkg.features)) { %><li><%- include('icon', { name: 'check' }) %><span><%= f %></span></li><% } %>
+      </ul>
+      <dl class="package-meta">
+        <% if (pkg.timeline) { %><div><dt>Delivery</dt><dd><%= pkg.timeline %></dd></div><% } %>
+        <% if (pkg.best_for) { %><div><dt>Best for</dt><dd><%= pkg.best_for %></dd></div><% } %>
+      </dl>
+    <% } %>
+    <a class="btn <%= pkg.highlighted ? 'btn-gold btn-shine' : 'btn-dark' %> btn-block" href="/apply?package=<%= pkg.slug %>">Get started<span class="sr-only"> with <%= pkg.name %></span></a>
+  </div>
 </article>
