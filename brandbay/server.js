@@ -3,6 +3,7 @@ const { get } = require('./src/db');
 const { seed, backfillContent } = require('./scripts/seed');
 const { ensureDefaults } = require('./src/invoicing');
 const app = require('./src/app');
+const reviews = require('./src/reviews');
 
 // First boot on an empty database: load the studio's content so the site is never blank.
 if (!get('SELECT id FROM service_categories LIMIT 1')) {
@@ -12,6 +13,7 @@ if (!get('SELECT id FROM service_categories LIMIT 1')) {
 // Databases created before invoicing existed get its tax rates, currencies and price list here.
 ensureDefaults();
 backfillContent();
+reviews.startAutoRefresh();
 
 app.listen(config.port, () => {
   console.log(`BrandBay Studios running at ${config.baseUrl}`);

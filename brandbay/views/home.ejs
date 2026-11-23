@@ -95,7 +95,26 @@
     <h2 class="section-title" data-reveal="fade-up">TESTIMONIALS</h2>
     <p class="lead-light" data-reveal="fade-up">At <strong>BrandBay Innovation Studios</strong>, client satisfaction is at the center of everything we do. Our work is built on trust, professionalism, and delivering results that make a difference.</p>
   </div>
+  <% const gr = googleReviews; if (gr.rating || gr.reviewUrl) { %>
+    <div class="container google-badge-row" data-reveal="fade-up">
+      <% if (gr.rating) { %>
+        <a class="google-badge" href="<%= gr.profileUrl %>" target="_blank" rel="noopener">
+          <%- include('partials/google-g') %>
+          <span class="google-badge-score"><strong><%= gr.rating.toFixed(1) %></strong><span class="stars" aria-hidden="true"><%= '★'.repeat(Math.round(gr.rating)) %><span class="stars-off"><%= '★'.repeat(5 - Math.round(gr.rating)) %></span></span></span>
+          <span class="google-badge-text"><%= gr.rating.toFixed(1) %> out of 5 on Google<% if (gr.count) { %> · <%= gr.count %> review<%= gr.count === 1 ? '' : 's' %><% } %></span>
+        </a>
+      <% } %>
+      <% if (gr.reviewUrl) { %><a class="btn btn-ghost" href="/review" target="_blank" rel="noopener">Leave us a Google review</a><% } %>
+    </div>
+  <% } %>
   <div class="container quote-grid" data-reveal-group>
+    <% for (const r of googleReviews.reviews) { %>
+      <figure class="quote-card google-review tilt" data-reveal="fade-up">
+        <div class="stars" aria-label="<%= r.rating %> out of 5 stars"><%= '★'.repeat(Math.max(0, Math.min(5, r.rating))) %></div>
+        <blockquote><%= r.text %></blockquote>
+        <figcaption><% if (r.authorUrl) { %><a href="<%= r.authorUrl %>" target="_blank" rel="noopener"><%= r.author %></a><% } else { %><%= r.author %><% } %><span><%- include('partials/google-g') %> Google review<%= r.when ? ` · ${r.when}` : '' %></span></figcaption>
+      </figure>
+    <% } %>
     <% for (const t of testimonials) { %>
       <figure class="quote-card tilt" data-reveal="fade-up">
         <div class="stars" aria-label="<%= t.rating %> out of 5 stars"><%= '★'.repeat(Math.max(0, Math.min(5, t.rating))) %></div>

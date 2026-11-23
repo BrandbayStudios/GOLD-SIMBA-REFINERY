@@ -472,3 +472,19 @@ html, body { overflow-x: clip; }
 .bg-section.quote-page { overflow: clip; }
 /* On phones the estimate bar sits at the bottom of the screen; lift the floating buttons above it. */
 @media (max-width: 960px) { body:has(.quote-page) .whatsapp, body:has(.quote-page) .to-top { bottom: 150px; } }
+
+/* ---------- Google reviews ---------- */
+.google-badge-row { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.google-badge, .google-badge * { text-decoration: none; }
+.google-badge { display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.7rem 1.2rem; border-radius: 999px; background: #fff; color: var(--ink); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35); transition: transform 0.35s var(--ease-spring); }
+.google-badge:hover { transform: translateY(-3px); }
+.google-badge .google-g { width: 26px; height: 26px; }
+.google-badge-score { display: inline-flex; align-items: center; gap: 0.45rem; }
+.google-badge-score strong { font-size: 1.4rem; }
+.google-badge-score .stars { color: #f5b400; letter-spacing: 0.06em; }
+.stars-off { color: #d5d8dc; }
+.google-badge-text { color: #4b5563; font-size: 0.85rem; }
+.google-review figcaption span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.google-review figcaption a { color: inherit; }
+.footer-review { display: inline-flex; align-items: center; gap: 0.55rem; margin-bottom: 1rem; padding: 0.45rem 0.85rem; border-radius: 999px; background: #fff; color: var(--ink) !important; font-size: 0.85rem; transition: transform 0.3s var(--ease-spring); }
+.footer-review:hover { transform: translateY(-2px); }

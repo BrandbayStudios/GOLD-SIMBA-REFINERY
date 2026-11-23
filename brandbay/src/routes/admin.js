@@ -3,6 +3,7 @@ const express = require('express');
 const { all, get, run } = require('../db');
 const lib = require('../lib');
 const mailer = require('../mailer');
+const reviews = require('../reviews');
 const config = require('../config');
 const RESOURCES = require('./admin-resources');
 const invoicing = require('../invoicing');
@@ -152,10 +153,14 @@ router.post('/requests/:id', (req, res, next) => {
     changes.push(`Quote: ${lib.money(quote)} (${config.depositPercent}% deposit: ${lib.money((quote * config.depositPercent) / 100)})`);
   }
   if (changes.length && req.body.notify_client) {
+    // A finished project is the best moment to ask for a Google review.
+    const askReview = status === 'completed' && status !== request.status && reviews.reviewUrl()
+      ? `\n\nThank you for working with us! If you are happy with the result, a quick Google review helps other businesses find us:\n${config.baseUrl}/review`
+      : '';
     mailer.send({
       to: request.email,
       subject: `Update on your request ${request.reference}`,
-      text: `Hi ${request.name},\n\nThere is an update on your ${request.service} request:\n\n${changes.join('\n')}\n\nView the details and reply at ${config.baseUrl}/account/requests/${request.id}\n(Sign in or create an account with ${request.email}.)\n\nBrandBay Innovation Studios`,
+      text: `Hi ${request.name},\n\nThere is an update on your ${request.service} request:\n\n${changes.join('\n')}${askReview}\n\nView the details and reply at ${config.baseUrl}/account/requests/${request.id}\n(Sign in or create an account with ${request.email}.)\n\nBrandBay Innovation Studios`,
     });
   }
   flash(req, 'success', 'Request updated.');
@@ -324,6 +329,10 @@ const SETTING_FIELDS = [
   { name: 'instagram_url', label: 'Instagram URL' },
   { name: 'tiktok_url', label: 'TikTok URL' },
   { name: 'linkedin_url', label: 'LinkedIn URL' },
+  { name: 'google_place_id', label: 'Google Place ID (turns on Google reviews — find it at developers.google.com/maps/documentation/places/web-service/place-id)' },
+  { name: 'google_review_url', label: 'Google review link (optional — the "Ask for reviews" link from your Google Business Profile, e.g. g.page/r/…/review)' },
+  { name: 'google_rating', label: 'Google rating, as shown on your profile (e.g. 4.9) — updated automatically when a Places API key is set' },
+  { name: 'google_review_count', label: 'Number of Google reviews (e.g. 23)' },
   { name: 'google_site_verification', label: 'Google Search Console verification code (content of the meta tag)' },
   { name: 'bing_site_verification', label: 'Bing Webmaster Tools verification code' },
   { name: 'payment_instructions', label: 'Payment instructions (shown after checkout)', type: 'textarea' },
@@ -340,9 +349,14 @@ router.post('/settings', requireAdmin, (req, res) => {
     if (f.name.endsWith('_url') && value && !/^https?:\/\//i.test(value)) value = `https://${value}`;
     // Accept either the bare code or the whole <meta ... content="..."> tag pasted from Google or Bing.
     if (f.name.endsWith('_verification')) value = (value.match(/content=["']([^"']+)["']/) || [null, value])[1].replace(/[^\w-]/g, '');
+    if (f.name === 'google_review_url' && value && !/^https?:\/\//i.test(value)) value = `https://${value}`;
+    if (f.name === 'google_place_id') value = value.replace(/[^\w-]/g, '');
+    if (f.name === 'google_rating') value = value && Number(value) > 0 && Number(value) <= 5 ? String(Number(value)) : '';
+    if (f.name === 'google_review_count') value = parseInt(value, 10) > 0 ? String(parseInt(value, 10)) : '';
     lib.setSetting(f.name, value);
   }
   flash(req, 'success', 'Settings saved.');
+  reviews.refresh();
   res.redirect('/admin/settings');
 });
 

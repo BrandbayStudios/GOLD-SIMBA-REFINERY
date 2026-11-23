@@ -14,7 +14,7 @@ process.env.ADMIN_EMAIL = 'admin@test.local';
 process.env.ADMIN_PASSWORD = 'admin-password';
 
 const { seed } = require('../scripts/seed');
-const { get, run } = require('../src/db');
+const { get, run, all } = require('../src/db');
 const app = require('../src/app');
 
 let server;
@@ -353,4 +353,25 @@ test('instant quote estimator prices the selection on the server and saves a lea
   await admin.login('admin@test.local', 'admin-password');
   const view = await admin.get(`/admin/requests/${lead.id}`);
   assert.match(view.text, /Instant estimate/);
+});
+
+test('Google reviews stay hidden until set, then show the badge and the /review link', async () => {
+  const before = await (await fetch(`${base}/`)).text();
+  assert.doesNotMatch(before, /google-badge/);
+  assert.equal((await fetch(`${base}/review`, { redirect: 'manual' })).headers.get('location'), '/contact');
+
+  const admin = browser();
+  await admin.login('admin@test.local', 'admin-password');
+  await admin.get('/admin/settings');
+  const settings = Object.fromEntries(all('SELECT key, value FROM settings').map((r) => [r.key, r.value]));
+  await admin.post('/admin/settings', { ...settings, google_place_id: 'ChIJ_test-Place1', google_rating: '4.8', google_review_count: '12' });
+
+  const review = await fetch(`${base}/review`, { redirect: 'manual' });
+  assert.equal(review.headers.get('location'), 'https://search.google.com/local/writereview?placeid=ChIJ_test-Place1');
+  const after = await (await fetch(`${base}/`)).text();
+  assert.match(after, /4\.8 out of 5 on Google · 12 reviews/);
+  assert.match(after, /Leave us a Google review/);
+
+  const lead = get('SELECT id FROM service_requests LIMIT 1');
+  assert.match((await admin.get(`/admin/requests/${lead.id}`)).text, /Ask for a Google review/);
 });

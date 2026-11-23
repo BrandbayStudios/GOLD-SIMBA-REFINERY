@@ -63,6 +63,9 @@
     <div class="footer-brand" data-reveal="fade-up">
       <a class="brand brand-footer" href="/"><img src="/brand/logo-stacked-gold-sm.png" alt="<%= settings.site_name %>" width="420" height="249" loading="lazy"></a>
       <% if (settings.tagline) { %><p class="footer-tagline"><%= settings.tagline %></p><% } %>
+      <% if (googleReviews.reviewUrl) { %>
+        <a class="footer-review" href="/review" target="_blank" rel="noopener"><%- include('google-g') %><span><% if (googleReviews.rating) { %><strong><%= googleReviews.rating.toFixed(1) %> ★</strong> on Google · <% } %>Leave a review</span></a>
+      <% } %>
       <div class="socials">
         <% for (const [key, label] of [['facebook_url', 'Facebook'], ['instagram_url', 'Instagram'], ['tiktok_url', 'TikTok'], ['linkedin_url', 'LinkedIn']]) { if (settings[key]) { %>
           <a href="<%= settings[key] %>" target="_blank" rel="noopener" aria-label="<%= label %>"><%- include('icon', { name: label.toLowerCase() }) %></a>

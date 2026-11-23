@@ -451,3 +451,7 @@ textarea { resize: vertical; }
 .project-page { padding: 0; border: 0; background: #fff; cursor: zoom-in; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.35s ease, box-shadow 0.35s ease; }
 .project-page img { width: 100%; display: block; aspect-ratio: 1 / 1.414; object-fit: cover; }
 .project-page:hover { transform: translateY(-5px); box-shadow: 0 0 0 2px var(--gold), 0 20px 40px rgba(0, 0, 0, 0.18); }
+.review-prompt { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; margin-bottom: 1.5rem; }
+.review-prompt .google-g { width: 32px; height: 32px; flex: none; }
+.review-prompt p { margin: 0.2rem 0 0; }
+.review-prompt .btn { margin-left: auto; }

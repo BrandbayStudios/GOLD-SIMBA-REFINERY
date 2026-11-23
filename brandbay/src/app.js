@@ -8,6 +8,7 @@ const SqliteStore = require('./session-store');
 const lib = require('./lib');
 const seo = require('./seo');
 const { all, get } = require('./db');
+const reviews = require('./reviews');
 const { csrf, verifyCsrfUnlessMultipart, loadUser } = require('./middleware');
 
 const app = express();
@@ -68,6 +69,7 @@ app.use((req, res, next) => {
   res.locals.flash = req.session.flash || [];
   if (req.session.flash) delete req.session.flash;
   res.locals.settings = lib.getSettings();
+  res.locals.googleReviews = reviews.summary(res.locals.settings);
   res.locals.path = req.path;
   res.locals.cartCount = (req.session.cart || []).reduce((n, i) => n + i.qty, 0);
   res.locals.lib = lib;

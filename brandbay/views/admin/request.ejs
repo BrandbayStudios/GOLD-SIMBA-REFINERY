@@ -40,6 +40,18 @@
       <label class="check"><input type="checkbox" name="notify_client" value="1" checked> Email the client about status or quote changes</label>
       <button class="btn btn-gold btn-block" type="submit">Save changes</button>
     </form>
+    <% if (googleReviews.reviewUrl) { %>
+      <% const reviewText = `Hi ${request.name.split(' ')[0]}, thank you for choosing BrandBay Innovation Studios! If you're happy with your ${request.service.replace(/^Instant estimate.*$/, 'project')}, could you leave us a quick Google review? It really helps: ${config.baseUrl}/review`; %>
+      <section class="panel">
+        <h2>Ask for a Google review</h2>
+        <p class="muted">Best sent when the project is complete<%= request.status === 'completed' ? ' — like now' : '' %>.</p>
+        <div class="form-actions">
+          <% const wa = (request.phone || '').replace(/\D/g, ''); if (wa) { %><a class="btn btn-gold btn-sm" href="https://wa.me/<%= wa %>?text=<%= encodeURIComponent(reviewText) %>" target="_blank" rel="noopener">Send on WhatsApp</a><% } %>
+          <a class="btn btn-outline-dark btn-sm" href="mailto:<%= request.email %>?subject=<%= encodeURIComponent('Could you review BrandBay on Google?') %>&body=<%= encodeURIComponent(reviewText) %>">Send by email</a>
+        </div>
+        <p class="muted small-note">Link: <a href="/review" target="_blank" rel="noopener"><%= config.baseUrl.replace(/^https?:\/\//, '') %>/review</a></p>
+      </section>
+    <% } %>
     <section class="panel">
       <h2>Billing</h2>
       <% if (!invoices.length) { %><p class="muted">No quotations or invoices yet.</p><% } %>

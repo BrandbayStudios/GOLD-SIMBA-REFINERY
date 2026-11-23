@@ -69,6 +69,12 @@ router.get('/about', (req, res) => {
 const packages = () => all('SELECT * FROM packages WHERE published = 1 ORDER BY sort_order, price, id');
 const packageService = (p) => `Package — ${p.name} (from ${lib.moneyShort(p.price)})`;
 
+// Short, shareable link for business cards, WhatsApp and emails: brandbaystudios.online/review
+router.get('/review', (req, res) => {
+  const url = res.locals.googleReviews.reviewUrl;
+  res.redirect(302, url || '/contact');
+});
+
 router.get('/packages', (req, res) => {
   const list = packages();
   res.render('packages', {

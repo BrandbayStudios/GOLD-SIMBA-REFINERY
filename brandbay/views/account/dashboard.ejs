@@ -6,6 +6,13 @@
       <a class="btn btn-gold" href="/apply">Apply for a service</a>
     </div>
     <%- include('nav') %>
+    <% if (googleReviews.reviewUrl && requests.some((r) => r.status === 'completed')) { %>
+      <div class="card review-prompt">
+        <%- include('../partials/google-g') %>
+        <div><strong>How did we do?</strong><p class="muted">If you’re happy with your project, a quick Google review helps other businesses find us.</p></div>
+        <a class="btn btn-gold btn-sm" href="/review" target="_blank" rel="noopener">Leave a review</a>
+      </div>
+    <% } %>
     <h2>Service requests</h2>
     <% if (!requests.length) { %>
       <div class="empty card"><p>You haven’t applied for a service yet.</p><a class="btn btn-gold" href="/apply">Start a project</a></div>
