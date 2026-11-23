@@ -9,30 +9,30 @@ const POSTS = require('./posts');
 const PACKAGES = [
   {
     name: 'Logo Design', label: 'Starter', price: 1500,
-    tagline: 'A professional logo to launch your brand.',
+    tagline: 'A complete logo and stationery set to launch your brand.',
     best_for: 'New businesses, start-ups and side hustles',
-    features: ['3 original logo concepts', '2 rounds of revisions', 'Full-colour and black & white versions', 'Print and web files (PNG, JPG, PDF, SVG)', 'Social media profile picture'],
-    timeline: '3–5 working days',
+    features: ['Full logo design', 'Full business description, written for you', 'Logo guidelines', 'Logo mockups', 'Letterhead design', 'Business card design'],
+    timeline: '5–7 working days',
   },
   {
     name: 'Brand Identity', label: 'Essentials', price: 2500,
-    tagline: 'Look consistent everywhere you show up.',
+    tagline: 'Your logo and stationery plus a professional company profile.',
     best_for: 'Small businesses ready to look established',
-    features: ['Everything in Logo Design', 'Colour palette and font selection', 'Business card design', 'Letterhead and email signature', 'Social media profile and cover designs', 'One-page brand guide (PDF)'],
-    timeline: '5–7 working days',
+    features: ['Everything in Logo Design', 'Company profile design (10–12 pages)', 'Email header design'],
+    timeline: '7–10 working days',
   },
   {
     name: 'Business Launch', label: 'Growth', price: 4500, highlighted: 1,
     tagline: 'Everything you need to launch and market your business.',
     best_for: 'Businesses launching, rebranding or bidding for contracts',
-    features: ['Everything in Brand Identity', 'Company profile design (up to 8 pages)', 'Flyer or poster design', 'Pull-up banner design', '5 branded social media post templates', 'Full brand guidelines (PDF)'],
-    timeline: '7–14 working days',
+    features: ['Everything in Logo Design', 'Everything in Brand Identity', 'Social media post templates'],
+    timeline: '10–14 working days',
   },
   {
     name: 'Brand + Website', label: 'Premium', price: 7500,
-    tagline: 'Your brand identity plus a professional website.',
+    tagline: 'Your full brand identity plus a professional website.',
     best_for: 'Businesses that want to win customers online',
-    features: ['Everything in Brand Identity', 'Website of up to 5 pages, built for mobile', 'Contact / quote form and WhatsApp chat button', 'Google Maps location and basic SEO setup', 'Google Business Profile setup', '1 month of website support'],
+    features: ['Everything in Logo Design', 'Everything in Brand Identity', 'Website of up to 5 pages, built for mobile', 'Contact / quote form and WhatsApp chat button', 'Google Maps location and basic SEO setup', 'Google Business Profile setup', '1 month of website support'],
     timeline: '2–4 weeks',
   },
 ];
@@ -388,6 +388,17 @@ function backfillContent() {
   // One-time: add the packages to databases created before them.
   if (!getSettings().content_packages_v1) {
     transaction(() => { insertPackages(); setSetting('content_packages_v1', '1'); });
+  }
+  // One-time: package contents revised by the studio (Nov 2026).
+  if (!getSettings().content_packages_v2) {
+    transaction(() => {
+      for (const p of PACKAGES) {
+        const slug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        run('UPDATE packages SET tagline = ?, best_for = ?, features = ?, timeline = ? WHERE slug = ?',
+          p.tagline, p.best_for, p.features.join('\n'), p.timeline, slug);
+      }
+      setSetting('content_packages_v2', '1');
+    });
   }
   // One-time: publish the first Insights articles.
   if (!getSettings().content_posts_v1) {
