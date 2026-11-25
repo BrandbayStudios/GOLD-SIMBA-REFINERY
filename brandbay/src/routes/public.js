@@ -97,8 +97,8 @@ router.get('/services', (req, res) => {
 
 const SHOWCASES = {
   'technological-solutions': { title: 'Websites we’ve built', categories: ['Website Design'], link: '/projects?category=Website%20Design', linkLabel: 'All websites' },
-  'printing-artistry': { title: 'Branding & print jobs', categories: ['Vehicle Branding', 'Signage', 'Shopfront Branding', 'Stickers & Labels'], link: '/projects', linkLabel: 'All projects' },
-  'service-event-branding': { title: 'Branding & signage jobs', categories: ['Vehicle Branding', 'Signage', 'Shopfront Branding'], link: '/projects', linkLabel: 'All projects' },
+  'printing-artistry': { title: 'Branding & print jobs', categories: ['Vehicle Branding', 'Signage', 'Shopfront Branding', 'Pull-up Banners', 'Stickers & Labels'], link: '/projects', linkLabel: 'All projects' },
+  'service-event-branding': { title: 'Event & branding jobs', categories: ['Exhibitions & Events', 'Pull-up Banners', 'Signage', 'Vehicle Branding'], link: '/projects', linkLabel: 'All projects' },
 };
 
 function serviceShowcase(slug) {

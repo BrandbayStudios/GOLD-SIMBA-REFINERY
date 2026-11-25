@@ -325,7 +325,7 @@ const PRINT_JOBS = [
     tags: 'Vehicle graphics, Brand colours, Contact details, Durable vinyl',
   },
   {
-    image: 'kamint-rear-window-branding', title: 'Kamint Enterprise Car Vinyl Branding', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 1,
+    image: 'kamint-rear-window-branding', title: 'Kamint Enterprise Car Vinyl Branding', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 2,
     summary: 'Car vinyl branding for a GPS tracking company, carrying its logo, full list of services and contact details on the back of the vehicle.',
     tags: 'Car vinyl, Logo & services, Contact details',
   },
@@ -353,6 +353,56 @@ const PRINT_JOBS = [
     image: 'mlik-courier-stickers', title: 'Mlik Courier Branded Stickers', client: 'Mlik Courier & Logistics Ltd', category: 'Stickers & Labels', pages: 1,
     summary: 'Branded parcel stickers for a courier company: logo, contacts and the line "One delivery at a time", printed in sheets.',
     tags: 'Sticker printing, Packaging, Brand colours',
+  },
+  {
+    image: 'mlik-courier-delivery-box', title: 'Mlik Courier Delivery Box Branding', client: 'Mlik Courier & Logistics Ltd', category: 'Vehicle Branding', pages: 2,
+    summary: 'Branded delivery boxes for a courier company’s motorbikes, with logo, contacts and the line "One delivery at a time" on every side.',
+    tags: 'Delivery box wrap, Motorbike branding, Installation',
+  },
+  {
+    image: 'transformation-beauty-banner', title: 'Transformation Beauty Studio Banner', client: 'Transformation Beauty Studio', category: 'Signage', pages: 1,
+    summary: 'An outdoor balcony banner for a Kabwata beauty studio, featuring its models, services, phone number and location.',
+    tags: 'Outdoor banner, Photo-led design, Contact details',
+  },
+  {
+    image: 'izeni-resort-signboard', title: 'Izeni Resort Roadside Signboard', client: 'Izeni Resort', category: 'Signage', pages: 2,
+    summary: 'A large roadside signboard for a resort, showing its services, photos of the pool, rooms, hall and bar, and directions to the main entrance.',
+    tags: 'Roadside signage, Directional sign, Photo panels',
+  },
+  {
+    image: 'mobile-accessories-shopfront', title: 'Mobile Accessories Shopfront Posters', client: '', category: 'Shopfront Branding', pages: 1,
+    summary: 'Matching shopfront posters for a phone accessories shop, listing what it sells, from glass protectors and chargers to earpods and memory cards.',
+    tags: 'Shopfront posters, Product list, Contact details',
+  },
+  {
+    image: 'habib-exhibition-stand', title: 'Habib Industries Exhibition Stand', client: 'Habib Industries', category: 'Exhibitions & Events', pages: 5,
+    summary: 'A complete trade show stand for a packaging manufacturer: header fascia, printed backdrop, pull-up banners, flyers and embroidered caps.',
+    tags: 'Exhibition backdrop, Pull-up banners, Flyers, Embroidered caps',
+  },
+  {
+    image: 'kamint-pullup-banner', title: 'Kamint Enterprise Pull-up Banner', client: 'Kamint Enterprise', category: 'Pull-up Banners', pages: 1,
+    summary: 'A pull-up banner for a tracking company, setting out its full list of services under the line "Delivering excellence, one track at a time".',
+    tags: 'Pull-up banner, Service list',
+  },
+  {
+    image: 'buyzambezi-pullup-banner', title: 'BuyZambezi Pull-up Banner', client: 'BuyZambezi', category: 'Pull-up Banners', pages: 1,
+    summary: 'A bold pull-up banner for an African e-commerce platform: "One Africa, One Market".',
+    tags: 'Pull-up banner, Launch campaign',
+  },
+  {
+    image: 'toastmasters-pullup-banner', title: 'Toastmasters International Pull-up Banner', client: 'Toastmasters International', category: 'Pull-up Banners', pages: 1,
+    summary: 'A pull-up banner presenting the club’s values: Integrity, Respect, Service and Excellence.',
+    tags: 'Pull-up banner, Values display',
+  },
+  {
+    image: 'zamcom-pullup-banners', title: 'ZAMCOM Pull-up Banners & Backdrop', client: 'ZAMCOM', category: 'Pull-up Banners', pages: 1,
+    summary: 'Pull-up banners for professional programmes and media production, with a branded step-and-repeat backdrop for ZAMCOM and ZAMCOM Radio.',
+    tags: 'Pull-up banners, Media backdrop',
+  },
+  {
+    image: 'thrive-aid-pullup-banner', title: 'Thrive Aid Pull-up Banner', client: 'Thrive Aid', category: 'Pull-up Banners', pages: 1,
+    summary: 'A pull-up banner for a youth NGO, presenting its vision, mission and thematic areas: education, mentorship and mental health.',
+    tags: 'Pull-up banner, NGO, Photo collage',
   },
   {
     image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
@@ -568,6 +618,15 @@ function backfillContent() {
           p.slug, p.title, p.excerpt, p.body, p.image, `-${i} days`);
       });
       setSetting('content_posts_v1', '1');
+    });
+  }
+  // One-time: more print, signage, pull-up and exhibition jobs; the Kamint car gets a second photo.
+  if (!getSettings().content_print_v3) {
+    transaction(() => {
+      insertPrintJobs();
+      const kamint = PRINT_JOBS.find((j) => j.image === 'kamint-rear-window-branding');
+      run('UPDATE projects SET gallery = ? WHERE slug = ?', profilePages(kamint.image, kamint.pages), kamint.image);
+      setSetting('content_print_v3', '1');
     });
   }
   // One-time: the studio confirmed the Hanchu photos are its solar installation work and the Kamint job is car vinyl.
