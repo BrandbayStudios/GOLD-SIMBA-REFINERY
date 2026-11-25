@@ -458,3 +458,17 @@ test('WhatsApp alerts: sent for new leads through the chosen provider, never bre
     setting('whatsapp_alert_provider', 'off');
   }
 });
+
+test('admin login reset sets the contact email and a new password once', async () => {
+  const bcrypt = require('bcryptjs');
+  const { resetAdminLogin } = require('../scripts/seed');
+  const before = get("SELECT id, email FROM users WHERE role = 'admin' ORDER BY id LIMIT 1");
+  const contact = get("SELECT value FROM settings WHERE key = 'email'").value.toLowerCase();
+  const email = resetAdminLogin(bcrypt.hashSync('Reset-Test-Pass-1', 4));
+  assert.equal(email, contact);
+  const admin = browser();
+  assert.equal((await admin.login(contact, 'Reset-Test-Pass-1')).status, 302);
+  assert.equal((await admin.get('/admin')).status, 200);
+  // restore the test admin so later tests keep working
+  run('UPDATE users SET email = ?, password_hash = ? WHERE id = ?', before.email, bcrypt.hashSync('admin-password', 4), before.id);
+});

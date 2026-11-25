@@ -754,8 +754,32 @@ function seed() {
   invoicing.ensureDefaults();
 }
 
+// The studio lost the temporary launch password, so the admin login is reset once to the site's contact
+// email and a new temporary password (only its bcrypt hash is stored here). Change it after signing in.
+const ADMIN_RESET_HASH = '$2b$12$t7OdMiI2kBjqx2B8bo.5XOqtJgJMeSxfQfbxgRtfdG2Qxb7ebkrWS';
+
+function resetAdminLogin(hash = ADMIN_RESET_HASH) {
+  const email = String(getSettings().email || '').trim().toLowerCase();
+  return transaction(() => {
+    const admin = get("SELECT id, email FROM users WHERE role = 'admin' ORDER BY id LIMIT 1");
+    const taken = email && get('SELECT id FROM users WHERE email = ? COLLATE NOCASE AND id != ?', email, admin ? admin.id : 0);
+    const newEmail = email && !taken ? email : null;
+    if (admin) {
+      run('UPDATE users SET password_hash = ?, email = COALESCE(?, email), reset_token = NULL, reset_expires = NULL WHERE id = ?', hash, newEmail, admin.id);
+      return newEmail || admin.email;
+    }
+    const fallback = newEmail || 'admin@brandbaystudios.online';
+    run("INSERT INTO users (name, email, password_hash, role) VALUES ('BrandBay Admin', ?, ?, 'admin')", fallback, hash);
+    return fallback;
+  });
+}
+
 // Fills in content added after a database was first created; never overwrites edited text.
 function backfillContent() {
+  if (!getSettings().admin_reset_v1) {
+    resetAdminLogin();
+    setSetting('admin_reset_v1', '1');
+  }
   for (const [slug, intro] of Object.entries(SERVICE_INTROS)) {
     run("UPDATE service_categories SET intro = ? WHERE slug = ? AND (intro IS NULL OR intro = '')", intro, slug);
   }
@@ -896,7 +920,7 @@ function backfillContent() {
   });
 }
 
-module.exports = { seed, backfillContent };
+module.exports = { seed, backfillContent, resetAdminLogin };
 
 if (require.main === module) {
   seed();
