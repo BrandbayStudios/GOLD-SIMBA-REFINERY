@@ -545,9 +545,9 @@ const PRINT_JOBS = [
     tags: 'Wall graphics, Large-format print, Framed panels, Installation',
   },
   {
-    image: 'swap-topup-shopfront', title: 'Swap & Top Up Shopfront Installation', client: '', category: 'Shopfront Branding', pages: 1,
-    summary: 'Shopfront graphics for a phone and electronics store, installed on site by the BrandBay team: "Swap & Top Up Deals Accepted".',
-    tags: 'Shopfront graphics, On-site installation, Vinyl application',
+    image: 'swap-topup-shopfront', title: 'Promjet Solutions Shopfront Branding', client: 'Promjet Solutions', category: 'Shopfront Branding', pages: 2,
+    summary: 'Shopfront branding for Promjet Solutions: service panels for phones and electronics, logistics and vehicles, door logos and a lit side display, installed on site by the BrandBay team.',
+    tags: 'Shopfront graphics, Lit display, Door logos, On-site installation',
   },
   {
     image: 'rural-ventures-business-cards', title: 'Rural Ventures Limited Business Cards', client: 'Rural Ventures Limited', category: 'Business Cards', pages: 1,
@@ -563,6 +563,26 @@ const PRINT_JOBS = [
     image: 'kamint-company-profile', title: 'Kamint Enterprise Company Profile', client: 'Kamint Enterprise', category: 'Company Profile', pages: 1,
     summary: 'A landscape company profile for Kamint Enterprise, "Keep track of what matters most", printed and finished with eyelets.',
     tags: 'Profile design, Landscape format, Eyelet binding',
+  },
+  {
+    image: 'mind-solutions-car-cutouts', title: 'Mind Solutions Car Cut-outs', client: 'Mind Solutions', category: 'Vehicle Branding', pages: 1,
+    summary: 'A round vinyl cut-out of the Mind Solutions logo on the driver’s door, giving the company car a clean, professional look.',
+    tags: 'Vinyl cut-out, Door logo, Vehicle branding',
+  },
+  {
+    image: 'newtech-agro-business-cards', title: 'Newtech Agro Solutions Business Cards', client: 'Newtech Agro Solutions Ltd', category: 'Business Cards', pages: 1,
+    summary: 'Business cards for an agribusiness company, in green and charcoal with the logo, contact details and a line on its commodities and grain storage services.',
+    tags: 'Business card design, Rounded corners, Brand colours',
+  },
+  {
+    image: 'kamint-office-branding', title: 'Kamint Enterprise Office Branding', client: 'Kamint Enterprise', category: 'Office Branding', pages: 1,
+    summary: 'Branding for the Kamint Enterprise office: a large banner on the building, scaffold installation and the "Our Services" signboard at the gate.',
+    tags: 'Building banner, On-site installation, Signboard',
+  },
+  {
+    image: 'sashi-gardens-tshirts', title: 'Sashi Gardens T-Shirts', client: 'Sashi Gardens', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Black T-shirts printed with the Sashi Gardens logo in crisp white, packed individually.',
+    tags: 'T-shirt printing, Staff wear, Individually packed',
   },
   {
     image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
@@ -778,6 +798,16 @@ function backfillContent() {
           p.slug, p.title, p.excerpt, p.body, p.image, `-${i} days`);
       });
       setSetting('content_posts_v1', '1');
+    });
+  }
+  // One-time: Promjet Solutions is the shop behind the Swap & Top Up shopfront; it gets a second photo.
+  if (!getSettings().content_print_v7) {
+    transaction(() => {
+      insertPrintJobs();
+      const j = PRINT_JOBS.find((x) => x.image === 'swap-topup-shopfront');
+      run('UPDATE projects SET title = ?, client = ?, summary = ?, tags = ?, gallery = ? WHERE slug = ?',
+        j.title, j.client, j.summary, j.tags, profilePages(j.image, 2), j.image);
+      setSetting('content_print_v7', '1');
     });
   }
   // One-time: the studio named the tab "Office Branding"; the Al Faris office sign belongs there too.
