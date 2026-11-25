@@ -325,9 +325,9 @@ const PRINT_JOBS = [
     tags: 'Vehicle graphics, Brand colours, Contact details, Durable vinyl',
   },
   {
-    image: 'kamint-rear-window-branding', title: 'Kamint Enterprise Rear Window Branding', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 1,
-    summary: 'See-through rear window graphics for a GPS tracking company, listing its services and contact details while keeping the view clear for the driver.',
-    tags: 'One-way vision vinyl, Service list, Contact details',
+    image: 'kamint-rear-window-branding', title: 'Kamint Enterprise Car Vinyl Branding', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 1,
+    summary: 'Car vinyl branding for a GPS tracking company, carrying its logo, full list of services and contact details on the back of the vehicle.',
+    tags: 'Car vinyl, Logo & services, Contact details',
   },
   {
     image: 'kamint-signboard', title: 'Kamint Enterprise Signboard', client: 'Kamint Enterprise', category: 'Signage', pages: 1,
@@ -355,18 +355,18 @@ const PRINT_JOBS = [
     tags: 'Sticker printing, Packaging, Brand colours',
   },
   {
-    // Kept as a draft until the studio confirms what it produced for this client.
-    image: 'power-chip-hanchu', title: 'Power Chip — Hanchu ESS', client: 'Power Chip Electrical Solutions Zambia', category: 'Branding', pages: 3, published: 0,
-    summary: 'Hanchu ESS inverter and battery installations.', tags: '',
+    image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
+    summary: 'Hybrid solar inverter and lithium battery installations with a neat distribution board and cable trunking, giving homes and offices reliable backup power.',
+    tags: 'Hybrid inverter, Lithium battery, Distribution board, Neat trunking',
   },
 ];
 
 function insertPrintJobs() {
   PRINT_JOBS.forEach((p, i) => {
-    if (get('SELECT id FROM projects WHERE slug = ?', p.image)) return;
+    if (get('SELECT id FROM projects WHERE slug IN (?, ?)', p.slug || p.image, p.image)) return;
     run(
       'INSERT INTO projects (slug, title, client, category, summary, image, gallery, tags, published, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      p.image, p.title, p.client, p.category, p.summary, `/media/projects/${p.image}.webp`,
+      p.slug || p.image, p.title, p.client || null, p.category, p.summary, `/media/projects/${p.image}.webp`,
       profilePages(p.image, p.pages), p.tags || null, p.published ?? 1, i - 50,
     );
   });
@@ -568,6 +568,16 @@ function backfillContent() {
           p.slug, p.title, p.excerpt, p.body, p.image, `-${i} days`);
       });
       setSetting('content_posts_v1', '1');
+    });
+  }
+  // One-time: the studio confirmed the Hanchu photos are its solar installation work and the Kamint job is car vinyl.
+  if (!getSettings().content_print_v2) {
+    transaction(() => {
+      for (const p of PRINT_JOBS.filter((j) => ['power-chip-hanchu', 'kamint-rear-window-branding'].includes(j.image))) {
+        run('UPDATE projects SET slug = ?, title = ?, client = ?, category = ?, summary = ?, tags = ?, gallery = ?, published = 1 WHERE slug = ?',
+          p.slug || p.image, p.title, p.client || null, p.category, p.summary, p.tags, profilePages(p.image, p.pages), p.image);
+      }
+      setSetting('content_print_v2', '1');
     });
   }
   // One-time: add the vehicle branding, signage and print projects.

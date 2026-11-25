@@ -387,11 +387,11 @@ test('website projects link to the live site, except private systems', async () 
   assert.match(await (await fetch(`${base}/packages`)).text(), /saferoute-logistics-website/);
 });
 
-test('branding and print jobs appear under their own tabs; drafts stay hidden', async () => {
+test('branding, print and solar jobs appear under their own tabs', async () => {
   const html = await (await fetch(`${base}/projects`)).text();
   for (const tab of ['Vehicle Branding', 'Signage', 'Shopfront Branding', 'Stickers &amp; Labels']) assert.ok(html.includes(`data-filter="${tab}"`), tab);
   assert.match(html, /SafeRoute Logistics Car Branding/);
-  assert.doesNotMatch(html, /Hanchu/);
-  assert.equal((await fetch(`${base}/projects/power-chip-hanchu`)).status, 404);
+  assert.match(html, /Solar Inverter &amp; Battery Installation/);
+  assert.equal((await fetch(`${base}/projects/solar-installation`)).status, 200);
   assert.match(await (await fetch(`${base}/projects/izack-shopfront-branding`)).text(), /Photos from the job/);
 });
