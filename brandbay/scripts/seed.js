@@ -585,6 +585,16 @@ const PRINT_JOBS = [
     tags: 'T-shirt printing, Staff wear, Individually packed',
   },
   {
+    image: 'st-joseph-life-matters-tshirts', title: 'St Joseph Parish "Life Matters" T-Shirts', client: 'St Joseph Parish', category: 'T-Shirt Printing', pages: 4,
+    summary: 'Black T-shirts for St Joseph Parish’s "Life Matters" campaign, printed in gold with the parish emblem and slogan, worn at the parish event.',
+    tags: 'T-shirt printing, Gold print, Parish emblem, Event wear',
+  },
+  {
+    image: 'scour-cleaning-company-profile', title: 'Scour Cleaning Services Company Profile', client: 'Scour Cleaning Services', category: 'Company Profile', pages: 1,
+    summary: 'A printed company profile for a cleaning company, with its 3D-style logo on the cover.',
+    tags: 'Profile design, Logo design, Printing',
+  },
+  {
     image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
     summary: 'Hybrid solar inverter and lithium battery installations with a neat distribution board and cable trunking, giving homes and offices reliable backup power.',
     tags: 'Hybrid inverter, Lithium battery, Distribution board, Neat trunking',
@@ -799,6 +809,10 @@ function backfillContent() {
       });
       setSetting('content_posts_v1', '1');
     });
+  }
+  // One-time: St Joseph Parish T-shirts and the Scour Cleaning company profile.
+  if (!getSettings().content_print_v8) {
+    transaction(() => { insertPrintJobs(); setSetting('content_print_v8', '1'); });
   }
   // One-time: Promjet Solutions is the shop behind the Swap & Top Up shopfront; it gets a second photo.
   if (!getSettings().content_print_v7) {
