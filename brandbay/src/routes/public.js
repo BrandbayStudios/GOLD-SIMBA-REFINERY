@@ -82,6 +82,7 @@ router.get('/packages', (req, res) => {
     description: `Branding, logo and website packages from ${list.length ? lib.moneyShort(list[0].price) : 'K1,500'} at BrandBay Innovation Studios in Lusaka, Zambia. See what is included and get started.`,
     schema: [seo.packages(list), seo.breadcrumbs([['Packages', '/packages']])],
     packages: list,
+    websites: all("SELECT * FROM projects WHERE published = 1 AND category = 'Website Design' ORDER BY sort_order, id LIMIT 3"),
   });
 });
 
@@ -103,6 +104,8 @@ router.get('/services/:slug', (req, res, next) => {
     schema: [seo.service(service), seo.breadcrumbs([['Services', '/services'], [service.name, `/services/${service.slug}`]])],
     service,
     others: services().filter((s) => s.id !== service.id),
+    // Web and tech services show the websites the studio has built.
+    websites: service.slug === 'technological-solutions' ? all("SELECT * FROM projects WHERE published = 1 AND category = 'Website Design' ORDER BY sort_order, id LIMIT 6") : [],
     projects: all('SELECT * FROM projects WHERE published = 1 ORDER BY featured DESC, sort_order LIMIT 3'),
   });
 });
@@ -112,7 +115,7 @@ router.get('/projects', (req, res) => {
   const categories = [...new Set(projects.map((p) => p.category).filter(Boolean))];
   res.render('projects', {
     title: 'Portfolio — Branding & Design Projects in Zambia',
-    description: 'Recent brand identity, logo, social media and advertising design projects by BrandBay Innovation Studios for businesses in Lusaka and across Zambia.',
+    description: 'Websites, brand identities, company profiles, social media and advertising design by BrandBay Innovation Studios for businesses in Lusaka and across Zambia.',
     schema: [seo.breadcrumbs([['Projects', '/projects']])],
     projects,
     categories,

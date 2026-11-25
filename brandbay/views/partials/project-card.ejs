@@ -3,7 +3,7 @@
     <% if (project.image) { %><img src="<%= lib.thumb(project.image) %>" alt="<%= project.title %>" loading="lazy"><% } %>
   </div>
   <div class="project-body">
-    <% if (project.category) { %><span class="eyebrow"><%= project.category %></span><% } %>
+    <% if (project.category) { %><span class="eyebrow"><%= project.category %><% if (project.website_url) { %> · <span class="live-dot" aria-hidden="true"></span>Live<% } %></span><% } %>
     <h3><%= project.title %></h3>
     <% if (project.summary) { %><p><%= project.summary %></p><% } %>
   </div>

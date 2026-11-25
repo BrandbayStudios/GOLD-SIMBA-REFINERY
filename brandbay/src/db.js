@@ -346,6 +346,8 @@ db.exec(SCHEMA);
 // Columns added after the first release.
 const columns = (table) => db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
 if (!columns('projects').includes('gallery')) db.exec('ALTER TABLE projects ADD COLUMN gallery TEXT');
+if (!columns('projects').includes('website_url')) db.exec('ALTER TABLE projects ADD COLUMN website_url TEXT');
+if (!columns('projects').includes('tags')) db.exec('ALTER TABLE projects ADD COLUMN tags TEXT');
 if (!columns('service_requests').includes('estimate_amount')) db.exec('ALTER TABLE service_requests ADD COLUMN estimate_amount REAL');
 
 function all(sql, ...params) {

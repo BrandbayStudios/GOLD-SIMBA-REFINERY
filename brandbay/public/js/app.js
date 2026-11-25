@@ -32,6 +32,10 @@
         card.hidden = Boolean(value) && card.dataset.category !== value;
       });
     });
+    // /projects?category=Website%20Design opens with that filter on.
+    const wanted = new URLSearchParams(location.search).get('category');
+    const preset = wanted && [...filterGroup.querySelectorAll('[data-filter]')].find((b) => b.dataset.filter === wanted);
+    if (preset) preset.click();
   }
 
   // Lightbox for gallery, certificates and project images.

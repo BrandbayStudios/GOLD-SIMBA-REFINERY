@@ -283,6 +283,51 @@ const PROFILES = [
   },
 ];
 
+// Websites and web apps built by the studio; screenshots taken from the live sites.
+const WEBSITES = [
+  {
+    image: 'saferoute-logistics-website', title: 'SafeRoute Logistics', client: 'SafeRoute Logistics Limited', url: 'https://saferouteglobal.com/',
+    summary: 'A bold, fast website for a Lusaka customs clearing and freight forwarding company, with an instant quote calculator and shipment tracking.',
+    tags: 'Quote calculator, Shipment tracking, Service pages, Mobile friendly', pages: 4,
+  },
+  {
+    image: 'discovery-freight-website', title: 'Discovery Freight & Logistics', client: 'Discovery Freight & Logistics', url: 'https://discovery.co.zm/',
+    summary: 'Website for a Zambian customs and freight specialist serving every border entry, with service pages, FAQs and a quote request form.',
+    tags: 'Quote request form, FAQs, Search-ready, Mobile friendly', pages: 4,
+  },
+  {
+    image: 'alfaris-gold-website', title: 'Al Faris Gold Refinery', client: 'Al Faris Gold Leaching & Refining Ltd', url: 'https://alfarisgoldrefinery.com/',
+    summary: 'A premium website for a Lusaka gold refinery covering testing, smelting, safekeeping and gold trading, built to win consultations.',
+    tags: 'Consultation booking, WhatsApp chat, Premium design, Mobile friendly', pages: 4,
+  },
+  {
+    image: 'mlik-investments-website', title: 'Mlik Investments', client: 'Mlik Investments Limited', url: 'https://mlikinvestment.com/',
+    summary: 'A confident website for a mining, heavy machinery and mineral trading company, designed to turn visitors into commercial quote requests.',
+    tags: 'Quote requests, Product & service pages, FAQs, Mobile friendly', pages: 4,
+  },
+  {
+    image: 'saferoute-document-system', title: 'SafeRoute Document Management System', client: 'SafeRoute Logistics Limited', url: '',
+    summary: 'A private web app for SafeRoute Logistics to create invoices, quotations and delivery notes, manage customers and print or download documents.',
+    tags: 'Web app, Invoices & quotations, Delivery notes, Secure sign-in', pages: 2,
+  },
+  {
+    image: 'maukat-engineering-website', title: 'Maukat Developers & Engineering Website', client: 'Maukat Developers & Engineering Ltd', url: 'https://maukatengineering.com/',
+    summary: 'Official website for a Lusaka construction and engineering firm, showcasing its services, material supply and projects.',
+    tags: 'Service pages, Project showcase, Quote form, Mobile friendly', pages: 4,
+  },
+];
+
+function insertWebsites() {
+  WEBSITES.forEach((w, i) => {
+    if (get('SELECT id FROM projects WHERE slug = ?', w.image)) return;
+    run(
+      'INSERT INTO projects (slug, title, client, category, summary, image, gallery, website_url, tags, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      w.image, w.title, w.client, 'Website Design', w.summary, `/media/projects/${w.image}.webp`,
+      profilePages(w.image, w.pages), w.url || null, w.tags, i - 100,
+    );
+  });
+}
+
 function insertProfiles() {
   PROFILES.forEach((p, i) => {
     if (get('SELECT id FROM projects WHERE slug = ?', p.image)) return;
@@ -379,6 +424,7 @@ function seed() {
           p.image_2 ? `/media/projects/${p.image_2}.webp` : null, p.featured || 0, i,
         ));
       insertProfiles();
+      insertWebsites();
     }
 
     if (empty('packages')) insertPackages();
@@ -467,6 +513,10 @@ function backfillContent() {
       });
       setSetting('content_posts_v1', '1');
     });
+  }
+  // One-time: add the website projects to databases created before them.
+  if (!getSettings().content_websites_v1) {
+    transaction(() => { insertWebsites(); setSetting('content_websites_v1', '1'); });
   }
   // One-time: add the company profile projects to databases created before them.
   if (!getSettings().content_profiles_v1) {

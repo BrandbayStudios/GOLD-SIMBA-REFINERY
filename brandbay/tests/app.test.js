@@ -375,3 +375,14 @@ test('Google reviews stay hidden until set, then show the badge and the /review 
   const lead = get('SELECT id FROM service_requests LIMIT 1');
   assert.match((await admin.get(`/admin/requests/${lead.id}`)).text, /Ask for a Google review/);
 });
+
+test('website projects link to the live site, except private systems', async () => {
+  const site = await (await fetch(`${base}/projects/saferoute-logistics-website`)).text();
+  assert.match(site, /href="https:\/\/saferouteglobal\.com\/"[^>]*>Visit live site/);
+  assert.match(site, /Quote calculator/);
+  const app = await (await fetch(`${base}/projects/saferoute-document-system`)).text();
+  assert.doesNotMatch(app, /Visit live site/);
+  const tech = await (await fetch(`${base}/services/technological-solutions`)).text();
+  assert.match(tech, /Websites we’ve built/);
+  assert.match(await (await fetch(`${base}/packages`)).text(), /saferoute-logistics-website/);
+});

@@ -37,6 +37,8 @@ module.exports = {
       { name: 'image', label: 'Cover image', type: 'image' },
       { name: 'image_2', label: 'Second image', type: 'image' },
       { name: 'gallery', label: 'More images, e.g. profile pages (one image path per line)', type: 'textarea', rows: 6 },
+      { name: 'website_url', label: 'Live website address (shows a "Visit live site" button)', type: 'text', hint: 'e.g. https://clientsite.com — leave blank for private systems' },
+      { name: 'tags', label: 'Feature tags (comma separated)', type: 'text', hint: 'e.g. Quote calculator, Mobile friendly, WhatsApp chat' },
       { name: 'featured', label: 'Feature on home page', type: 'checkbox' },
       { name: 'sort_order', label: 'Sort order', type: 'number' },
       { name: 'published', label: 'Published', type: 'checkbox', default: 1 },

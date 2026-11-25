@@ -488,3 +488,24 @@ html, body { overflow-x: clip; }
 .google-review figcaption a { color: inherit; }
 .footer-review { display: inline-flex; align-items: center; gap: 0.55rem; margin-bottom: 1rem; padding: 0.45rem 0.85rem; border-radius: 999px; background: #fff; color: var(--ink) !important; font-size: 0.85rem; transition: transform 0.3s var(--ease-spring); }
 .footer-review:hover { transform: translateY(-2px); }
+
+/* ---------- Website projects ---------- */
+.project-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 1rem 0 0; }
+.project-tags li { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 999px; background: rgba(227, 180, 0, 0.14); color: var(--gold); font-size: 0.82rem; font-weight: 600; }
+.project-tags svg { width: 14px; height: 14px; }
+.project-live { margin-top: 1.3rem; gap: 0.5rem; }
+.project-live svg { width: 18px; height: 18px; transition: transform 0.3s var(--ease-out); }
+.project-live:hover svg { transform: translate(3px, -3px) rotate(-45deg); }
+.project-pages.is-screens { grid-template-columns: repeat(3, 1fr); align-items: start; }
+.project-pages.is-screens .project-page img { aspect-ratio: auto; object-fit: contain; }
+.project-pages.is-screens .project-page:last-child { max-width: 220px; }
+@media (max-width: 760px) { .project-pages.is-screens { grid-template-columns: 1fr; } }
+.live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 0.3rem; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2); vertical-align: middle; }
+.package-websites { margin-top: 3.5rem; text-align: center; }
+.package-websites h2 { color: #fff; margin-bottom: 1.5rem; }
+.package-websites-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+.package-website { position: relative; display: block; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35); transition: transform 0.4s var(--ease-spring), box-shadow 0.4s; }
+.package-website:hover { transform: translateY(-6px); box-shadow: 0 0 0 2px var(--gold), 0 26px 50px rgba(0, 0, 0, 0.45); }
+.package-website img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.package-website span { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.9rem 1rem 0.8rem; background: linear-gradient(transparent, rgba(0, 0, 0, 0.8)); color: #fff; font-weight: 700; text-align: left; }
+@media (max-width: 760px) { .package-websites-grid { grid-template-columns: 1fr; } }

@@ -6,6 +6,12 @@
     <h1><%= project.title %></h1>
     <% if (project.summary) { %><p class="lead"><%= project.summary %></p><% } %>
     <% if (project.client) { %><p class="muted">Client: <%= project.client %></p><% } %>
+    <% const tags = String(project.tags || '').split(',').map((t) => t.trim()).filter(Boolean); if (tags.length) { %>
+      <ul class="project-tags"><% for (const t of tags) { %><li><%- include('partials/icon', { name: 'check' }) %><%= t %></li><% } %></ul>
+    <% } %>
+    <% if (project.website_url) { %>
+      <a class="btn btn-gold btn-shine project-live" href="<%= project.website_url %>" target="_blank" rel="noopener">Visit live site <%- include('partials/icon', { name: 'arrow' }) %><span class="sr-only"> (opens <%= project.website_url.replace(/^https?:\/\//, '').replace(/\/$/, '') %> in a new tab)</span></a>
+    <% } %>
   </div>
 </section>
 <section class="section">
@@ -19,8 +25,9 @@
     </div>
     <% const pages = lib.lines(project.gallery); %>
     <% if (pages.length) { %>
-      <h2 class="project-pages-title">Inside the <%= project.category === 'Company Profile' ? 'profile' : 'project' %></h2>
-      <div class="project-pages" data-lightbox-group data-reveal-group>
+      <% const isWeb = project.category === 'Website Design'; %>
+      <h2 class="project-pages-title"><%= project.category === 'Company Profile' ? 'Inside the profile' : isWeb ? 'Screens from the site' : 'Inside the project' %></h2>
+      <div class="project-pages<%= isWeb ? ' is-screens' : '' %>" data-lightbox-group data-reveal-group>
         <% pages.forEach((img, i) => { %>
           <button class="project-page" type="button" data-lightbox="<%= img %>" data-caption="<%= project.title %> — page <%= i + 1 %>" data-reveal="fade-up">
             <img src="<%= lib.thumb(img) %>" alt="<%= project.title %>, page <%= i + 1 %>" loading="lazy">
@@ -34,8 +41,8 @@
       </div>
     <% } %>
     <div class="cta-inline">
-      <p>Want something like this for your brand?</p>
-      <a class="btn btn-gold" href="/apply">Start your project</a>
+      <p><%= project.category === 'Website Design' ? 'Want a website like this for your business?' : 'Want something like this for your brand?' %></p>
+      <a class="btn btn-gold" href="<%= project.category === 'Website Design' ? '/packages' : '/apply' %>"><%= project.category === 'Website Design' ? 'See website packages' : 'Start your project' %></a>
     </div>
   </div>
 </section>

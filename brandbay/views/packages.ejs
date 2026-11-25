@@ -13,6 +13,17 @@
   <% } else { %>
     <p class="center lead-light">Our packages are being updated. <a href="/apply">Request a quote</a> and we’ll get back to you.</p>
   <% } %>
+  <% if (websites.length) { %>
+    <div class="container package-websites" data-reveal="fade-up">
+      <h2>Websites we’ve built</h2>
+      <div class="package-websites-grid">
+        <% for (const w of websites) { %>
+          <a class="package-website" href="/projects/<%= w.slug %>"><img src="<%= lib.thumb(w.image) %>" alt="<%= w.title %> website" loading="lazy"><span><%= w.title %></span></a>
+        <% } %>
+      </div>
+      <a class="link-arrow" href="/projects?category=Website%20Design">See all our websites <%- include('partials/icon', { name: 'arrow' }) %></a>
+    </div>
+  <% } %>
   <div class="container package-notes" data-reveal="fade-up">
     <ul>
       <li>Prices are starting prices in Zambian Kwacha. Your final quote depends on the scope of your project.</li>
