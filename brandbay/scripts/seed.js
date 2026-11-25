@@ -530,7 +530,7 @@ const PRINT_JOBS = [
     tags: 'Tri-fold brochure, Design & printing',
   },
   {
-    image: 'alfaris-office-logo-sign', title: 'Al Faris Office Logo Sign', client: 'Al Faris Gold Leaching & Refining Ltd', category: 'Signage', pages: 1,
+    image: 'alfaris-office-logo-sign', title: 'Al Faris Office Logo Sign', client: 'Al Faris Gold Leaching & Refining Ltd', category: 'Office Branding', pages: 1,
     summary: 'A raised 3D cut-out logo sign for the Al Faris office wall, with the company name and its line "Purity, Security, and Excellence in Every Ounce".',
     tags: '3D cut-out letters, Office signage, Wall mounted',
   },
@@ -540,7 +540,7 @@ const PRINT_JOBS = [
     tags: 'Vinyl cut-outs, Bonnet logo, Rear window',
   },
   {
-    image: 'g100-wall-branding', title: 'G-100 Group Office Wall Branding', client: 'G-100 Group of Companies', category: 'Office & Wall Branding', pages: 3,
+    image: 'g100-wall-branding', title: 'G-100 Group Office Wall Branding', client: 'G-100 Group of Companies', category: 'Office Branding', pages: 3,
     summary: 'A full-height framed wall graphic for the G-100 Group office, presenting its divisions: Mining & Mineral Wealth, Hospitality & Tourism, Agriculture, and Energy & Power.',
     tags: 'Wall graphics, Large-format print, Framed panels, Installation',
   },
@@ -779,6 +779,11 @@ function backfillContent() {
       });
       setSetting('content_posts_v1', '1');
     });
+  }
+  // One-time: the studio named the tab "Office Branding"; the Al Faris office sign belongs there too.
+  if (!getSettings().content_office_v1) {
+    run("UPDATE projects SET category = 'Office Branding' WHERE category = 'Office & Wall Branding' OR slug = 'alfaris-office-logo-sign'");
+    setSetting('content_office_v1', '1');
   }
   // One-time: wall branding, printed profiles, business cards and a shopfront install; a second Kamint signboard photo.
   if (!getSettings().content_print_v6) {
