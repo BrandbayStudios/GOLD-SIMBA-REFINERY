@@ -330,7 +330,7 @@ const PRINT_JOBS = [
     tags: 'Car vinyl, Logo & services, Contact details',
   },
   {
-    image: 'kamint-signboard', title: 'Kamint Enterprise Signboard', client: 'Kamint Enterprise', category: 'Signage', pages: 1,
+    image: 'kamint-signboard', title: 'Kamint Enterprise Signboard', client: 'Kamint Enterprise', category: 'Signage', pages: 2,
     summary: 'A tall, framed roadside signboard for a tracking company, showing its services, phone numbers and email at the office entrance.',
     tags: 'Outdoor signage, Steel frame, Service list',
   },
@@ -538,6 +538,31 @@ const PRINT_JOBS = [
     image: 'kamint-fleet-cutouts', title: 'Kamint Enterprise Fleet Cutouts', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 3,
     summary: 'Vinyl cut-out logos and contact strips for the Kamint Enterprise fleet: bonnet logos and rear-window branding.',
     tags: 'Vinyl cut-outs, Bonnet logo, Rear window',
+  },
+  {
+    image: 'g100-wall-branding', title: 'G-100 Group Office Wall Branding', client: 'G-100 Group of Companies', category: 'Office & Wall Branding', pages: 3,
+    summary: 'A full-height framed wall graphic for the G-100 Group office, presenting its divisions: Mining & Mineral Wealth, Hospitality & Tourism, Agriculture, and Energy & Power.',
+    tags: 'Wall graphics, Large-format print, Framed panels, Installation',
+  },
+  {
+    image: 'swap-topup-shopfront', title: 'Swap & Top Up Shopfront Installation', client: '', category: 'Shopfront Branding', pages: 1,
+    summary: 'Shopfront graphics for a phone and electronics store, installed on site by the BrandBay team: "Swap & Top Up Deals Accepted".',
+    tags: 'Shopfront graphics, On-site installation, Vinyl application',
+  },
+  {
+    image: 'rural-ventures-business-cards', title: 'Rural Ventures Limited Business Cards', client: 'Rural Ventures Limited', category: 'Business Cards', pages: 1,
+    summary: 'Double-sided business cards in black and yellow for the Managing Director of Rural Ventures Limited.',
+    tags: 'Business card design, Double-sided print, Rounded corners',
+  },
+  {
+    image: 'printed-company-profiles', title: 'Printed Company Profiles', client: 'Bertha Medical, Miyogath General Dealers, Scour Cleaning Services', category: 'Company Profile', pages: 1,
+    summary: 'Company profiles designed and printed for a medical supplier, a general dealer and a cleaning company.',
+    tags: 'Profile design, Printing & binding',
+  },
+  {
+    image: 'kamint-company-profile', title: 'Kamint Enterprise Company Profile', client: 'Kamint Enterprise', category: 'Company Profile', pages: 1,
+    summary: 'A landscape company profile for Kamint Enterprise, "Keep track of what matters most", printed and finished with eyelets.',
+    tags: 'Profile design, Landscape format, Eyelet binding',
   },
   {
     image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
@@ -753,6 +778,14 @@ function backfillContent() {
           p.slug, p.title, p.excerpt, p.body, p.image, `-${i} days`);
       });
       setSetting('content_posts_v1', '1');
+    });
+  }
+  // One-time: wall branding, printed profiles, business cards and a shopfront install; a second Kamint signboard photo.
+  if (!getSettings().content_print_v6) {
+    transaction(() => {
+      insertPrintJobs();
+      run('UPDATE projects SET gallery = ? WHERE slug = ?', profilePages('kamint-signboard', 2), 'kamint-signboard');
+      setSetting('content_print_v6', '1');
     });
   }
   // One-time: embroidery, ID cards, business cards, more print jobs; a second Brookehouse photo.
