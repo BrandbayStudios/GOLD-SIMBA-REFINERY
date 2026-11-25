@@ -29,17 +29,17 @@
     </aside>
   </div>
 </section>
-<% if (websites.length) { %>
+<% if (showcase) { %>
 <section class="section section-paper">
   <div class="container">
-    <div class="section-head row"><h2>Websites we’ve built</h2><a class="btn btn-outline-dark" href="/projects?category=Website%20Design">All websites</a></div>
+    <div class="section-head row"><h2><%= showcase.title %></h2><a class="btn btn-outline-dark" href="<%= showcase.link %>"><%= showcase.linkLabel %></a></div>
     <div class="project-grid three">
-      <% for (const project of websites) { %><%- include('partials/project-card', { project }) %><% } %>
+      <% for (const project of showcase.items) { %><%- include('partials/project-card', { project }) %><% } %>
     </div>
   </div>
 </section>
 <% } %>
-<% if (projects.length && !websites.length) { %>
+<% if (projects.length && !showcase) { %>
 <section class="section section-paper">
   <div class="container">
     <div class="section-head row"><h2>Recent work</h2><a class="btn btn-outline-dark" href="/projects">All projects</a></div>

@@ -317,6 +317,61 @@ const WEBSITES = [
   },
 ];
 
+// Branding and print jobs photographed on site.
+const PRINT_JOBS = [
+  {
+    image: 'saferoute-vehicle-branding', title: 'SafeRoute Logistics Car Branding', client: 'SafeRoute Logistics Limited', category: 'Vehicle Branding', pages: 4,
+    summary: 'Full-side vehicle branding for SafeRoute Logistics: logo, contact details and brand swoosh, turning the company car into a moving billboard.',
+    tags: 'Vehicle graphics, Brand colours, Contact details, Durable vinyl',
+  },
+  {
+    image: 'kamint-rear-window-branding', title: 'Kamint Enterprise Rear Window Branding', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 1,
+    summary: 'See-through rear window graphics for a GPS tracking company, listing its services and contact details while keeping the view clear for the driver.',
+    tags: 'One-way vision vinyl, Service list, Contact details',
+  },
+  {
+    image: 'kamint-signboard', title: 'Kamint Enterprise Signboard', client: 'Kamint Enterprise', category: 'Signage', pages: 1,
+    summary: 'A tall, framed roadside signboard for a tracking company, showing its services, phone numbers and email at the office entrance.',
+    tags: 'Outdoor signage, Steel frame, Service list',
+  },
+  {
+    image: 'discovery-wall-banner', title: 'Discovery Freight Wall Banner', client: 'Discovery Freight & Logistics', category: 'Signage', pages: 1,
+    summary: '"Moving Your Cargo. Moving Your Business." A large outdoor wall banner presenting Discovery’s logistics services and contacts.',
+    tags: 'Large-format print, Wall mounted, Outdoor',
+  },
+  {
+    image: 'maukat-wall-banner', title: 'Maukat Developers Wall Banner', client: 'Maukat Developers & Engineering Ltd', category: 'Signage', pages: 1,
+    summary: 'A wide perimeter-wall banner for a construction and engineering firm, introducing the company, its services and its values.',
+    tags: 'Large-format print, Wall mounted, Installation',
+  },
+  {
+    image: 'izack-shopfront-branding', title: 'Izack Investments Shopfront Branding', client: 'Izack Investments Limited', category: 'Shopfront Branding', pages: 2,
+    summary: 'Shopfront and shutter branding for a Lusaka town-centre phone and appliance store: fascia, door panels and a "Welcome to our store" display.',
+    tags: 'Shopfront panels, Shutter graphics, Product display',
+  },
+  {
+    image: 'mlik-courier-stickers', title: 'Mlik Courier Branded Stickers', client: 'Mlik Courier & Logistics Ltd', category: 'Stickers & Labels', pages: 1,
+    summary: 'Branded parcel stickers for a courier company: logo, contacts and the line "One delivery at a time", printed in sheets.',
+    tags: 'Sticker printing, Packaging, Brand colours',
+  },
+  {
+    // Kept as a draft until the studio confirms what it produced for this client.
+    image: 'power-chip-hanchu', title: 'Power Chip — Hanchu ESS', client: 'Power Chip Electrical Solutions Zambia', category: 'Branding', pages: 3, published: 0,
+    summary: 'Hanchu ESS inverter and battery installations.', tags: '',
+  },
+];
+
+function insertPrintJobs() {
+  PRINT_JOBS.forEach((p, i) => {
+    if (get('SELECT id FROM projects WHERE slug = ?', p.image)) return;
+    run(
+      'INSERT INTO projects (slug, title, client, category, summary, image, gallery, tags, published, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      p.image, p.title, p.client, p.category, p.summary, `/media/projects/${p.image}.webp`,
+      profilePages(p.image, p.pages), p.tags || null, p.published ?? 1, i - 50,
+    );
+  });
+}
+
 function insertWebsites() {
   WEBSITES.forEach((w, i) => {
     if (get('SELECT id FROM projects WHERE slug = ?', w.image)) return;
@@ -425,6 +480,7 @@ function seed() {
         ));
       insertProfiles();
       insertWebsites();
+      insertPrintJobs();
     }
 
     if (empty('packages')) insertPackages();
@@ -513,6 +569,10 @@ function backfillContent() {
       });
       setSetting('content_posts_v1', '1');
     });
+  }
+  // One-time: add the vehicle branding, signage and print projects.
+  if (!getSettings().content_print_v1) {
+    transaction(() => { insertPrintJobs(); setSetting('content_print_v1', '1'); });
   }
   // One-time: add the website projects to databases created before them.
   if (!getSettings().content_websites_v1) {

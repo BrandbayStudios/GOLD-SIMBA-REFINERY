@@ -25,9 +25,9 @@
     </div>
     <% const pages = lib.lines(project.gallery); %>
     <% if (pages.length) { %>
-      <% const isWeb = project.category === 'Website Design'; %>
-      <h2 class="project-pages-title"><%= project.category === 'Company Profile' ? 'Inside the profile' : isWeb ? 'Screens from the site' : 'Inside the project' %></h2>
-      <div class="project-pages<%= isWeb ? ' is-screens' : '' %>" data-lightbox-group data-reveal-group>
+      <% const isWeb = project.category === 'Website Design'; const isPages = project.category === 'Company Profile'; %>
+      <h2 class="project-pages-title"><%= isPages ? 'Inside the profile' : isWeb ? 'Screens from the site' : 'Photos from the job' %></h2>
+      <div class="project-pages<%= isWeb ? ' is-screens' : isPages ? '' : ' is-photos' %>" data-lightbox-group data-reveal-group>
         <% pages.forEach((img, i) => { %>
           <button class="project-page" type="button" data-lightbox="<%= img %>" data-caption="<%= project.title %> — page <%= i + 1 %>" data-reveal="fade-up">
             <img src="<%= lib.thumb(img) %>" alt="<%= project.title %>, page <%= i + 1 %>" loading="lazy">

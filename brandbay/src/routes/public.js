@@ -95,6 +95,19 @@ router.get('/services', (req, res) => {
   });
 });
 
+const SHOWCASES = {
+  'technological-solutions': { title: 'Websites we’ve built', categories: ['Website Design'], link: '/projects?category=Website%20Design', linkLabel: 'All websites' },
+  'printing-artistry': { title: 'Branding & print jobs', categories: ['Vehicle Branding', 'Signage', 'Shopfront Branding', 'Stickers & Labels'], link: '/projects', linkLabel: 'All projects' },
+  'service-event-branding': { title: 'Branding & signage jobs', categories: ['Vehicle Branding', 'Signage', 'Shopfront Branding'], link: '/projects', linkLabel: 'All projects' },
+};
+
+function serviceShowcase(slug) {
+  const s = SHOWCASES[slug];
+  if (!s) return null;
+  const items = all(`SELECT * FROM projects WHERE published = 1 AND category IN (${s.categories.map(() => '?').join(', ')}) ORDER BY sort_order, id LIMIT 6`, ...s.categories);
+  return items.length ? { ...s, items } : null;
+}
+
 router.get('/services/:slug', (req, res, next) => {
   const service = get('SELECT * FROM service_categories WHERE slug = ? AND published = 1', req.params.slug);
   if (!service) return next();
@@ -104,8 +117,8 @@ router.get('/services/:slug', (req, res, next) => {
     schema: [seo.service(service), seo.breadcrumbs([['Services', '/services'], [service.name, `/services/${service.slug}`]])],
     service,
     others: services().filter((s) => s.id !== service.id),
-    // Web and tech services show the websites the studio has built.
-    websites: service.slug === 'technological-solutions' ? all("SELECT * FROM projects WHERE published = 1 AND category = 'Website Design' ORDER BY sort_order, id LIMIT 6") : [],
+    // Some services show matching work instead of the general "Recent work".
+    showcase: serviceShowcase(service.slug),
     projects: all('SELECT * FROM projects WHERE published = 1 ORDER BY featured DESC, sort_order LIMIT 3'),
   });
 });
