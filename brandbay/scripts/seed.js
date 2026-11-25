@@ -475,9 +475,69 @@ const PRINT_JOBS = [
     tags: 'Flyer design & printing, Event promotion',
   },
   {
-    image: 'brookehouse-brochures', title: 'Brookehouse Commodities Brochures', client: 'Brookehouse Commodities Ltd', category: 'Flyers & Brochures', pages: 1,
+    image: 'brookehouse-brochures', title: 'Brookehouse Commodities Brochures', client: 'Brookehouse Commodities Ltd', category: 'Flyers & Brochures', pages: 2,
     summary: 'Folded brochures for an agricultural commodities company, in its navy and green brand colours.',
     tags: 'Brochure design & printing, Folded brochure',
+  },
+  {
+    image: 'be-limitless-tshirts', title: 'Be Limitless T-Shirts', client: 'Be Limitless', category: 'T-Shirt Printing', pages: 1,
+    summary: 'White T-shirts printed with the full-colour Be Limitless brain logo, matching the My Limitless Journal.',
+    tags: 'T-shirt printing, Full-colour logo',
+  },
+  {
+    image: 'zatu-creatives-tshirts', title: 'Zatu Creatives Foundation T-Shirts', client: 'Zatu Creatives Foundation', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Cream T-shirts printed with the Zatu Creatives Foundation logo and its Africa map mark.',
+    tags: 'T-shirt printing, Bold one-colour print',
+  },
+  {
+    image: 'namukonda-legacy-tshirts', title: 'The Namukonda Legacy Project T-Shirts', client: 'The Namukonda Legacy Project', category: 'T-Shirt Printing', pages: 1,
+    summary: 'White T-shirts for a community project, printed with its caring-hands and heart logo in black and gold.',
+    tags: 'T-shirt printing, Full-colour print',
+  },
+  {
+    image: 'zarena-power-elec-embroidery', title: 'ZARENA Polos & Power & Elec Zambia 2025 Caps', client: 'Zambia Renewable Energy Association', category: 'Embroidery', pages: 1,
+    summary: 'Embroidered polo shirts for the Zambia Renewable Energy Association and embroidered caps for the Power & Elec Zambia 2025 expo.',
+    tags: 'Embroidered polos, Embroidered caps, Event wear',
+  },
+  {
+    image: 'embroidered-polo-shirts', title: 'Embroidered Polo Shirts', client: '', category: 'Embroidery', pages: 1,
+    summary: 'Navy polo shirts with an embroidered badge logo, finished and packed for a group order.',
+    tags: 'Embroidered badge, Polo shirts, Bulk order',
+  },
+  {
+    image: 'immaculate-conception-shirts', title: 'Immaculate Conception Parish Shirts', client: 'Immaculate Conception Parish, Luanshya', category: 'Embroidery', pages: 1,
+    summary: 'White and khaki shirts for Immaculate Conception Parish in Luanshya, with a detailed embroidered parish emblem.',
+    tags: 'Embroidered emblem, Church uniforms, Two colours',
+  },
+  {
+    image: 'staff-id-cards', title: 'Staff ID Cards', client: '', category: 'ID Cards & Badges', pages: 1,
+    summary: 'Custom-designed photo ID cards for staff and directors of several companies, printed and fitted in clear holders with lanyards.',
+    tags: 'ID card design, Photo ID, Holders & lanyards',
+  },
+  {
+    image: 'cwl-name-badges', title: 'Catholic Women’s League Name Badges', client: 'St Matthias Kalemba Parish, Siavonga', category: 'ID Cards & Badges', pages: 1,
+    summary: 'Domed name badges for Catholic Women’s League members of St Matthias Kalemba Parish, Siavonga.',
+    tags: 'Name badges, Domed finish, Personalised',
+  },
+  {
+    image: 'cfar-business-cards', title: 'CFAR Business Cards', client: 'The African Center for Apologetics Research', category: 'Business Cards', pages: 1,
+    summary: 'Business cards for the Regional Director of the African Center for Apologetics Research, with full contact and social details.',
+    tags: 'Business card design, Printing',
+  },
+  {
+    image: 'clean-solar-brochures', title: 'Clean Solar ZM Brochures', client: 'Clean Solar ZM', category: 'Flyers & Brochures', pages: 2,
+    summary: 'Tri-fold brochures for a solar panel cleaning and maintenance company, with services, socials and contact details.',
+    tags: 'Tri-fold brochure, Design & printing',
+  },
+  {
+    image: 'alfaris-office-logo-sign', title: 'Al Faris Office Logo Sign', client: 'Al Faris Gold Leaching & Refining Ltd', category: 'Signage', pages: 1,
+    summary: 'A raised 3D cut-out logo sign for the Al Faris office wall, with the company name and its line "Purity, Security, and Excellence in Every Ounce".',
+    tags: '3D cut-out letters, Office signage, Wall mounted',
+  },
+  {
+    image: 'kamint-fleet-cutouts', title: 'Kamint Enterprise Fleet Cutouts', client: 'Kamint Enterprise', category: 'Vehicle Branding', pages: 3,
+    summary: 'Vinyl cut-out logos and contact strips for the Kamint Enterprise fleet: bonnet logos and rear-window branding.',
+    tags: 'Vinyl cut-outs, Bonnet logo, Rear window',
   },
   {
     image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
@@ -693,6 +753,14 @@ function backfillContent() {
           p.slug, p.title, p.excerpt, p.body, p.image, `-${i} days`);
       });
       setSetting('content_posts_v1', '1');
+    });
+  }
+  // One-time: embroidery, ID cards, business cards, more print jobs; a second Brookehouse photo.
+  if (!getSettings().content_print_v5) {
+    transaction(() => {
+      insertPrintJobs();
+      run('UPDATE projects SET gallery = ? WHERE slug = ?', profilePages('brookehouse-brochures', 2), 'brookehouse-brochures');
+      setSetting('content_print_v5', '1');
     });
   }
   // One-time: T-shirt printing, branded merchandise and flyer jobs.
