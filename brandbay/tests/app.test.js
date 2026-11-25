@@ -395,3 +395,66 @@ test('branding, print and solar jobs appear under their own tabs', async () => {
   assert.equal((await fetch(`${base}/projects/solar-installation`)).status, 200);
   assert.match(await (await fetch(`${base}/projects/izack-shopfront-branding`)).text(), /Photos from the job/);
 });
+
+test('WhatsApp alerts: sent for new leads through the chosen provider, never break the form, keep keys private', async () => {
+  const setting = (k, v) => run('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value', k, v);
+  const realFetch = global.fetch;
+  const calls = [];
+  let outcome = { ok: true, status: 200 };
+  global.fetch = (url, opts) => (String(url).startsWith(base) ? realFetch(url, opts) : (calls.push({ url: String(url), opts }), Promise.resolve(outcome)));
+  const lead = async (email) => {
+    const v = browser();
+    await v.get('/quote');
+    const logo = get("SELECT id FROM estimate_items WHERE slug = 'logo-design'");
+    return v.post('/quote', { name: 'Alert Test', email, phone: '0977123456', [`item_${logo.id}`]: '1' });
+  };
+  try {
+    setting('whatsapp_alert_provider', 'off');
+    assert.equal((await lead('off@test.local')).status, 302);
+    assert.equal(calls.length, 0, 'nothing is sent while alerts are off');
+
+    setting('whatsapp_alert_provider', 'callmebot'); setting('whatsapp_alert_to', '260972015689'); setting('callmebot_apikey', 'KEY123');
+    assert.equal((await lead('cmb@test.local')).status, 302);
+    await new Promise((r) => setTimeout(r, 50));
+    assert.equal(calls.length, 1);
+    const u = new URL(calls[0].url);
+    assert.equal(u.hostname, 'api.callmebot.com');
+    assert.equal(u.searchParams.get('phone'), '260972015689');
+    assert.equal(u.searchParams.get('apikey'), 'KEY123');
+    assert.match(u.searchParams.get('text'), /Instant estimate/);
+    assert.match(u.searchParams.get('text'), /\/admin\/requests\/\d+/);
+
+    calls.length = 0; outcome = { ok: false, status: 500 };
+    assert.equal((await lead('fail@test.local')).status, 302, 'a failing provider never breaks the form');
+
+    outcome = { ok: true, status: 200 };
+    setting('whatsapp_alert_provider', 'meta'); setting('meta_wa_phone_id', '12345'); setting('meta_wa_token', 'SECRETTOKEN'); setting('meta_wa_template', 'new_lead');
+    assert.equal((await lead('meta@test.local')).status, 302);
+    await new Promise((r) => setTimeout(r, 50));
+    const meta = calls.at(-1);
+    assert.match(meta.url, /graph\.facebook\.com\/v21\.0\/12345\/messages/);
+    assert.equal(meta.opts.headers.Authorization, 'Bearer SECRETTOKEN');
+    const body = JSON.parse(meta.opts.body);
+    assert.equal(body.template.name, 'new_lead');
+    assert.ok(body.template.components[0].parameters.every((p) => !/\n/.test(p.text)));
+
+    // Keys never appear on public pages or are echoed back in the settings form.
+    const home = await (await fetch(`${base}/`)).text();
+    assert.ok(!home.includes('SECRETTOKEN') && !home.includes('KEY123'));
+    const admin = browser();
+    await admin.login('admin@test.local', 'admin-password');
+    const form = await admin.get('/admin/settings');
+    assert.ok(!form.text.includes('SECRETTOKEN') && !form.text.includes('KEY123'));
+    assert.match(form.text, /Saved — leave blank to keep it/);
+    await admin.post('/admin/settings', { ...Object.fromEntries(all('SELECT key, value FROM settings').map((r) => [r.key, r.value])), meta_wa_token: '', callmebot_apikey: '' });
+    assert.equal(get("SELECT value FROM settings WHERE key = 'meta_wa_token'").value, 'SECRETTOKEN', 'a blank secret keeps the saved one');
+
+    calls.length = 0;
+    const tested = await admin.post('/admin/settings/test-alert', {});
+    assert.equal(tested.status, 302);
+    assert.equal(calls.length, 1);
+  } finally {
+    global.fetch = realFetch;
+    setting('whatsapp_alert_provider', 'off');
+  }
+});

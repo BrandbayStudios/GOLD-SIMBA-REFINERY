@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const config = require('./config');
+const alerts = require('./alerts');
 
 const transport = config.mail.host
   ? nodemailer.createTransport({
@@ -26,6 +27,7 @@ async function send({ to, subject, text }) {
 }
 
 function notifyStudio(subject, text) {
+  alerts.notify(subject, text); // WhatsApp, if set up in Admin → Settings; never blocks or throws
   return send({ to: config.mail.notify, subject, text });
 }
 

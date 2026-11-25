@@ -68,7 +68,8 @@ app.use(loadUser);
 app.use((req, res, next) => {
   res.locals.flash = req.session.flash || [];
   if (req.session.flash) delete req.session.flash;
-  res.locals.settings = lib.getSettings();
+  const { callmebot_apikey: _a, meta_wa_token: _b, ...publicSettings } = lib.getSettings(); // secrets never reach templates
+  res.locals.settings = publicSettings;
   res.locals.googleReviews = reviews.summary(res.locals.settings);
   res.locals.path = req.path;
   res.locals.cartCount = (req.session.cart || []).reduce((n, i) => n + i.qty, 0);

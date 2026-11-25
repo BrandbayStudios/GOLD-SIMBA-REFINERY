@@ -121,3 +121,4 @@ form.toolbar { justify-content: flex-start; }
 .save-bar { position: sticky; bottom: 0; padding: 1rem 0; background: linear-gradient(transparent, #f3f2ee 35%); }
 .admin-sidebar .brand { display: grid; gap: 0.35rem; justify-items: start; padding: 0 0.5rem 1rem; }
 .admin-sidebar .brand img { height: 30px; }
+.settings-heading { margin: 1.6rem 0 0.2rem; font-size: 1.1rem; }

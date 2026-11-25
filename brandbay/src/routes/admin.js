@@ -4,6 +4,7 @@ const { all, get, run } = require('../db');
 const lib = require('../lib');
 const mailer = require('../mailer');
 const reviews = require('../reviews');
+const alerts = require('../alerts');
 const config = require('../config');
 const RESOURCES = require('./admin-resources');
 const invoicing = require('../invoicing');
@@ -329,6 +330,15 @@ const SETTING_FIELDS = [
   { name: 'instagram_url', label: 'Instagram URL' },
   { name: 'tiktok_url', label: 'TikTok URL' },
   { name: 'linkedin_url', label: 'LinkedIn URL' },
+  { heading: 'WhatsApp alerts for new leads', note: 'Get a WhatsApp message on your phone for every new contact message, quote request, estimate and order. Pick a provider, fill in its details, save, then press "Send a test alert".' },
+  { name: 'whatsapp_alert_provider', label: 'Provider', type: 'select', options: [['off', 'Off'], ['callmebot', 'CallMeBot (free, your own number)'], ['meta', 'WhatsApp Business Cloud API (Meta)']] },
+  { name: 'whatsapp_alert_to', label: 'Your WhatsApp number to alert (digits only, with country code, e.g. 260972015689)' },
+  { name: 'callmebot_apikey', label: 'CallMeBot API key (from callmebot.com — message their bot to get it)', type: 'secret' },
+  { name: 'meta_wa_phone_id', label: 'Meta: phone number ID' },
+  { name: 'meta_wa_token', label: 'Meta: permanent access token', type: 'secret' },
+  { name: 'meta_wa_template', label: 'Meta: approved template name (body: "New lead: {{1}} — {{2}}")' },
+  { name: 'meta_wa_lang', label: 'Meta: template language code (e.g. en)' },
+  { heading: 'Google' },
   { name: 'google_place_id', label: 'Google Place ID (turns on Google reviews — find it at developers.google.com/maps/documentation/places/web-service/place-id)' },
   { name: 'google_review_url', label: 'Google review link (optional — the "Ask for reviews" link from your Google Business Profile, e.g. g.page/r/…/review)' },
   { name: 'google_rating', label: 'Google rating, as shown on your profile (e.g. 4.9) — updated automatically when a Places API key is set' },
@@ -340,12 +350,24 @@ const SETTING_FIELDS = [
 ];
 
 router.get('/settings', requireAdmin, (req, res) => {
-  res.render('admin/settings', { title: 'Settings', fields: SETTING_FIELDS, values: lib.getSettings(), mailEnabled: mailer.enabled });
+  res.render('admin/settings', { title: 'Settings', fields: SETTING_FIELDS, values: lib.getSettings(), mailEnabled: mailer.enabled, alertsReady: alerts.enabled() });
+});
+
+router.post('/settings/test-alert', requireAdmin, async (req, res) => {
+  const result = await alerts.test();
+  flash(req, result.ok ? 'success' : 'error', result.ok ? 'Test alert sent. Check your WhatsApp.' : `Test alert failed: ${result.error || 'not set up yet'}`);
+  res.redirect('/admin/settings');
 });
 
 router.post('/settings', requireAdmin, (req, res) => {
   for (const f of SETTING_FIELDS) {
+    if (f.heading) continue;
     let value = lib.clean(req.body[f.name], 20000);
+    // Secrets are never shown again, so a blank field keeps the saved value.
+    if (f.type === 'secret' && !value) continue;
+    if (f.type === 'select' && !f.options.some(([v]) => v === value)) continue;
+    if (f.name === 'whatsapp_alert_to' || f.name === 'meta_wa_phone_id') value = value.replace(/\D/g, '');
+    if (f.name === 'meta_wa_token' || f.name === 'callmebot_apikey' || f.name === 'meta_wa_template' || f.name === 'meta_wa_lang') value = value.replace(/\s/g, '');
     if (f.name.endsWith('_url') && value && !/^https?:\/\//i.test(value)) value = `https://${value}`;
     // Accept either the bare code or the whole <meta ... content="..."> tag pasted from Google or Bing.
     if (f.name.endsWith('_verification')) value = (value.match(/content=["']([^"']+)["']/) || [null, value])[1].replace(/[^\w-]/g, '');
