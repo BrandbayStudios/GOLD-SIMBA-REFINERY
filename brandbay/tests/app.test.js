@@ -389,7 +389,7 @@ test('website projects link to the live site, except private systems', async () 
 
 test('branding, print and solar jobs appear under their own tabs', async () => {
   const html = await (await fetch(`${base}/projects`)).text();
-  for (const tab of ['Vehicle Branding', 'Signage', 'Shopfront Branding', 'Stickers &amp; Labels', 'Pull-up Banners', 'Exhibitions &amp; Events']) assert.ok(html.includes(`data-filter="${tab}"`), tab);
+  for (const tab of ['Vehicle Branding', 'Signage', 'Shopfront Branding', 'Stickers &amp; Labels', 'Pull-up Banners', 'Exhibitions &amp; Events', 'T-Shirt Printing', 'Branded Merchandise', 'Flyers &amp; Brochures']) assert.ok(html.includes(`data-filter="${tab}"`), tab);
   assert.match(html, /SafeRoute Logistics Car Branding/);
   assert.match(html, /Solar Inverter &amp; Battery Installation/);
   assert.equal((await fetch(`${base}/projects/solar-installation`)).status, 200);

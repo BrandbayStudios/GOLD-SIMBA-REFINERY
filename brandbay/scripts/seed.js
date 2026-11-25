@@ -405,6 +405,81 @@ const PRINT_JOBS = [
     tags: 'Pull-up banner, NGO, Photo collage',
   },
   {
+    image: 'vessels-foundation-tshirts', title: 'The Vessels Foundation T-Shirts', client: 'The Vessels Foundation', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Black and white branded T-shirts for a charity foundation, printed with its full-colour logo.',
+    tags: 'T-shirt printing, Full-colour logo, Black & white shirts',
+  },
+  {
+    image: 'virtues-cash-tshirts', title: 'Virtues Cash Solution T-Shirts', client: 'Virtues Cash Solution', category: 'T-Shirt Printing', pages: 1,
+    summary: 'White staff T-shirts for a finance company, carrying its logo and the line "Building Dreams. Securing Futures".',
+    tags: 'T-shirt printing, Staff uniforms',
+  },
+  {
+    image: 'dangote-cement-tshirts', title: 'Dangote Cement Zambia T-Shirts & Mug', client: 'Dangote Cement Zambia', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Branded T-shirts and a matching printed mug for Dangote Cement Zambia.',
+    tags: 'T-shirt printing, Mug printing, Corporate merchandise',
+  },
+  {
+    image: 'spotless-tshirts', title: 'Spotless T-Shirts', client: 'Spotless', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Black T-shirts with the Spotless logo printed in crisp white and red.',
+    tags: 'T-shirt printing, Team wear',
+  },
+  {
+    image: 'global-youth-network-tshirts', title: 'Global Youth Network 2025 T-Shirts', client: 'Global Youth Network', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Event T-shirts for Global Youth Network 2025, with a bright globe design on sky-blue shirts.',
+    tags: 'Event T-shirts, Bulk order',
+  },
+  {
+    image: 'yango-fellowship-tshirts', title: 'Yango Fellowship T-Shirts', client: 'Yango & Zambian National STEM Foundation', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Front-and-back printed T-shirts for the Yango Fellowship with the Zambian National STEM Foundation.',
+    tags: 'T-shirt printing, Front & back print, Programme wear',
+  },
+  {
+    image: 'richmond-farms-tshirts', title: 'Richmond Farms T-Shirts', client: 'Richmond Farms Limited', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Staff T-shirts in the farm’s green, black and white, printed with the Richmond Farms logo.',
+    tags: 'T-shirt printing, Staff uniforms, Three colours',
+  },
+  {
+    image: 'excel-tshirts', title: 'Excel "Positioned for Greatness" T-Shirts', client: 'Excel', category: 'T-Shirt Printing', pages: 1,
+    summary: 'White T-shirts with an elegant gradient "Excel — Positioned for Greatness" print.',
+    tags: 'T-shirt printing, Gradient print',
+  },
+  {
+    image: 'kupes-young-womens-tshirts', title: 'Kupes Young Womens Network T-Shirts', client: 'Kupes Young Womens Network', category: 'T-Shirt Printing', pages: 1,
+    summary: 'Black T-shirts for a young women’s network, with a butterfly silhouette logo in pink and purple.',
+    tags: 'T-shirt printing, Multi-colour print',
+  },
+  {
+    image: 'why-my-voice-matters-pens', title: '#WhyMyVoiceMatters Branded Pens', client: '', category: 'Branded Merchandise', pages: 1,
+    summary: 'Branded white pens for the #WhyMyVoiceMatters campaign, printed with the hashtag and organisation logo.',
+    tags: 'Branded pens, Campaign merchandise',
+  },
+  {
+    image: 'why-my-vote-matters-pens', title: '#WhyMyVoteMatters Branded Pens', client: '', category: 'Branded Merchandise', pages: 2,
+    summary: 'White and black-and-gold pens for the #WhyMyVoteMatters voter campaign.',
+    tags: 'Branded pens, Campaign merchandise',
+  },
+  {
+    image: 'my-limitless-journal', title: 'My Limitless Journal', client: 'Be Limitless', category: 'Branded Merchandise', pages: 1,
+    summary: 'Custom leather-look journals in three colours, printed with the "My Limitless Journal" design.',
+    tags: 'Branded journals, Notebook printing',
+  },
+  {
+    image: 'mount-zion-bookmarks', title: 'Mount Zion Christian Centre Bookmarks', client: 'Mount Zion Christian Centre', category: 'Flyers & Brochures', pages: 1,
+    summary: 'Printed bookmarks carrying the church’s mission statement, logo and cross design.',
+    tags: 'Bookmark printing, Church stationery',
+  },
+  {
+    image: 'flames-of-hope-flyers', title: 'Flames of Hope Back to School Flyers', client: 'Flames of Hope Ministries', category: 'Flyers & Brochures', pages: 1,
+    summary: 'Flyers for a "Back to School" youth Sunday service, with date, time, location and scripture.',
+    tags: 'Flyer design & printing, Event promotion',
+  },
+  {
+    image: 'brookehouse-brochures', title: 'Brookehouse Commodities Brochures', client: 'Brookehouse Commodities Ltd', category: 'Flyers & Brochures', pages: 1,
+    summary: 'Folded brochures for an agricultural commodities company, in its navy and green brand colours.',
+    tags: 'Brochure design & printing, Folded brochure',
+  },
+  {
     image: 'power-chip-hanchu', slug: 'solar-installation', title: 'Solar Inverter & Battery Installation', client: '', category: 'Solar Installation', pages: 2,
     summary: 'Hybrid solar inverter and lithium battery installations with a neat distribution board and cable trunking, giving homes and offices reliable backup power.',
     tags: 'Hybrid inverter, Lithium battery, Distribution board, Neat trunking',
@@ -619,6 +694,10 @@ function backfillContent() {
       });
       setSetting('content_posts_v1', '1');
     });
+  }
+  // One-time: T-shirt printing, branded merchandise and flyer jobs.
+  if (!getSettings().content_print_v4) {
+    transaction(() => { insertPrintJobs(); setSetting('content_print_v4', '1'); });
   }
   // One-time: more print, signage, pull-up and exhibition jobs; the Kamint car gets a second photo.
   if (!getSettings().content_print_v3) {
