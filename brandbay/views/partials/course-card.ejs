@@ -1,0 +1,19 @@
+<article class="package-card tilt" data-reveal="fade-up">
+  <header class="package-head">
+    <span class="package-icon" aria-hidden="true"><%- include('icon', { name: c.icon }) %></span>
+    <span class="package-label"><%= c.level %></span>
+    <h3 class="package-name"><%= c.name %></h3>
+    <p class="package-price"><small>from</small> <strong><%= lib.moneyShort(c.fee) %></strong></p>
+  </header>
+  <div class="package-body">
+    <p class="package-tagline"><%= c.tagline %></p>
+    <ul class="package-features">
+      <% for (const t of c.topics) { %><li><%- include('icon', { name: 'check' }) %><span><%= t %></span></li><% } %>
+    </ul>
+    <dl class="package-meta">
+      <div><dt>Length</dt><dd><%= c.duration %></dd></div>
+      <div><dt>Best for</dt><dd><%= c.forWho %></dd></div>
+    </dl>
+    <a class="btn btn-dark btn-block" href="/apply?course=<%= c.slug %>">Enrol<span class="sr-only"> in <%= c.name %></span></a>
+  </div>
+</article>

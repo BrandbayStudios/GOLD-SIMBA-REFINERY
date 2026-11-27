@@ -1,0 +1,31 @@
+<%- include('partials/head') %>
+
+<section class="bg-section section-pad page-top">
+  <%- include('partials/bg', { image: 'bg-services', overlay: 78, eager: true }) %>
+  <div class="container center narrow-text">
+    <h1 class="page-title" data-split>Short courses</h1>
+    <p class="lead-light" data-reveal="fade-up">Learn design, web, digital and safety skills from the team that does the work every day. Small classes in Lusaka, with a BrandBay certificate at the end.</p>
+  </div>
+  <% for (const group of groups) { %>
+    <div class="container course-group" data-reveal="fade-up">
+      <h2><%= group.name %></h2>
+      <div class="package-grid course-grid" data-reveal-group>
+        <% for (const c of group.courses) { %><%- include('partials/course-card', { c }) %><% } %>
+      </div>
+    </div>
+  <% } %>
+  <div class="container package-notes" data-reveal="fade-up">
+    <ul>
+      <li>Fees are starting prices in Zambian Kwacha. Dates, venue and the exact fee are confirmed when you enrol.</li>
+      <li>Classes have 8 to 15 people so every student gets hands-on help.</li>
+      <li>Every course ends with a BrandBay Certificate of Completion or Attendance. These are BrandBay certificates, not national qualifications.</li>
+      <li>Training a team? We run any course for schools, churches, companies and institutions at your venue.</li>
+    </ul>
+    <div class="package-custom">
+      <h2>Want a course for your team?</h2>
+      <p>Tell us how many people and what they need to learn, and we will quote a group price.</p>
+      <a class="btn btn-gold btn-shine" href="/apply?service=Course%20%E2%80%94%20Group%20training">Ask for group training</a>
+      <% if (settings.whatsapp) { %><a class="btn btn-ghost" href="https://wa.me/<%= settings.whatsapp.replace(/\D/g, '') %>?text=<%= encodeURIComponent('Hi BrandBay, I would like to know about your next course dates.') %>" target="_blank" rel="noopener">Ask about dates on WhatsApp</a><% } %>
+    </div>
+  </div>
+</section>

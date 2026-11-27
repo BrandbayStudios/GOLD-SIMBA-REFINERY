@@ -34,6 +34,12 @@
                 <% for (const v of packageOptions) { %><option value="<%= v %>"<%= form.service === v ? ' selected' : '' %>><%= v.replace(/^Package — /, '') %></option><% } %>
               </optgroup>
             <% } %>
+            <% if ((locals.courseOptions || []).length) { %>
+              <optgroup label="Short courses">
+                <% for (const v of courseOptions) { %><option value="<%= v %>"<%= form.service === v ? ' selected' : '' %>><%= v.replace(/^Course — /, '') %></option><% } %>
+                <option value="Course — Group training"<%= form.service === 'Course — Group training' ? ' selected' : '' %>>Group training for a team</option>
+              </optgroup>
+            <% } %>
             <% for (const s of services) { %>
               <optgroup label="<%= s.name %>">
                 <option<%= form.service === s.name ? ' selected' : '' %>><%= s.name %></option>

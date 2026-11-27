@@ -472,3 +472,18 @@ test('admin login reset sets the contact email and a new password once', async (
   // restore the test admin so later tests keep working
   run('UPDATE users SET email = ?, password_hash = ? WHERE id = ?', before.email, bcrypt.hashSync('admin-password', 4), before.id);
 });
+
+test('courses page lists every course and enrolment lands as a request', async () => {
+  const html = await (await fetch(`${base}/courses`)).text();
+  for (const name of ['Graphic Design Basics', 'Build Your First Website', 'Cyber Safety for Everyone', 'Social Media Management']) assert.ok(html.includes(name), name);
+  assert.match(html, /K1,200/);
+  assert.match(html, /href="\/apply\?course=graphic-design-basics"/);
+  const apply = await (await fetch(`${base}/apply?course=graphic-design-basics`)).text();
+  assert.match(apply, /<option value="Course — Graphic Design Basics \(from K1,200\)" selected>/);
+  assert.match(await (await fetch(`${base}/sitemap.xml`)).text(), /\/courses</);
+  const b = browser();
+  await b.get('/apply?course=graphic-design-basics');
+  const res = await b.post('/apply', { name: 'Test Student', email: 'student@test.local', phone: '0977000000', service: 'Course — Graphic Design Basics (from K1,200)', budget: '', timeline: '', description: 'Next intake please' });
+  assert.equal(res.status, 302);
+  assert.ok(get("SELECT id FROM service_requests WHERE service LIKE 'Course — Graphic Design Basics%'"));
+});
