@@ -96,6 +96,54 @@ router.get('/courses', (req, res) => {
   });
 });
 
+const trainingPage = (extra = {}) => ({
+  title: 'Team Training for Institutions: 1-Week Workshops',
+  description: 'One-week workshops for institutions in Zambia: cyber security awareness, digital skills, communications, design, websites and digital marketing. We train your team and quote you a group price.',
+  schema: [seo.breadcrumbs([['Courses', '/courses'], ['Team training', '/team-training']])],
+  workshops: courses.WORKSHOPS,
+  timelines: lib.TIMELINES,
+  picked: [], form: {},
+  ...extra,
+});
+
+router.get('/team-training', (req, res) => {
+  const picked = String(req.query.w || '').split(',').filter((slug) => courses.workshopBySlug(slug));
+  res.render('team-training', trainingPage({ picked, form: { name: req.user?.name, email: req.user?.email, phone: req.user?.phone, company: req.user?.company } }));
+});
+
+router.post('/team-training', formLimiter, (req, res) => {
+  if (req.body.website) return res.redirect('/');
+  const form = {
+    name: lib.clean(req.body.name, 120),
+    role: lib.clean(req.body.role, 120),
+    email: lib.clean(req.body.email, 200),
+    phone: lib.clean(req.body.phone, 40),
+    company: lib.clean(req.body.company, 160),
+    people: Math.min(500, Math.max(0, parseInt(req.body.people, 10) || 0)),
+    venue: lib.clean(req.body.venue, 200),
+    timeline: lib.clean(req.body.timeline, 60),
+    notes: lib.clean(req.body.notes, 4000),
+  };
+  const picked = courses.WORKSHOPS.filter((w) => req.body[`w_${w.slug}`]);
+  const errors = [];
+  if (!form.company) errors.push('Please enter the name of your institution.');
+  if (!form.name) errors.push('Please enter the contact person’s name.');
+  if (!lib.isEmail(form.email)) errors.push('Please enter a valid email address.');
+  if (!picked.length && !form.notes) errors.push('Choose at least one workshop, or describe what you need.');
+  if (errors.length) {
+    return res.status(422).render('team-training', trainingPage({ picked: picked.map((w) => w.slug), form, errors }));
+  }
+  const list = picked.map((w) => `• ${w.name} (5 days)`).join('\n') || '• Custom programme (see notes)';
+  createRequest(req, {
+    name: form.name, email: form.email, phone: form.phone, company: form.company,
+    service: `Team training — ${picked.length || 1} workshop${picked.length === 1 ? '' : 's'}`,
+    budget: 'Quote requested',
+    timeline: form.timeline,
+    description: `Team training quote request\nInstitution: ${form.company}\nContact: ${form.name}${form.role ? ` (${form.role})` : ''}\nParticipants: ${form.people || 'not stated'}\nVenue: ${form.venue || 'not stated'}\n\nWorkshops requested:\n${list}${form.notes ? `\n\nNotes:\n${form.notes}` : ''}`,
+  });
+  res.redirect('/apply/thank-you');
+});
+
 router.get('/services', (req, res) => {
   res.render('services', {
     title: 'Branding, Design, Web & Marketing Services in Zambia',
@@ -397,6 +445,7 @@ router.get('/sitemap.xml', (req, res) => {
     { loc: '/packages', priority: '0.9' },
     { loc: '/quote', priority: '0.8' },
     { loc: '/courses', priority: '0.8' },
+    { loc: '/team-training', priority: '0.8' },
     { loc: '/projects', priority: '0.8' },
     { loc: '/gallery', priority: '0.8', images: [...album('logos'), ...album('posters')].map((g) => [g.image, g.title]) },
     { loc: '/about', priority: '0.7', images: album('compliance').map((g) => [g.image, g.title]) },

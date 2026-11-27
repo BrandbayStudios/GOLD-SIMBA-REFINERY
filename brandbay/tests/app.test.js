@@ -487,3 +487,20 @@ test('courses page lists every course and enrolment lands as a request', async (
   assert.equal(res.status, 302);
   assert.ok(get("SELECT id FROM service_requests WHERE service LIKE 'Course — Graphic Design Basics%'"));
 });
+
+test('team training page lists the one-week workshops and a quote request becomes a lead', async () => {
+  const html = await (await fetch(`${base}/team-training?w=cyber-awareness-week`)).text();
+  for (const name of ['Cyber Security Awareness Week', 'Digital Skills for Staff Week', 'Design and Branding Week']) assert.ok(html.includes(name), name);
+  assert.match(html, /name="w_cyber-awareness-week" value="1" checked/);
+  assert.match(await (await fetch(`${base}/sitemap.xml`)).text(), /\/team-training</);
+  const b = browser();
+  await b.get('/team-training');
+  const bad = await b.post('/team-training', { company: 'Test Unit', name: 'Officer', email: 'bad' });
+  assert.equal(bad.status, 422);
+  const ok = await b.post('/team-training', { company: 'Test Unit', name: 'Officer', email: 'unit@test.local', people: '25', w_cyber_dummy: '', 'w_cyber-awareness-week': '1', 'w_digital-skills-week': '1', timeline: 'Within a month' });
+  assert.equal(ok.status, 302);
+  const row = get("SELECT * FROM service_requests WHERE service LIKE 'Team training%' ORDER BY id DESC");
+  assert.equal(row.service, 'Team training — 2 workshops');
+  assert.match(row.description, /Participants: 25/);
+  assert.match(row.description, /Cyber Security Awareness Week/);
+});

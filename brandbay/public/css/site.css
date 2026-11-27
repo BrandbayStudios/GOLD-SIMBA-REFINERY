@@ -409,6 +409,10 @@ html, body { overflow-x: clip; }
 .btn-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
 .btn-dark:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
 .package-card.is-compact .package-body { gap: 1.3rem; }
+.training-form, .training-form h2, .training-form label, .training-form legend { color: var(--ink); }
+.training-form .muted { color: #5d6470; }
+.training-form .check { display: flex; align-items: center; gap: 0.6rem; padding: 0.35rem 0; font-weight: 500; }
+.training-form .check input { width: auto; }
 .course-group { margin-top: 3.5rem; }
 .course-group > h2 { color: var(--gold); font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin: 0; }
 .course-grid { grid-template-columns: repeat(3, 1fr); margin-top: 1.5rem; }

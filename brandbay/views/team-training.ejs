@@ -1,0 +1,85 @@
+<%- include('partials/head') %>
+
+<section class="bg-section section-pad page-top">
+  <%- include('partials/bg', { image: 'bg-services', overlay: 78, eager: true }) %>
+  <div class="container center narrow-text">
+    <h1 class="page-title" data-split>Team training for institutions</h1>
+    <p class="lead-light" data-reveal="fade-up">One-week workshops for your staff, at your venue or ours. Pick the workshops, tell us your numbers and we will send a group quote.</p>
+    <p data-reveal="fade-up"><a class="btn btn-gold btn-shine" href="#quote">Get a quote</a></p>
+  </div>
+
+  <div class="container course-group" data-reveal="fade-up">
+    <h2>One-week workshops</h2>
+    <div class="package-grid course-grid" data-reveal-group>
+      <% for (const w of workshops) { %>
+        <article class="package-card tilt" data-reveal="fade-up">
+          <header class="package-head">
+            <span class="package-icon" aria-hidden="true"><%- include('partials/icon', { name: w.icon }) %></span>
+            <span class="package-label">5 days · group quote</span>
+            <h3 class="package-name"><%= w.name %></h3>
+          </header>
+          <div class="package-body">
+            <p class="package-tagline"><%= w.tagline %></p>
+            <ul class="package-features">
+              <% for (const d of w.days) { %><li><%- include('partials/icon', { name: 'check' }) %><span><%= d %></span></li><% } %>
+            </ul>
+            <dl class="package-meta"><div><dt>Best for</dt><dd><%= w.forWho %></dd></div></dl>
+            <a class="btn btn-dark btn-block" href="/team-training?w=<%= w.slug %>#quote">Request this workshop<span class="sr-only">: <%= w.name %></span></a>
+          </div>
+        </article>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="container package-notes" data-reveal="fade-up">
+    <ul>
+      <li>We bring the trainers, slides, workbooks and exercises. You provide a room and, for labs, devices or participants’ own phones.</li>
+      <li>Groups of 8 to 30 people. Larger institutions can run several cohorts.</li>
+      <li>Every participant who completes the week gets a BrandBay Certificate of Completion. These are BrandBay certificates, not national qualifications.</li>
+      <li>You can mix workshops or ask for a custom week built around your institution’s needs.</li>
+    </ul>
+  </div>
+
+  <div class="container" id="quote" style="margin-top:3rem">
+    <form class="card form training-form" method="post" action="/team-training">
+      <h2>Get a team training quote</h2>
+      <%- include('partials/errors') %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <fieldset>
+        <legend>Your institution</legend>
+        <div class="form-row">
+          <label>Institution name*<input name="company" required autocomplete="organization" value="<%= form.company || '' %>"></label>
+          <label>Number of participants<input type="number" name="people" min="1" max="500" value="<%= form.people || '' %>"></label>
+        </div>
+        <div class="form-row">
+          <label>Contact person*<input name="name" required autocomplete="name" value="<%= form.name || '' %>"></label>
+          <label>Role<input name="role" value="<%= form.role || '' %>"></label>
+        </div>
+        <div class="form-row">
+          <label>Email address*<input type="email" name="email" required autocomplete="email" value="<%= form.email || '' %>"></label>
+          <label>Phone / WhatsApp<input type="tel" name="phone" autocomplete="tel" value="<%= form.phone || '' %>"></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Workshops you want</legend>
+        <% for (const w of workshops) { %>
+          <label class="check"><input type="checkbox" name="w_<%= w.slug %>" value="1"<%= picked.includes(w.slug) ? ' checked' : '' %>> <%= w.name %></label>
+        <% } %>
+      </fieldset>
+      <fieldset>
+        <legend>Details</legend>
+        <div class="form-row">
+          <label>Preferred start<select name="timeline">
+            <option value="">Choose</option>
+            <% for (const t of timelines) { %><option<%= form.timeline === t ? ' selected' : '' %>><%= t %></option><% } %>
+          </select></label>
+          <label>Venue or town<input name="venue" placeholder="At our venue, or yours: where?" value="<%= form.venue || '' %>"></label>
+        </div>
+        <label>Anything else we should know?<textarea name="notes" rows="4"><%= form.notes || '' %></textarea></label>
+      </fieldset>
+      <button class="btn btn-gold btn-shine" type="submit">Send my quote request</button>
+      <p class="muted">We reply with a group price and proposed dates. No payment is needed to request a quote.</p>
+    </form>
+  </div>
+</section>

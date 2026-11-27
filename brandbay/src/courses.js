@@ -59,8 +59,50 @@ const COURSES = [
   },
 ];
 
+// One-week (5-day) workshops BrandBay delivers to institutions, at the client's venue or ours. Priced by quote.
+const WORKSHOPS = [
+  {
+    slug: 'cyber-awareness-week', name: 'Cyber Security Awareness Week', icon: 'star',
+    tagline: 'Protect people, phones, accounts and information from scams, hackers and leaks.',
+    days: ['Day 1: threats, attackers and how attacks unfold', 'Day 2: passwords and two-factor lab', 'Day 3: phishing, fake messages and social engineering', 'Day 4: phones, social media and information handling', 'Day 5: cyber law, incident response drill and certificates'],
+    forWho: 'Security services, ministries, councils, banks and schools',
+  },
+  {
+    slug: 'digital-skills-week', name: 'Digital Skills for Staff Week', icon: 'check',
+    tagline: 'Everyday computer, email and cloud skills so staff work faster and safer.',
+    days: ['Day 1: computers, files and typing', 'Day 2: Word and document formatting', 'Day 3: Excel for records and reports', 'Day 4: email, calendars and cloud sharing', 'Day 5: PowerPoint, online safety and certificates'],
+    forWho: 'Administrative and support staff',
+  },
+  {
+    slug: 'communications-week', name: 'Communications and Social Media Week', icon: 'spark',
+    tagline: 'Run the institution’s pages, announcements and public messaging professionally.',
+    days: ['Day 1: audience, tone and message planning', 'Day 2: content calendars and writing for social media', 'Day 3: designing posts and short videos', 'Day 4: scheduling, moderation and handling criticism', 'Day 5: reporting results and certificates'],
+    forWho: 'Public relations, communications and marketing teams',
+  },
+  {
+    slug: 'design-and-branding-week', name: 'Design and Branding Week', icon: 'pen',
+    tagline: 'Produce consistent flyers, posters, ID cards and reports in the institution’s own style.',
+    days: ['Day 1: design principles, colour and type', 'Day 2: Canva and Photoshop essentials', 'Day 3: posters, flyers and banners', 'Day 4: brand guidelines, letterheads and templates', 'Day 5: preparing files for print and certificates'],
+    forWho: 'Communications teams, schools and associations',
+  },
+  {
+    slug: 'website-presence-week', name: 'Website and Online Presence Week', icon: 'code',
+    tagline: 'Plan, update and secure the institution’s website and online listings.',
+    days: ['Day 1: domains, hosting and website planning', 'Day 2: building pages with WordPress or a builder', 'Day 3: content, images and forms', 'Day 4: search visibility and Google Business profile', 'Day 5: security, maintenance and certificates'],
+    forWho: 'ICT officers, communications staff and administrators',
+  },
+  {
+    slug: 'digital-marketing-week', name: 'Digital Marketing and Customer Reach Week', icon: 'arrow',
+    tagline: 'Reach more clients through WhatsApp Business, Google, social media and simple ads.',
+    days: ['Day 1: goals, audience and offers', 'Day 2: WhatsApp Business and customer service', 'Day 3: Facebook and Instagram ads on a small budget', 'Day 4: Google reviews, listings and email', 'Day 5: tracking results and certificates'],
+    forWho: 'SACCOs, cooperatives, SMEs and business associations',
+  },
+];
+
+const workshopBySlug = (slug) => WORKSHOPS.find((w) => w.slug === slug);
+
 const bySlug = (slug) => COURSES.find((c) => c.slug === slug);
 const courseService = (c) => `Course — ${c.name} (from K${c.fee.toLocaleString('en-US')})`;
 const categories = () => [...new Set(COURSES.map((c) => c.category))].map((name) => ({ name, courses: COURSES.filter((c) => c.category === name) }));
 
-module.exports = { COURSES, bySlug, courseService, categories };
+module.exports = { COURSES, WORKSHOPS, workshopBySlug, bySlug, courseService, categories };
