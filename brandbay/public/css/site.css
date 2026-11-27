@@ -416,6 +416,27 @@ html, body { overflow-x: clip; }
 .course-group { margin-top: 3.5rem; }
 .course-group > h2 { color: var(--gold); font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin: 0; }
 .course-grid { grid-template-columns: repeat(3, 1fr); margin-top: 1.5rem; }
+
+.course-grid { align-items: start; gap: 1rem; }
+.mini-card { background: #fff; color: var(--ink); border-radius: 16px; padding: 1.1rem 1.2rem; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32); transition: transform 0.35s var(--ease-spring), box-shadow 0.35s; }
+.mini-card:hover { transform: translateY(-4px); box-shadow: 0 0 0 2px var(--gold), 0 20px 44px rgba(0, 0, 0, 0.4); }
+.mini-top { display: flex; align-items: center; gap: 0.8rem; }
+.mini-top .package-icon { flex: none; width: 2.6rem; height: 2.6rem; border-radius: 10px; }
+.mini-top > div { flex: 1; min-width: 0; }
+.mini-card .package-label { color: #7a5f00; font-size: 0.7rem; }
+.mini-name { margin: 0.1rem 0 0; font-size: 1.05rem; line-height: 1.25; color: var(--ink); }
+.mini-price { margin: 0; text-align: right; color: var(--ink); line-height: 1.1; }
+.mini-price small { display: block; font-size: 0.7rem; color: #5d6470; }
+.mini-price strong { font-size: 1.2rem; }
+.mini-tag { margin: 0.7rem 0 0.4rem; font-size: 0.92rem; color: #444b57; }
+.mini-len { margin: 0 0 0.6rem; font-size: 0.85rem; color: #5d6470; display: flex; align-items: center; gap: 0.4rem; }
+.mini-more > summary { cursor: pointer; list-style: none; font-weight: 600; font-size: 0.9rem; color: #7a5f00; padding: 0.35rem 0; }
+.mini-more > summary::-webkit-details-marker { display: none; }
+.mini-more > summary::after { content: ' ▾'; }
+.mini-more[open] > summary::after { content: ' ▴'; }
+.mini-more > summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+.mini-more .package-features { margin: 0.4rem 0 0.8rem; }
+.mini-for { font-size: 0.88rem; color: #444b57; margin: 0 0 0.9rem; }
 .package-grid.compact + p { margin-top: 2.5rem; }
 .package-notes { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-top: 3rem; align-items: center; }
 .package-notes ul { margin: 0; padding-left: 1.1rem; color: rgba(255, 255, 255, 0.72); display: grid; gap: 0.5rem; font-size: 0.92rem; }

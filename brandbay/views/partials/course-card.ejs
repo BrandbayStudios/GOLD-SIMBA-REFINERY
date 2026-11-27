@@ -1,19 +1,20 @@
-<article class="package-card tilt" data-reveal="fade-up">
-  <header class="package-head">
+<article class="mini-card tilt" data-reveal="fade-up">
+  <div class="mini-top">
     <span class="package-icon" aria-hidden="true"><%- include('icon', { name: c.icon }) %></span>
-    <span class="package-label"><%= c.level %></span>
-    <h3 class="package-name"><%= c.name %></h3>
-    <p class="package-price"><small>from</small> <strong><%= lib.moneyShort(c.fee) %></strong></p>
-  </header>
-  <div class="package-body">
-    <p class="package-tagline"><%= c.tagline %></p>
+    <div>
+      <span class="package-label"><%= c.level %></span>
+      <h3 class="mini-name"><%= c.name %></h3>
+    </div>
+    <p class="mini-price"><small>from</small> <strong><%= lib.moneyShort(c.fee) %></strong></p>
+  </div>
+  <p class="mini-tag"><%= c.tagline %></p>
+  <p class="mini-len"><%- include('icon', { name: 'check' }) %> <%= c.duration %></p>
+  <details class="mini-more">
+    <summary>View details<span class="sr-only"> for <%= c.name %></span></summary>
     <ul class="package-features">
       <% for (const t of c.topics) { %><li><%- include('icon', { name: 'check' }) %><span><%= t %></span></li><% } %>
     </ul>
-    <dl class="package-meta">
-      <div><dt>Length</dt><dd><%= c.duration %></dd></div>
-      <div><dt>Best for</dt><dd><%= c.forWho %></dd></div>
-    </dl>
-    <a class="btn btn-dark btn-block" href="/apply?course=<%= c.slug %>">Enrol<span class="sr-only"> in <%= c.name %></span></a>
-  </div>
+    <p class="mini-for"><b>Best for:</b> <%= c.forWho %></p>
+    <a class="btn btn-gold btn-block" href="/apply?course=<%= c.slug %>">Enrol<span class="sr-only"> in <%= c.name %></span></a>
+  </details>
 </article>

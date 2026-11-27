@@ -12,20 +12,23 @@
     <h2>One-week workshops</h2>
     <div class="package-grid course-grid" data-reveal-group>
       <% for (const w of workshops) { %>
-        <article class="package-card tilt" data-reveal="fade-up">
-          <header class="package-head">
+        <article class="mini-card tilt" data-reveal="fade-up">
+          <div class="mini-top">
             <span class="package-icon" aria-hidden="true"><%- include('partials/icon', { name: w.icon }) %></span>
-            <span class="package-label">5 days · group quote</span>
-            <h3 class="package-name"><%= w.name %></h3>
-          </header>
-          <div class="package-body">
-            <p class="package-tagline"><%= w.tagline %></p>
+            <div>
+              <span class="package-label">5 days · group quote</span>
+              <h3 class="mini-name"><%= w.name %></h3>
+            </div>
+          </div>
+          <p class="mini-tag"><%= w.tagline %></p>
+          <details class="mini-more">
+            <summary>View the 5 days<span class="sr-only"> of <%= w.name %></span></summary>
             <ul class="package-features">
               <% for (const d of w.days) { %><li><%- include('partials/icon', { name: 'check' }) %><span><%= d %></span></li><% } %>
             </ul>
-            <dl class="package-meta"><div><dt>Best for</dt><dd><%= w.forWho %></dd></div></dl>
-            <a class="btn btn-dark btn-block" href="/team-training?w=<%= w.slug %>#quote">Request this workshop<span class="sr-only">: <%= w.name %></span></a>
-          </div>
+            <p class="mini-for"><b>Best for:</b> <%= w.forWho %></p>
+            <a class="btn btn-gold btn-block" href="/team-training?w=<%= w.slug %>#quote">Request this workshop<span class="sr-only">: <%= w.name %></span></a>
+          </details>
         </article>
       <% } %>
     </div>
